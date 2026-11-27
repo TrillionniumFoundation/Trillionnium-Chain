@@ -181,8 +181,10 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     stream = request.get("variable_stream_fixture", False)
     linear_stream = request.get("linear_stream_fixture", False)
     cursor_stream = request.get("cursor_stream_fixture", False)
-    wide_stream = linear_stream or cursor_stream
-    replay_limit = request.get("receipt_replay_limit", 8 if wide_stream else 4 if stream else 1)
+    bank_stream = request.get("bank_stream_fixture", False)
+    wide_stream = linear_stream or cursor_stream or bank_stream
+    wide_limit = 9 if bank_stream else 8
+    replay_limit = request.get("receipt_replay_limit", wide_limit if wide_stream else 4 if stream else 1)
     same_block = request.get("same_block_fixture", False)
     variable_first = request.get("variable_first_fixture", False)
     variable_pair = request.get("variable_pair_fixture", False)
@@ -190,9 +192,10 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
     variable_rows = 1 if variable_first else 2 if variable_pair else 4 if variable_settle else 0
     replay_control_step = request.get("first_replay_fixture_control_step", replay_limit)
     if ((replay and (not journal or len(replay_image) != 2))
-            or type(replay_limit) is not int or replay_limit not in ((8,) if wide_stream else (1, 2, 3, 4))
+            or type(replay_limit) is not int or replay_limit not in ((wide_limit,) if wide_stream else (1, 2, 3, 4))
             or type(linear_stream) is not bool or type(cursor_stream) is not bool
-            or (wide_stream and not stream) or (linear_stream and cursor_stream)
+            or type(bank_stream) is not bool
+            or (wide_stream and not stream) or sum((bool(linear_stream), bool(cursor_stream), bool(bank_stream))) > 1
             or type(stream) is not bool
             or (stream and (not replay or "receipt_replay_limit" in request or variable_rows or same_block))
             or type(variable_first) is not bool or type(variable_pair) is not bool
@@ -330,7 +333,9 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                     profile, = struct.unpack_from("<Q", state, 349024)
                     if wide_stream:
                         native_rows, = struct.unpack_from("<Q", state, 7002)
-                        if profile == 10 and 5 <= native_rows <= 8:
+                        if bank_stream:
+                            rows = native_rows if (profile, native_rows) == (12, 9) else None
+                        elif profile == 10 and 5 <= native_rows <= 8:
                             rows = native_rows
                         elif cursor_stream and (profile, native_rows) in ((6, 1), (5, 2), (11, 2), (7, 2), (9, 3), (8, 4)):
                             rows = native_rows
@@ -368,7 +373,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                                                 variable_rows=active_rows if measured and stream else variable_rows)
                 raw = engine.apply(payload)
                 predecessor_root = (active_rows == 4 or active_same or linear_stream
-                                    or (cursor_stream and active_rows >= 3)
+                                    or ((cursor_stream or bank_stream) and active_rows >= 3)
                                     or (stream and active_rows == 3))
                 if raw and predecessor_root:
                     if engine.last_parent_root is None:
@@ -419,7 +424,7 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
             result.update(replay_calls=replay_calls, replay_held=replay_held, replay_locks=replay_locks)
             if status == 0 and replay_calls != (selected_rows if stream else replay_limit):
                 raise ValueError("Success without exact Engine observation")
-        if cursor_stream:
+        if cursor_stream or bank_stream:
             result["replay_profile"] = selected_profile
         if projected:
             result["projection"] = projection

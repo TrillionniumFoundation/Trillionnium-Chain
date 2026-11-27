@@ -378,13 +378,19 @@ block prove_slot(pr_r:readbuf,pr_m:mutbuf,pr_w:mutbuf,pr_row:u64,pr_first:bool,p
 block save_witness(sw_r:readbuf,sw_m:mutbuf,sw_w:mutbuf,sw_row:u64,sw_first:bool,sw_last:bool,sw_len:u64)
   sw_profile_at:u64 = const() {"value":349024}
   sw_profile:u64 = call(sw_m,sw_profile_at) {"function":"cp_get"}
-  sw_written:u64 = call(sw_r,sw_m,sw_row,sw_profile) {"function":"hfs_save_receipt"}
+  sw_stream:bool = call(sw_profile) {"function":"hfs_bank_profile"}
+  branch sw_stream stream_receipt(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len) pack_receipt(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len,sw_profile)
+block stream_receipt(qsr:readbuf,qsm:mutbuf,qsw:mutbuf,qsi:u64,qsf:bool,qst:bool,qsn:u64)
+  streaming:bool = call(qsr,qsm,qsw,qsi) {"function":"hfs_bank_feed"}
+  branch streaming parent(qsr,qsm,qsw,qsi,qsf,qst,qsn) refused()
+block pack_receipt(pack_r:readbuf,pack_m:mutbuf,pack_w:mutbuf,pack_i:u64,pack_f:bool,pack_l:bool,pack_n:u64,pack_p:u64)
+  sw_written:u64 = call(pack_r,pack_m,pack_i,pack_p) {"function":"hfs_save_receipt"}
   sw_four:u64 = const() {"value":4}
-  sw_settle:bool = compare.eq(sw_row,sw_four)
-  sw_settle_profile:bool = call(sw_profile) {"function":"hfs_settled"}
-  sw_tail:bool = bool.and(sw_settle,sw_last)
+  sw_settle:bool = compare.eq(pack_i,sw_four)
+  sw_settle_profile:bool = call(pack_p) {"function":"hfs_settled"}
+  sw_tail:bool = bool.and(sw_settle,pack_l)
   sw_final:bool = bool.and(sw_tail,sw_settle_profile)
-  branch sw_final prove_id(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len) parent(sw_r,sw_m,sw_w,sw_row,sw_first,sw_last,sw_len)
+  branch sw_final prove_id(pack_r,pack_m,pack_w,pack_i,pack_f,pack_l,pack_n) parent(pack_r,pack_m,pack_w,pack_i,pack_f,pack_l,pack_n)
 block prove_id(pi_r:readbuf,pi_m:mutbuf,pi_w:mutbuf,pi_row:u64,pi_first:bool,pi_last:bool,pi_len:u64)
   pi_valid:bool = call(pi_r,pi_m) {"function":"hfs_install_id"}
   branch pi_valid parent(pi_r,pi_m,pi_w,pi_row,pi_first,pi_last,pi_len) refused()

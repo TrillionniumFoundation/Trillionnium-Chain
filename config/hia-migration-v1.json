@@ -3979,6 +3979,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-held-stream-prefix-bank",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Independent private native one-SQL-pass replay of an actual original nine-AdmitReceipt linear Store with ten separately verified marker endpoints. Bounded bank hashes separate original count-prefixed contexts in flight without retaining a receipt archive or reading operations twice; unchanged old eight-operation guard, original roots/state/close checks, no arbitrary history or production authority.",
+      "sources": [
+        "hia/platform/service_settlement/held_stream_bank_replay.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_linear_replay.py",
+        "hia/tests/rust_settlement_same_block_fixture.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

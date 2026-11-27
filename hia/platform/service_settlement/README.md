@@ -548,6 +548,17 @@ count and admits only consecutive AdmitReceipt operations in its bounded
 close, including the ordinary fourth receipt (not a Settle). It leaves the
 shorter and mixed entries, and all writer and recovery authority, unchanged.
 
+A separate native stream entry consumes nine actual consecutive AdmitReceipt
+operations and ten checked original marker endpoints in one SQLite read
+snapshot. It seeds independent SHA-256 contexts with the original Borsh
+prefix counts before ingesting any receipt. Each receipt is forwarded only
+once from its verified SQLite row, updates the remaining contexts, and
+does not enter a packed receipt archive. Each finished context is compared
+with the original checkpoint. The bounded bank retains one context per
+remaining endpoint; hashing work is not constant per receipt. A later empty
+checkpoint falls outside this exact linear entry, and the older cursor still
+refuses nine operations. No production ownership or arbitrary history.
+
 One opt-in native cursor dispatcher now chooses the existing three-row
 Rollup, four-row mixed, or bounded linear receipt lane from original verified
 metadata, and each lane still enforces original typed command and committed

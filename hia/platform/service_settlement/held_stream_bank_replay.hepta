@@ -1,0 +1,37 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_stream_bank
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  n:usize = buffer.len(mem)
+  expected:usize = const() {"value":1048576}
+  good:bool = compare.eq(n,expected)
+  branch good route(raw,mem,work) bad()
+block route(r:readbuf,m:mutbuf,w:mutbuf)
+  stage_at:u64 = const() {"value":96}
+  live_stage:u64 = const() {"value":3}
+  stage:u64 = call(m,stage_at) {"function":"cp_get"}
+  metadata_checked:bool = compare.ge(stage,live_stage)
+  branch metadata_checked select_rows(r,m,w) provisional(r,m,w)
+block provisional(pr:readbuf,pm:mutbuf,pw:mutbuf)
+  measured:u64 = const() {"value":6}
+  code:u32 = call(pr,pm,pw,measured) {"function":"hfr_read"}
+  ret(code)
+block select_rows(sr:readbuf,sm:mutbuf,sw:mutbuf)
+  count_at:u64 = const() {"value":7002}
+  count:u64 = call(sm,count_at) {"function":"cp_get"}
+  low:u64 = const() {"value":9}
+  high:u64 = const() {"value":9}
+  above:bool = compare.ge(count,low)
+  below:bool = compare.le(count,high)
+  fits:bool = bool.and(above,below)
+  branch fits cursor(sr,sm,sw) bad()
+block cursor(rr:readbuf,rm:mutbuf,rw:mutbuf)
+  enabled_at:u64 = const() {"value":349048}
+  enabled:u64 = const() {"value":1}
+  cursor_mode:u64 = call(rm,enabled_at,enabled) {"function":"cp_put"}
+  held_linear:u64 = const() {"value":12}
+  result:u32 = call(rr,rm,rw,held_linear) {"function":"hfr_read"}
+  ret(result)
+block bad()
+  denied:u32 = const() {"value":100}
+  ret(denied)
+end

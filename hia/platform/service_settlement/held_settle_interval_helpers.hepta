@@ -60,6 +60,152 @@ block entry(r:readbuf,m:mutbuf,seq:u64,profile:u64)
   ret(end)
 end
 
+fn hfs_bank_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  bank:u64 = const() {"value":12}
+  enabled:bool = compare.eq(profile,bank)
+  ret(enabled)
+end
+
+fn hfs_bank_feed(r:readbuf,m:mutbuf,w:mutbuf,seq:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,w:mutbuf,seq:u64)
+  one:u64 = const() {"value":1}
+  nine:u64 = const() {"value":9}
+  ten:u64 = const() {"value":10}
+  at:u64 = const() {"value":88}
+  seen_at:u64 = const() {"value":459992}
+  seen:u64 = call(m,seen_at) {"function":"cp_get"}
+  count:u64 = call(m,at) {"function":"cp_get"}
+  next:u64 = int.add.wrap(seen,one)
+  sequential:bool = compare.eq(seq,next)
+  smallest:bool = compare.ge(seq,one)
+  largest:bool = compare.le(seq,nine)
+  markers:bool = compare.eq(count,ten)
+  range:bool = bool.and(smallest,largest)
+  valid_count:bool = bool.and(markers,range)
+  valid:bool = bool.and(sequential,valid_count)
+  branch valid save_journal(r,m,w,seq) bad()
+block save_journal(jr:readbuf,jm:mutbuf,jw:mutbuf,js:u64)
+  zero_j:usize = const() {"value":0}
+  backup:usize = const() {"value":474000}
+  sha_extent:u64 = const() {"value":1208}
+  saved:u64 = call(jw,jm,zero_j,backup,sha_extent) {"function":"sscid_copy"}
+  one_j:u64 = const() {"value":1}
+  first:bool = compare.eq(js,one_j)
+  zero_index:u64 = const() {"value":0}
+  branch first init(jr,jm,jw,js,zero_index) feed(jr,jm,jw,js,js)
+block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64)
+  anchor:u64 = const() {"value":0}
+  one_i:u64 = const() {"value":1}
+  source_off:u64 = const() {"value":88}
+  target_off:u64 = const() {"value":96}
+  start:bool = compare.eq(ii,anchor)
+  preceding:u64 = int.sub.wrap(ii,one_i)
+  expected_source:u64 = select(start,anchor,preceding)
+  marker:u64 = call(ii) {"function":"hfs_marker_offset"}
+  source_at:u64 = int.add.wrap(marker,source_off)
+  target_at:u64 = int.add.wrap(marker,target_off)
+  source:u64 = call(im,source_at) {"function":"cp_get"}
+  target:u64 = call(im,target_at) {"function":"cp_get"}
+  source_ok:bool = compare.eq(source,expected_source)
+  target_ok:bool = compare.eq(target,ii)
+  exact:bool = bool.and(source_ok,target_ok)
+  branch exact new_context(ir,im,iw,is,ii,start) bad()
+block new_context(nr:readbuf,nm:mutbuf,nw:mutbuf,ns:u64,ni:u64,nz:bool)
+  okay:bool = call(nw,ni) {"function":"sjr_prefix"}
+  branch okay init_choose(nr,nm,nw,ns,ni,nz) bad()
+block init_choose(cr:readbuf,cm:mutbuf,cw:mutbuf,cs:u64,ci:u64,cz:bool)
+  branch cz genesis(cr,cm,cw,cs,ci) keep_init(cr,cm,cw,cs,ci)
+block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf,gs:u64,gi:u64)
+  exact_g:bool = call(gm,gw,gi) {"function":"hfs_bank_finish"}
+  branch exact_g next_init(gr,gm,gw,gs,gi) bad()
+block keep_init(kr:readbuf,km:mutbuf,kw:mutbuf,ks:u64,ki:u64)
+  kept:u64 = call(km,kw,ki) {"function":"hfs_bank_store"}
+  jump next_init(kr,km,kw,ks,ki)
+block next_init(nir:readbuf,nim:mutbuf,niw:mutbuf,nis:u64,nii:u64)
+  nine_i:u64 = const() {"value":9}
+  done_i:bool = compare.eq(nii,nine_i)
+  by_one:u64 = const() {"value":1}
+  next_i:u64 = int.add.wrap(nii,by_one)
+  branch done_i feed(nir,nim,niw,nis,nis) init(nir,nim,niw,nis,next_i)
+block feed(fr:readbuf,fm:mutbuf,fw:mutbuf,fs:u64,fi:u64)
+  slot:u64 = call(fi) {"function":"hfs_bank_offset"}
+  src:usize = int.cast(slot) {"mode":"wrap"}
+  zero_f:usize = const() {"value":0}
+  width_f:u64 = const() {"value":1208}
+  loaded_f:u64 = call(fm,fw,src,zero_f,width_f) {"function":"sscid_copy"}
+  receipt_width:u64 = const() {"value":149}
+  updated:bool = call(fr,fw,receipt_width) {"function":"sjr_receipt"}
+  step_finished:bool = compare.eq(fi,fs)
+  branch updated capture(fr,fm,fw,fs,fi,step_finished) bad()
+block capture(car:readbuf,cam:mutbuf,caw:mutbuf,cas:u64,cai:u64,caz:bool)
+  branch caz finish(car,cam,caw,cas,cai) save(car,cam,caw,cas,cai)
+block finish(zr:readbuf,zm:mutbuf,zw:mutbuf,zs:u64,zi:u64)
+  valid_z:bool = call(zm,zw,zi) {"function":"hfs_bank_finish"}
+  branch valid_z next_row(zr,zm,zw,zs,zi) bad()
+block save(sr:readbuf,sm:mutbuf,sw:mutbuf,ss:u64,si:u64)
+  digest_context:u64 = call(sm,sw,si) {"function":"hfs_bank_store"}
+  jump next_row(sr,sm,sw,ss,si)
+block next_row(qr:readbuf,qm:mutbuf,qw:mutbuf,qs:u64,qi:u64)
+  nine_q:u64 = const() {"value":9}
+  ended:bool = compare.eq(qi,nine_q)
+  one_q:u64 = const() {"value":1}
+  after_q:u64 = int.add.wrap(qi,one_q)
+  branch ended restore(qm,qw,qs) feed(qr,qm,qw,qs,after_q)
+block restore(rsm:mutbuf,rsw:mutbuf,rss:u64)
+  backup_r:usize = const() {"value":474000}
+  zero_r:usize = const() {"value":0}
+  width_r:u64 = const() {"value":1208}
+  restored:u64 = call(rsm,rsw,backup_r,zero_r,width_r) {"function":"sscid_copy"}
+  count_r:u64 = const() {"value":459992}
+  remembered:u64 = call(rsm,count_r,rss) {"function":"cp_put"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_bank_offset(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  extent:u64 = const() {"value":1208}
+  start:u64 = const() {"value":460000}
+  stride:u64 = int.mul.wrap(index,extent)
+  at:u64 = int.add.wrap(start,stride)
+  ret(at)
+end
+
+fn hfs_bank_store(m:mutbuf,w:mutbuf,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,index:u64)
+  raw:u64 = call(index) {"function":"hfs_bank_offset"}
+  at:usize = int.cast(raw) {"mode":"wrap"}
+  zero:usize = const() {"value":0}
+  width:u64 = const() {"value":1208}
+  stored:u64 = call(w,m,zero,at,width) {"function":"sscid_copy"}
+  ret(stored)
+end
+
+fn hfs_bank_finish(m:mutbuf,w:mutbuf,index:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,index:u64)
+  outcome:u64 = call(w) {"function":"tr_sha_final_full"}
+  zero:u64 = const() {"value":0}
+  fine:bool = compare.eq(outcome,zero)
+  branch fine digest(m,w,index) bad()
+block digest(dm:mutbuf,dw:mutbuf,di:u64)
+  from:usize = const() {"value":1168}
+  width:u64 = const() {"value":32}
+  base:u64 = const() {"value":440000}
+  to:u64 = int.mul.wrap(di,width)
+  a:u64 = int.add.wrap(base,to)
+  ofs:usize = int.cast(a) {"mode":"wrap"}
+  copied:u64 = call(dw,dm,from,ofs,width) {"function":"sscid_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
 fn hfs_install_id(r:readbuf,m:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,m:mutbuf)
   base:u64 = const() {"value":400000}
@@ -454,11 +600,27 @@ block entry(m:mutbuf,w:mutbuf,rows:u64)
   floor:u64 = const() {"value":3}
   extent:u64 = int.add.wrap(rows,one_c)
   exact:bool = compare.eq(count,extent)
-  below:bool = compare.le(rows,cap_c)
+  mode_at:u64 = const() {"value":349024}
+  mode:u64 = call(m,mode_at) {"function":"cp_get"}
+  bank:bool = call(mode) {"function":"hfs_bank_profile"}
+  cap_bank:u64 = const() {"value":9}
+  selected:u64 = select(bank,cap_bank,cap_c)
+  below:bool = compare.le(rows,selected)
   above:bool = compare.ge(rows,floor)
   limits:bool = bool.and(below,above)
   safe:bool = bool.and(exact,limits)
-  branch safe setup(m,w,rows) bad()
+  branch safe route(m,w,rows,bank) bad()
+block route(rrm:mutbuf,rrw:mutbuf,rrn:u64,rrb:bool)
+  branch rrb verify_bank(rrm,rrn) setup(rrm,rrw,rrn)
+block verify_bank(bm:mutbuf,bn:u64)
+  seen_at:u64 = const() {"value":459992}
+  nine:u64 = const() {"value":9}
+  zero_b:u64 = const() {"value":0}
+  count_seen:u64 = call(bm,seen_at) {"function":"cp_get"}
+  valid_seen:bool = compare.eq(count_seen,nine)
+  exact_n:bool = compare.eq(bn,nine)
+  ready:bool = bool.and(valid_seen,exact_n)
+  branch ready walk(bm,zero_b,bn) bad()
 block setup(sm:mutbuf,sw:mutbuf,sn:u64)
   stride:u64 = const() {"value":153}
   packed_bytes:u64 = int.mul.wrap(sn,stride)
@@ -489,7 +651,9 @@ end
 fn hfs_long(profile:u64) -> (bool) effects() entry(entry)
 block entry(profile:u64)
   bound:u64 = const() {"value":10}
-  long:bool = compare.eq(profile,bound)
+  ordinary:bool = compare.eq(profile,bound)
+  bank:bool = call(profile) {"function":"hfs_bank_profile"}
+  long:bool = bool.or(ordinary,bank)
   ret(long)
 end
 

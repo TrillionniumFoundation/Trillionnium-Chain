@@ -31,7 +31,10 @@ class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
                           "variable": OWNER / "held_variable_stream_replay.hepta",
                           "cursor": OWNER / "held_cursor_variable_linear_replay.hepta",
                           "execution": OWNER / "execution_journal_read.hepta",
+                          "bank": OWNER / "held_stream_bank_replay.hepta",
                       }.items()}
+            images["bank-direct"] = stack.enter_context(NativeModule(
+                OWNER / "held_stream_bank_replay.hepta", byte_exports=("f0",), backend="direct"))
             out = tmp / "engine"
             engine = json.loads(execute([sys.executable, "-B", "-m", "hia.platform.service_settlement.build",
                                         "--output", out], timeout=200).stdout)
@@ -49,12 +52,14 @@ class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
                            "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
                            "directory": str(owned), "database": str(path),
                            "journal_binding": binding.hex()}
-                if lane in ("variable", "cursor"):
+                if lane in ("variable", "cursor", "bank", "bank-direct"):
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
                     request["variable_stream_fixture"] = True
                     if lane == "cursor":
                         request["linear_stream_fixture"] = True
-                if lane == "cursor" and failed is None:
+                    if lane in ("bank", "bank-direct"):
+                        request["bank_stream_fixture"] = True
+                if lane in ("cursor", "bank", "bank-direct") and failed is None:
                     request["writer"] = str(original)
                 if failed is not None:
                     request.update(first_replay_fixture_control=failed, first_replay_fixture_control_step=ordinal)
@@ -98,6 +103,26 @@ class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
                                           cursor["replay_locks"]), (100, None, 0, 0), cursor)
                         self.assertGreater(cursor["released"], 0)
                         self.assertNotIn(50, [phase for phase, _, _ in cursor["transcript"]])
+                        for lane in ("bank", "bank-direct"):
+                            with self.subTest(stream_lane=lane):
+                                continued = invoke(db, held, lane)
+                                self.assertEqual((continued["status"], continued["replay_profile"],
+                                                  continued["replay_calls"], continued["replay_locks"], continued["released"]),
+                                                 (0, 12, 9, 9, 0), continued)
+                                self.assertEqual(bytes.fromhex(continued["projection"]), actual)
+                                self.assertEqual(continued["transcript"], independent["transcript"])
+                                self.assertEqual(continued["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        for ordinal, control in ((1, "root"), (8, "id"), (9, "state")):
+                            refused = invoke(db, held, "bank", failed=control, ordinal=ordinal)
+                            self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                             (100, None, ordinal), refused)
+                            self.assertGreater(refused["released"], 0)
+                        later = owned / "nine operations and one trailing marker.db"
+                        with_empty = execute([original, "seed-receipts", later, paths[0], "0", *paths[1:], "-"]).stdout
+                        self.assertTrue(execute([original, "verify-journal", later, paths[0]]).stdout)
+                        refused = invoke(later, with_empty, "bank")
+                        self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                         (100, None, 0), refused)
                     else:
                         self.assertEqual((cursor["status"], cursor["replay_calls"], cursor["replay_locks"],
                                           cursor["released"]), (0, count, count, 0), cursor)
@@ -109,5 +134,9 @@ class SettlementHeldVariableLinearReplayTests(unittest.TestCase):
                             self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
                                              (100, None, ordinal), refused)
                             self.assertGreater(refused["released"], 0)
+                    if count == 8:
+                        under = invoke(db, held, "bank")
+                        self.assertEqual((under["status"], under["projection"], under["replay_calls"]),
+                                         (100, None, 0), under)
                     self.assertEqual(db.read_bytes(), pristine)
                     self.assertFalse(db.with_name(db.name+"-journal").exists())
