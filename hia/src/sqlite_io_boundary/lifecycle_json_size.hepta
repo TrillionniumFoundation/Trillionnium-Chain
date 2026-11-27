@@ -14,38 +14,15 @@ block capacity(cr:readbuf,co:mutbuf,cn:usize)
   space:bool = compare.ge(outlen,need)
   branch space measure(cr,co,cn) short()
 block measure(mr:readbuf,mo:mutbuf,mn:usize)
-  head:u64 = const() {"value":104}
-  len:u64 = int.cast(mn) {"mode":"wrap"}
-  tail:u64 = int.sub.wrap(len,head)
-  namebytes:u64 = call(mr,head,tail) {"function":"je_string_size"}
-  utf8error:u64 = const() {"value":4294967280}
-  utf8ok:bool = compare.ne(namebytes,utf8error)
-  branch utf8ok fields(mr,mo,namebytes) malformed()
-block fields(fr:readbuf,fo:mutbuf,nb:u64)
-  attag:u64 = const() {"value":0}
-  tag:u64 = call(fr,attag) {"function":"tr_read"}
-  ab:u64 = call(tag) {"function":"mlj_action_size"}
+  offset:u64 = const() {"value":104}
+  size:u64 = int.cast(mn) {"mode":"wrap"}
+  bytes:u64 = call(mr,offset,size) {"function":"mlj_measure"}
   zero:u64 = const() {"value":0}
-  known:bool = compare.gt(ab,zero)
-  option:u64 = call(fr) {"function":"mlj_options"}
-  valid_option:bool = compare.ne(option,zero)
-  good:bool = bool.and(known,valid_option)
-  branch good lower(fr,fo,nb,ab,option) malformed()
-block lower(lr:readbuf,lo:mutbuf,ln:u64,la:u64,lp:u64)
-  counts:u64 = call(lr) {"function":"mlj_counts"}
-  zero_l:u64 = const() {"value":0}
-  valid_l:bool = compare.ne(counts,zero_l)
-  branch valid_l total(lr,lo,ln,la,lp,counts) malformed()
-block total(tr:readbuf,to:mutbuf,tn:u64,ta:u64,tp:u64,tc:u64)
-  ds:u64 = call(tr) {"function":"mlj_tail"}
-  base:u64 = const() {"value":165}
-  z:u64 = const() {"value":0}
-  sum0:u64 = int.add.wrap(base,tn)
-  sum1:u64 = int.add.wrap(sum0,ta)
-  sum2:u64 = int.add.wrap(sum1,tp)
-  sum3:u64 = int.add.wrap(sum2,tc)
-  sum4:u64 = int.add.wrap(sum3,ds)
-  wrote:u64 = call(to,z,sum4) {"function":"cp_put"}
+  measured_ok:bool = compare.ne(bytes,zero)
+  branch measured_ok publish(mo,bytes) malformed()
+block publish(po:mutbuf,pn:u64)
+  p0:u64 = const() {"value":0}
+  written:u64 = call(po,p0,pn) {"function":"cp_put"}
   ok:u32 = const() {"value":0}
   ret(ok)
 block malformed()
@@ -54,6 +31,42 @@ block malformed()
 block short()
   shortcode:u32 = const() {"value":102}
   ret(shortcode)
+end
+
+fn mlj_measure(mr:readbuf,head:u64,len:u64) -> (u64) effects(read,write,trap) entry(measure)
+block measure(mr:readbuf,head:u64,len:u64)
+  tail:u64 = int.sub.wrap(len,head)
+  namebytes:u64 = call(mr,head,tail) {"function":"je_string_size"}
+  utf8error:u64 = const() {"value":4294967280}
+  utf8ok:bool = compare.ne(namebytes,utf8error)
+  branch utf8ok fields(mr,namebytes) malformed()
+block fields(fr:readbuf,nb:u64)
+  attag:u64 = const() {"value":0}
+  tag:u64 = call(fr,attag) {"function":"tr_read"}
+  ab:u64 = call(tag) {"function":"mlj_action_size"}
+  zero:u64 = const() {"value":0}
+  known:bool = compare.gt(ab,zero)
+  option:u64 = call(fr) {"function":"mlj_options"}
+  valid_option:bool = compare.ne(option,zero)
+  good:bool = bool.and(known,valid_option)
+  branch good lower(fr,nb,ab,option) malformed()
+block lower(lr:readbuf,ln:u64,la:u64,lp:u64)
+  counts:u64 = call(lr) {"function":"mlj_counts"}
+  zero_l:u64 = const() {"value":0}
+  valid_l:bool = compare.ne(counts,zero_l)
+  branch valid_l total(lr,ln,la,lp,counts) malformed()
+block total(tr:readbuf,tn:u64,ta:u64,tp:u64,tc:u64)
+  ds:u64 = call(tr) {"function":"mlj_tail"}
+  base:u64 = const() {"value":165}
+  sum0:u64 = int.add.wrap(base,tn)
+  sum1:u64 = int.add.wrap(sum0,ta)
+  sum2:u64 = int.add.wrap(sum1,tp)
+  sum3:u64 = int.add.wrap(sum2,tc)
+  sum4:u64 = int.add.wrap(sum3,ds)
+  ret(sum4)
+block malformed()
+  invalid:u64 = const() {"value":0}
+  ret(invalid)
 end
 
 fn mlj_action_size(id:u64) -> (u64) effects(trap) entry(entry)

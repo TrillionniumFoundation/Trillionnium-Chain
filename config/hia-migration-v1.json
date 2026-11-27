@@ -160,6 +160,17 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/typed_record_evidence",
+      "node_integration_complete": false,
+      "scope": "Finite original SQLite ledger recorder replay with exact native typed receipt measurement, class and sequence bound before the same retention step. No serialized byte emission, vector ownership or production VFS.",
+      "source": "hia/src/sqlite_io_boundary/typed_record_evidence.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_typed_record_evidence.py",
+        "hia/tests/rust_sqlite_record_evidence_reference.rs"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/lifecycle_json_size",
       "node_integration_complete": false,
       "scope": "Finite native compact JSON byte measurement of original M15 typed lifecycle receipts with exact UTF-8 escaping, unsigned decimal widths and option semantics. No JSON emission, evidence publication, actual vector ownership, callbacks or production VFS.",
@@ -2509,7 +2520,8 @@
         "sqlite_io_boundary/release_pending_replay",
         "sqlite_io_boundary/shm_replay",
         "sqlite_io_boundary/record_evidence",
-        "sqlite_io_boundary/lifecycle_json_size"
+        "sqlite_io_boundary/lifecycle_json_size",
+        "sqlite_io_boundary/typed_record_evidence"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",

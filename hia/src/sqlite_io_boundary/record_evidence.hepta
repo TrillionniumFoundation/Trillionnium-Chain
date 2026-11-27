@@ -4,7 +4,7 @@ block entry(raw:readbuf,out:mutbuf,work:mutbuf)
   extent:usize = buffer.len(raw)
   fixed:usize = const() {"value":80}
   framed:bool = compare.eq(extent,fixed)
-  branch framed capacity(raw,out) malformed()
+  branch framed capacity(raw,out) invalid()
 block capacity(cr:readbuf,co:mutbuf)
   ol:usize = buffer.len(co)
   need:usize = const() {"value":72}
@@ -33,13 +33,28 @@ block header(hr:readbuf,ho:mutbuf)
   code:u64 = call(hr,a72) {"function":"tr_read"}
   one:u64 = const() {"value":1}
   two:u64 = const() {"value":2}
+  normal:bool = compare.eq(mode,one)
+  clean:bool = compare.eq(mode,two)
+  action:bool = bool.or(normal,clean)
+  branch action apply(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code) invalid()
+block apply(a_ho:mutbuf,a_normal:bool,a_measured:u64,a_ordinary:u64,a_cleanup:u64,a_next_seq:u64,a_total:u64,a_complete:u64,a_denied:u64,a_tag:u64,a_code:u64)
+  applied:u32 = call(a_ho,a_normal,a_measured,a_ordinary,a_cleanup,a_next_seq,a_total,a_complete,a_denied,a_tag,a_code) {"function":"evidence_apply"}
+  ret(applied)
+block invalid()
+  unusable:u32 = const() {"value":100}
+  ret(unusable)
+block short()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+end
+
+fn evidence_apply(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64)
+  one:u64 = const() {"value":1}
   count_o:u64 = const() {"value":1024}
   count_c:u64 = const() {"value":256}
   event_max:u64 = const() {"value":512}
   measured_max:u64 = const() {"value":4096}
-  normal:bool = compare.eq(mode,one)
-  clean:bool = compare.eq(mode,two)
-  action:bool = bool.or(normal,clean)
   length_low:bool = compare.ge(measured,one)
   length_hi:bool = compare.le(measured,measured_max)
   length_good:bool = bool.and(length_low,length_hi)
@@ -52,11 +67,10 @@ block header(hr:readbuf,ho:mutbuf)
   db:bool = compare.le(total,width)
   is_bool:bool = compare.le(complete,one)
   e_ok:bool = call(tag,code) {"function":"evidence_first_valid"}
-  s0:bool = bool.and(action,length_good)
   s1:bool = bool.and(limits,valid_seq)
   s2:bool = bool.and(db,is_bool)
   s3:bool = bool.and(s2,e_ok)
-  sx:bool = bool.and(s0,s1)
+  sx:bool = bool.and(length_good,s1)
   safe:bool = bool.and(sx,s3)
   branch safe choose(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code) malformed()
 block choose(qo:mutbuf,qnormal:bool,qbytes:u64,qcount_o:u64,qcount_c:u64,qseq:u64,qtotal:u64,qcomplete:u64,qdenied:u64,qtag:u64,qcode:u64)
@@ -116,9 +130,6 @@ block emit(eo:mutbuf,eo_count:u64,ec_count:u64,eseq:u64,etotal:u64,ecomplete:u64
 block malformed()
   unusable:u32 = const() {"value":100}
   ret(unusable)
-block short()
-  insufficient:u32 = const() {"value":102}
-  ret(insufficient)
 end
 
 fn evidence_first_valid(tag:u64,code:u64) -> (bool) effects() entry(entry)

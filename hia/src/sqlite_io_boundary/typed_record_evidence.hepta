@@ -1,0 +1,61 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_typed_record_evidence
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  size:usize = buffer.len(raw)
+  min:usize = const() {"value":160}
+  max:usize = const() {"value":672}
+  low:bool = compare.ge(size,min)
+  high:bool = compare.le(size,max)
+  framed:bool = bool.and(low,high)
+  branch framed capacity(raw,out,size) malformed()
+block capacity(cr:readbuf,co:mutbuf,cs:usize)
+  extent:usize = buffer.len(co)
+  need:usize = const() {"value":72}
+  fits:bool = compare.ge(extent,need)
+  branch fits measure(cr,co,cs) short()
+block measure(mr:readbuf,mo:mutbuf,ms:usize)
+  start:u64 = const() {"value":160}
+  extent64:u64 = int.cast(ms) {"mode":"wrap"}
+  bytes:u64 = call(mr,start,extent64) {"function":"mlj_measure"}
+  zero:u64 = const() {"value":0}
+  valid:bool = compare.ne(bytes,zero)
+  branch valid decode(mr,mo,bytes) malformed()
+block decode(dr:readbuf,do:mutbuf,db:u64)
+  k0:u64 = const() {"value":0}
+  k8:u64 = const() {"value":8}
+  k104:u64 = const() {"value":104}
+  k112:u64 = const() {"value":112}
+  k120:u64 = const() {"value":120}
+  k128:u64 = const() {"value":128}
+  k136:u64 = const() {"value":136}
+  k144:u64 = const() {"value":144}
+  k152:u64 = const() {"value":152}
+  action:u64 = call(dr,k0) {"function":"tr_read"}
+  seq:u64 = call(dr,k8) {"function":"tr_read"}
+  ordered:u64 = call(dr,k104) {"function":"tr_read"}
+  clean:u64 = call(dr,k112) {"function":"tr_read"}
+  total:u64 = call(dr,k120) {"function":"tr_read"}
+  complete:u64 = call(dr,k128) {"function":"tr_read"}
+  denied:u64 = call(dr,k136) {"function":"tr_read"}
+  first:u64 = call(dr,k144) {"function":"tr_read"}
+  code:u64 = call(dr,k152) {"function":"tr_read"}
+  normal:bool = call(action) {"function":"mte_ordinary"}
+  status:u32 = call(do,normal,db,ordered,clean,seq,total,complete,denied,first,code) {"function":"evidence_apply"}
+  ret(status)
+block malformed()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+end
+
+fn mte_ordinary(action:u64) -> (bool) effects() entry(entry)
+block entry(action:u64)
+  seven:u64 = const() {"value":7}
+  nine:u64 = const() {"value":9}
+  low:bool = compare.lt(action,seven)
+  shm:bool = compare.eq(action,nine)
+  ordinary:bool = bool.or(low,shm)
+  ret(ordinary)
+end

@@ -172,3 +172,23 @@ cleanup retention at 511, 512 and 513 bytes, alongside separate typed
 encoder fixtures for numeric, escaping, and option extremes. Neither
 entry point creates a file, retains a record, or routes production VFS
 work.
+
+## Typed record and retention
+
+`typed_record_evidence.hepta` runs both steps in one private native entry.
+Its packet is the 104-byte typed receipt prefix, seven little-endian
+u64 prior-state values (ordinary count, cleanup count, retained JSON
+byte total, completeness, denial count, first reason, first SQLite code),
+then the 0–512 byte UTF-8 basename. It has no measured-byte or class
+field. The native measure supplies the former; the original action tag
+determines the latter. The embedded event sequence is checked against
+the sum of the prior vector counts.
+
+The entry returns the existing 72-byte retention diagnostic. SQLite FULL
+preserves sequence and retained total, and keeps any earlier error while reporting the
+original evidence failure. Malformed or short packets publish no
+diagnostic. Tests bind the exact original Rust recorder, including 511,
+512 and 513 bytes in both classes, the 1,024 and 256 vector limits,
+cross-class append, earlier error and all original action routes. This
+does not verify externally provided ledger state, emit JSON, write a
+vector, or own a production callback.
