@@ -37,8 +37,13 @@ SETTLEMENT_IDS = GENERAL_IDS + [
     "hia.tests.test_settlement_held_variable_stream_replay.Example.test_companion",
     "hia.tests.test_settlement_read_only_uri.Example.test_original_uri",
 ]
+STATE_IMPORT_IDS = SETTLEMENT_IDS + [
+    "hia.tests.test_state_import_checkpoint_context.Example.test_original_context",
+    "hia.tests.test_state_import_sqlite_update_write.Example.test_original_update",
+]
 PLAN_FIXTURES = {part.LEGACY_PLAN: IDS, part.SPLIT_PLAN: SPLIT_IDS,
-                 part.GENERAL_PLAN: GENERAL_IDS, part.SETTLEMENT_PLAN: SETTLEMENT_IDS}
+                 part.GENERAL_PLAN: GENERAL_IDS, part.SETTLEMENT_PLAN: SETTLEMENT_IDS,
+                 part.STATE_IMPORT_PLAN: STATE_IMPORT_IDS}
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
 SOURCES.update(word_fixture.fixture()[2])
@@ -240,7 +245,7 @@ class ComponentPartitions(unittest.TestCase):
         jobs = {match[1]: text[match.start():headers[index + 1].start() if index + 1 < len(headers) else len(text)]
                 for index, match in enumerate(headers)}
         expected = {group: "native-components" + ("-" + group if group != "general-a" else "")
-                    for group in part.SETTLEMENT_GROUPS}
+                    for group in part.STATE_IMPORT_GROUPS}
         for group, name in expected.items():
             job = jobs[name]
             self.assertEqual(re.findall(r"(?m)^    timeout-minutes: ([0-9]+)$", job), ["20"])
@@ -260,8 +265,9 @@ class ComponentPartitions(unittest.TestCase):
         general_b = jobs["native-components-general-b"]
         general_c = jobs["native-components-general-c"]
         settlement = jobs["native-components-general-settlement"]
+        state_import = jobs["native-components-general-state-import"]
         bench = jobs["native-components-bench"]
-        for shard in (general, general_b, general_c, settlement):
+        for shard in (general, general_b, general_c, settlement, state_import):
             self.assertNotIn("HIA_BENCH_PROFILE_OBSERVATIONS:", shard)
             self.assertNotIn("hia-bench-${{", shard)
             self.assertNotIn("archive_ci_evidence.py", shard)
@@ -280,6 +286,9 @@ class ComponentPartitions(unittest.TestCase):
         settlement_base = settlement.split("      - name: Execute every assigned native HIA", 1)[0]
         self.assertEqual(c_base.replace("  native-components-general-c:",
                                         "  native-components-general-settlement:", 1), settlement_base)
+        # Same untouched original setup, gates and evidence contract as the
+        # established Settlement split apart from the shard/artifact name.
+        self.assertEqual(settlement.replace("general-settlement", "general-state-import"), state_import)
         self.assertIn("HIA_CONTROL_GUARD_OUTPUT", general)
         for variable in ("HIA_CONTROL_PLANE_OUTPUT", "TRNM_HIA_ESCROW_OUTPUT",
                          "TRNM_HIA_GOVERNANCE_OUTPUT", "HIA_PEER_LEASE_OUTPUT"):
@@ -300,10 +309,10 @@ class ComponentPartitions(unittest.TestCase):
         reader = jobs["native-components-readback"]
         needs = re.search(r"(?m)^    needs: \[(.*)\]$", reader)[1].split(", ")
         self.assertEqual(set(needs), set(expected.values()))
-        self.assertEqual(len(needs), 10)
-        self.assertIn(" --partition-plan split-general-settlement-v1 ", reader)
-        self.assertEqual(part.source_plan(root), part.SETTLEMENT_PLAN)
-        for historical in (part.SPLIT_PLAN, part.GENERAL_PLAN):
+        self.assertEqual(len(needs), 11)
+        self.assertIn(" --partition-plan split-general-state-import-v1 ", reader)
+        self.assertEqual(part.source_plan(root), part.STATE_IMPORT_PLAN)
+        for historical in (part.SPLIT_PLAN, part.GENERAL_PLAN, part.SETTLEMENT_PLAN):
             with self.assertRaisesRegex(ValueError, "differs from tracked source"):
                 part.source_bound_plan(root, historical)
         for group, producer in expected.items():
@@ -650,13 +659,20 @@ class ComponentReadback(unittest.TestCase):
         plan = part.SETTLEMENT_PLAN
         new = {g: part.descriptor(ids, g, plan)["selected_tests"] for g in part.SETTLEMENT_GROUPS}
         moved = new["general-settlement"]
-        self.assertEqual(set(x.split(".")[2] for x in moved), {
+        # The historical plan's tracked cutoff still governs new Settlement
+        # modules. Read the actual old C inventory, not the launch-day roster.
+        expected_settlement = sorted(x for x in old["general-c"]
+                                     if x.split(".")[2].startswith("test_settlement_")
+                                     and x.split(".")[2] <= "test_settlement_held_variable_stream_replay")
+        self.assertEqual(moved, expected_settlement)
+        self.assertTrue({
             "test_settlement_checksum_journal_read", "test_settlement_command_journal_read",
             "test_settlement_execution_context", "test_settlement_execution_journal_read",
             "test_settlement_first_native_replay", "test_settlement_held_first_replay",
             "test_settlement_held_same_block_replay", "test_settlement_held_state_shape",
             "test_settlement_held_variable_first_replay", "test_settlement_held_variable_pair_replay",
-            "test_settlement_held_variable_settle_replay", "test_settlement_held_variable_stream_replay"})
+            "test_settlement_held_variable_settle_replay", "test_settlement_held_variable_stream_replay"}
+            <= {x.split(".")[2] for x in moved})
         self.assertEqual(sorted(ids), sorted(i for selected in new.values() for i in selected))
         self.assertEqual(sorted(old["general-c"]), sorted(new["general-c"] + moved))
         self.assertFalse(set(new["general-c"]) & set(moved))
@@ -669,6 +685,21 @@ class ComponentReadback(unittest.TestCase):
                          "test_settlement_read_only_uri"} <= c_modules)
         from hia.tools import qualify
         self.assertEqual(qualify.rust_oracle_names("general-c"), qualify.rust_oracle_names("general-settlement"))
+        live = part.STATE_IMPORT_PLAN
+        final = {g: part.descriptor(ids, g, live)["selected_tests"] for g in part.STATE_IMPORT_GROUPS}
+        picked = final["general-state-import"]
+        self.assertTrue(picked)
+        self.assertEqual(picked, sorted(x for x in ids if x.split(".")[2].startswith("test_state_import_")))
+        self.assertEqual(sorted(ids), sorted(x for group in final.values() for x in group))
+        self.assertEqual(sorted(final["general-c"] + picked), new["general-c"])
+        for group in set(new) - {"general-c"}:
+            self.assertEqual(new[group], final[group])
+        for module in {i.split(".")[2] for i in ids}:
+            self.assertEqual(len({part.group_for(i, live) for i in ids if i.split(".")[2] == module}), 1)
+        final_c = {x.split(".")[2] for x in final["general-c"]}
+        self.assertTrue({"test_sha256_word_evidence", "test_task_metadata_initializer",
+                         "test_settlement_read_only_uri"} <= final_c)
+        self.assertEqual(qualify.rust_oracle_names("general-c"), qualify.rust_oracle_names("general-state-import"))
 
     def test_ten_way_readback_refuses_missing_duplicate_stale_and_nine_way_source(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -712,6 +743,56 @@ class ComponentReadback(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "must succeed: general-settlement"):
                     ci.validate_job_results({**env, key: bad}, plan)
             with self.assertRaisesRegex(ValueError, "must succeed: general-settlement"):
+                ci.validate_job_results({k: v for k, v in env.items() if k != key}, plan)
+
+        self._assert_eleven_way_hard_negatives()
+
+    def _assert_eleven_way_hard_negatives(self):
+        # Extend the historical owner test; keep its stable discovered test
+        # identity and the same roster size for the CI migration itself.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = part.STATE_IMPORT_PLAN
+            active = "general-state-import"
+            bundles = {g: self.make_bundle(root / "current", g, plan) for g in part.STATE_IMPORT_GROUPS}
+            def read(inputs):
+                return ci.verify_all(inputs, LINEAGE, SOURCES, STATE_IMPORT_IDS, COMPILER, "f" * 40, plan)
+            result = read(bundles)
+            self.assertEqual((result["schema"], result["tests"]), (ci.STATE_IMPORT_SCHEMA, len(STATE_IMPORT_IDS)))
+            self.assertIsNotNone(result["partitions"]["general-c"]["sha256_word_evidence"])
+            self.assertIsNone(result["partitions"][active]["sha256_word_evidence"])
+            old = self.make_bundle(root / "ten-partition", "general-c", part.SETTLEMENT_PLAN)
+            for inputs in ({g: p for g, p in bundles.items() if g != active},
+                           {**bundles, active: bundles["general-c"]},
+                           {**bundles, "general-c": old},
+                           {**bundles, active: old}):
+                with self.assertRaises(ValueError):
+                    read(inputs)
+            for control in ("next-attempt", "different-head", "duplicate-completion"):
+                bad = self.make_bundle(root / control, active, plan)
+                path = bad / "hia-observations/qualification.json"
+                value = json.loads(path.read_text())
+                reason = "Different component head, run or attempt"
+                if control == "next-attempt":
+                    value["lineage"]["attempt"] += 1
+                elif control == "different-head":
+                    value["lineage"]["git_head"] = "c" * 40
+                else:
+                    completed = value["test_partition"]["finished_tests"]
+                    self.assertEqual(len(completed), 2)
+                    completed[1] = completed[0]
+                    reason = "Missing, repeated or unassigned actual component execution"
+                path.write_text(json.dumps(value))
+                with self.assertRaisesRegex(ValueError, reason):
+                    read({**bundles, active: bad})
+            env = {"TRNM_COMPONENT_" + g.upper().replace("-", "_") + "_RESULT": "success"
+                   for g in part.STATE_IMPORT_GROUPS}
+            ci.validate_job_results(env, plan)
+            key = "TRNM_COMPONENT_GENERAL_STATE_IMPORT_RESULT"
+            for bad in ("cancelled", "skipped", "failure", ""):
+                with self.assertRaisesRegex(ValueError, "must succeed: general-state-import"):
+                    ci.validate_job_results({**env, key: bad}, plan)
+            with self.assertRaisesRegex(ValueError, "must succeed: general-state-import"):
                 ci.validate_job_results({k: v for k, v in env.items() if k != key}, plan)
 
     def test_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):

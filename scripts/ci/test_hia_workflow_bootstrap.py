@@ -28,6 +28,7 @@ EXPECTED_BOOTSTRAP_JOBS = (
     "native-components-general-b",
     "native-components-general-c",
     "native-components-general-settlement",
+    "native-components-general-state-import",
     "native-components-oracle",
     "native-components-bench",
     "native-components-crypto-types",

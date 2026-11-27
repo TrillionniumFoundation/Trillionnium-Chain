@@ -22,7 +22,8 @@ LEGACY_PLAN = "legacy-six-v1"
 SPLIT_PLAN = "split-bench-v1"
 GENERAL_PLAN = "split-general-v1"
 SETTLEMENT_PLAN = "split-general-settlement-v1"
-PLANS = (LEGACY_PLAN, SPLIT_PLAN, GENERAL_PLAN, SETTLEMENT_PLAN)
+STATE_IMPORT_PLAN = "split-general-state-import-v1"
+PLANS = (LEGACY_PLAN, SPLIT_PLAN, GENERAL_PLAN, SETTLEMENT_PLAN, STATE_IMPORT_PLAN)
 SPLIT_GROUPS = (*GROUPS, "bench")
 SPLIT_SCHEMA = "trnm.hia.component-test-partition.v6"
 GENERAL_SHARDS = ("general-a", "general-b", "general-c")
@@ -31,10 +32,14 @@ GENERAL_SCHEMA = "trnm.hia.component-test-partition.v7"
 SETTLEMENT_SHARDS = (*GENERAL_SHARDS, "general-settlement")
 SETTLEMENT_GROUPS = (*SETTLEMENT_SHARDS, *SPLIT_GROUPS[1:])
 SETTLEMENT_SCHEMA = "trnm.hia.component-test-partition.v8"
+STATE_IMPORT_SHARDS = (*SETTLEMENT_SHARDS, "general-state-import")
+STATE_IMPORT_GROUPS = (*STATE_IMPORT_SHARDS, *SPLIT_GROUPS[1:])
+STATE_IMPORT_SCHEMA = "trnm.hia.component-test-partition.v9"
 PLAN_TRACKED_PREFIX = "# HIA component coverage plan:"
 PLAN_TRACKED_LINE = f"{PLAN_TRACKED_PREFIX} {SPLIT_PLAN}"
 GENERAL_TRACKED_LINE = f"{PLAN_TRACKED_PREFIX} {GENERAL_PLAN}"
 SETTLEMENT_TRACKED_LINE = f"{PLAN_TRACKED_PREFIX} {SETTLEMENT_PLAN}"
+STATE_IMPORT_TRACKED_LINE = f"{PLAN_TRACKED_PREFIX} {STATE_IMPORT_PLAN}"
 
 # Keep complete unittest modules together, including their shared fixtures.
 GENERAL_A_LAST = "test_control_guard"
@@ -43,13 +48,16 @@ GENERAL_B_LAST = "test_release_file_descriptor"
 # tail's SHA-word and Task evidence owners or the rest of the general suite.
 SETTLEMENT_PREFIX = "test_settlement_"
 SETTLEMENT_LAST = "test_settlement_held_variable_stream_replay"
+# The entire actual General C family, not the separate maximal State-root job.
+STATE_IMPORT_PREFIX = "test_state_import_"
 SHA_WORD_GROUPS = frozenset(("general", "general-c"))
 
 
 def groups_for(plan):
     need(plan in PLANS, "Unknown component coverage plan")
     return {LEGACY_PLAN: GROUPS, SPLIT_PLAN: SPLIT_GROUPS,
-            GENERAL_PLAN: GENERAL_GROUPS, SETTLEMENT_PLAN: SETTLEMENT_GROUPS}[plan]
+            GENERAL_PLAN: GENERAL_GROUPS, SETTLEMENT_PLAN: SETTLEMENT_GROUPS,
+            STATE_IMPORT_PLAN: STATE_IMPORT_GROUPS}[plan]
 
 
 def source_plan(root):
@@ -58,11 +66,13 @@ def source_plan(root):
     need(path.is_file() and not path.is_symlink(), "Missing exact component workflow")
     lines = [line.strip() for line in path.read_text().splitlines()
              if line.strip().startswith(PLAN_TRACKED_PREFIX)]
-    need(lines in ([], [PLAN_TRACKED_LINE], [GENERAL_TRACKED_LINE], [SETTLEMENT_TRACKED_LINE]),
+    need(lines in ([], [PLAN_TRACKED_LINE], [GENERAL_TRACKED_LINE], [SETTLEMENT_TRACKED_LINE],
+                   [STATE_IMPORT_TRACKED_LINE]),
          "Invalid component coverage plan in source")
     return {(): LEGACY_PLAN, (PLAN_TRACKED_LINE,): SPLIT_PLAN,
             (GENERAL_TRACKED_LINE,): GENERAL_PLAN,
-            (SETTLEMENT_TRACKED_LINE,): SETTLEMENT_PLAN}[tuple(lines)]
+            (SETTLEMENT_TRACKED_LINE,): SETTLEMENT_PLAN,
+            (STATE_IMPORT_TRACKED_LINE,): STATE_IMPORT_PLAN}[tuple(lines)]
 
 
 def source_bound_plan(root, requested):
@@ -108,13 +118,16 @@ def group_for(identifier, plan=LEGACY_PLAN):
     module = identifier.split(".")[2]
     if plan != LEGACY_PLAN and module.startswith("test_bench_"):
         return "bench"
-    if plan in (GENERAL_PLAN, SETTLEMENT_PLAN):
+    if plan in (GENERAL_PLAN, SETTLEMENT_PLAN, STATE_IMPORT_PLAN):
         if module <= GENERAL_A_LAST:
             return "general-a"
         if module <= GENERAL_B_LAST:
             return "general-b"
-        if plan == SETTLEMENT_PLAN and module.startswith(SETTLEMENT_PREFIX) and module <= SETTLEMENT_LAST:
+        if (plan in (SETTLEMENT_PLAN, STATE_IMPORT_PLAN)
+                and module.startswith(SETTLEMENT_PREFIX) and module <= SETTLEMENT_LAST):
             return "general-settlement"
+        if plan == STATE_IMPORT_PLAN and module.startswith(STATE_IMPORT_PREFIX):
+            return "general-state-import"
         return "general-c"
     return "general"
 
@@ -132,7 +145,8 @@ def descriptor(identifiers, group, plan=LEGACY_PLAN):
     selected = [identifier for identifier in ordered
                 if group == "all" or group_for(identifier, plan) == group]
     return {"schema": {LEGACY_PLAN: SCHEMA, SPLIT_PLAN: SPLIT_SCHEMA,
-                       GENERAL_PLAN: GENERAL_SCHEMA, SETTLEMENT_PLAN: SETTLEMENT_SCHEMA}[plan],
+                       GENERAL_PLAN: GENERAL_SCHEMA, SETTLEMENT_PLAN: SETTLEMENT_SCHEMA,
+                       STATE_IMPORT_PLAN: STATE_IMPORT_SCHEMA}[plan],
             "group": group, "groups": list(groups),
             "discovered_tests": ordered, "discovered_sha256": object_hash(ordered),
             "selected_tests": selected, "selected_sha256": object_hash(selected)}
