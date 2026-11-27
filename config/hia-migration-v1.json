@@ -137,6 +137,17 @@
       ]
     },
     {
+      "id": "state_import/incremental_delta_projection_chain",
+      "node_integration_complete": false,
+      "scope": "M13 single immutable-loan composition of original bounded delta validation, raw context and base-row consistency, and target-row merge selectors; no root callback/authority, installation, SQLite, or production routing",
+      "source": "hia/src/state_import/incremental_delta_projection_chain.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_incremental_delta_projection_chain.py",
+        "hia/tests/rust_state_import_incremental_delta_projection_chain_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/incremental_delta_target_projection",
       "node_integration_complete": false,
       "scope": "M13 pure bounded post-base target merge projection: Some-only ceiling, immutable ordered merge, exact target count/digest and provenance selectors; no authority, root callback, state installation, SQLite or production routing",
@@ -2506,6 +2517,7 @@
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
+        "state_import/incremental_delta_projection_chain",
         "state_import/incremental_delta_target_projection",
         "state_import/incremental_delta_base_witness",
         "state_import/incremental_delta_validate",

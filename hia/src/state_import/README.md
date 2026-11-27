@@ -492,3 +492,39 @@ target rows and deliberately refuses. The native projection has no
 such callback, verifies no checkpoint authority, does not check the
 enclosing delta commitment or either application state root, and
 does not apply, publish or write any state.
+
+### One-loan offline incremental projection chain
+
+`incremental_delta_projection_chain.hepta` checks one immutable input,
+without accepting summaries or results from earlier calls. First it runs
+the frozen original-shaped delta validator on the exact bounded prefix;
+then it compares both supplied raw contexts to those embedded in that
+same delta, checks the base rows and their actual count and digest, and
+computes the target projection. Its operation descriptors refer to the
+same operation fields and option tags that were already validated in the
+delta prefix. It obtains both claimed row counts and digests directly
+from the same delta header bytes, not from a second copy. Recomputing
+commitments establishes consistency only; it confers no trust on the bytes.
+
+The private frame holds the unchanged pure delta validator frame
+(starting with its 760-byte packed header), then two supplied 240-byte
+contexts, a big-endian 64-bit actual base count, the base rows in the
+16-byte descriptor format above, and a last big-endian 64-bit byte
+extent of the delta prefix. Both row sections must exactly consume their
+respective checked spans. Both counts are privately capped at eight.
+The complete input is at most 1 MiB and requires 2,896 disjoint scratch
+bytes and at least 56 disjoint output bytes; the output is the same
+count/digest/selector layout as the standalone projection. Success
+changes no input, and failure leaves the result untouched. It neither
+returns a root nor accepts a previously checked result.
+
+The unchanged Rust reference checks original refusal order before
+the first root callback. The first callback deliberately refuses in one
+contrast; for the synthetic projection witness it instead computes the
+fixture base root, and the second callback records the exact target rows
+and deliberately refuses. Thus zero is an offline data-consistency
+observation, not either application state root, original apply success
+or context authorization. The native path does not call any root owner,
+install state, or initiate SQLite/node effects. Direct and selfhost
+share the 1 MiB evidence; an additional original-Rust-only fixture
+demonstrates the private cap is not a Rust protocol limit.
