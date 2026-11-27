@@ -216,34 +216,60 @@ end
 
 fn archive_batch_record(raw:readbuf,w:mutbuf,end:u64,seal_at:u64,seal_end:u64,record:u64,pc:u64,rc:u64) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,w:mutbuf,end:u64,seal_at:u64,seal_end:u64,record:u64,pc:u64,rc:u64)
+  height_back:u64 = const() {"value":188}
+  height_at:u64 = int.sub.wrap(seal_end,height_back)
+  current:u64 = call(raw,height_at) {"function":"tr_read"}
+  ctx:u64 = const() {"value":18}
+  r:u32 = call(raw,w,end,seal_at,current,record,pc,rc,ctx) {"function":"archive_record_admission"}
+  clear:u32 = const() {"value":0}
+  good:bool = compare.eq(r,clear)
+  branch good expiry(raw,end,current) done(r)
+block expiry(er:readbuf,ee:u64,eh:u64)
+  paid_back:u64 = const() {"value":24}
+  paid_at:u64 = int.sub.wrap(ee,paid_back)
+  paid:u64 = call(er,paid_at) {"function":"tr_read"}
+  max:u64 = const() {"value":18446744073709551615}
+  can_advance:bool = compare.ne(paid,max)
+  branch can_advance elapsed(eh,paid) overflow()
+block elapsed(h:u64,p:u64)
+  past:bool = compare.gt(h,p)
+  ok:u32 = const() {"value":0}
+  invalid:u32 = const() {"value":13}
+  code:u32 = select(past,ok,invalid)
+  ret(code)
+block overflow()
+  ov:u32 = const() {"value":20}
+  ret(ov)
+block done(st:u32)
+  ret(st)
+end
+
+fn archive_record_admission(raw:readbuf,w:mutbuf,end:u64,seal_at:u64,height:u64,record:u64,pc:u64,rc:u64,policy_ctx:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,end:u64,seal_at:u64,height:u64,record:u64,pc:u64,rc:u64,policy_ctx:u64)
   ver:bool = call(raw,record) {"function":"archive_batch_schema"}
-  branch ver ctx(raw,w,end,seal_at,seal_end,record,pc,rc) schema_bad()
-block ctx(cr:readbuf,cw:mutbuf,ce:u64,cs:u64,cb:u64,ca:u64,cp:u64,cn:u64)
+  branch ver ctx(raw,w,end,seal_at,height,record,pc,rc,policy_ctx) schema_bad()
+block ctx(cr:readbuf,cw:mutbuf,ce:u64,cs:u64,cb:u64,ca:u64,cp:u64,cn:u64,cpctx:u64)
   same_size:bool = compare.eq(cp,cn)
-  branch same_size compare_ctx(cr,cw,ce,cs,cb,ca,cp) context_bad()
-block compare_ctx(dr:readbuf,dw:mutbuf,de:u64,ds:u64,db:u64,da:u64,dp:u64)
+  branch same_size compare_ctx(cr,cw,ce,cs,cb,ca,cp,cpctx) context_bad()
+block compare_ctx(dr:readbuf,dw:mutbuf,de:u64,ds:u64,db:u64,da:u64,dp:u64,dpctx:u64)
   two:u64 = const() {"value":2}
   ctx_base:u64 = const() {"value":72}
-  policy_ctx:u64 = const() {"value":18}
   row_ctx:u64 = int.add.wrap(da,two)
   n:u64 = int.add.wrap(dp,ctx_base)
-  same:bool = call(dr,policy_ctx,row_ctx,n) {"function":"archive_equal"}
+  same:bool = call(dr,dpctx,row_ctx,n) {"function":"archive_equal"}
   branch same heights(dr,dw,de,ds,db) context_bad()
 block heights(hr:readbuf,hw:mutbuf,he:u64,hs:u64,hb:u64)
-  current_back:u64 = const() {"value":188}
   terminal_back:u64 = const() {"value":144}
   bytes_back:u64 = const() {"value":32}
-  current_at:u64 = int.sub.wrap(hb,current_back)
   terminal_at:u64 = int.sub.wrap(he,terminal_back)
   nbytes_at:u64 = int.sub.wrap(he,bytes_back)
-  current:u64 = call(hr,current_at) {"function":"tr_read"}
   terminal:u64 = call(hr,terminal_at) {"function":"tr_read"}
   nbytes:u64 = call(hr,nbytes_at) {"function":"tr_read"}
-  not_future:bool = compare.le(terminal,current)
+  not_future:bool = compare.le(terminal,hb)
   z:u64 = const() {"value":0}
   nonzero:bool = compare.gt(nbytes,z)
   height_ok:bool = bool.and(not_future,nonzero)
-  branch height_ok required(hr,hw,he,hs,current,terminal,nbytes) bounds()
+  branch height_ok required(hr,hw,he,hs,hb,terminal,nbytes) bounds()
 block required(rr:readbuf,rw:mutbuf,re:u64,rs:u64,r_cur:u64,r_term:u64,r_bytes:u64)
   min_back:u64 = const() {"value":40}
   paid_back:u64 = const() {"value":24}
@@ -271,21 +297,7 @@ block cost(ir:readbuf,iw:mutbuf,ie:u64,is:u64,i_cur:u64,i_bytes:u64,i_paid:u64,i
   rate_at:u64 = int.sub.wrap(is,rate_back)
   rate:u64 = call(ir,rate_at) {"function":"tr_read"}
   good:u32 = call(ir,iw,ie,i_bytes,i_count,rate) {"function":"archive_batch_charge"}
-  ok:u32 = const() {"value":0}
-  charged_ok:bool = compare.eq(good,ok)
-  branch charged_ok expiry(i_cur,i_paid) propagate(good)
-block expiry(ex_cur:u64,ex_paid:u64)
-  max:u64 = const() {"value":18446744073709551615}
-  can_advance:bool = compare.ne(ex_paid,max)
-  branch can_advance elapsed_out(ex_cur,ex_paid) overflow()
-block elapsed_out(f_cur:u64,f_paid:u64)
-  beyond:bool = compare.gt(f_cur,f_paid)
-  branch beyond accepted() invalid()
-block propagate(g:u32)
-  ret(g)
-block accepted()
-  code0:u32 = const() {"value":0}
-  ret(code0)
+  ret(good)
 block context_bad()
   bad_context:u32 = const() {"value":200}
   ret(bad_context)
@@ -298,9 +310,6 @@ block bounds()
 block overflow()
   code20:u32 = const() {"value":20}
   ret(code20)
-block invalid()
-  code13:u32 = const() {"value":13}
-  ret(code13)
 end
 
 fn archive_batch_charge(raw:readbuf,w:mutbuf,end:u64,size:u64,blocks:u64,rate:u64) -> (u32) effects(read,write,trap) entry(entry)

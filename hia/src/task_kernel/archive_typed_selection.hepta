@@ -1,0 +1,186 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_archive_typed_selection_v1
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  ns:usize = buffer.len(raw)
+  n:u64 = int.cast(ns) {"mode":"wrap"}
+  smallest:u64 = const() {"value":154}
+  hi:u64 = const() {"value":7018}
+  a:bool = compare.ge(n,smallest)
+  b:bool = compare.le(n,hi)
+  ok:bool = bool.and(a,b)
+  branch ok fixed(raw,out,w,n) bad()
+block fixed(fr:readbuf,fo:mutbuf,fw:mutbuf,fnn:u64)
+  z:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  sixteen:u64 = const() {"value":16}
+  start:u64 = const() {"value":40}
+  plen:u64 = call(fr,z) {"function":"tr_read"}
+  count:u64 = call(fr,eight) {"function":"tr_read"}
+  held:u64 = call(fr,sixteen) {"function":"tr_read"}
+  pmin:u64 = const() {"value":114}
+  pmax:u64 = const() {"value":626}
+  low:bool = compare.ge(plen,pmin)
+  high:bool = compare.le(plen,pmax)
+  n_ok:bool = compare.le(count,eight)
+  h_ok:bool = compare.le(held,eight)
+  boundary:u64 = int.add.wrap(start,plen)
+  valid_boundary:bool = compare.le(boundary,fnn)
+  p_ok:bool = bool.and(low,high)
+  counts:bool = bool.and(n_ok,h_ok)
+  gates:bool = bool.and(counts,p_ok)
+  valid:bool = bool.and(gates,valid_boundary)
+  branch valid capacity(fr,fo,fw,fnn,boundary,count,held) bad()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64,cp:u64,cc:u64,ch:u64)
+  olen:usize = buffer.len(co)
+  wlen:usize = buffer.len(cw)
+  one_size:usize = const() {"value":6276}
+  work_size:usize = const() {"value":1496}
+  fits:bool = compare.ge(olen,one_size)
+  ready:bool = compare.ge(wlen,work_size)
+  rooms:bool = bool.and(fits,ready)
+  branch rooms policy_shape(cr,co,cw,cn,cp,cc,ch) short()
+block policy_shape(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pp:u64,pc:u64,ph:u64)
+  chain_at:u64 = const() {"value":74}
+  chain:u64 = call(pr,chain_at) {"function":"archive_u32"}
+  fixed_end:u64 = const() {"value":154}
+  expected_p:u64 = int.add.wrap(fixed_end,chain)
+  shape_ok:bool = compare.eq(pp,expected_p)
+  branch shape_ok text(pr,po,pw,pn,pp,pc,ph,chain) bad()
+block text(tr:readbuf,to:mutbuf,tw:mutbuf,tn:u64,tp:u64,tc:u64,th:u64,tl:u64)
+  t_at:u64 = const() {"value":78}
+  t_out:u64 = call(tr,t_at,tl) {"function":"value_utf8"}
+  yes:u64 = const() {"value":1}
+  valid_t:bool = compare.eq(t_out,yes)
+  branch valid_t prepare(tr,to,tw,tn,tp,tc,th) bad()
+block prepare(ir:readbuf,io:mutbuf,iw:mutbuf,in0:u64,ip:u64,ic:u64,ih:u64)
+  zero:u64 = const() {"value":0}
+  tag:u64 = const() {"value":8}
+  pending:u64 = const() {"value":1488}
+  _ptype:u64 = call(iw,zero,tag) {"function":"tr_put"}
+  _limit:u64 = call(iw,pending,ip) {"function":"tr_put"}
+  jump scan(ir,io,iw,in0,ip,ic,ih,ip,zero)
+block scan(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sp:u64,sc:u64,sh:u64,sa:u64,si:u64)
+  another:bool = compare.lt(si,sc)
+  branch another span(sr,so,sw,sn,sp,sc,sh,sa,si) hold_shape(sr,so,sw,sn,sp,sc,sh,sa)
+block span(xr:readbuf,xo:mutbuf,xw:mutbuf,xn:u64,xp:u64,xc:u64,xh:u64,xa:u64,xi:u64)
+  base:u64 = const() {"value":250}
+  shortest:u64 = int.add.wrap(xa,base)
+  has_body:bool = compare.le(shortest,xn)
+  branch has_body row_shape(xr,xo,xw,xn,xp,xc,xh,xa,xi,shortest) bad()
+block row_shape(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rp:u64,rc:u64,rh:u64,ra:u64,ri:u64,rb:u64)
+  len_bias:u64 = const() {"value":34}
+  len_at:u64 = int.add.wrap(ra,len_bias)
+  rlen:u64 = call(rr,len_at) {"function":"archive_u32"}
+  maxrow:u64 = const() {"value":512}
+  under_bound:bool = compare.le(rlen,maxrow)
+  final_end:u64 = int.add.wrap(rb,rlen)
+  in_input:bool = compare.le(final_end,rn)
+  admissible:bool = bool.and(under_bound,in_input)
+  branch admissible row_text(rr,ro,rw,rn,rp,rc,rh,ra,ri,final_end,rlen) bad()
+block row_text(ur:readbuf,uo:mutbuf,uw:mutbuf,un:u64,up:u64,uc:u64,uh:u64,ua:u64,ui:u64,ue:u64,ul:u64)
+  c_bias:u64 = const() {"value":38}
+  c_at:u64 = int.add.wrap(ua,c_bias)
+  checked:u64 = call(ur,c_at,ul) {"function":"value_utf8"}
+  row_yes:u64 = const() {"value":1}
+  pass:bool = compare.eq(checked,row_yes)
+  branch pass save(ur,uo,uw,un,up,uc,uh,ua,ui,ue) bad()
+block save(vr:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vp:u64,vc:u64,vh:u64,va:u64,vi:u64,ve:u64)
+  slot:u64 = call(vi) {"function":"as_typed_slot"}
+  word:u64 = const() {"value":8}
+  end_at:u64 = int.add.wrap(slot,word)
+  _record_at:u64 = call(vw,slot,va) {"function":"tr_put"}
+  _record_end:u64 = call(vw,end_at,ve) {"function":"tr_put"}
+  ord_at:u64 = call(vi) {"function":"as_ord"}
+  tagged:u64 = int.add.wrap(vi,word)
+  _sort_seed:u64 = call(vw,ord_at,tagged) {"function":"tr_put"}
+  held_at:u64 = call(vi) {"function":"as_hold"}
+  selected_at:u64 = call(vi) {"function":"as_selected"}
+  clear:u64 = const() {"value":0}
+  _held:u64 = call(vw,held_at,clear) {"function":"tr_put"}
+  _selected:u64 = call(vw,selected_at,clear) {"function":"tr_put"}
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(vi,one)
+  jump scan(vr,vo,vw,vn,vp,vc,vh,ve,next)
+block hold_shape(hr:readbuf,ho:mutbuf,hw:mutbuf,hn:u64,hp:u64,hc:u64,hh:u64,ha:u64)
+  width:u64 = const() {"value":32}
+  bytes:u64 = int.mul.wrap(hh,width)
+  end:u64 = int.add.wrap(ha,bytes)
+  exact:bool = compare.eq(end,hn)
+  branch exact schema(hr,ho,hw,hp,hc,hh,ha) bad()
+block schema(kr:readbuf,ko:mutbuf,kw:mutbuf,kp:u64,kc:u64,kh:u64,ka:u64)
+  policy_at:u64 = const() {"value":40}
+  ver:bool = call(kr,policy_at) {"function":"archive_batch_schema"}
+  branch ver bounds(kr,ko,kw,kp,kc,kh,ka) schema_bad()
+block bounds(br:readbuf,bo:mutbuf,bw:mutbuf,bp:u64,bc:u64,bh:u64,ba:u64)
+  pvalid:bool = call(br,bp) {"function":"archive_batch_policy_bounds"}
+  branch pvalid selected(br,bo,bw,bc,bh,ba) bounds_bad()
+block selected(lr:readbuf,lo:mutbuf,lw:mutbuf,lc:u64,lh:u64,la:u64)
+  status:u32 = call(lr,lo,lw,lc,lh,la) {"function":"as_run"}
+  ok_status:u32 = const() {"value":0}
+  success:bool = compare.eq(status,ok_status)
+  branch success borsh(lr,lo,lw) refused(status)
+block borsh(bor_r:readbuf,bor_o:mutbuf,bor_w:mutbuf)
+  _borsh:u64 = call(bor_r,bor_o,bor_w) {"function":"typed_selected_records"}
+  selected_ok:u32 = const() {"value":0}
+  ret(selected_ok)
+block refused(error:u32)
+  ret(error)
+block bad()
+  bad_code:u32 = const() {"value":100}
+  ret(bad_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block schema_bad()
+  sv:u32 = const() {"value":22}
+  ret(sv)
+block bounds_bad()
+  bv:u32 = const() {"value":1}
+  ret(bv)
+end
+
+fn typed_selected_records(raw:readbuf,o:mutbuf,w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,o:mutbuf,w:mutbuf)
+  zero:u64 = const() {"value":0}
+  n:u64 = call(o,zero) {"function":"tr_get"}
+  nbyte:u8 = int.cast(n) {"mode":"wrap"}
+  zbyte:u8 = const() {"value":0}
+  first:usize = const() {"value":176}
+  second:usize = const() {"value":177}
+  third:usize = const() {"value":178}
+  fourth:usize = const() {"value":179}
+  _ = buffer.store(o,first,nbyte)
+  _ = buffer.store(o,second,zbyte)
+  _ = buffer.store(o,third,zbyte)
+  _ = buffer.store(o,fourth,zbyte)
+  data:u64 = const() {"value":180}
+  jump rows(raw,o,w,n,zero,data)
+block rows(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,ri:u64,rd:u64)
+  more:bool = compare.lt(ri,rn)
+  branch more append(rr,ro,rw,rn,ri,rd) length(ro,rd)
+block append(ar:readbuf,ao:mutbuf,aw:mutbuf,an:u64,ai:u64,ad:u64)
+  width:u64 = const() {"value":8}
+  base:u64 = const() {"value":40}
+  idx_stride:u64 = int.mul.wrap(ai,width)
+  pos:u64 = int.add.wrap(base,idx_stride)
+  idx:u64 = call(ao,pos) {"function":"tr_get"}
+  slot:u64 = call(idx) {"function":"as_typed_slot"}
+  end_slot:u64 = int.add.wrap(slot,width)
+  start:u64 = call(aw,slot) {"function":"tr_get"}
+  end:u64 = call(aw,end_slot) {"function":"tr_get"}
+  nbytes:u64 = int.sub.wrap(end,start)
+  source:usize = int.cast(start) {"mode":"wrap"}
+  destination:usize = int.cast(ad) {"mode":"wrap"}
+  bytes:usize = int.cast(nbytes) {"mode":"wrap"}
+  _ = buffer.copy_range(ao,ar,destination,source,bytes)
+  next_at:u64 = int.add.wrap(ad,nbytes)
+  one:u64 = const() {"value":1}
+  next_i:u64 = int.add.wrap(ai,one)
+  jump rows(ar,ao,aw,an,next_i,next_at)
+block length(lo:mutbuf,le:u64)
+  start_vec:u64 = const() {"value":176}
+  info:u64 = const() {"value":168}
+  actual:u64 = int.sub.wrap(le,start_vec)
+  _size:u64 = call(lo,info,actual) {"function":"tr_put"}
+  ret(actual)
+end

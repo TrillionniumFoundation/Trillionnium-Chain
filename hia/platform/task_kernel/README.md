@@ -309,3 +309,27 @@ selected count, selected bytes, selected charge (two words), retained count,
 then eight selected and eight retained canonical original indexes (unused
 slots are u64 max). Errors publish no output or partial selection. The result
 does not provide a seal root or authority to install/prune/delete records.
+
+### Typed archive planner selection
+
+`src/task_kernel/archive_typed_selection.hepta` unifies original policy
+validation, canonical terminal record parsing and billing, and the native
+bounded selector in one borrowed call. Its private packet begins with five
+little-endian u64s (policy byte length, record count, hold count, current
+height, batch sequence), then exact Borsh policy and variable records,
+then packed 32-byte hold IDs. At most eight records and hold IDs and
+512 UTF-8 chain-ID bytes per typed object are admitted. The input is read
+directly as immutable bytes; no encoded host projections are trusted.
+
+The sorter processes original (height, Task ID) order before record
+validation, duplicate/total checks, hold-subset admission and selection.
+Batch verification can reuse the original paid charge checks but still
+requires expired rows; selection checks expiry only when needed after
+testing holds. Both previous diagnostic ABIs retain their original contracts.
+
+Scratch needs 1,496 bytes and the caller reserves 6,276 output bytes before
+any publication. Success writes the existing 168-byte selection projection,
+a u64 byte length, and the exact Borsh Vec of chosen original records
+(canonical u32 count and directly copied original bodies). Unused output
+remains unchanged. This is not a complete seal/root or storage pipeline and
+does not confer node, pruning or deletion authority.

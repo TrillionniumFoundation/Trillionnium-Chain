@@ -11,11 +11,14 @@ use trnm_task_kernel::{
 
 fn row(w: &mut impl Write, p: &TaskArchivePolicyV1, facts: &[TerminalTaskArchiveRecordV1],
        holds: BTreeSet<TaskIdV1>, height: u64, sequence: u64) {
+    let typed = std::env::args_os().nth(1).is_some_and(|v| v == "typed");
+    let mut selected_borsh = Vec::new();
     let result = plan_task_archive_pruning_v1(p, facts, &holds, height, sequence, Hash32V1([7;32]));
     let mut output = [u64::MAX;21];
     let status = match result {
         Ok(plan) => {
             let selected = plan.archive_batch().map(|b| b.records.as_slice()).unwrap_or(&[]);
+            if typed { selected_borsh = borsh::to_vec(&selected.to_vec()).unwrap(); }
             let sums = selected.iter().map(|x| x.retention_charge_paid).sum::<u128>();
             output[..5].copy_from_slice(&[
                 selected.len() as u64, selected.iter().map(|x| x.encoded_bytes).sum(),
@@ -30,6 +33,9 @@ fn row(w: &mut impl Write, p: &TaskArchivePolicyV1, facts: &[TerminalTaskArchive
         }
         Err(err) => match err.code() {
             AgentMarketErrorCodeV1::InvalidBounds => 1,
+            AgentMarketErrorCodeV1::SchemaMismatch => 22,
+            AgentMarketErrorCodeV1::InvalidContext => 200,
+            AgentMarketErrorCodeV1::ConservationViolation => 15,
             AgentMarketErrorCodeV1::NonCanonical => 2,
             AgentMarketErrorCodeV1::Conflict => 18,
             AgentMarketErrorCodeV1::NotFound => 19,
@@ -38,23 +44,36 @@ fn row(w: &mut impl Write, p: &TaskArchivePolicyV1, facts: &[TerminalTaskArchive
         },
     };
     let mut raw = Vec::new();
-    for x in [facts.len() as u64, holds.len() as u64, height, sequence,
-              u64::from(p.maximum_live_terminal_records), p.maximum_live_terminal_bytes,
-              u64::from(p.maximum_archive_batch_records), p.maximum_archive_batch_bytes] {
-        raw.extend(x.to_le_bytes());
-    }
-    for fact in facts {
-        raw.extend(fact.task_id.0);
-        raw.extend(fact.terminal_height.to_le_bytes());
-        raw.extend(fact.retention_paid_through_height.to_le_bytes());
-        raw.extend(fact.encoded_bytes.to_le_bytes());
-        raw.extend(fact.retention_charge_paid.to_le_bytes());
+    if typed {
+        let policy = borsh::to_vec(p).unwrap();
+        for x in [policy.len() as u64, facts.len() as u64, holds.len() as u64, height, sequence] {
+            raw.extend(x.to_le_bytes());
+        }
+        raw.extend(policy);
+        for fact in facts { raw.extend(borsh::to_vec(fact).unwrap()); }
+    } else {
+        for x in [facts.len() as u64, holds.len() as u64, height, sequence,
+                  u64::from(p.maximum_live_terminal_records), p.maximum_live_terminal_bytes,
+                  u64::from(p.maximum_archive_batch_records), p.maximum_archive_batch_bytes] {
+            raw.extend(x.to_le_bytes());
+        }
+        for fact in facts {
+            raw.extend(fact.task_id.0);
+            raw.extend(fact.terminal_height.to_le_bytes());
+            raw.extend(fact.retention_paid_through_height.to_le_bytes());
+            raw.extend(fact.encoded_bytes.to_le_bytes());
+            raw.extend(fact.retention_charge_paid.to_le_bytes());
+        }
     }
     for id in holds { raw.extend(id.0); }
     w.write_all(&status.to_le_bytes()).unwrap();
     w.write_all(&(raw.len() as u32).to_le_bytes()).unwrap();
     w.write_all(&raw).unwrap();
     for x in output { w.write_all(&x.to_le_bytes()).unwrap(); }
+    if typed {
+        w.write_all(&(selected_borsh.len() as u64).to_le_bytes()).unwrap();
+        w.write_all(&selected_borsh).unwrap();
+    }
 }
 
 fn main() {
@@ -122,4 +141,37 @@ fn main() {
     let id = frozen.task_id;
     row(&mut w,&p,&[other.clone(),frozen.clone()],BTreeSet::new(),20,1); // expiry overflows.
     row(&mut w,&p,&[other,frozen],BTreeSet::from([id]),20,1); // held row skips expiry.
+    if std::env::args_os().nth(1).is_some_and(|v| v == "typed") {
+        let canonical = fixture::record(&context, 4);
+        let mut earlier = fixture::record(&context, 0);
+        let mut later = canonical.clone();
+        let mut wrong = p.clone();
+        wrong.schema_version = 2;
+        wrong.maximum_live_terminal_bytes = 0;
+        earlier.schema_version = 2;
+        row(&mut w,&wrong,&[canonical.clone(),earlier.clone()],BTreeSet::new(),20,1); // policy version
+        wrong.schema_version = 1;
+        row(&mut w,&wrong,&[canonical.clone(),earlier.clone()],BTreeSet::new(),20,1); // policy bounds
+
+        later.context.chain_id.push('x');
+        row(&mut w,&p,&[later.clone(),earlier.clone()],BTreeSet::new(),20,1); // canonical earlier schema
+        earlier.schema_version = 1;
+        row(&mut w,&p,&[later,earlier.clone()],BTreeSet::new(),20,1); // full record context
+        earlier.encoded_bytes = 0;
+        row(&mut w,&p,&[canonical.clone(),earlier.clone()],BTreeSet::new(),20,1);
+        earlier.encoded_bytes = 100;
+        earlier.retention_charge_paid = 499;
+        row(&mut w,&p,&[canonical.clone(),earlier.clone()],BTreeSet::new(),20,1); // original exact charge
+
+        earlier.retention_charge_paid = 500;
+        earlier.retention_paid_through_height = 4;
+        row(&mut w,&p,&[canonical.clone(),earlier.clone()],BTreeSet::new(),20,1); // < mandatory
+        earlier.retention_paid_through_height = 5;
+        earlier.context.chain_id = "四\0".repeat(128);
+        let mut max_policy = p.clone();
+        max_policy.context = earlier.context.clone();
+        let mut max_other = canonical;
+        max_other.context = max_policy.context.clone();
+        row(&mut w,&max_policy,&[max_other,earlier],BTreeSet::new(),20,1); // max 512-byte context
+    }
 }
