@@ -14,6 +14,7 @@ import unittest
 from hia.platform.task_kernel.build_provider import ProviderBuild
 from hia.platform.task_kernel.readback_provider import Reader, check_provider
 from hia.tests.native_support import NativeModule, unlinked_path
+from hia.tests.locked_cargo_target import locked_cargo_build
 
 ROOT = Path(__file__).resolve().parents[2]
 OWNER = ROOT / "hia/platform/service_settlement"
@@ -47,12 +48,8 @@ def original_adapter(out, *, metadata=False, operation=False, marker=False, same
     pin = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
     if execute([rustc, "--version"]).stdout.decode().split()[1] != pin:
         raise ValueError("Original Settlement schema requires the pinned Rust toolchain")
-    target = out / "target"
-    build = execute([cargo, "build", "--locked", "--offline", "--manifest-path",
-                     str(ROOT / "trillionnium/Cargo.toml"), "--target-dir", str(target),
-                     "-p", "trnm-service-settlement", "--message-format=json"],
-                    timeout=160, env={**os.environ, "RUSTC": rustc, "CARGO_BUILD_JOBS": "2"})
-    events = [json.loads(row) for row in build.stdout.splitlines()]
+    _, events = locked_cargo_build(ROOT, rustc=rustc, cargo=cargo,
+                                   package="trnm-service-settlement", execute=execute)
     [settlement] = [e for e in events if e.get("reason") == "compiler-artifact"
                     and e["target"]["name"] == "trnm_service_settlement"]
     if Path(settlement["target"]["src_path"]) != STORE / "src/lib.rs" or settlement["features"] != ["default"]:

@@ -10,6 +10,7 @@ import tomllib
 import unittest
 
 from hia.tests.native_support import NativeModule
+from hia.tests.locked_cargo_target import locked_cargo_build
 from hia.tests.test_settlement_schema_read import execute
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -38,11 +39,8 @@ def original_adapter(owned, adapter=ADAPTER):
         constants.append(declaration)
     reference = owned / "original-ledger-reference.rs"
     reference.write_bytes(b"#![allow(dead_code)]\n" + b"".join(constants) + adapter.read_bytes())
-    res = execute([cargo, "build", "--locked", "--offline",
-                   "--manifest-path", ROOT / "trillionnium/Cargo.toml",
-                   "--target-dir", owned / "target", "-p", "trnm-sqlite-io-boundary", "--message-format=json"],
-                  timeout=160, env={**os.environ, "RUSTC": rustc, "CARGO_BUILD_JOBS": "2"})
-    events = [json.loads(line) for line in res.stdout.splitlines()]
+    target, events = locked_cargo_build(ROOT, rustc=rustc, cargo=cargo,
+                                        package="trnm-sqlite-io-boundary", execute=execute)
     [crate] = [e for e in events if e.get("reason") == "compiler-artifact" and
                e["target"]["name"] == "trnm_sqlite_io_boundary"]
     if Path(crate["target"]["src_path"]) != LIB or Path(crate["manifest_path"]) != CRATE / "Cargo.toml":
@@ -59,7 +57,7 @@ def original_adapter(owned, adapter=ADAPTER):
     if origin_sqlite["linked_libs"] != ["static=sqlite3"] or not path.startswith("native="):
         raise ValueError("Original reservation ledger requires the locked SQLite")
     binary = owned / "original-ledger"
-    execute([rustc, "--edition=2024", "-O", *externs, "-L", f"dependency={owned/'target/debug/deps'}",
+    execute([rustc, "--edition=2024", "-O", *externs, "-L", f"dependency={target/'debug/deps'}",
              "-L", path, reference, "-o", binary], timeout=60,
             env={**os.environ, "TRNM_M15_LEDGER_ORIGINAL": str(LEDGER)})
     return binary
