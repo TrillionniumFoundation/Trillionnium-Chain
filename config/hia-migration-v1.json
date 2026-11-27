@@ -4119,6 +4119,19 @@
       ]
     },
     {
+      "id": "platform/service-settlement-preview-empty-decision",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Private exact zero-command preview decision using an audited, explicitly closed native mixed snapshot. Checks the original expected parent, direct successor and historical block ID uniqueness on actual verified markers. Original public method compared on owned data with separate cold readback; not full preview, authority, Node, or durability.",
+      "sources": [
+        "hia/platform/service_settlement/preview_empty_decision.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_settlement_held_variable_cursor_dispatch.py",
+        "hia/tests/rust_settlement_marker_reference.rs"
+      ]
+    },
+    {
       "id": "platform/service-settlement-live-variable-cursor-dispatch",
       "node_integration_complete": false,
       "retirement_accepted": false,

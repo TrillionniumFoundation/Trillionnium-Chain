@@ -182,6 +182,63 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             io::stdout().write_all(&binding)?;
         }
+        "observe-preview-empty" => {
+            assert_eq!(args.len(), 6);
+            let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
+            let before = owner.fresh_readback()?;
+            let parent = ConsumptionSettlementStoreV1::open_existing(ConsumptionSettlementStoreConfigV1 {
+                path: PathBuf::from(&args[4]),
+                ..config.clone()
+            })?.fresh_readback()?;
+            let mut height = before.order_height() + 1;
+            let id = match args[5].to_str().unwrap() {
+                "fresh" => word_hash(4000),
+                "zero" => Hash32V1([0; 32]),
+                "head" => before.order_block_id(),
+                "historical" => {
+                    let db = open_read_snapshot(&path)?;
+                    load_committed_block_markers(&db, &config)?[1].order_block_id
+                }
+                "wrong-height" => { height += 1; word_hash(4000) }
+                unrecognized => panic!("unexpected private original preview fixture: {unrecognized}"),
+            };
+            let mut input = height.to_le_bytes().to_vec();
+            input.extend(id.0);
+            input.extend(parent.store_schema_version().to_le_bytes());
+            input.extend(parent.store_id().0);
+            input.extend(parent.sequence().to_le_bytes());
+            input.extend(parent.order_height().to_le_bytes());
+            input.extend(parent.order_block_id().0);
+            input.extend(parent.durable_state_root().0);
+            input.extend(parent.durable_journal_root().0);
+            input.extend(parent.durable_committed_block_root().0);
+            input.extend(canonical_bytes(parent.context())?);
+            let mut result = Vec::new();
+            match owner.preview_before_vote_v1(&parent, height, id, &[]) {
+                Ok(preview) => {
+                    assert!(preview.candidate_receipts().is_empty());
+                    result.extend(0_u32.to_le_bytes());
+                    result.extend(preview.source_sequence().to_le_bytes());
+                    result.extend(preview.source_state_root().0);
+                    result.extend(preview.source_journal_root().0);
+                    result.extend(preview.candidate_post_state_root().0);
+                    result.extend(0_u64.to_le_bytes());
+                }
+                Err(e) if e.code() == trnm_service_settlement::ConsumptionSettlementErrorCodeV1::InvalidContext => {
+                    result.extend(100_u32.to_le_bytes());
+                }
+                Err(e) if e.code() == trnm_service_settlement::ConsumptionSettlementErrorCodeV1::ArithmeticOverflow => {
+                    result.extend(101_u32.to_le_bytes());
+                }
+                Err(e) => return Err(e.into()),
+            }
+            assert_eq!(before, owner.fresh_readback()?);
+            let mut out = io::stdout().lock();
+            for bytes in [&input, &result] {
+                out.write_all(&u32::try_from(bytes.len())?.to_le_bytes())?;
+                out.write_all(bytes)?;
+            }
+        }
         "verify" | "verify-join" | "verify-journal" => {
             let owner = ConsumptionSettlementStoreV1::open_existing(config.clone())?;
             let head = owner.fresh_readback()?;

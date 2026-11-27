@@ -39,6 +39,11 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             for backend in ("direct", "selfhost"):
                 images["mixed-" + backend] = stack.enter_context(NativeModule(
                     OWNER / "held_mixed_plan_replay.hepta", byte_exports=("f0",), backend=backend))
+            preview_images = {
+                backend: stack.enter_context(NativeModule(
+                    OWNER / "preview_empty_decision.hepta", byte_exports=("f0",), backend=backend))
+                for backend in ("direct", "selfhost")
+            }
             physical_images = {
                 backend: {
                     name: stack.enter_context(NativeModule(OWNER / source, byte_exports=("f0",), backend=backend))
@@ -62,7 +67,7 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             owned = tmp / "owned"
             owned.mkdir(mode=0o700)
 
-            def invoke(path, binding, lane, *, failed=None, ordinal=4, physical=None, lifecycle=None):
+            def invoke(path, binding, lane, *, failed=None, ordinal=4, physical=None, lifecycle=None, preview=None):
                 def image(name):
                     module = images[name]
                     return [str(module.library), module.artifact_sha256]
@@ -77,6 +82,11 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
                 if lifecycle is not None:
                     module = lifecycle_images[lifecycle]
                     request["open_lifecycle"] = [str(module.library), module.artifact_sha256]
+                if preview is not None:
+                    backend, frames = preview
+                    module = preview_images[backend]
+                    request.update(preview_decision=[str(module.library), module.artifact_sha256],
+                                   preview_frames=[raw.hex() for raw in frames])
                 if lane != "execution":
                     request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
                     request["variable_stream_fixture"] = True
@@ -290,3 +300,31 @@ class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
             self.assertEqual(bad_row.read_bytes(), drifted)
             self.assertFalse(bad_row.with_name(bad_row.name + "-journal").exists())
             self.assertEqual(execute([original, "verify-journal", case, case_paths[0]]).stdout, reference)
+
+            later_preview = owned / "original preview source after the next empty commit.db"
+            later_binding = execute([original, "seed-mixed-same-block", later_preview, case_paths[0], "1",
+                                    case_paths[1], case_paths[4], case_paths[6], "-", "-", case_paths[8]]).stdout
+            later_original = execute([original, "verify-journal", later_preview, case_paths[0]]).stdout
+            preview_pristine = later_preview.read_bytes()
+            requests, decisions = [], []
+            for expected, what in ((later_preview, "fresh"), (later_preview, "zero"), (later_preview, "head"),
+                                   (later_preview, "historical"), (later_preview, "wrong-height"), (case, "fresh")):
+                frame, expected_result = frames(execute([original, "observe-preview-empty", later_preview,
+                                                         case_paths[0], expected, what]).stdout)
+                requests.append(frame)
+                code, = struct.unpack_from("<I", expected_result)
+                decisions.append([code, expected_result[4:].hex() if code == 0 else None])
+            self.assertEqual([result[0] for result in decisions], [0, 100, 100, 100, 100, 100])
+            for backend in preview_images:
+                with self.subTest(empty_preview_from_actual_closed_snapshot=backend):
+                    got = invoke(later_preview, later_binding, "mixed-" + backend, preview=(backend, requests))
+                    self.assertEqual(got["preview_decisions"], decisions)
+                    self.assertEqual(bytes.fromhex(got["projection"]), later_original)
+                    self.assertEqual((got["status"], got["released"], got["replay_calls"], got["replay_locks"]),
+                                     (0, 0, 4, 4))
+                    self.assertEqual(got["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                    # A fresh native cold reopen independently rechecks the audited parent.
+                    cold = invoke(later_preview, later_binding, "mixed-" + backend)
+                    self.assertEqual(cold, {k: v for k, v in got.items() if k != "preview_decisions"})
+            self.assertEqual(later_preview.read_bytes(), preview_pristine)
+            self.assertFalse(later_preview.with_name(later_preview.name + "-journal").exists())

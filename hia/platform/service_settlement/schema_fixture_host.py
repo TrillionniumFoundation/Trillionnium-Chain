@@ -158,7 +158,7 @@ def native_open_lifecycle(path, image, open_sqlite, fetch, owner):
     raise ValueError("Bounded native ownership continuation did not terminate")
 
 
-def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None):
+def run(request, uri_image, reader, provider, gate=None, header_reader=None, post_open=None, lifecycle=None, preview=None):
     db = Path(request["database"])
     directory = Path(request["directory"])
     if (db.parent != directory or directory.resolve(strict=True) != directory
@@ -221,6 +221,14 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
         raise ValueError("Post-open path requires the sealed native pre-open gate and header")
     if header_reader is not None and gate is None:
         raise ValueError("Native store header requires original pathname admission")
+    preview_frames = None
+    if preview is not None:
+        frames = request.get("preview_frames")
+        if not mixed_plan or not isinstance(frames, list) or not 1 <= len(frames) <= 8:
+            raise ValueError("Expected finite preview decisions over actual native mixed profile")
+        preview_frames = [bytes.fromhex(frame) for frame in frames]
+        if any(not 219 <= len(frame) <= 8410 for frame in preview_frames):
+            raise ValueError("Original preview decision frame exceeded the fixture domain")
     path_checks = header_checks = None
     if gate is not None:
         gate_status, path_checks = native_path_preflight(os.fsencode(db), gate, provider)
@@ -433,6 +441,19 @@ def run(request, uri_image, reader, provider, gate=None, header_reader=None, pos
                 raise ValueError("Success without exact Engine observation")
         if cursor_stream or bank_stream or mixed_plan:
             result["replay_profile"] = selected_profile
+        if preview_frames is not None and status == 0:
+            if result["released"] != 0:
+                raise ValueError("Preview decision requires an explicitly closed original snapshot")
+            decide = bind(preview, "f0", u64, *signature)
+            decisions = []
+            for frame in preview_frames:
+                candidate = ctypes.create_string_buffer(frame)
+                output = ctypes.create_string_buffer(b"\xa5" * 112, 112)
+                code = decide(candidate, len(frame), state, EXTENT, output, len(output))
+                if code not in (0, 100, 101) or (code and output.raw != b"\xa5" * 112):
+                    raise ValueError("Native preview decision leaked or lacked exact live custody")
+                decisions.append([code, output.raw.hex() if code == 0 else None])
+            result["preview_decisions"] = decisions
         if projected:
             result["projection"] = projection
         return result
@@ -454,7 +475,8 @@ def main():
         header_reader = owners.enter_context(sealed_library(*message["header_reader"])) if "header_reader" in message else None
         post_open = owners.enter_context(sealed_library(*message["post_open_path"])) if "post_open_path" in message else None
         lifecycle = owners.enter_context(sealed_library(*message["open_lifecycle"])) if "open_lifecycle" in message else None
-        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle)))
+        preview = owners.enter_context(sealed_library(*message["preview_decision"])) if "preview_decision" in message else None
+        print(json.dumps(run(message, uri, reader, provider, gate, header_reader, post_open, lifecycle, preview)))
 
 
 if __name__ == "__main__":
