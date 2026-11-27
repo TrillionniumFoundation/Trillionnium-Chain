@@ -19,13 +19,16 @@ REFERENCE = ROOT / "hia/tests/rust_task_archive_hash_reference.rs"
 PINS = {
     "Cargo.toml": "91c4bbe354e2edb578951bdd4aab473fd777d4b88e46dade4e8ae9547e176738",
     "src/archive.rs": "f131b99ff3934aee03ea85398ab5c3d666442a25678c03700a77db491b459e75",
+    "src/archive_verifier.rs": "0b68ad221bba64f8775b5452dc08377ec96021a4a305b23b2130aba2bc2b460d",
+    "src/lib.rs": "235abe77de9c7bc6597bb466a9fee1e83c8a50bdd83109b70e83431a1114b54e",
+    "src/error.rs": "436cb05ae5707862239fe1805c18525d2d76806b64bb7d412c19a8686f6fbd12",
     "src/codec.rs": "36a385d57c0b22ccad5b29b2a2180f6ce0dd0eb08ea12e94e013057ebdefb83a",
     "src/types.rs": "211e9bd2d7e51a78e5e6842600e034531845690e8b68dc870ba7d5479ad01522",
     "../../Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
 }
 
 
-def original(directory):
+def original(directory, reference=REFERENCE):
     for path, digest in PINS.items():
         if hashlib.sha256((CRATE / path).read_bytes()).hexdigest() != digest:
             raise ValueError(f"Original TaskKernel input differs: {path}")
@@ -52,7 +55,7 @@ def original(directory):
         [lib] = [f for f in event["filenames"] if f.endswith(".rlib")]
         extern += ["--extern", f"{name}={lib}"]
     result = directory / "archive-hash-original"
-    execute([rustc, "--edition=2021", REFERENCE, "-L", f"dependency={target}/debug/deps",
+    execute([rustc, "--edition=2021", reference, "-L", f"dependency={target}/debug/deps",
              "-L", f"native={next((target/'debug/build').glob('libsqlite3-sys-*/out'))}",
              *extern, "-o", result], env=env, timeout=60)
     return result

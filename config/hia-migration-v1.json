@@ -225,6 +225,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_inclusion_fold",
+      "node_integration_complete": false,
+      "scope": "Exact ordered archive Merkle proof fold from a separately admitted seal root/count and a native record hash, paired with the original planner and verifier. No seal/prepaid-retention or deletion authority.",
+      "source": "hia/src/task_kernel/archive_inclusion_fold.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_inclusion_fold.py",
+        "hia/tests/rust_task_archive_inclusion_fold_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_hash",
       "node_integration_complete": false,
       "scope": "Bounded canonical Borsh TaskArchivePolicyV1 and inert TerminalTaskArchiveRecordV1 hash admission using original validation and SHA-256 domains. Does not grant terminality, pruning, deletion or production authority.",
@@ -2630,7 +2641,8 @@
     },
     {
       "components": [
-        "task_kernel/archive_hash"
+        "task_kernel/archive_hash",
+        "task_kernel/archive_inclusion_fold"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",

@@ -170,3 +170,30 @@ python3 -B -m unittest -v hia.tests.test_task_archive_hash
 The test uses the original locked Rust crate and its two public hash methods,
 plus stock Direct and Selfhost execution. It does not exercise archive
 selection, inclusion, filesystem mutation, consensus, or node routing.
+
+### Ordered archive inclusion fold
+
+`src/task_kernel/archive_inclusion_fold.hepta` is the pure final Merkle join
+of the public verifier, not the complete proof-verifier entry. Its private
+borrowed input is exact packed little-endian count (u32), leaf index (u32),
+sibling count (u64), 32-byte admitted seal root, 32-byte leaf hash, and one
+32-byte word per sibling. The seal count and Merkle root are explicit inputs
+from separate seal validation. Seal and proof schemas, seal hash, context and
+prepaid-retention admission remain untouched in Rust. The native route does
+not authenticate the seal or create deletion authority.
+
+The fold checks the index, the original 4,096-count bound and the exact
+ceil-halving depth, then hashes each ordered pair in the original framed
+archive-node domain based on the active index parity. In the odd-tail case the
+actual prover supplies the duplicate sibling; the original verifier does not
+add another proof-shape predicate for duplicate tails. The input is immutable,
+output is untouched, and scratch requires 1,344 bytes. A mismatched root is
+status 23, index or calculated-depth mismatch 13, and out-of-range count 1
+after an otherwise valid index. Zero count is invalid in this private fold;
+the outer original seal hash rejects it before a fold is called.
+
+The test drives both native compilers with actual public planner/proof output
+and actual public verifier status. The already-native archive record hash
+supplies the leaf, not a precomputed comparator result. It covers ordinary
+odd/even ends, capacity and tampering. This route does not plan deletion,
+mutate a store, change CI policy or route production traffic.
