@@ -192,3 +192,21 @@ diagnostic. Tests bind the exact original Rust recorder, including 511,
 cross-class append, earlier error and all original action routes. This
 does not verify externally provided ledger state, emit JSON, write a
 vector, or own a production callback.
+
+## Compact lifecycle event emission
+
+`lifecycle_json_emit.hepta` accepts exactly the typed measurement packet.
+It validates UTF-8 and measures the compact form with the existing
+native helper before writing anything. If the caller supplies fewer
+than eight bytes plus the exact JSON length, both mutable spans stay
+untouched. Success writes an eight-byte little-endian length followed
+by exact compact UTF-8 JSON in original Rust field order. It leaves the
+output suffix and scratch unchanged. Malformed input returns 100;
+insufficient output returns 102.
+
+The original locked serde bytes are compared end to end across all
+twelve action literals, V1/V2 original receipt paths, null versus zero
+versus omitted options, escaped controls and punctuation, and UTF-8
+through four-byte code points. Widths 511, 512 and 513 are emitted
+without prejudging ledger retention. No event is appended by this
+entry, and it does not own a filesystem or production VFS callback.

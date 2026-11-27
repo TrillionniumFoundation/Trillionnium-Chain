@@ -30,7 +30,7 @@ const ACTIONS: [&str; 12] = [
     "shm-reference", "underlying-close", "underlying-shm-unmap", "unlinked",
 ];
 
-fn emit(out: &mut impl Write, family: u64, e: &LifecycleReceipt) {
+fn emit(out: &mut impl Write, family: u64, e: &LifecycleReceipt, emit_bytes: bool) {
     let action = ACTIONS.iter().position(|&a| a == e.action).unwrap() as u64 + 1;
     let flags = u64::from(e.device.is_some()) | (u64::from(e.inode.is_some()) << 1)
         | (u64::from(e.requested_endpoint.is_some()) << 2);
@@ -43,10 +43,12 @@ fn emit(out: &mut impl Write, family: u64, e: &LifecycleReceipt) {
         out.write_all(&x.to_le_bytes()).unwrap();
     }
     out.write_all(e.basename.as_bytes()).unwrap();
+    if emit_bytes { out.write_all(&eq).unwrap(); }
 }
 
 fn main() {
     let mut out = io::stdout().lock();
+    let emit_bytes = std::env::args().any(|x| x == "--bytes");
     for policy in [GrowthPolicy::ExactV1, GrowthPolicy::Reserve64KiBV2] {
         let mut l = Ledger::with_policy(policy);
         let slot = l.reserve_open("native-雪.sqlite", true).unwrap();
@@ -57,7 +59,7 @@ fn main() {
         l.reserve_handle(slot).unwrap(); l.release_pending(slot, "failed-open-no-methods");
         l.add_shm(slot).unwrap(); l.close_shm(slot);
         l.unlinked(slot); l.close_handle(slot);
-        for e in l.lifecycle.iter().chain(&l.cleanup) { emit(&mut out, 0, e); }
+        for e in l.lifecycle.iter().chain(&l.cleanup) { emit(&mut out, 0, e, emit_bytes); }
     }
     let controls: String = (0u8..32).map(char::from).collect();
     let unicode = "\u{007f}é中😀\u{2028}\u{2029}e\u{0301}";
@@ -71,7 +73,7 @@ fn main() {
             high_water_bytes: 99999, actual_last_bytes: 100000,
             requested_endpoint: (bits & 4 != 0).then_some(0),
         };
-        emit(&mut out, 1, &e);
+        emit(&mut out, 1, &e, emit_bytes);
     }
     let (base, _) = original::pending_close_probe("");
     let base_len = serde_json::to_vec(&base).unwrap().len();
@@ -79,11 +81,11 @@ fn main() {
         let (e, kept) = original::pending_close_probe(&"q".repeat(width - base_len));
         assert_eq!(serde_json::to_vec(&e).unwrap().len(), width);
         assert_eq!(kept, width <= 512);
-        emit(&mut out, 2, &e);
+        emit(&mut out, 2, &e, emit_bytes);
     }
     let (empty, _) = original::pending_close_probe("");
-    emit(&mut out, 3, &empty);
+    emit(&mut out, 3, &empty, emit_bytes);
     let mut wide = empty;
     wide.basename = "\u{0003}".repeat(512); // typed serde fixture, not a ledger filename
-    emit(&mut out, 3, &wide);
+    emit(&mut out, 3, &wide, emit_bytes);
 }

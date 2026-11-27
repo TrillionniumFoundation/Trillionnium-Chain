@@ -160,6 +160,17 @@
       ]
     },
     {
+      "id": "sqlite_io_boundary/lifecycle_json_emit",
+      "node_integration_complete": false,
+      "scope": "Finite native compact JSON bytes for exact original M15 typed lifecycle receipts in serde field order. Exact width prechecked before production of test bytes; does not retain events or own physical VFS.",
+      "source": "hia/src/sqlite_io_boundary/lifecycle_json_emit.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_sqlite_lifecycle_json_emit.py",
+        "hia/tests/rust_sqlite_lifecycle_json_size_reference.rs"
+      ]
+    },
+    {
       "id": "sqlite_io_boundary/typed_record_evidence",
       "node_integration_complete": false,
       "scope": "Finite original SQLite ledger recorder replay with exact native typed receipt measurement, class and sequence bound before the same retention step. No serialized byte emission, vector ownership or production VFS.",
@@ -2521,7 +2532,8 @@
         "sqlite_io_boundary/shm_replay",
         "sqlite_io_boundary/record_evidence",
         "sqlite_io_boundary/lifecycle_json_size",
-        "sqlite_io_boundary/typed_record_evidence"
+        "sqlite_io_boundary/typed_record_evidence",
+        "sqlite_io_boundary/lifecycle_json_emit"
       ],
       "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
       "module": "M15",
