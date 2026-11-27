@@ -137,6 +137,17 @@
       ]
     },
     {
+      "id": "state_import/incremental_delta_target_projection",
+      "node_integration_complete": false,
+      "scope": "M13 pure bounded post-base target merge projection: Some-only ceiling, immutable ordered merge, exact target count/digest and provenance selectors; no authority, root callback, state installation, SQLite or production routing",
+      "source": "hia/src/state_import/incremental_delta_target_projection.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_incremental_delta_target_projection.py",
+        "hia/tests/rust_state_import_incremental_delta_target_projection_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/incremental_delta_base_witness",
       "node_integration_complete": false,
       "scope": "M13 read-only outer pre-root base witness: equal raw typed contexts then original base row shape/order, canonical count and digest on bounded owned synthetic input; no context authority, root computation, application, SQLite or production routing",
@@ -2472,6 +2483,7 @@
         "state_import/export_order_step",
         "state_import/export_post_finality_fold",
         "state_import/durable_snapshot_shadow",
+        "state_import/incremental_delta_target_projection",
         "state_import/incremental_delta_base_witness",
         "state_import/incremental_delta_validate",
         "state_import/incremental_delta_header_validate",

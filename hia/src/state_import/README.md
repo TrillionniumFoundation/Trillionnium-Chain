@@ -457,3 +457,38 @@ the first root callback, the witness checks the actual ordered rows and
 always refuses. This does not verify opaque contexts, recheck pure delta
 validation, compute application state, apply a delta, or write to SQLite
 or any production owner.
+
+### Offline target merge projection
+
+`incremental_delta_target_projection.hepta` implements the bounded pure
+merge and target-row check between the two root-owner boundaries of
+`apply_incremental_delta_v0`. It scopes the computation to immutable
+synthetic typed rows, defensively checks each input sequence, and bounds
+the declared target count by base rows plus **present** operations only.
+An absent deletion adds no row, even if the key was not present.
+An exact matching base key is consumed; a present empty value still
+contributes a row. The call computes the resulting ordered target-row
+digest and compares both the actual count and actual digest before
+writing the private output. On refusal it does not publish anything.
+
+The fixed 56-byte prefix is big-endian `u64` base and operation counts
+(each zero through eight), big-endian `u64` declared target count, and
+the 32-byte declared target digest. The base rows then the operation rows
+use four little-endian `u32` words (namespace, key and value widths, then
+option tag), followed by the declared binary fields. Base tags are 1;
+operation tag 0 requires zero value length, and tag 1 permits empty.
+The input is bounded to 1 MiB, with 2,896 disjoint scratch bytes and at
+least 56 output bytes. Success writes a little-endian `u64` computed
+count, computed digest32, and one byte per output row, with selectors
+`0..7` for base input rows and `128..135` for operations. The remaining
+output bytes are untouched. Status 119 corresponds to original target
+count/digest mismatch; private framing/capacity/hash and defensive
+input validation use the existing status conventions.
+
+The original locked Rust witness derives authentic typed metadata with
+test-owned rows and hashes the exact rows at its first, synthetic
+root-owner callback; at the second callback it checks the observed
+target rows and deliberately refuses. The native projection has no
+such callback, verifies no checkpoint authority, does not check the
+enclosing delta commitment or either application state root, and
+does not apply, publish or write any state.
