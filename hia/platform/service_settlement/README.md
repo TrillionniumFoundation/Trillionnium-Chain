@@ -406,8 +406,12 @@ prefix and leaves later bytes untouched. Both native backends match
 the unchanged original `operation_journal_root_through` and the actual
 source and target roots for all seven original markers, including the
 two consecutive empty committed blocks. This standalone raw hashing
-diagnostic does not decode receipt semantics or execute within the
-held reader.
+diagnostic does not decode receipt semantics. Its bounded iterator is also
+reused inside the held same-block, mixed and linear readers, where strict
+typed receipts are already retained. Each caller keeps its existing order,
+count and marker requirements (the standalone entry still accepts 0–4).
+A frame must fit the remaining bytes, and the iterator checks exact
+terminal consumption before copying any roots to the caller.
 
 The finite `held_settle_replay.hepta` lane uses one original SQLite
 snapshot for the actual four commands and seven actual committed block

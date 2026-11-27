@@ -85,40 +85,46 @@ block bad()
   ret(no)
 end
 
+fn hfs_collect_roots(m:mutbuf,w:mutbuf,rows:u64,bytes:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,rows:u64,bytes:u64)
+  cap_w:usize = buffer.len(w)
+  required:usize = const() {"value":8192}
+  cap_ok:bool = compare.ge(cap_w,required)
+  max:u64 = const() {"value":1480}
+  fits:bool = compare.le(bytes,max)
+  safe:bool = bool.and(cap_ok,fits)
+  branch safe collect(m,w,rows,bytes) denied()
+block collect(cm:mutbuf,cw:mutbuf,cr:u64,cn:u64)
+  receipts:usize = const() {"value":430000}
+  slot:usize = const() {"value":4100}
+  copied:u64 = call(cm,cw,receipts,slot,cn) {"function":"sscid_copy"}
+  base:u64 = const() {"value":4100}
+  end_at:u64 = int.add.wrap(base,cn)
+  result:u32 = call(cw,end_at,cr) {"function":"jph_collect"}
+  zero:u32 = const() {"value":0}
+  checked:bool = compare.eq(result,zero)
+  branch checked save(cm,cw,cr) denied()
+block save(sm:mutbuf,sw:mutbuf,sr:u64)
+  first:usize = const() {"value":3000}
+  destination:usize = const() {"value":440000}
+  stride:u64 = const() {"value":32}
+  extra:u64 = const() {"value":1}
+  count:u64 = int.add.wrap(sr,extra)
+  n:u64 = int.mul.wrap(count,stride)
+  written:u64 = call(sw,sm,first,destination,n) {"function":"sscid_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block denied()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
 fn hfs_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
 block entry(m:mutbuf,w:mutbuf)
-  source:usize = const() {"value":430000}
-  dest:usize = const() {"value":4100}
-  size:u64 = const() {"value":644}
-  moved:u64 = call(m,w,source,dest,size) {"function":"sscid_copy"}
-  zero:u64 = const() {"value":0}
-  jump loop(m,w,zero,zero)
-block loop(lm:mutbuf,lw:mutbuf,li:u64,le:u64)
-  base:u64 = const() {"value":4100}
-  end_l:u64 = int.add.wrap(base,le)
-  good:bool = call(lw,base,end_l,li) {"function":"jph_hash"}
-  branch good save(lm,lw,li,le) bad()
-block save(sm:mutbuf,sw:mutbuf,si:u64,se:u64)
-  digest:usize = const() {"value":1168}
-  origin:u64 = const() {"value":440000}
-  n:u64 = const() {"value":32}
-  delta:u64 = int.mul.wrap(si,n)
-  at_s:u64 = int.add.wrap(origin,delta)
-  d:usize = int.cast(at_s) {"mode":"wrap"}
-  saved:u64 = call(sw,sm,digest,d,n) {"function":"sscid_copy"}
-  final_i:u64 = const() {"value":4}
-  done:bool = compare.eq(si,final_i)
-  branch done next_marker(sm) advance(sm,sw,si,se)
-block advance(am:mutbuf,aw:mutbuf,ai:u64,ae:u64)
-  three:u64 = const() {"value":3}
-  one_a:u64 = const() {"value":1}
-  first:u64 = const() {"value":153}
-  last:u64 = const() {"value":185}
-  final_added:bool = compare.eq(ai,three)
-  extent:u64 = select(final_added,last,first)
-  next_count:u64 = int.add.wrap(ai,one_a)
-  next_end:u64 = int.add.wrap(ae,extent)
-  jump loop(am,aw,next_count,next_end)
+  rows:u64 = const() {"value":4}
+  extent:u64 = const() {"value":644}
+  got:bool = call(m,w,rows,extent) {"function":"hfs_collect_roots"}
+  branch got next_marker(m) bad()
 block next_marker(nm:mutbuf)
   start:u64 = const() {"value":0}
   result:bool = call(nm,start) {"function":"hfs_compare_markers"}
@@ -353,26 +359,11 @@ end
 
 fn hfs_sameblock_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
 block entry(m:mutbuf,w:mutbuf)
-  source:usize = const() {"value":430000}
-  to_work:usize = const() {"value":4100}
-  len:u64 = const() {"value":306}
-  located:u64 = call(m,w,source,to_work,len) {"function":"sscid_copy"}
-  start:u64 = const() {"value":4100}
-  zero:u64 = const() {"value":0}
-  first:bool = call(w,start,start,zero) {"function":"jph_hash"}
-  branch first save0(m,w,start) bad()
-block save0(sm:mutbuf,sw:mutbuf,base:u64)
-  orig:usize = const() {"value":1168}
-  root_out:usize = const() {"value":440000}
-  n:u64 = const() {"value":32}
-  copied:u64 = call(sw,sm,orig,root_out,n) {"function":"sscid_copy"}
-  two:u64 = const() {"value":2}
-  end:u64 = const() {"value":4406}
-  both:bool = call(sw,base,end,two) {"function":"jph_hash"}
-  branch both save2(sm,sw,orig,n) bad()
-block save2(pm:mutbuf,pw:mutbuf,digest_at:usize,length:u64)
-  root2:usize = const() {"value":440064}
-  saved:u64 = call(pw,pm,digest_at,root2,length) {"function":"sscid_copy"}
+  rows:u64 = const() {"value":2}
+  extent:u64 = const() {"value":306}
+  got:bool = call(m,w,rows,extent) {"function":"hfs_collect_roots"}
+  branch got compare_markers(m) bad()
+block compare_markers(pm:mutbuf)
   n0:u64 = const() {"value":0}
   n1:u64 = const() {"value":1}
   n2:u64 = const() {"value":2}
@@ -457,33 +448,11 @@ block entry(m:mutbuf,w:mutbuf,rows:u64)
   safe:bool = bool.and(exact,limits)
   branch safe setup(m,w,rows) bad()
 block setup(sm:mutbuf,sw:mutbuf,sn:u64)
-  receipts:usize = const() {"value":430000}
-  slot:usize = const() {"value":4100}
-  initial_stride:u64 = const() {"value":153}
-  size:u64 = int.mul.wrap(sn,initial_stride)
-  moved:u64 = call(sm,sw,receipts,slot,size) {"function":"sscid_copy"}
+  stride:u64 = const() {"value":153}
+  packed_bytes:u64 = int.mul.wrap(sn,stride)
+  got:bool = call(sm,sw,sn,packed_bytes) {"function":"hfs_collect_roots"}
   zero:u64 = const() {"value":0}
-  jump hashes(sm,sw,zero,sn)
-block hashes(hm:mutbuf,hw:mutbuf,hi:u64,hn:u64)
-  at:u64 = const() {"value":4100}
-  width:u64 = const() {"value":153}
-  len:u64 = int.mul.wrap(hi,width)
-  end:u64 = int.add.wrap(at,len)
-  hashed:bool = call(hw,at,end,hi) {"function":"jph_hash"}
-  branch hashed save(hm,hw,hi,hn) bad()
-block save(am:mutbuf,aw:mutbuf,ai:u64,an:u64)
-  from:usize = const() {"value":1168}
-  root_base:u64 = const() {"value":440000}
-  width_a:u64 = const() {"value":32}
-  rel:u64 = int.mul.wrap(ai,width_a)
-  slot_a:u64 = int.add.wrap(root_base,rel)
-  to:usize = int.cast(slot_a) {"mode":"wrap"}
-  saved:u64 = call(aw,am,from,to,width_a) {"function":"sscid_copy"}
-  done:bool = compare.eq(ai,an)
-  one:u64 = const() {"value":1}
-  next:u64 = int.add.wrap(ai,one)
-  zero_a:u64 = const() {"value":0}
-  branch done walk(am,zero_a,an) hashes(am,aw,next,an)
+  branch got walk(sm,zero,sn) bad()
 block walk(vm:mutbuf,vi:u64,max:u64)
   first:u64 = const() {"value":0}
   unit:u64 = const() {"value":1}
