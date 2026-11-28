@@ -2287,6 +2287,17 @@
       ]
     },
     {
+      "id": "release-bundle/artifact-set-ordered-256",
+      "node_integration_complete": false,
+      "scope": "Separate read-only original V0 typed artifact sorted aggregate at 0–256 private slots, sharing bounded mergesort with SBOM and reusing original canonical member hashing. No membership admission or verification; existing 64-slot ABIs unchanged.",
+      "source": "hia/src/release_bundle/artifact_set_ordered_256.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_artifact_ordered_256.py",
+        "hia/tests/rust_release_artifact_ordered_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/sbom-ordered-256",
       "node_integration_complete": false,
       "scope": "Separate read-only original V0 typed SBOM ordered aggregate at 0–256 private slots, with bounded index mergesort and original canonical member hashing. No release verification or trust; existing 64-slot ABI unchanged.",
@@ -3213,6 +3224,19 @@
     }
   ],
   "native_foundations": [
+    {
+      "id": "release-bundle/private-ordered-release-digest-driver",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Read-only common private 256-slot typed sorting and hash folding foundation, accessed through fixed artifact and SBOM digest entrypoints. No release admission or trust.",
+      "sources": [
+        "hia/src/release_bundle/ordered_release_digest_256.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_release_artifact_ordered_256.py",
+        "hia/tests/test_release_sbom_ordered_256.py"
+      ]
+    },
     {
       "id": "bench/linux-no-profile-main",
       "node_integration_complete": false,

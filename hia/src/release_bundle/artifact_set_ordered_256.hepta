@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_artifact_set_ordered_256_v0
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  artifact:bool = const() {"value":true}
+  status:u32 = call(r,o,w,artifact) {"function":"ordered_aggregate"}
+  ret(status)
+end

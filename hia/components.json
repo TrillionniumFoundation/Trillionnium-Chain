@@ -16211,9 +16211,22 @@
     ],
     "src/release_bundle/sbom_ordered_256.hepta": [
       {
+        "source": "src/release_bundle/ordered_release_digest_256.hepta",
+        "functions": [
+          "ordered_aggregate",
+          "m_get",
+          "m_put",
+          "m_merge",
+          "ordered_width",
+          "ordered_row",
+          "ordered_shape",
+          "ordered_compare",
+          "ordered_member"
+        ]
+      },
+      {
         "source": "src/release_bundle/sbom_digest.hepta",
         "functions": [
-          "sb_row",
           "sb_width",
           "sb_well_formed",
           "sb_compare",
@@ -16223,6 +16236,163 @@
           "sb_append_digest",
           "sb_ord",
           "sb_digest_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_set_digest.hepta",
+        "functions": [
+          "aset_ord",
+          "aset_read_size",
+          "aset_cmp_size",
+          "aset_well_formed",
+          "aset_digest_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le",
+          "rac_write_be"
+        ]
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "es_copy_field"
+        ],
+        "source": "src/release_bundle/exact_source.hepta"
+      },
+      {
+        "functions": [
+          "rb_le16",
+          "rb_part",
+          "rb_text"
+        ],
+        "source": "src/release_bundle/bundle_binding.hepta"
+      }
+    ],
+    "src/release_bundle/artifact_set_ordered_256.hepta": [
+      {
+        "source": "src/release_bundle/ordered_release_digest_256.hepta",
+        "functions": [
+          "ordered_aggregate",
+          "m_get",
+          "m_put",
+          "m_merge",
+          "ordered_width",
+          "ordered_row",
+          "ordered_shape",
+          "ordered_compare",
+          "ordered_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_width",
+          "sb_well_formed",
+          "sb_compare",
+          "sb_compare_field",
+          "sb_hash_transcript",
+          "sb_copy_digest",
+          "sb_append_digest",
+          "sb_ord",
+          "sb_digest_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_set_digest.hepta",
+        "functions": [
+          "aset_ord",
+          "aset_read_size",
+          "aset_cmp_size",
+          "aset_well_formed",
+          "aset_digest_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le",
+          "rac_write_be"
+        ]
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "es_copy_field"
+        ],
+        "source": "src/release_bundle/exact_source.hepta"
+      },
+      {
+        "functions": [
+          "rb_le16",
+          "rb_part",
+          "rb_text"
+        ],
+        "source": "src/release_bundle/bundle_binding.hepta"
+      }
+    ],
+    "src/release_bundle/ordered_release_digest_256.hepta": [
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_width",
+          "sb_well_formed",
+          "sb_compare",
+          "sb_compare_field",
+          "sb_hash_transcript",
+          "sb_copy_digest",
+          "sb_append_digest",
+          "sb_ord",
+          "sb_digest_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_set_digest.hepta",
+        "functions": [
+          "aset_ord",
+          "aset_read_size",
+          "aset_cmp_size",
+          "aset_well_formed",
+          "aset_digest_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le",
+          "rac_write_be"
         ]
       },
       {
