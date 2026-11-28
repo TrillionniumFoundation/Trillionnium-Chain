@@ -964,6 +964,18 @@
       ]
     },
     {
+      "id": "state/routed-int257-model-commitment",
+      "node_integration_complete": false,
+      "scope": "Canonical public-model Int257 commitment over version, original geometry and signed validated matrices, exact frozen domain/length framing; no admission, proofs or production authority.",
+      "source": "hia/src/state/routed_int257_model_commitment.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_routed_int257_model_commitment.py",
+        "hia/tests/rust_routed_int257_model_commitment_reference.rs",
+        "hia/tests/test_routed_int257_ordinary.py"
+      ]
+    },
+    {
       "id": "state/routed-int257-ordinary",
       "node_integration_complete": false,
       "scope": "Pure ordinary routed Int257 inference: fixed signed coefficient and feature caps, exact selected logits and stable argmax; no live model, W1/proof, commitment, request or production authority.",
@@ -3160,7 +3172,8 @@
         "crypto/ml-dsa-owner",
         "state/routed-int257-ordinary",
         "state/routed-int257-direct",
-        "state/routed-int257-grouped"
+        "state/routed-int257-grouped",
+        "state/routed-int257-model-commitment"
       ],
       "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
       "module": "M01",
