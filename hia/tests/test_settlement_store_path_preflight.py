@@ -9,6 +9,10 @@ import sys
 import tempfile
 import unittest
 
+if __name__ == "__main__":
+    # The private child is deliberately launched with -I -S -B.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 from hia.platform.service_settlement.schema_fixture_host import native_post_open_path, native_store_header
 from hia.platform.state_import_sqlite.qualification_host import bind, sealed_library
 from hia.platform.task_kernel.build_provider import ProviderBuild
@@ -76,21 +80,26 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
                                             "open_lifecycle": [[1, 15, 24]] * examined})
 
             self.assertEqual(original_result(db), b"VALID")
-            # The real provider must transfer all 20 bytes, not merely matching the
-            # two format bytes that the retained HIA reader interprets.
-            def loaded(name):
-                image = images[name]
-                return stack.enter_context(sealed_library(str(image.library), image.artifact_sha256))
+            def observe_descriptors(mode, paths, cases=(), expected_header=b""):
+                request = {
+                    "mode": mode,
+                    "database": str(db),
+                    "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
+                    "images": [[str(image.library), image.artifact_sha256] for image in paths],
+                    "cases": [str(case) for case in cases],
+                    "expected_header": expected_header.hex(),
+                }
+                outcome = execute(
+                    [sys.executable, "-I", "-S", "-B", __file__, "--descriptor-observer"],
+                    input=json.dumps(request).encode(), timeout=45,
+                )
+                self.assertEqual(outcome.stderr, b"")
+                self.assertEqual(outcome.stdout, b"")
 
-            # Keep all sealed descriptors distinct and alive across these direct calls.
-            header_image, post_gate = loaded("header_reader"), loaded("post_open_path")
-            direct_image = stack.enter_context(NativeModule(
-                OWNER / "store_post_open_path.hepta", byte_exports=("f0",), backend="direct"))
-            direct_gate = stack.enter_context(sealed_library(str(direct_image.library), direct_image.artifact_sha256))
-            lib = stack.enter_context(sealed_library(str(provider), proof.checked[str(provider)]["sha256"]))
-            actual_header, header_trace = native_store_header(os.fsencode(db), header_image, lib)
-            self.assertEqual(actual_header, prior[:20])
-            self.assertEqual(header_trace, [[17, 24], [29, 44], [18, 24]])
+            # Keep the direct checks out of the long-lived General test host.
+            # The dynamic loader keys the sealed memfd by its procfs pathname;
+            # retaining simultaneous descriptors does not isolate earlier tests.
+            observe_descriptors("header", [images["header_reader"]], expected_header=prior[:20])
             native = observed(db, hold=True, header=True)
             self.assertEqual(native, {**observed(db, hold=True), "header_checks": [[17, 24], [29, 44], [18, 24]]})
             self.assertEqual((native["status"], native["held"], native["released"]),
@@ -117,29 +126,9 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             for case in (missing, not_file):
                 self.assertEqual(original_result(case), b"StoreFailure")
                 refusals(case, 100, 1)
-            # Isolated refusal cleanup: use a separate real read-only SQLite handle
-            # and observe two independent static paths. The end-to-end fixture
-            # always passes its own original database path. No pathname changes.
-            ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
-            fetch = bind(lib, "trnm_task_provider", u64, ptr, u64, ptr, u64, ptr, u64)
-            make = bind(lib, "trnm_task_provider_new", ptr)
-            reset = bind(lib, "trnm_task_provider_reset", u64, ptr)
-            free = bind(lib, "trnm_task_provider_free", None, ptr)
-            uri = (db.as_uri() + "?mode=ro").encode("ascii")
-            opening = ctypes.create_string_buffer(struct.pack("<QQ", 16810049, len(uri)) + uri)
-            for backend, post_close_gate in (("selfhost", post_gate), ("direct", direct_gate)):
-                for case in (missing, not_file):
-                    with self.subTest(close_after_refused_path=case.name, backend=backend):
-                        owner = make()
-                        self.assertTrue(owner)
-                        try:
-                            response = ctypes.create_string_buffer(24)
-                            self.assertEqual(fetch(owner, 2, opening, len(opening) - 1, response, 24), 24)
-                            self.assertEqual(native_post_open_path(os.fsencode(case), post_close_gate, fetch, owner, response.raw),
-                                             (100, [[15, 24], [3, 24]]))
-                            self.assertEqual(reset(owner), 0)
-                        finally:
-                            free(owner)
+            direct_image = stack.enter_context(NativeModule(
+                OWNER / "store_post_open_path.hepta", byte_exports=("f0",), backend="direct"))
+            observe_descriptors("post-open", [images["post_open_path"], direct_image], (missing, not_file))
             for width in (0, 1, 19):
                 with self.subTest(short=width):
                     short = owned / f"short-{width}.db"
@@ -171,3 +160,51 @@ class SettlementStorePathPreflightTests(unittest.TestCase):
             wal.unlink()
             self.assertEqual(db.read_bytes(), prior)
             self.assertEqual(sorted(p.name for p in owned.iterdir()), [db.name, not_file.name])
+
+
+def descriptor_observer(request):
+    checks = unittest.TestCase()
+    db = Path(request["database"])
+    with ExitStack() as stack:
+        images = [stack.enter_context(sealed_library(*image)) for image in request["images"]]
+        lib = stack.enter_context(sealed_library(*request["provider"]))
+        if request["mode"] == "header":
+            [header_image] = images
+            actual_header, header_trace = native_store_header(os.fsencode(db), header_image, lib)
+            # Transfer all 20 bytes, not merely the format bytes the HIA reader uses.
+            checks.assertEqual(actual_header, bytes.fromhex(request["expected_header"]))
+            checks.assertEqual(header_trace, [[17, 24], [29, 44], [18, 24]])
+            return
+        if request["mode"] != "post-open":
+            raise ValueError("Unknown private descriptor observation")
+        post_gate, direct_gate = images
+        cases = [Path(case) for case in request["cases"]]
+        # Isolated refusal cleanup: use a separate real read-only SQLite handle
+        # and observe two independent static paths. The end-to-end fixture
+        # always passes its own original database path. No pathname changes.
+        ptr, u64 = ctypes.c_void_p, ctypes.c_uint64
+        fetch = bind(lib, "trnm_task_provider", u64, ptr, u64, ptr, u64, ptr, u64)
+        make = bind(lib, "trnm_task_provider_new", ptr)
+        reset = bind(lib, "trnm_task_provider_reset", u64, ptr)
+        free = bind(lib, "trnm_task_provider_free", None, ptr)
+        uri = (db.as_uri() + "?mode=ro").encode("ascii")
+        opening = ctypes.create_string_buffer(struct.pack("<QQ", 16810049, len(uri)) + uri)
+        for backend, post_close_gate in (("selfhost", post_gate), ("direct", direct_gate)):
+            for case in cases:
+                with checks.subTest(close_after_refused_path=case.name, backend=backend):
+                    owner = make()
+                    checks.assertTrue(owner)
+                    try:
+                        response = ctypes.create_string_buffer(24)
+                        checks.assertEqual(fetch(owner, 2, opening, len(opening) - 1, response, 24), 24)
+                        checks.assertEqual(native_post_open_path(os.fsencode(case), post_close_gate, fetch, owner, response.raw),
+                                         (100, [[15, 24], [3, 24]]))
+                        checks.assertEqual(reset(owner), 0)
+                    finally:
+                        free(owner)
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] != ["--descriptor-observer"]:
+        raise SystemExit("Expected the private descriptor observer role")
+    descriptor_observer(json.load(sys.stdin))
