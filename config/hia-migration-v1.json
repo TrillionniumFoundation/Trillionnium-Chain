@@ -1995,6 +1995,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-framing",
+      "node_integration_complete": false,
+      "scope": "Bounded immutable TMT/TMR and synthetic supplied content digest relation, selected container extent, Safetensors pre-JSON prefix/padding, and independent raw SHA-256 observation; no verified layout, reader or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_framing.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_framing.py",
+        "hia/tests/rust_cell_tensor_reader_framing_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-view-bytes",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable dense bytes: exact CellResidentTensorV1 segment projection, checked copy and F32 little-endian bits. Receives raw backing plus bounded view coordinates only; no admission, loader, store, keys, network, execution or production.",
