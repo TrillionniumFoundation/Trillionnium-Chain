@@ -1,0 +1,1249 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_private_history_cte
+fn f0(entry_r:readbuf,entry_s:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_s:mutbuf,entry_w:mutbuf)
+  entry_n:usize = buffer.len(entry_r)
+  entry_size:usize = buffer.len(entry_s)
+  entry_work:usize = buffer.len(entry_w)
+  entry_minimum:usize = const() {"value":8192}
+  entry_zero:usize = const() {"value":0}
+  entry_valid:bool = compare.eq(entry_size,entry_minimum)
+  entry_spare:bool = compare.eq(entry_work,entry_zero)
+  entry_safe:bool = bool.and(entry_valid,entry_spare)
+  branch entry_safe dispatch(entry_r,entry_s,entry_n) bad()
+block dispatch(dispatch_r:readbuf,dispatch_s:mutbuf,dispatch_n:usize)
+  dispatch_a_phase:u64 = const() {"value":0}
+  dispatch_phase:u64 = call(dispatch_s,dispatch_a_phase) {"function":"cp_get"}
+  dispatch_zero:u64 = const() {"value":0}
+  dispatch_fresh:bool = compare.eq(dispatch_phase,dispatch_zero)
+  branch dispatch_fresh init_size(dispatch_r,dispatch_s,dispatch_n) route1(dispatch_r,dispatch_s,dispatch_n,dispatch_phase)
+block route1(route1_r:readbuf,route1_s:mutbuf,route1_n:usize,route1_phase:u64)
+  route1_tag:u64 = const() {"value":1}
+  route1_hit:bool = compare.eq(route1_phase,route1_tag)
+  branch route1_hit opened(route1_r,route1_s,route1_n) route2(route1_r,route1_s,route1_n,route1_phase)
+block route2(route2_r:readbuf,route2_s:mutbuf,route2_n:usize,route2_phase:u64)
+  route2_tag:u64 = const() {"value":2}
+  route2_hit:bool = compare.eq(route2_phase,route2_tag)
+  branch route2_hit prepared(route2_r,route2_s,route2_n) route3(route2_r,route2_s,route2_n,route2_phase)
+block route3(route3_r:readbuf,route3_s:mutbuf,route3_n:usize,route3_phase:u64)
+  route3_tag:u64 = const() {"value":3}
+  route3_hit:bool = compare.eq(route3_phase,route3_tag)
+  branch route3_hit bound(route3_r,route3_s,route3_n) route4(route3_r,route3_s,route3_n,route3_phase)
+block route4(route4_r:readbuf,route4_s:mutbuf,route4_n:usize,route4_phase:u64)
+  route4_tag:u64 = const() {"value":4}
+  route4_hit:bool = compare.eq(route4_phase,route4_tag)
+  branch route4_hit stepped(route4_r,route4_s,route4_n) route5(route4_r,route4_s,route4_n,route4_phase)
+block route5(route5_r:readbuf,route5_s:mutbuf,route5_n:usize,route5_phase:u64)
+  route5_tag:u64 = const() {"value":5}
+  route5_hit:bool = compare.eq(route5_phase,route5_tag)
+  branch route5_hit column(route5_r,route5_s,route5_n) route6(route5_r,route5_s,route5_n,route5_phase)
+block route6(route6_r:readbuf,route6_s:mutbuf,route6_n:usize,route6_phase:u64)
+  route6_tag:u64 = const() {"value":6}
+  route6_hit:bool = compare.eq(route6_phase,route6_tag)
+  branch route6_hit finalized(route6_r,route6_s,route6_n) route7(route6_r,route6_s,route6_n,route6_phase)
+block route7(route7_r:readbuf,route7_s:mutbuf,route7_n:usize,route7_phase:u64)
+  route7_tag:u64 = const() {"value":7}
+  route7_hit:bool = compare.eq(route7_phase,route7_tag)
+  branch route7_hit closed(route7_r,route7_s,route7_n) route8(route7_r,route7_s,route7_n,route7_phase)
+block route8(route8_r:readbuf,route8_s:mutbuf,route8_n:usize,route8_phase:u64)
+  route8_tag:u64 = const() {"value":8}
+  route8_hit:bool = compare.eq(route8_phase,route8_tag)
+  branch route8_hit column_count(route8_r,route8_s,route8_n) bad()
+block init_size(init_size_r:readbuf,init_size_s:mutbuf,init_size_n:usize)
+  init_size_eight:usize = const() {"value":8}
+  init_size_fit:bool = compare.eq(init_size_n,init_size_eight)
+  branch init_size_fit init_value(init_size_r,init_size_s) bad()
+block init_value(init_value_r:readbuf,init_value_s:mutbuf)
+  init_value_r_mode:u64 = const() {"value":0}
+  init_value_mode:u64 = call(init_value_r,init_value_r_mode) {"function":"tr_read"}
+  init_value_max:u64 = const() {"value":2}
+  init_value_valid:bool = compare.le(init_value_mode,init_value_max)
+  branch init_value_valid start(init_value_s,init_value_mode) bad()
+block start(start_s:mutbuf,start_mode:u64)
+  start_d_mode:u64 = const() {"value":88}
+  start__p_mode:u64 = call(start_s,start_d_mode,start_mode) {"function":"cp_put"}
+  start_cursor:u64 = const() {"value":4104}
+  start_d_cursor:u64 = const() {"value":80}
+  start__p_cursor:u64 = call(start_s,start_d_cursor,start_cursor) {"function":"cp_put"}
+  start_flags:u64 = const() {"value":6}
+  start_d_flags:u64 = const() {"value":256}
+  start__p_flags:u64 = call(start_s,start_d_flags,start_flags) {"function":"cp_put"}
+  start_len:u64 = const() {"value":8}
+  start_d_len:u64 = const() {"value":264}
+  start__p_len:u64 = call(start_s,start_d_len,start_len) {"function":"cp_put"}
+  start_mem:u64 = const() {"value":4213524749284109626}
+  start_d_mem:u64 = const() {"value":272}
+  start__p_mem:u64 = call(start_s,start_d_mem,start_mem) {"function":"cp_put"}
+  start_p:u64 = const() {"value":1}
+  start_op:u64 = const() {"value":2}
+  start_size:u64 = const() {"value":24}
+  start_issued:u32 = call(start_s,start_p,start_op,start_size) {"function":"sr_issue"}
+  ret(start_issued)
+block opened(opened_r:readbuf,opened_s:mutbuf,opened_n:usize)
+  opened_want:u64 = const() {"value":0}
+  opened_okay:bool = call(opened_r,opened_n,opened_want) {"function":"sr_status"}
+  branch opened_okay retain_db(opened_r,opened_s) bad()
+block retain_db(retain_db_r:readbuf,retain_db_s:mutbuf)
+  retain_db_r_db:u64 = const() {"value":8}
+  retain_db_db:u64 = call(retain_db_r,retain_db_r_db) {"function":"tr_read"}
+  retain_db_z:u64 = const() {"value":0}
+  retain_db_nonnull:bool = compare.ne(retain_db_db,retain_db_z)
+  branch retain_db_nonnull save_db(retain_db_s,retain_db_db) bad()
+block save_db(save_db_s:mutbuf,save_db_db:u64)
+  save_db_d_db:u64 = const() {"value":32}
+  save_db__p_db:u64 = call(save_db_s,save_db_d_db,save_db_db) {"function":"cp_put"}
+  save_db_result:u32 = call(save_db_s) {"function":"hct_prepare"}
+  ret(save_db_result)
+block prepared(prepared_r:readbuf,prepared_s:mutbuf,prepared_n:usize)
+  prepared_want:u64 = const() {"value":0}
+  prepared_okay:bool = call(prepared_r,prepared_n,prepared_want) {"function":"sr_status"}
+  branch prepared_okay check_prepare(prepared_r,prepared_s) bad()
+block check_prepare(check_prepare_r:readbuf,check_prepare_s:mutbuf)
+  check_prepare_r_stmt:u64 = const() {"value":8}
+  check_prepare_stmt:u64 = call(check_prepare_r,check_prepare_r_stmt) {"function":"tr_read"}
+  check_prepare_r_tail:u64 = const() {"value":16}
+  check_prepare_tail:u64 = call(check_prepare_r,check_prepare_r_tail) {"function":"tr_read"}
+  check_prepare_a_req:u64 = const() {"value":16}
+  check_prepare_req:u64 = call(check_prepare_s,check_prepare_a_req) {"function":"cp_get"}
+  check_prepare_head:u64 = const() {"value":16}
+  check_prepare_z:u64 = const() {"value":0}
+  check_prepare_sql:u64 = int.sub.wrap(check_prepare_req,check_prepare_head)
+  check_prepare_tail_matches:bool = compare.eq(check_prepare_tail,check_prepare_sql)
+  check_prepare_plan:bool = compare.ne(check_prepare_stmt,check_prepare_z)
+  check_prepare_okay:bool = bool.and(check_prepare_tail_matches,check_prepare_plan)
+  branch check_prepare_okay save_stmt(check_prepare_s,check_prepare_stmt) bad()
+block save_stmt(save_stmt_s:mutbuf,save_stmt_stmt:u64)
+  save_stmt_d_stmt:u64 = const() {"value":40}
+  save_stmt__p_stmt:u64 = call(save_stmt_s,save_stmt_d_stmt,save_stmt_stmt) {"function":"cp_put"}
+  save_stmt_a_stage:u64 = const() {"value":48}
+  save_stmt_stage:u64 = call(save_stmt_s,save_stmt_a_stage) {"function":"cp_get"}
+  save_stmt_cte:u64 = const() {"value":4}
+  save_stmt_query:bool = compare.eq(save_stmt_stage,save_stmt_cte)
+  branch save_stmt_query columns_count(save_stmt_s) step_stmt(save_stmt_s)
+block columns_count(columns_count_s:mutbuf)
+  columns_count_a_handle:u64 = const() {"value":40}
+  columns_count_handle:u64 = call(columns_count_s,columns_count_a_handle) {"function":"cp_get"}
+  columns_count_p:u64 = const() {"value":8}
+  columns_count_op:u64 = const() {"value":13}
+  columns_count_issued:u32 = call(columns_count_s,columns_count_p,columns_count_op,columns_count_handle) {"function":"sr_handle"}
+  ret(columns_count_issued)
+block column_count(column_count_r:readbuf,column_count_s:mutbuf,column_count_n:usize)
+  column_count_want:u64 = const() {"value":0}
+  column_count_okay:bool = call(column_count_r,column_count_n,column_count_want) {"function":"sr_status"}
+  branch column_count_okay count_check(column_count_r,column_count_s) bad()
+block count_check(count_check_r:readbuf,count_check_s:mutbuf)
+  count_check_r_count:u64 = const() {"value":8}
+  count_check_count:u64 = call(count_check_r,count_check_r_count) {"function":"tr_read"}
+  count_check_eleven:u64 = const() {"value":11}
+  count_check_exact:bool = compare.eq(count_check_count,count_check_eleven)
+  branch count_check_exact first_bind(count_check_s) bad()
+block first_bind(first_bind_s:mutbuf)
+  first_bind_index:u64 = const() {"value":1}
+  first_bind_result:u32 = call(first_bind_s,first_bind_index) {"function":"hct_bind"}
+  ret(first_bind_result)
+block bound(bound_r:readbuf,bound_s:mutbuf,bound_n:usize)
+  bound_want:u64 = const() {"value":0}
+  bound_okay:bool = call(bound_r,bound_n,bound_want) {"function":"sr_status"}
+  branch bound_okay next_bind(bound_s) bad()
+block next_bind(next_bind_s:mutbuf)
+  next_bind_a_index:u64 = const() {"value":56}
+  next_bind_index:u64 = call(next_bind_s,next_bind_a_index) {"function":"cp_get"}
+  next_bind_one:u64 = const() {"value":1}
+  next_bind_last:u64 = const() {"value":4}
+  next_bind_done:bool = compare.eq(next_bind_index,next_bind_last)
+  next_bind_next:u64 = int.add.wrap(next_bind_index,next_bind_one)
+  branch next_bind_done step_stmt(next_bind_s) bind_next(next_bind_s,next_bind_next)
+block bind_next(bind_next_s:mutbuf,bind_next_i:u64)
+  bind_next_result:u32 = call(bind_next_s,bind_next_i) {"function":"hct_bind"}
+  ret(bind_next_result)
+block step_stmt(step_stmt_s:mutbuf)
+  step_stmt_a_handle:u64 = const() {"value":40}
+  step_stmt_handle:u64 = call(step_stmt_s,step_stmt_a_handle) {"function":"cp_get"}
+  step_stmt_p:u64 = const() {"value":4}
+  step_stmt_op:u64 = const() {"value":7}
+  step_stmt_issued:u32 = call(step_stmt_s,step_stmt_p,step_stmt_op,step_stmt_handle) {"function":"sr_handle"}
+  ret(step_stmt_issued)
+block stepped(stepped_r:readbuf,stepped_s:mutbuf,stepped_n:usize)
+  stepped_want:u64 = const() {"value":101}
+  stepped_done:bool = call(stepped_r,stepped_n,stepped_want) {"function":"sr_status"}
+  branch stepped_done finish_stmt(stepped_s) step_row(stepped_r,stepped_s,stepped_n)
+block step_row(step_row_r:readbuf,step_row_s:mutbuf,step_row_n:usize)
+  step_row_want:u64 = const() {"value":100}
+  step_row_row:bool = call(step_row_r,step_row_n,step_row_want) {"function":"sr_status"}
+  step_row_a_stage:u64 = const() {"value":48}
+  step_row_stage:u64 = call(step_row_s,step_row_a_stage) {"function":"cp_get"}
+  step_row_a_rows:u64 = const() {"value":64}
+  step_row_rows:u64 = call(step_row_s,step_row_a_rows) {"function":"cp_get"}
+  step_row_cte:u64 = const() {"value":4}
+  step_row_is_query:bool = compare.eq(step_row_cte,step_row_stage)
+  step_row_bound:bool = compare.lt(step_row_rows,step_row_cte)
+  step_row_legal:bool = bool.and(step_row_row,step_row_is_query)
+  step_row_fit:bool = bool.and(step_row_legal,step_row_bound)
+  branch step_row_fit first_col(step_row_s) bad()
+block first_col(first_col_s:mutbuf)
+  first_col_i:u64 = const() {"value":0}
+  first_col_result:u32 = call(first_col_s,first_col_i) {"function":"hct_column"}
+  ret(first_col_result)
+block column(column_r:readbuf,column_s:mutbuf,column_n:usize)
+  column_header:usize = const() {"value":24}
+  column_fit:bool = compare.le(column_header,column_n)
+  branch column_fit inspect(column_r,column_s,column_n) bad()
+block inspect(inspect_r:readbuf,inspect_s:mutbuf,inspect_n:usize)
+  inspect_r_code:u64 = const() {"value":0}
+  inspect_code:u64 = call(inspect_r,inspect_r_code) {"function":"tr_read"}
+  inspect_r_kind:u64 = const() {"value":8}
+  inspect_kind:u64 = call(inspect_r,inspect_r_kind) {"function":"tr_read"}
+  inspect_r_length:u64 = const() {"value":16}
+  inspect_length:u64 = call(inspect_r,inspect_r_length) {"function":"tr_read"}
+  inspect_z:u64 = const() {"value":0}
+  inspect_max:u64 = const() {"value":64}
+  inspect_head:u64 = const() {"value":24}
+  inspect_okay:bool = compare.eq(inspect_code,inspect_z)
+  inspect_bound:bool = compare.le(inspect_length,inspect_max)
+  inspect_payload:u64 = int.add.wrap(inspect_length,inspect_head)
+  inspect_actual:u64 = int.cast(inspect_n) {"mode":"wrap"}
+  inspect_exact:bool = compare.eq(inspect_payload,inspect_actual)
+  inspect_valid:bool = bool.and(inspect_okay,inspect_bound)
+  inspect_safe:bool = bool.and(inspect_valid,inspect_exact)
+  branch inspect_safe typed(inspect_r,inspect_s,inspect_kind,inspect_length) bad()
+block typed(typed_r:readbuf,typed_s:mutbuf,typed_kind:u64,typed_length:u64)
+  typed_null:u64 = const() {"value":5}
+  typed_blob:u64 = const() {"value":4}
+  typed_integer:u64 = const() {"value":1}
+  typed_is_null:bool = compare.eq(typed_kind,typed_null)
+  typed_is_blob:bool = compare.eq(typed_kind,typed_blob)
+  typed_is_int:bool = compare.eq(typed_kind,typed_integer)
+  typed_z:u64 = const() {"value":0}
+  typed_eight:u64 = const() {"value":8}
+  typed_zero_len:bool = compare.eq(typed_length,typed_z)
+  typed_eight_len:bool = compare.eq(typed_length,typed_eight)
+  typed_null_ok:bool = bool.and(typed_is_null,typed_zero_len)
+  typed_int_ok:bool = bool.and(typed_is_int,typed_eight_len)
+  typed_nonblob:bool = bool.or(typed_null_ok,typed_int_ok)
+  typed_allowed:bool = bool.or(typed_nonblob,typed_is_blob)
+  typed_tag:u64 = select(typed_is_null,typed_z,typed_kind)
+  branch typed_allowed project(typed_r,typed_s,typed_tag,typed_length) bad()
+block project(project_r:readbuf,project_s:mutbuf,project_tag:u64,project_length:u64)
+  project_a_cursor:u64 = const() {"value":80}
+  project_cursor:u64 = call(project_s,project_a_cursor) {"function":"cp_get"}
+  project_eight:u64 = const() {"value":8}
+  project_head:u64 = const() {"value":16}
+  project_a:u64 = int.add.wrap(project_cursor,project_eight)
+  project_b:u64 = int.add.wrap(project_cursor,project_head)
+  project_next:u64 = int.add.wrap(project_b,project_length)
+  project_arena:u64 = const() {"value":8192}
+  project_safe:bool = compare.le(project_next,project_arena)
+  branch project_safe append(project_r,project_s,project_tag,project_length,project_cursor,project_a,project_b,project_next) bad()
+block append(append_r:readbuf,append_s:mutbuf,append_tag:u64,append_length:u64,append_cursor:u64,append_a:u64,append_b:u64,append_next:u64)
+  append__tag:u64 = call(append_s,append_cursor,append_tag) {"function":"cp_put"}
+  append__length:u64 = call(append_s,append_a,append_length) {"function":"cp_put"}
+  append_source:u64 = const() {"value":24}
+  append__copy:u64 = call(append_r,append_source,append_s,append_b,append_length) {"function":"cp_copy"}
+  append_d_next:u64 = const() {"value":80}
+  append__p_next:u64 = call(append_s,append_d_next,append_next) {"function":"cp_put"}
+  append_a_i:u64 = const() {"value":72}
+  append_i:u64 = call(append_s,append_a_i) {"function":"cp_get"}
+  append_last:u64 = const() {"value":10}
+  append_one:u64 = const() {"value":1}
+  append_end:bool = compare.eq(append_i,append_last)
+  append_j:u64 = int.add.wrap(append_i,append_one)
+  branch append_end add_row(append_s) read_col(append_s,append_j)
+block read_col(read_col_s:mutbuf,read_col_i:u64)
+  read_col_result:u32 = call(read_col_s,read_col_i) {"function":"hct_column"}
+  ret(read_col_result)
+block add_row(add_row_s:mutbuf)
+  add_row_a_rows:u64 = const() {"value":64}
+  add_row_rows:u64 = call(add_row_s,add_row_a_rows) {"function":"cp_get"}
+  add_row_one:u64 = const() {"value":1}
+  add_row_next:u64 = int.add.wrap(add_row_rows,add_row_one)
+  add_row_d_next:u64 = const() {"value":64}
+  add_row__p_next:u64 = call(add_row_s,add_row_d_next,add_row_next) {"function":"cp_put"}
+  jump step_stmt(add_row_s)
+block finish_stmt(finish_stmt_s:mutbuf)
+  finish_stmt_a_handle:u64 = const() {"value":40}
+  finish_stmt_handle:u64 = call(finish_stmt_s,finish_stmt_a_handle) {"function":"cp_get"}
+  finish_stmt_p:u64 = const() {"value":6}
+  finish_stmt_op:u64 = const() {"value":9}
+  finish_stmt_issued:u32 = call(finish_stmt_s,finish_stmt_p,finish_stmt_op,finish_stmt_handle) {"function":"sr_handle"}
+  ret(finish_stmt_issued)
+block finalized(finalized_r:readbuf,finalized_s:mutbuf,finalized_n:usize)
+  finalized_want:u64 = const() {"value":0}
+  finalized_okay:bool = call(finalized_r,finalized_n,finalized_want) {"function":"sr_status"}
+  branch finalized_okay script(finalized_s) bad()
+block script(script_s:mutbuf)
+  script_a_stage:u64 = const() {"value":48}
+  script_stage:u64 = call(script_s,script_a_stage) {"function":"cp_get"}
+  script_last:u64 = const() {"value":5}
+  script_one:u64 = const() {"value":1}
+  script_done:bool = compare.eq(script_stage,script_last)
+  script_next:u64 = int.add.wrap(script_stage,script_one)
+  branch script_done close(script_s) prepare_again(script_s,script_next)
+block prepare_again(prepare_again_s:mutbuf,prepare_again_next:u64)
+  prepare_again_d_next:u64 = const() {"value":48}
+  prepare_again__p_next:u64 = call(prepare_again_s,prepare_again_d_next,prepare_again_next) {"function":"cp_put"}
+  prepare_again_result:u32 = call(prepare_again_s) {"function":"hct_prepare"}
+  ret(prepare_again_result)
+block close(close_s:mutbuf)
+  close_a_handle:u64 = const() {"value":32}
+  close_handle:u64 = call(close_s,close_a_handle) {"function":"cp_get"}
+  close_p:u64 = const() {"value":7}
+  close_op:u64 = const() {"value":3}
+  close_issued:u32 = call(close_s,close_p,close_op,close_handle) {"function":"sr_handle"}
+  ret(close_issued)
+block closed(closed_r:readbuf,closed_s:mutbuf,closed_n:usize)
+  closed_want:u64 = const() {"value":0}
+  closed_okay:bool = call(closed_r,closed_n,closed_want) {"function":"sr_status"}
+  branch closed_okay publish(closed_s) bad()
+block publish(publish_s:mutbuf)
+  publish_a_rows:u64 = const() {"value":64}
+  publish_rows:u64 = call(publish_s,publish_a_rows) {"function":"cp_get"}
+  publish_d_rows:u64 = const() {"value":4096}
+  publish__p_rows:u64 = call(publish_s,publish_d_rows,publish_rows) {"function":"cp_put"}
+  publish_a_cursor:u64 = const() {"value":80}
+  publish_cursor:u64 = call(publish_s,publish_a_cursor) {"function":"cp_get"}
+  publish_base:u64 = const() {"value":4096}
+  publish_length:u64 = int.sub.wrap(publish_cursor,publish_base)
+  publish_d_length:u64 = const() {"value":24}
+  publish__p_length:u64 = call(publish_s,publish_d_length,publish_length) {"function":"cp_put"}
+  publish_code:u32 = const() {"value":0}
+  ret(publish_code)
+block bad()
+  bad_code:u32 = const() {"value":100}
+  ret(bad_code)
+end
+fn hct_prepare(entry_s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_s:mutbuf)
+  entry_a_db:u64 = const() {"value":32}
+  entry_db:u64 = call(entry_s,entry_a_db) {"function":"cp_get"}
+  entry_d_db:u64 = const() {"value":256}
+  entry__p_db:u64 = call(entry_s,entry_d_db,entry_db) {"function":"cp_put"}
+  entry_a_stage:u64 = const() {"value":48}
+  entry_stage:u64 = call(entry_s,entry_a_stage) {"function":"cp_get"}
+  jump route0(entry_s,entry_stage)
+block route0(route0_s:mutbuf,route0_stage:u64)
+  route0_expected:u64 = const() {"value":0}
+  route0_hit:bool = compare.eq(route0_expected,route0_stage)
+  branch route0_hit sql0(route0_s) route1(route0_s,route0_stage)
+block sql0(sql0_s:mutbuf)
+  sql0_sql_len:u64 = const() {"value":75}
+  sql0_d_sql_len:u64 = const() {"value":264}
+  sql0__p_sql_len:u64 = call(sql0_s,sql0_d_sql_len,sql0_sql_len) {"function":"cp_put"}
+  sql0_word0:u64 = const() {"value":6061921326615319107}
+  sql0_d_word0:u64 = const() {"value":272}
+  sql0__p_word0:u64 = call(sql0_s,sql0_d_word0,sql0_word0) {"function":"cp_put"}
+  sql0_word1:u64 = const() {"value":8028900126435852865}
+  sql0_d_word1:u64 = const() {"value":280}
+  sql0__p_word1:u64 = call(sql0_s,sql0_d_word1,sql0_word1) {"function":"cp_put"}
+  sql0_word2:u64 = const() {"value":4764918808570981219}
+  sql0_d_word2:u64 = const() {"value":288}
+  sql0__p_word2:u64 = call(sql0_s,sql0_d_word2,sql0_word2) {"function":"cp_put"}
+  sql0_word3:u64 = const() {"value":5569072918312406860}
+  sql0_d_word3:u64 = const() {"value":296}
+  sql0__p_word3:u64 = call(sql0_s,sql0_d_word3,sql0_word3) {"function":"cp_put"}
+  sql0_word4:u64 = const() {"value":3195661599563665985}
+  sql0_d_word4:u64 = const() {"value":304}
+  sql0__p_word4:u64 = call(sql0_s,sql0_d_word4,sql0_word4) {"function":"cp_put"}
+  sql0_word5:u64 = const() {"value":7506502696416993648}
+  sql0_d_word5:u64 = const() {"value":312}
+  sql0__p_word5:u64 = call(sql0_s,sql0_d_word5,sql0_word5) {"function":"cp_put"}
+  sql0_word6:u64 = const() {"value":7521904681118296421}
+  sql0_d_word6:u64 = const() {"value":320}
+  sql0__p_word6:u64 = call(sql0_s,sql0_d_word6,sql0_word6) {"function":"cp_put"}
+  sql0_word7:u64 = const() {"value":3200777783247530337}
+  sql0_d_word7:u64 = const() {"value":328}
+  sql0__p_word7:u64 = call(sql0_s,sql0_d_word7,sql0_word7) {"function":"cp_put"}
+  sql0_word8:u64 = const() {"value":8030585974903895155}
+  sql0_d_word8:u64 = const() {"value":336}
+  sql0__p_word8:u64 = call(sql0_s,sql0_d_word8,sql0_word8) {"function":"cp_put"}
+  sql0_word9:u64 = const() {"value":2716783}
+  sql0_d_word9:u64 = const() {"value":344}
+  sql0__p_word9:u64 = call(sql0_s,sql0_d_word9,sql0_word9) {"function":"cp_put"}
+  sql0_p:u64 = const() {"value":2}
+  sql0_op:u64 = const() {"value":5}
+  sql0_size:u64 = const() {"value":91}
+  sql0_issued:u32 = call(sql0_s,sql0_p,sql0_op,sql0_size) {"function":"sr_issue"}
+  ret(sql0_issued)
+block route1(route1_s:mutbuf,route1_stage:u64)
+  route1_expected:u64 = const() {"value":1}
+  route1_hit:bool = compare.eq(route1_expected,route1_stage)
+  branch route1_hit sql1(route1_s) route2(route1_s,route1_stage)
+block sql1(sql1_s:mutbuf)
+  sql1_sql_len:u64 = const() {"value":1322}
+  sql1_d_sql_len:u64 = const() {"value":264}
+  sql1__p_sql_len:u64 = call(sql1_s,sql1_d_sql_len,sql1_sql_len) {"function":"cp_put"}
+  sql1_word0:u64 = const() {"value":5269304276350619209}
+  sql1_d_word0:u64 = const() {"value":272}
+  sql1__p_word0:u64 = call(sql1_s,sql1_d_word0,sql1_word0) {"function":"cp_put"}
+  sql1_word1:u64 = const() {"value":7165064700874413134}
+  sql1_d_word1:u64 = const() {"value":280}
+  sql1__p_word1:u64 = call(sql1_s,sql1_d_word1,sql1_word1) {"function":"cp_put"}
+  sql1_word2:u64 = const() {"value":4995983205138985835}
+  sql1_d_word2:u64 = const() {"value":288}
+  sql1__p_word2:u64 = call(sql1_s,sql1_d_word2,sql1_word2) {"function":"cp_put"}
+  sql1_word3:u64 = const() {"value":3472328258243534931}
+  sql1_d_word3:u64 = const() {"value":296}
+  sql1__p_word3:u64 = call(sql1_s,sql1_d_word3,sql1_word3) {"function":"cp_put"}
+  sql1_word4:u64 = const() {"value":3472328296227680304}
+  sql1_d_word4:u64 = const() {"value":304}
+  sql1__p_word4:u64 = call(sql1_s,sql1_d_word4,sql1_word4) {"function":"cp_put"}
+  sql1_word5:u64 = const() {"value":3834592088812433456}
+  sql1_d_word5:u64 = const() {"value":312}
+  sql1__p_word5:u64 = call(sql1_s,sql1_d_word5,sql1_word5) {"function":"cp_put"}
+  sql1_word6:u64 = const() {"value":3834592118961550647}
+  sql1_d_word6:u64 = const() {"value":320}
+  sql1__p_word6:u64 = call(sql1_s,sql1_d_word6,sql1_word6) {"function":"cp_put"}
+  sql1_word7:u64 = const() {"value":3834592118961550647}
+  sql1_d_word7:u64 = const() {"value":328}
+  sql1__p_word7:u64 = call(sql1_s,sql1_d_word7,sql1_word7) {"function":"cp_put"}
+  sql1_word8:u64 = const() {"value":3834592118961550647}
+  sql1_d_word8:u64 = const() {"value":336}
+  sql1__p_word8:u64 = call(sql1_s,sql1_d_word8,sql1_word8) {"function":"cp_put"}
+  sql1_word9:u64 = const() {"value":3834592118961550647}
+  sql1_d_word9:u64 = const() {"value":344}
+  sql1__p_word9:u64 = call(sql1_s,sql1_d_word9,sql1_word9) {"function":"cp_put"}
+  sql1_word10:u64 = const() {"value":3834592118961550647}
+  sql1_d_word10:u64 = const() {"value":352}
+  sql1__p_word10:u64 = call(sql1_s,sql1_d_word10,sql1_word10) {"function":"cp_put"}
+  sql1_word11:u64 = const() {"value":5632920352003142967}
+  sql1_d_word11:u64 = const() {"value":360}
+  sql1__p_word11:u64 = call(sql1_s,sql1_d_word11,sql1_word11) {"function":"cp_put"}
+  sql1_word12:u64 = const() {"value":2835064550842977365}
+  sql1_d_word12:u64 = const() {"value":368}
+  sql1__p_word12:u64 = call(sql1_s,sql1_d_word12,sql1_word12) {"function":"cp_put"}
+  sql1_word13:u64 = const() {"value":3472328296227680304}
+  sql1_d_word13:u64 = const() {"value":376}
+  sql1__p_word13:u64 = call(sql1_s,sql1_d_word13,sql1_word13) {"function":"cp_put"}
+  sql1_word14:u64 = const() {"value":3472328296227680304}
+  sql1_d_word14:u64 = const() {"value":384}
+  sql1__p_word14:u64 = call(sql1_s,sql1_d_word14,sql1_word14) {"function":"cp_put"}
+  sql1_word15:u64 = const() {"value":3472328296227680304}
+  sql1_d_word15:u64 = const() {"value":392}
+  sql1__p_word15:u64 = call(sql1_s,sql1_d_word15,sql1_word15) {"function":"cp_put"}
+  sql1_word16:u64 = const() {"value":3472328296227680304}
+  sql1_d_word16:u64 = const() {"value":400}
+  sql1__p_word16:u64 = call(sql1_s,sql1_d_word16,sql1_word16) {"function":"cp_put"}
+  sql1_word17:u64 = const() {"value":3472328296227680304}
+  sql1_d_word17:u64 = const() {"value":408}
+  sql1__p_word17:u64 = call(sql1_s,sql1_d_word17,sql1_word17) {"function":"cp_put"}
+  sql1_word18:u64 = const() {"value":3472328296227680304}
+  sql1_d_word18:u64 = const() {"value":416}
+  sql1__p_word18:u64 = call(sql1_s,sql1_d_word18,sql1_word18) {"function":"cp_put"}
+  sql1_word19:u64 = const() {"value":3472328296227680304}
+  sql1_d_word19:u64 = const() {"value":424}
+  sql1__p_word19:u64 = call(sql1_s,sql1_d_word19,sql1_word19) {"function":"cp_put"}
+  sql1_word20:u64 = const() {"value":3472328296227680304}
+  sql1_d_word20:u64 = const() {"value":432}
+  sql1__p_word20:u64 = call(sql1_s,sql1_d_word20,sql1_word20) {"function":"cp_put"}
+  sql1_word21:u64 = const() {"value":3472328296227680304}
+  sql1_d_word21:u64 = const() {"value":440}
+  sql1__p_word21:u64 = call(sql1_s,sql1_d_word21,sql1_word21) {"function":"cp_put"}
+  sql1_word22:u64 = const() {"value":3472328296227680304}
+  sql1_d_word22:u64 = const() {"value":448}
+  sql1__p_word22:u64 = call(sql1_s,sql1_d_word22,sql1_word22) {"function":"cp_put"}
+  sql1_word23:u64 = const() {"value":3472328296227680304}
+  sql1_d_word23:u64 = const() {"value":456}
+  sql1__p_word23:u64 = call(sql1_s,sql1_d_word23,sql1_word23) {"function":"cp_put"}
+  sql1_word24:u64 = const() {"value":3472328296227680304}
+  sql1_d_word24:u64 = const() {"value":464}
+  sql1__p_word24:u64 = call(sql1_s,sql1_d_word24,sql1_word24) {"function":"cp_put"}
+  sql1_word25:u64 = const() {"value":3472328296227680304}
+  sql1_d_word25:u64 = const() {"value":472}
+  sql1__p_word25:u64 = call(sql1_s,sql1_d_word25,sql1_word25) {"function":"cp_put"}
+  sql1_word26:u64 = const() {"value":3472328296227680304}
+  sql1_d_word26:u64 = const() {"value":480}
+  sql1__p_word26:u64 = call(sql1_s,sql1_d_word26,sql1_word26) {"function":"cp_put"}
+  sql1_word27:u64 = const() {"value":3472328296227680304}
+  sql1_d_word27:u64 = const() {"value":488}
+  sql1__p_word27:u64 = call(sql1_s,sql1_d_word27,sql1_word27) {"function":"cp_put"}
+  sql1_word28:u64 = const() {"value":3472328296227680304}
+  sql1_d_word28:u64 = const() {"value":496}
+  sql1__p_word28:u64 = call(sql1_s,sql1_d_word28,sql1_word28) {"function":"cp_put"}
+  sql1_word29:u64 = const() {"value":7004611676365925415}
+  sql1_d_word29:u64 = const() {"value":504}
+  sql1__p_word29:u64 = call(sql1_s,sql1_d_word29,sql1_word29) {"function":"cp_put"}
+  sql1_word30:u64 = const() {"value":7004611677336723765}
+  sql1_d_word30:u64 = const() {"value":512}
+  sql1__p_word30:u64 = call(sql1_s,sql1_d_word30,sql1_word30) {"function":"cp_put"}
+  sql1_word31:u64 = const() {"value":7004611677336723765}
+  sql1_d_word31:u64 = const() {"value":520}
+  sql1__p_word31:u64 = call(sql1_s,sql1_d_word31,sql1_word31) {"function":"cp_put"}
+  sql1_word32:u64 = const() {"value":7004611677336723765}
+  sql1_d_word32:u64 = const() {"value":528}
+  sql1__p_word32:u64 = call(sql1_s,sql1_d_word32,sql1_word32) {"function":"cp_put"}
+  sql1_word33:u64 = const() {"value":7004611677336723765}
+  sql1_d_word33:u64 = const() {"value":536}
+  sql1__p_word33:u64 = call(sql1_s,sql1_d_word33,sql1_word33) {"function":"cp_put"}
+  sql1_word34:u64 = const() {"value":7004611677336723765}
+  sql1_d_word34:u64 = const() {"value":544}
+  sql1__p_word34:u64 = call(sql1_s,sql1_d_word34,sql1_word34) {"function":"cp_put"}
+  sql1_word35:u64 = const() {"value":7004611677336723765}
+  sql1_d_word35:u64 = const() {"value":552}
+  sql1__p_word35:u64 = call(sql1_s,sql1_d_word35,sql1_word35) {"function":"cp_put"}
+  sql1_word36:u64 = const() {"value":7004611677336723765}
+  sql1_d_word36:u64 = const() {"value":560}
+  sql1__p_word36:u64 = call(sql1_s,sql1_d_word36,sql1_word36) {"function":"cp_put"}
+  sql1_word37:u64 = const() {"value":2894733909603737909}
+  sql1_d_word37:u64 = const() {"value":568}
+  sql1__p_word37:u64 = call(sql1_s,sql1_d_word37,sql1_word37) {"function":"cp_put"}
+  sql1_word38:u64 = const() {"value":3472328296244455256}
+  sql1_d_word38:u64 = const() {"value":576}
+  sql1__p_word38:u64 = call(sql1_s,sql1_d_word38,sql1_word38) {"function":"cp_put"}
+  sql1_word39:u64 = const() {"value":3472328296227680304}
+  sql1_d_word39:u64 = const() {"value":584}
+  sql1__p_word39:u64 = call(sql1_s,sql1_d_word39,sql1_word39) {"function":"cp_put"}
+  sql1_word40:u64 = const() {"value":3978146547550728240}
+  sql1_d_word40:u64 = const() {"value":592}
+  sql1__p_word40:u64 = call(sql1_s,sql1_d_word40,sql1_word40) {"function":"cp_put"}
+  sql1_word41:u64 = const() {"value":3978146547550730037}
+  sql1_d_word41:u64 = const() {"value":600}
+  sql1__p_word41:u64 = call(sql1_s,sql1_d_word41,sql1_word41) {"function":"cp_put"}
+  sql1_word42:u64 = const() {"value":3978146547550730037}
+  sql1_d_word42:u64 = const() {"value":608}
+  sql1__p_word42:u64 = call(sql1_s,sql1_d_word42,sql1_word42) {"function":"cp_put"}
+  sql1_word43:u64 = const() {"value":3978146547550730037}
+  sql1_d_word43:u64 = const() {"value":616}
+  sql1__p_word43:u64 = call(sql1_s,sql1_d_word43,sql1_word43) {"function":"cp_put"}
+  sql1_word44:u64 = const() {"value":3978146547550730037}
+  sql1_d_word44:u64 = const() {"value":624}
+  sql1__p_word44:u64 = call(sql1_s,sql1_d_word44,sql1_word44) {"function":"cp_put"}
+  sql1_word45:u64 = const() {"value":3978146547550730037}
+  sql1_d_word45:u64 = const() {"value":632}
+  sql1__p_word45:u64 = call(sql1_s,sql1_d_word45,sql1_word45) {"function":"cp_put"}
+  sql1_word46:u64 = const() {"value":3472318572354025269}
+  sql1_d_word46:u64 = const() {"value":640}
+  sql1__p_word46:u64 = call(sql1_s,sql1_d_word46,sql1_word46) {"function":"cp_put"}
+  sql1_word47:u64 = const() {"value":3472328296227680304}
+  sql1_d_word47:u64 = const() {"value":648}
+  sql1__p_word47:u64 = call(sql1_s,sql1_d_word47,sql1_word47) {"function":"cp_put"}
+  sql1_word48:u64 = const() {"value":3978138829376729136}
+  sql1_d_word48:u64 = const() {"value":656}
+  sql1__p_word48:u64 = call(sql1_s,sql1_d_word48,sql1_word48) {"function":"cp_put"}
+  sql1_word49:u64 = const() {"value":3978146547550730037}
+  sql1_d_word49:u64 = const() {"value":664}
+  sql1__p_word49:u64 = call(sql1_s,sql1_d_word49,sql1_word49) {"function":"cp_put"}
+  sql1_word50:u64 = const() {"value":3978146547550730037}
+  sql1_d_word50:u64 = const() {"value":672}
+  sql1__p_word50:u64 = call(sql1_s,sql1_d_word50,sql1_word50) {"function":"cp_put"}
+  sql1_word51:u64 = const() {"value":3978146547550730037}
+  sql1_d_word51:u64 = const() {"value":680}
+  sql1__p_word51:u64 = call(sql1_s,sql1_d_word51,sql1_word51) {"function":"cp_put"}
+  sql1_word52:u64 = const() {"value":3978146547550730037}
+  sql1_d_word52:u64 = const() {"value":688}
+  sql1__p_word52:u64 = call(sql1_s,sql1_d_word52,sql1_word52) {"function":"cp_put"}
+  sql1_word53:u64 = const() {"value":3978146547550730037}
+  sql1_d_word53:u64 = const() {"value":696}
+  sql1__p_word53:u64 = call(sql1_s,sql1_d_word53,sql1_word53) {"function":"cp_put"}
+  sql1_word54:u64 = const() {"value":3181572363459573557}
+  sql1_d_word54:u64 = const() {"value":704}
+  sql1__p_word54:u64 = call(sql1_s,sql1_d_word54,sql1_word54) {"function":"cp_put"}
+  sql1_word55:u64 = const() {"value":3544386989628861489}
+  sql1_d_word55:u64 = const() {"value":712}
+  sql1__p_word55:u64 = call(sql1_s,sql1_d_word55,sql1_word55) {"function":"cp_put"}
+  sql1_word56:u64 = const() {"value":3544386989794013488}
+  sql1_d_word56:u64 = const() {"value":720}
+  sql1__p_word56:u64 = call(sql1_s,sql1_d_word56,sql1_word56) {"function":"cp_put"}
+  sql1_word57:u64 = const() {"value":3544386989794013488}
+  sql1_d_word57:u64 = const() {"value":728}
+  sql1__p_word57:u64 = call(sql1_s,sql1_d_word57,sql1_word57) {"function":"cp_put"}
+  sql1_word58:u64 = const() {"value":3544386989794013488}
+  sql1_d_word58:u64 = const() {"value":736}
+  sql1__p_word58:u64 = call(sql1_s,sql1_d_word58,sql1_word58) {"function":"cp_put"}
+  sql1_word59:u64 = const() {"value":3544386989794013488}
+  sql1_d_word59:u64 = const() {"value":744}
+  sql1__p_word59:u64 = call(sql1_s,sql1_d_word59,sql1_word59) {"function":"cp_put"}
+  sql1_word60:u64 = const() {"value":3544386989794013488}
+  sql1_d_word60:u64 = const() {"value":752}
+  sql1__p_word60:u64 = call(sql1_s,sql1_d_word60,sql1_word60) {"function":"cp_put"}
+  sql1_word61:u64 = const() {"value":3544386989794013488}
+  sql1_d_word61:u64 = const() {"value":760}
+  sql1__p_word61:u64 = call(sql1_s,sql1_d_word61,sql1_word61) {"function":"cp_put"}
+  sql1_word62:u64 = const() {"value":3544386989794013488}
+  sql1_d_word62:u64 = const() {"value":768}
+  sql1__p_word62:u64 = call(sql1_s,sql1_d_word62,sql1_word62) {"function":"cp_put"}
+  sql1_word63:u64 = const() {"value":3544386989794013488}
+  sql1_d_word63:u64 = const() {"value":776}
+  sql1__p_word63:u64 = call(sql1_s,sql1_d_word63,sql1_word63) {"function":"cp_put"}
+  sql1_word64:u64 = const() {"value":3544386989794013488}
+  sql1_d_word64:u64 = const() {"value":784}
+  sql1__p_word64:u64 = call(sql1_s,sql1_d_word64,sql1_word64) {"function":"cp_put"}
+  sql1_word65:u64 = const() {"value":3544386989794013488}
+  sql1_d_word65:u64 = const() {"value":792}
+  sql1__p_word65:u64 = call(sql1_s,sql1_d_word65,sql1_word65) {"function":"cp_put"}
+  sql1_word66:u64 = const() {"value":3544386989794013488}
+  sql1_d_word66:u64 = const() {"value":800}
+  sql1__p_word66:u64 = call(sql1_s,sql1_d_word66,sql1_word66) {"function":"cp_put"}
+  sql1_word67:u64 = const() {"value":3544386989794013488}
+  sql1_d_word67:u64 = const() {"value":808}
+  sql1__p_word67:u64 = call(sql1_s,sql1_d_word67,sql1_word67) {"function":"cp_put"}
+  sql1_word68:u64 = const() {"value":3544386989794013488}
+  sql1_d_word68:u64 = const() {"value":816}
+  sql1__p_word68:u64 = call(sql1_s,sql1_d_word68,sql1_word68) {"function":"cp_put"}
+  sql1_word69:u64 = const() {"value":3544386989794013488}
+  sql1_d_word69:u64 = const() {"value":824}
+  sql1__p_word69:u64 = call(sql1_s,sql1_d_word69,sql1_word69) {"function":"cp_put"}
+  sql1_word70:u64 = const() {"value":3544386989794013488}
+  sql1_d_word70:u64 = const() {"value":832}
+  sql1__p_word70:u64 = call(sql1_s,sql1_d_word70,sql1_word70) {"function":"cp_put"}
+  sql1_word71:u64 = const() {"value":2835064512270315824}
+  sql1_d_word71:u64 = const() {"value":840}
+  sql1__p_word71:u64 = call(sql1_s,sql1_d_word71,sql1_word71) {"function":"cp_put"}
+  sql1_word72:u64 = const() {"value":7076670370903056949}
+  sql1_d_word72:u64 = const() {"value":848}
+  sql1__p_word72:u64 = call(sql1_s,sql1_d_word72,sql1_word72) {"function":"cp_put"}
+  sql1_word73:u64 = const() {"value":7076670370903056949}
+  sql1_d_word73:u64 = const() {"value":856}
+  sql1__p_word73:u64 = call(sql1_s,sql1_d_word73,sql1_word73) {"function":"cp_put"}
+  sql1_word74:u64 = const() {"value":7076670370903056949}
+  sql1_d_word74:u64 = const() {"value":864}
+  sql1__p_word74:u64 = call(sql1_s,sql1_d_word74,sql1_word74) {"function":"cp_put"}
+  sql1_word75:u64 = const() {"value":7076670370903056949}
+  sql1_d_word75:u64 = const() {"value":872}
+  sql1__p_word75:u64 = call(sql1_s,sql1_d_word75,sql1_word75) {"function":"cp_put"}
+  sql1_word76:u64 = const() {"value":7076670370903056949}
+  sql1_d_word76:u64 = const() {"value":880}
+  sql1__p_word76:u64 = call(sql1_s,sql1_d_word76,sql1_word76) {"function":"cp_put"}
+  sql1_word77:u64 = const() {"value":7076670370903056949}
+  sql1_d_word77:u64 = const() {"value":888}
+  sql1__p_word77:u64 = call(sql1_s,sql1_d_word77,sql1_word77) {"function":"cp_put"}
+  sql1_word78:u64 = const() {"value":7076670370903056949}
+  sql1_d_word78:u64 = const() {"value":896}
+  sql1__p_word78:u64 = call(sql1_s,sql1_d_word78,sql1_word78) {"function":"cp_put"}
+  sql1_word79:u64 = const() {"value":7076670370903056949}
+  sql1_d_word79:u64 = const() {"value":904}
+  sql1__p_word79:u64 = call(sql1_s,sql1_d_word79,sql1_word79) {"function":"cp_put"}
+  sql1_word80:u64 = const() {"value":3616433760363096359}
+  sql1_d_word80:u64 = const() {"value":912}
+  sql1__p_word80:u64 = call(sql1_s,sql1_d_word80,sql1_word80) {"function":"cp_put"}
+  sql1_word81:u64 = const() {"value":3472328296227680304}
+  sql1_d_word81:u64 = const() {"value":920}
+  sql1__p_word81:u64 = call(sql1_s,sql1_d_word81,sql1_word81) {"function":"cp_put"}
+  sql1_word82:u64 = const() {"value":3978138829376729136}
+  sql1_d_word82:u64 = const() {"value":928}
+  sql1__p_word82:u64 = call(sql1_s,sql1_d_word82,sql1_word82) {"function":"cp_put"}
+  sql1_word83:u64 = const() {"value":3978146547550730037}
+  sql1_d_word83:u64 = const() {"value":936}
+  sql1__p_word83:u64 = call(sql1_s,sql1_d_word83,sql1_word83) {"function":"cp_put"}
+  sql1_word84:u64 = const() {"value":3978146547550730037}
+  sql1_d_word84:u64 = const() {"value":944}
+  sql1__p_word84:u64 = call(sql1_s,sql1_d_word84,sql1_word84) {"function":"cp_put"}
+  sql1_word85:u64 = const() {"value":3978146547550730037}
+  sql1_d_word85:u64 = const() {"value":952}
+  sql1__p_word85:u64 = call(sql1_s,sql1_d_word85,sql1_word85) {"function":"cp_put"}
+  sql1_word86:u64 = const() {"value":3978146547550730037}
+  sql1_d_word86:u64 = const() {"value":960}
+  sql1__p_word86:u64 = call(sql1_s,sql1_d_word86,sql1_word86) {"function":"cp_put"}
+  sql1_word87:u64 = const() {"value":3978146547550730037}
+  sql1_d_word87:u64 = const() {"value":968}
+  sql1__p_word87:u64 = call(sql1_s,sql1_d_word87,sql1_word87) {"function":"cp_put"}
+  sql1_word88:u64 = const() {"value":3181572363459573557}
+  sql1_d_word88:u64 = const() {"value":976}
+  sql1__p_word88:u64 = call(sql1_s,sql1_d_word88,sql1_word88) {"function":"cp_put"}
+  sql1_word89:u64 = const() {"value":3472328296244455256}
+  sql1_d_word89:u64 = const() {"value":984}
+  sql1__p_word89:u64 = call(sql1_s,sql1_d_word89,sql1_word89) {"function":"cp_put"}
+  sql1_word90:u64 = const() {"value":3472328296227680304}
+  sql1_d_word90:u64 = const() {"value":992}
+  sql1__p_word90:u64 = call(sql1_s,sql1_d_word90,sql1_word90) {"function":"cp_put"}
+  sql1_word91:u64 = const() {"value":3978146547550728240}
+  sql1_d_word91:u64 = const() {"value":1000}
+  sql1__p_word91:u64 = call(sql1_s,sql1_d_word91,sql1_word91) {"function":"cp_put"}
+  sql1_word92:u64 = const() {"value":3978146547550730037}
+  sql1_d_word92:u64 = const() {"value":1008}
+  sql1__p_word92:u64 = call(sql1_s,sql1_d_word92,sql1_word92) {"function":"cp_put"}
+  sql1_word93:u64 = const() {"value":3978146547550730037}
+  sql1_d_word93:u64 = const() {"value":1016}
+  sql1__p_word93:u64 = call(sql1_s,sql1_d_word93,sql1_word93) {"function":"cp_put"}
+  sql1_word94:u64 = const() {"value":3978146547550730037}
+  sql1_d_word94:u64 = const() {"value":1024}
+  sql1__p_word94:u64 = call(sql1_s,sql1_d_word94,sql1_word94) {"function":"cp_put"}
+  sql1_word95:u64 = const() {"value":3978146547550730037}
+  sql1_d_word95:u64 = const() {"value":1032}
+  sql1__p_word95:u64 = call(sql1_s,sql1_d_word95,sql1_word95) {"function":"cp_put"}
+  sql1_word96:u64 = const() {"value":3978146547550730037}
+  sql1_d_word96:u64 = const() {"value":1040}
+  sql1__p_word96:u64 = call(sql1_s,sql1_d_word96,sql1_word96) {"function":"cp_put"}
+  sql1_word97:u64 = const() {"value":2835064559430481717}
+  sql1_d_word97:u64 = const() {"value":1048}
+  sql1__p_word97:u64 = call(sql1_s,sql1_d_word97,sql1_word97) {"function":"cp_put"}
+  sql1_word98:u64 = const() {"value":3616445683360346672}
+  sql1_d_word98:u64 = const() {"value":1056}
+  sql1__p_word98:u64 = call(sql1_s,sql1_d_word98,sql1_word98) {"function":"cp_put"}
+  sql1_word99:u64 = const() {"value":3616445683360346672}
+  sql1_d_word99:u64 = const() {"value":1064}
+  sql1__p_word99:u64 = call(sql1_s,sql1_d_word99,sql1_word99) {"function":"cp_put"}
+  sql1_word100:u64 = const() {"value":3616445683360346672}
+  sql1_d_word100:u64 = const() {"value":1072}
+  sql1__p_word100:u64 = call(sql1_s,sql1_d_word100,sql1_word100) {"function":"cp_put"}
+  sql1_word101:u64 = const() {"value":3616445683360346672}
+  sql1_d_word101:u64 = const() {"value":1080}
+  sql1__p_word101:u64 = call(sql1_s,sql1_d_word101,sql1_word101) {"function":"cp_put"}
+  sql1_word102:u64 = const() {"value":3616445683360346672}
+  sql1_d_word102:u64 = const() {"value":1088}
+  sql1__p_word102:u64 = call(sql1_s,sql1_d_word102,sql1_word102) {"function":"cp_put"}
+  sql1_word103:u64 = const() {"value":3616445683360346672}
+  sql1_d_word103:u64 = const() {"value":1096}
+  sql1__p_word103:u64 = call(sql1_s,sql1_d_word103,sql1_word103) {"function":"cp_put"}
+  sql1_word104:u64 = const() {"value":3616445683360346672}
+  sql1_d_word104:u64 = const() {"value":1104}
+  sql1__p_word104:u64 = call(sql1_s,sql1_d_word104,sql1_word104) {"function":"cp_put"}
+  sql1_word105:u64 = const() {"value":3616445683360346672}
+  sql1_d_word105:u64 = const() {"value":1112}
+  sql1__p_word105:u64 = call(sql1_s,sql1_d_word105,sql1_word105) {"function":"cp_put"}
+  sql1_word106:u64 = const() {"value":3616445683360346672}
+  sql1_d_word106:u64 = const() {"value":1120}
+  sql1__p_word106:u64 = call(sql1_s,sql1_d_word106,sql1_word106) {"function":"cp_put"}
+  sql1_word107:u64 = const() {"value":3616445683360346672}
+  sql1_d_word107:u64 = const() {"value":1128}
+  sql1__p_word107:u64 = call(sql1_s,sql1_d_word107,sql1_word107) {"function":"cp_put"}
+  sql1_word108:u64 = const() {"value":3616445683360346672}
+  sql1_d_word108:u64 = const() {"value":1136}
+  sql1__p_word108:u64 = call(sql1_s,sql1_d_word108,sql1_word108) {"function":"cp_put"}
+  sql1_word109:u64 = const() {"value":3616445683360346672}
+  sql1_d_word109:u64 = const() {"value":1144}
+  sql1__p_word109:u64 = call(sql1_s,sql1_d_word109,sql1_word109) {"function":"cp_put"}
+  sql1_word110:u64 = const() {"value":3616445683360346672}
+  sql1_d_word110:u64 = const() {"value":1152}
+  sql1__p_word110:u64 = call(sql1_s,sql1_d_word110,sql1_word110) {"function":"cp_put"}
+  sql1_word111:u64 = const() {"value":3616445683360346672}
+  sql1_d_word111:u64 = const() {"value":1160}
+  sql1__p_word111:u64 = call(sql1_s,sql1_d_word111,sql1_word111) {"function":"cp_put"}
+  sql1_word112:u64 = const() {"value":3616445683360346672}
+  sql1_d_word112:u64 = const() {"value":1168}
+  sql1__p_word112:u64 = call(sql1_s,sql1_d_word112,sql1_word112) {"function":"cp_put"}
+  sql1_word113:u64 = const() {"value":3616445683360346672}
+  sql1_d_word113:u64 = const() {"value":1176}
+  sql1__p_word113:u64 = call(sql1_s,sql1_d_word113,sql1_word113) {"function":"cp_put"}
+  sql1_word114:u64 = const() {"value":4050205240834141223}
+  sql1_d_word114:u64 = const() {"value":1184}
+  sql1__p_word114:u64 = call(sql1_s,sql1_d_word114,sql1_word114) {"function":"cp_put"}
+  sql1_word115:u64 = const() {"value":4050205241117063221}
+  sql1_d_word115:u64 = const() {"value":1192}
+  sql1__p_word115:u64 = call(sql1_s,sql1_d_word115,sql1_word115) {"function":"cp_put"}
+  sql1_word116:u64 = const() {"value":4050205241117063221}
+  sql1_d_word116:u64 = const() {"value":1200}
+  sql1__p_word116:u64 = call(sql1_s,sql1_d_word116,sql1_word116) {"function":"cp_put"}
+  sql1_word117:u64 = const() {"value":4050205241117063221}
+  sql1_d_word117:u64 = const() {"value":1208}
+  sql1__p_word117:u64 = call(sql1_s,sql1_d_word117,sql1_word117) {"function":"cp_put"}
+  sql1_word118:u64 = const() {"value":4050205241117063221}
+  sql1_d_word118:u64 = const() {"value":1216}
+  sql1__p_word118:u64 = call(sql1_s,sql1_d_word118,sql1_word118) {"function":"cp_put"}
+  sql1_word119:u64 = const() {"value":4050205241117063221}
+  sql1_d_word119:u64 = const() {"value":1224}
+  sql1__p_word119:u64 = call(sql1_s,sql1_d_word119,sql1_word119) {"function":"cp_put"}
+  sql1_word120:u64 = const() {"value":4050205241117063221}
+  sql1_d_word120:u64 = const() {"value":1232}
+  sql1__p_word120:u64 = call(sql1_s,sql1_d_word120,sql1_word120) {"function":"cp_put"}
+  sql1_word121:u64 = const() {"value":4050205241117063221}
+  sql1_d_word121:u64 = const() {"value":1240}
+  sql1__p_word121:u64 = call(sql1_s,sql1_d_word121,sql1_word121) {"function":"cp_put"}
+  sql1_word122:u64 = const() {"value":2894733908915861557}
+  sql1_d_word122:u64 = const() {"value":1248}
+  sql1__p_word122:u64 = call(sql1_s,sql1_d_word122,sql1_word122) {"function":"cp_put"}
+  sql1_word123:u64 = const() {"value":3472328296278009688}
+  sql1_d_word123:u64 = const() {"value":1256}
+  sql1__p_word123:u64 = call(sql1_s,sql1_d_word123,sql1_word123) {"function":"cp_put"}
+  sql1_word124:u64 = const() {"value":3472328296227680304}
+  sql1_d_word124:u64 = const() {"value":1264}
+  sql1__p_word124:u64 = call(sql1_s,sql1_d_word124,sql1_word124) {"function":"cp_put"}
+  sql1_word125:u64 = const() {"value":3978146547550728240}
+  sql1_d_word125:u64 = const() {"value":1272}
+  sql1__p_word125:u64 = call(sql1_s,sql1_d_word125,sql1_word125) {"function":"cp_put"}
+  sql1_word126:u64 = const() {"value":3978146547550730037}
+  sql1_d_word126:u64 = const() {"value":1280}
+  sql1__p_word126:u64 = call(sql1_s,sql1_d_word126,sql1_word126) {"function":"cp_put"}
+  sql1_word127:u64 = const() {"value":3978146547550730037}
+  sql1_d_word127:u64 = const() {"value":1288}
+  sql1__p_word127:u64 = call(sql1_s,sql1_d_word127,sql1_word127) {"function":"cp_put"}
+  sql1_word128:u64 = const() {"value":3978146547550730037}
+  sql1_d_word128:u64 = const() {"value":1296}
+  sql1__p_word128:u64 = call(sql1_s,sql1_d_word128,sql1_word128) {"function":"cp_put"}
+  sql1_word129:u64 = const() {"value":3978146547550730037}
+  sql1_d_word129:u64 = const() {"value":1304}
+  sql1__p_word129:u64 = call(sql1_s,sql1_d_word129,sql1_word129) {"function":"cp_put"}
+  sql1_word130:u64 = const() {"value":3978146547550730037}
+  sql1_d_word130:u64 = const() {"value":1312}
+  sql1__p_word130:u64 = call(sql1_s,sql1_d_word130,sql1_word130) {"function":"cp_put"}
+  sql1_word131:u64 = const() {"value":3616433760429881141}
+  sql1_d_word131:u64 = const() {"value":1320}
+  sql1__p_word131:u64 = call(sql1_s,sql1_d_word131,sql1_word131) {"function":"cp_put"}
+  sql1_word132:u64 = const() {"value":3472328296227680304}
+  sql1_d_word132:u64 = const() {"value":1328}
+  sql1__p_word132:u64 = call(sql1_s,sql1_d_word132,sql1_word132) {"function":"cp_put"}
+  sql1_word133:u64 = const() {"value":3978138829376729136}
+  sql1_d_word133:u64 = const() {"value":1336}
+  sql1__p_word133:u64 = call(sql1_s,sql1_d_word133,sql1_word133) {"function":"cp_put"}
+  sql1_word134:u64 = const() {"value":3978146547550730037}
+  sql1_d_word134:u64 = const() {"value":1344}
+  sql1__p_word134:u64 = call(sql1_s,sql1_d_word134,sql1_word134) {"function":"cp_put"}
+  sql1_word135:u64 = const() {"value":3978146547550730037}
+  sql1_d_word135:u64 = const() {"value":1352}
+  sql1__p_word135:u64 = call(sql1_s,sql1_d_word135,sql1_word135) {"function":"cp_put"}
+  sql1_word136:u64 = const() {"value":3978146547550730037}
+  sql1_d_word136:u64 = const() {"value":1360}
+  sql1__p_word136:u64 = call(sql1_s,sql1_d_word136,sql1_word136) {"function":"cp_put"}
+  sql1_word137:u64 = const() {"value":3978146547550730037}
+  sql1_d_word137:u64 = const() {"value":1368}
+  sql1__p_word137:u64 = call(sql1_s,sql1_d_word137,sql1_word137) {"function":"cp_put"}
+  sql1_word138:u64 = const() {"value":3978146547550730037}
+  sql1_d_word138:u64 = const() {"value":1376}
+  sql1__p_word138:u64 = call(sql1_s,sql1_d_word138,sql1_word138) {"function":"cp_put"}
+  sql1_word139:u64 = const() {"value":3181572363459573557}
+  sql1_d_word139:u64 = const() {"value":1384}
+  sql1__p_word139:u64 = call(sql1_s,sql1_d_word139,sql1_word139) {"function":"cp_put"}
+  sql1_word140:u64 = const() {"value":3688504376727972915}
+  sql1_d_word140:u64 = const() {"value":1392}
+  sql1__p_word140:u64 = call(sql1_s,sql1_d_word140,sql1_word140) {"function":"cp_put"}
+  sql1_word141:u64 = const() {"value":3688504376926679856}
+  sql1_d_word141:u64 = const() {"value":1400}
+  sql1__p_word141:u64 = call(sql1_s,sql1_d_word141,sql1_word141) {"function":"cp_put"}
+  sql1_word142:u64 = const() {"value":3688504376926679856}
+  sql1_d_word142:u64 = const() {"value":1408}
+  sql1__p_word142:u64 = call(sql1_s,sql1_d_word142,sql1_word142) {"function":"cp_put"}
+  sql1_word143:u64 = const() {"value":3688504376926679856}
+  sql1_d_word143:u64 = const() {"value":1416}
+  sql1__p_word143:u64 = call(sql1_s,sql1_d_word143,sql1_word143) {"function":"cp_put"}
+  sql1_word144:u64 = const() {"value":3688504376926679856}
+  sql1_d_word144:u64 = const() {"value":1424}
+  sql1__p_word144:u64 = call(sql1_s,sql1_d_word144,sql1_word144) {"function":"cp_put"}
+  sql1_word145:u64 = const() {"value":3688504376926679856}
+  sql1_d_word145:u64 = const() {"value":1432}
+  sql1__p_word145:u64 = call(sql1_s,sql1_d_word145,sql1_word145) {"function":"cp_put"}
+  sql1_word146:u64 = const() {"value":3688504376926679856}
+  sql1_d_word146:u64 = const() {"value":1440}
+  sql1__p_word146:u64 = call(sql1_s,sql1_d_word146,sql1_word146) {"function":"cp_put"}
+  sql1_word147:u64 = const() {"value":3688504376926679856}
+  sql1_d_word147:u64 = const() {"value":1448}
+  sql1__p_word147:u64 = call(sql1_s,sql1_d_word147,sql1_word147) {"function":"cp_put"}
+  sql1_word148:u64 = const() {"value":3688504376926679856}
+  sql1_d_word148:u64 = const() {"value":1456}
+  sql1__p_word148:u64 = call(sql1_s,sql1_d_word148,sql1_word148) {"function":"cp_put"}
+  sql1_word149:u64 = const() {"value":3688504376926679856}
+  sql1_d_word149:u64 = const() {"value":1464}
+  sql1__p_word149:u64 = call(sql1_s,sql1_d_word149,sql1_word149) {"function":"cp_put"}
+  sql1_word150:u64 = const() {"value":3688504376926679856}
+  sql1_d_word150:u64 = const() {"value":1472}
+  sql1__p_word150:u64 = call(sql1_s,sql1_d_word150,sql1_word150) {"function":"cp_put"}
+  sql1_word151:u64 = const() {"value":3688504376926679856}
+  sql1_d_word151:u64 = const() {"value":1480}
+  sql1__p_word151:u64 = call(sql1_s,sql1_d_word151,sql1_word151) {"function":"cp_put"}
+  sql1_word152:u64 = const() {"value":3688504376926679856}
+  sql1_d_word152:u64 = const() {"value":1488}
+  sql1__p_word152:u64 = call(sql1_s,sql1_d_word152,sql1_word152) {"function":"cp_put"}
+  sql1_word153:u64 = const() {"value":3688504376926679856}
+  sql1_d_word153:u64 = const() {"value":1496}
+  sql1__p_word153:u64 = call(sql1_s,sql1_d_word153,sql1_word153) {"function":"cp_put"}
+  sql1_word154:u64 = const() {"value":3688504376926679856}
+  sql1_d_word154:u64 = const() {"value":1504}
+  sql1__p_word154:u64 = call(sql1_s,sql1_d_word154,sql1_word154) {"function":"cp_put"}
+  sql1_word155:u64 = const() {"value":3688504376926679856}
+  sql1_d_word155:u64 = const() {"value":1512}
+  sql1__p_word155:u64 = call(sql1_s,sql1_d_word155,sql1_word155) {"function":"cp_put"}
+  sql1_word156:u64 = const() {"value":2835064512303870768}
+  sql1_d_word156:u64 = const() {"value":1520}
+  sql1__p_word156:u64 = call(sql1_s,sql1_d_word156,sql1_word156) {"function":"cp_put"}
+  sql1_word157:u64 = const() {"value":4122263934683396405}
+  sql1_d_word157:u64 = const() {"value":1528}
+  sql1__p_word157:u64 = call(sql1_s,sql1_d_word157,sql1_word157) {"function":"cp_put"}
+  sql1_word158:u64 = const() {"value":4122263934683396405}
+  sql1_d_word158:u64 = const() {"value":1536}
+  sql1__p_word158:u64 = call(sql1_s,sql1_d_word158,sql1_word158) {"function":"cp_put"}
+  sql1_word159:u64 = const() {"value":4122263934683396405}
+  sql1_d_word159:u64 = const() {"value":1544}
+  sql1__p_word159:u64 = call(sql1_s,sql1_d_word159,sql1_word159) {"function":"cp_put"}
+  sql1_word160:u64 = const() {"value":4122263934683396405}
+  sql1_d_word160:u64 = const() {"value":1552}
+  sql1__p_word160:u64 = call(sql1_s,sql1_d_word160,sql1_word160) {"function":"cp_put"}
+  sql1_word161:u64 = const() {"value":4122263934683396405}
+  sql1_d_word161:u64 = const() {"value":1560}
+  sql1__p_word161:u64 = call(sql1_s,sql1_d_word161,sql1_word161) {"function":"cp_put"}
+  sql1_word162:u64 = const() {"value":4122263934683396405}
+  sql1_d_word162:u64 = const() {"value":1568}
+  sql1__p_word162:u64 = call(sql1_s,sql1_d_word162,sql1_word162) {"function":"cp_put"}
+  sql1_word163:u64 = const() {"value":4122263934683396405}
+  sql1_d_word163:u64 = const() {"value":1576}
+  sql1__p_word163:u64 = call(sql1_s,sql1_d_word163,sql1_word163) {"function":"cp_put"}
+  sql1_word164:u64 = const() {"value":4122263934683396405}
+  sql1_d_word164:u64 = const() {"value":1584}
+  sql1__p_word164:u64 = call(sql1_s,sql1_d_word164,sql1_word164) {"function":"cp_put"}
+  sql1_word165:u64 = const() {"value":10535}
+  sql1_d_word165:u64 = const() {"value":1592}
+  sql1__p_word165:u64 = call(sql1_s,sql1_d_word165,sql1_word165) {"function":"cp_put"}
+  sql1_p:u64 = const() {"value":2}
+  sql1_op:u64 = const() {"value":5}
+  sql1_size:u64 = const() {"value":1338}
+  sql1_issued:u32 = call(sql1_s,sql1_p,sql1_op,sql1_size) {"function":"sr_issue"}
+  ret(sql1_issued)
+block route2(route2_s:mutbuf,route2_stage:u64)
+  route2_expected:u64 = const() {"value":2}
+  route2_hit:bool = compare.eq(route2_expected,route2_stage)
+  branch route2_hit sql2(route2_s) route3(route2_s,route2_stage)
+block sql2(sql2_s:mutbuf)
+  sql2_sql_len:u64 = const() {"value":20}
+  sql2_d_sql_len:u64 = const() {"value":264}
+  sql2__p_sql_len:u64 = call(sql2_s,sql2_d_sql_len,sql2_sql_len) {"function":"cp_put"}
+  sql2_word0:u64 = const() {"value":8151587125704348240}
+  sql2_d_word0:u64 = const() {"value":272}
+  sql2__p_word0:u64 = call(sql2_s,sql2_d_word0,sql2_word0) {"function":"cp_put"}
+  sql2_word1:u64 = const() {"value":7813304859384505717}
+  sql2_d_word1:u64 = const() {"value":280}
+  sql2__p_word1:u64 = call(sql2_s,sql2_d_word1,sql2_word1) {"function":"cp_put"}
+  sql2_word2:u64 = const() {"value":1313815929}
+  sql2_d_word2:u64 = const() {"value":288}
+  sql2__p_word2:u64 = call(sql2_s,sql2_d_word2,sql2_word2) {"function":"cp_put"}
+  sql2_p:u64 = const() {"value":2}
+  sql2_op:u64 = const() {"value":5}
+  sql2_size:u64 = const() {"value":36}
+  sql2_issued:u32 = call(sql2_s,sql2_p,sql2_op,sql2_size) {"function":"sr_issue"}
+  ret(sql2_issued)
+block route3(route3_s:mutbuf,route3_stage:u64)
+  route3_expected:u64 = const() {"value":3}
+  route3_hit:bool = compare.eq(route3_expected,route3_stage)
+  branch route3_hit sql3(route3_s) route4(route3_s,route3_stage)
+block sql3(sql3_s:mutbuf)
+  sql3_sql_len:u64 = const() {"value":14}
+  sql3_d_sql_len:u64 = const() {"value":264}
+  sql3__p_sql_len:u64 = call(sql3_s,sql3_d_sql_len,sql3_sql_len) {"function":"cp_put"}
+  sql3_word0:u64 = const() {"value":4991149807642297666}
+  sql3_d_word0:u64 = const() {"value":272}
+  sql3__p_word0:u64 = call(sql3_s,sql3_d_word0,sql3_word0) {"function":"cp_put"}
+  sql3_word1:u64 = const() {"value":75064524555590}
+  sql3_d_word1:u64 = const() {"value":280}
+  sql3__p_word1:u64 = call(sql3_s,sql3_d_word1,sql3_word1) {"function":"cp_put"}
+  sql3_p:u64 = const() {"value":2}
+  sql3_op:u64 = const() {"value":5}
+  sql3_size:u64 = const() {"value":30}
+  sql3_issued:u32 = call(sql3_s,sql3_p,sql3_op,sql3_size) {"function":"sr_issue"}
+  ret(sql3_issued)
+block route4(route4_s:mutbuf,route4_stage:u64)
+  route4_expected:u64 = const() {"value":4}
+  route4_hit:bool = compare.eq(route4_expected,route4_stage)
+  branch route4_hit sql4(route4_s) route5(route4_s,route4_stage)
+block sql4(sql4_s:mutbuf)
+  sql4_sql_len:u64 = const() {"value":624}
+  sql4_d_sql_len:u64 = const() {"value":264}
+  sql4__p_sql_len:u64 = call(sql4_s,sql4_d_sql_len,sql4_sql_len) {"function":"cp_put"}
+  sql4_word0:u64 = const() {"value":4847370872540121431}
+  sql4_d_word0:u64 = const() {"value":272}
+  sql4__p_word0:u64 = call(sql4_s,sql4_d_word0,sql4_word0) {"function":"cp_put"}
+  sql4_word1:u64 = const() {"value":6998670057833452117}
+  sql4_d_word1:u64 = const() {"value":280}
+  sql4__p_word1:u64 = call(sql4_s,sql4_d_word1,sql4_word1) {"function":"cp_put"}
+  sql4_word2:u64 = const() {"value":2916488078176904046}
+  sql4_d_word2:u64 = const() {"value":288}
+  sql4__p_word2:u64 = call(sql4_s,sql4_d_word2,sql4_word2) {"function":"cp_put"}
+  sql4_word3:u64 = const() {"value":7954890079639200873}
+  sql4_d_word3:u64 = const() {"value":296}
+  sql4__p_word3:u64 = call(sql4_s,sql4_d_word3,sql4_word3) {"function":"cp_put"}
+  sql4_word4:u64 = const() {"value":7020664749254716532}
+  sql4_d_word4:u64 = const() {"value":304}
+  sql4__p_word4:u64 = call(sql4_s,sql4_d_word4,sql4_word4) {"function":"cp_put"}
+  sql4_word5:u64 = const() {"value":731870481394706796}
+  sql4_d_word5:u64 = const() {"value":312}
+  sql4__p_word5:u64 = call(sql4_s,sql4_d_word5,sql4_word5) {"function":"cp_put"}
+  sql4_word6:u64 = const() {"value":2314885530818453536}
+  sql4_d_word6:u64 = const() {"value":320}
+  sql4__p_word6:u64 = call(sql4_s,sql4_d_word6,sql4_word6) {"function":"cp_put"}
+  sql4_word7:u64 = const() {"value":2314885530818453536}
+  sql4_d_word7:u64 = const() {"value":328}
+  sql4__p_word7:u64 = call(sql4_s,sql4_d_word7,sql4_word7) {"function":"cp_put"}
+  sql4_word8:u64 = const() {"value":2329560872168805152}
+  sql4_d_word8:u64 = const() {"value":336}
+  sql4__p_word8:u64 = call(sql4_s,sql4_d_word8,sql4_word8) {"function":"cp_put"}
+  sql4_word9:u64 = const() {"value":7954890079639200873}
+  sql4_d_word9:u64 = const() {"value":344}
+  sql4__p_word9:u64 = call(sql4_s,sql4_d_word9,sql4_word9) {"function":"cp_put"}
+  sql4_word10:u64 = const() {"value":5570761725221809268}
+  sql4_d_word10:u64 = const() {"value":352}
+  sql4__p_word10:u64 = call(sql4_s,sql4_d_word10,sql4_word10) {"function":"cp_put"}
+  sql4_word11:u64 = const() {"value":753063637516313120}
+  sql4_d_word11:u64 = const() {"value":360}
+  sql4__p_word11:u64 = call(sql4_s,sql4_d_word11,sql4_word11) {"function":"cp_put"}
+  sql4_word12:u64 = const() {"value":2314885530818453536}
+  sql4_d_word12:u64 = const() {"value":368}
+  sql4__p_word12:u64 = call(sql4_s,sql4_d_word12,sql4_word12) {"function":"cp_put"}
+  sql4_word13:u64 = const() {"value":2314885530818453536}
+  sql4_d_word13:u64 = const() {"value":376}
+  sql4__p_word13:u64 = call(sql4_s,sql4_d_word13,sql4_word13) {"function":"cp_put"}
+  sql4_word14:u64 = const() {"value":7575130792889177888}
+  sql4_d_word14:u64 = const() {"value":384}
+  sql4__p_word14:u64 = call(sql4_s,sql4_d_word14,sql4_word14) {"function":"cp_put"}
+  sql4_word15:u64 = const() {"value":4921943049283517796}
+  sql4_d_word15:u64 = const() {"value":392}
+  sql4__p_word15:u64 = call(sql4_s,sql4_d_word15,sql4_word15) {"function":"cp_put"}
+  sql4_word16:u64 = const() {"value":2319986289835010336}
+  sql4_d_word16:u64 = const() {"value":400}
+  sql4__p_word16:u64 = call(sql4_s,sql4_d_word16,sql4_word16) {"function":"cp_put"}
+  sql4_word17:u64 = const() {"value":4404912313220746817}
+  sql4_d_word17:u64 = const() {"value":408}
+  sql4__p_word17:u64 = call(sql4_s,sql4_d_word17,sql4_word17) {"function":"cp_put"}
+  sql4_word18:u64 = const() {"value":2314885530817016639}
+  sql4_d_word18:u64 = const() {"value":416}
+  sql4__p_word18:u64 = call(sql4_s,sql4_d_word18,sql4_word18) {"function":"cp_put"}
+  sql4_word19:u64 = const() {"value":2314885530818453536}
+  sql4_d_word19:u64 = const() {"value":424}
+  sql4__p_word19:u64 = call(sql4_s,sql4_d_word19,sql4_word19) {"function":"cp_put"}
+  sql4_word20:u64 = const() {"value":5713183729814347808}
+  sql4_d_word20:u64 = const() {"value":432}
+  sql4__p_word20:u64 = call(sql4_s,sql4_d_word20,sql4_word20) {"function":"cp_put"}
+  sql4_word21:u64 = const() {"value":2314861531281563726}
+  sql4_d_word21:u64 = const() {"value":440}
+  sql4__p_word21:u64 = call(sql4_s,sql4_d_word21,sql4_word21) {"function":"cp_put"}
+  sql4_word22:u64 = const() {"value":2314885530818453536}
+  sql4_d_word22:u64 = const() {"value":448}
+  sql4__p_word22:u64 = call(sql4_s,sql4_d_word22,sql4_word22) {"function":"cp_put"}
+  sql4_word23:u64 = const() {"value":5989822826752778272}
+  sql4_d_word23:u64 = const() {"value":456}
+  sql4__p_word23:u64 = call(sql4_s,sql4_d_word23,sql4_word23) {"function":"cp_put"}
+  sql4_word24:u64 = const() {"value":3342269419740286021}
+  sql4_d_word24:u64 = const() {"value":464}
+  sql4__p_word24:u64 = call(sql4_s,sql4_d_word24,sql4_word24) {"function":"cp_put"}
+  sql4_word25:u64 = const() {"value":8241992137582601321}
+  sql4_d_word25:u64 = const() {"value":472}
+  sql4__p_word25:u64 = call(sql4_s,sql4_d_word25,sql4_word25) {"function":"cp_put"}
+  sql4_word26:u64 = const() {"value":8245860437631200869}
+  sql4_d_word26:u64 = const() {"value":480}
+  sql4__p_word26:u64 = call(sql4_s,sql4_d_word26,sql4_word26) {"function":"cp_put"}
+  sql4_word27:u64 = const() {"value":734415958729189732}
+  sql4_d_word27:u64 = const() {"value":488}
+  sql4__p_word27:u64 = call(sql4_s,sql4_d_word27,sql4_word27) {"function":"cp_put"}
+  sql4_word28:u64 = const() {"value":2314885530818453536}
+  sql4_d_word28:u64 = const() {"value":496}
+  sql4__p_word28:u64 = call(sql4_s,sql4_d_word28,sql4_word28) {"function":"cp_put"}
+  sql4_word29:u64 = const() {"value":2314885530818453536}
+  sql4_d_word29:u64 = const() {"value":504}
+  sql4__p_word29:u64 = call(sql4_s,sql4_d_word29,sql4_word29) {"function":"cp_put"}
+  sql4_word30:u64 = const() {"value":7953673933328369184}
+  sql4_d_word30:u64 = const() {"value":512}
+  sql4__p_word30:u64 = call(sql4_s,sql4_d_word30,sql4_word30) {"function":"cp_put"}
+  sql4_word31:u64 = const() {"value":6998727353420703075}
+  sql4_d_word31:u64 = const() {"value":520}
+  sql4__p_word31:u64 = call(sql4_s,sql4_d_word31,sql4_word31) {"function":"cp_put"}
+  sql4_word32:u64 = const() {"value":7809840224423332384}
+  sql4_d_word32:u64 = const() {"value":528}
+  sql4__p_word32:u64 = call(sql4_s,sql4_d_word32,sql4_word32) {"function":"cp_put"}
+  sql4_word33:u64 = const() {"value":5701665019765941103}
+  sql4_d_word33:u64 = const() {"value":536}
+  sql4__p_word33:u64 = call(sql4_s,sql4_d_word33,sql4_word33) {"function":"cp_put"}
+  sql4_word34:u64 = const() {"value":7006866998170886222}
+  sql4_d_word34:u64 = const() {"value":544}
+  sql4__p_word34:u64 = call(sql4_s,sql4_d_word34,sql4_word34) {"function":"cp_put"}
+  sql4_word35:u64 = const() {"value":753348419667456046}
+  sql4_d_word35:u64 = const() {"value":552}
+  sql4__p_word35:u64 = call(sql4_s,sql4_d_word35,sql4_word35) {"function":"cp_put"}
+  sql4_word36:u64 = const() {"value":2314885530818453536}
+  sql4_d_word36:u64 = const() {"value":560}
+  sql4__p_word36:u64 = call(sql4_s,sql4_d_word36,sql4_word36) {"function":"cp_put"}
+  sql4_word37:u64 = const() {"value":2314885530818453536}
+  sql4_d_word37:u64 = const() {"value":568}
+  sql4__p_word37:u64 = call(sql4_s,sql4_d_word37,sql4_word37) {"function":"cp_put"}
+  sql4_word38:u64 = const() {"value":7070727634623682336}
+  sql4_d_word38:u64 = const() {"value":576}
+  sql4__p_word38:u64 = call(sql4_s,sql4_d_word38,sql4_word38) {"function":"cp_put"}
+  sql4_word39:u64 = const() {"value":2319986289835010350}
+  sql4_d_word39:u64 = const() {"value":584}
+  sql4__p_word39:u64 = call(sql4_s,sql4_d_word39,sql4_word39) {"function":"cp_put"}
+  sql4_word40:u64 = const() {"value":7235365275330432577}
+  sql4_d_word40:u64 = const() {"value":592}
+  sql4__p_word40:u64 = call(sql4_s,sql4_d_word40,sql4_word40) {"function":"cp_put"}
+  sql4_word41:u64 = const() {"value":5569066115402775841}
+  sql4_d_word41:u64 = const() {"value":600}
+  sql4__p_word41:u64 = call(sql4_s,sql4_d_word41,sql4_word41) {"function":"cp_put"}
+  sql4_word42:u64 = const() {"value":2314861427982095433}
+  sql4_d_word42:u64 = const() {"value":608}
+  sql4__p_word42:u64 = call(sql4_s,sql4_d_word42,sql4_word42) {"function":"cp_put"}
+  sql4_word43:u64 = const() {"value":2314885530818453536}
+  sql4_d_word43:u64 = const() {"value":616}
+  sql4__p_word43:u64 = call(sql4_s,sql4_d_word43,sql4_word43) {"function":"cp_put"}
+  sql4_word44:u64 = const() {"value":2314885436480167968}
+  sql4_d_word44:u64 = const() {"value":624}
+  sql4__p_word44:u64 = call(sql4_s,sql4_d_word44,sql4_word44) {"function":"cp_put"}
+  sql4_word45:u64 = const() {"value":2314885530818453536}
+  sql4_d_word45:u64 = const() {"value":632}
+  sql4__p_word45:u64 = call(sql4_s,sql4_d_word45,sql4_word45) {"function":"cp_put"}
+  sql4_word46:u64 = const() {"value":6071772916508467232}
+  sql4_d_word46:u64 = const() {"value":640}
+  sql4__p_word46:u64 = call(sql4_s,sql4_d_word46,sql4_word46) {"function":"cp_put"}
+  sql4_word47:u64 = const() {"value":7954890079639331360}
+  sql4_d_word47:u64 = const() {"value":648}
+  sql4__p_word47:u64 = call(sql4_s,sql4_d_word47,sql4_word47) {"function":"cp_put"}
+  sql4_word48:u64 = const() {"value":7451598556590386292}
+  sql4_d_word48:u64 = const() {"value":656}
+  sql4__p_word48:u64 = call(sql4_s,sql4_d_word48,sql4_word48) {"function":"cp_put"}
+  sql4_word49:u64 = const() {"value":7018969070123644008}
+  sql4_d_word49:u64 = const() {"value":664}
+  sql4__p_word49:u64 = call(sql4_s,sql4_d_word49,sql4_word49) {"function":"cp_put"}
+  sql4_word50:u64 = const() {"value":7074147253932748393}
+  sql4_d_word50:u64 = const() {"value":672}
+  sql4__p_word50:u64 = call(sql4_s,sql4_d_word50,sql4_word50) {"function":"cp_put"}
+  sql4_word51:u64 = const() {"value":8241417393636930350}
+  sql4_d_word51:u64 = const() {"value":680}
+  sql4__p_word51:u64 = call(sql4_s,sql4_d_word51,sql4_word51) {"function":"cp_put"}
+  sql4_word52:u64 = const() {"value":2314885436536024943}
+  sql4_d_word52:u64 = const() {"value":688}
+  sql4__p_word52:u64 = call(sql4_s,sql4_d_word52,sql4_word52) {"function":"cp_put"}
+  sql4_word53:u64 = const() {"value":2314885530818453536}
+  sql4_d_word53:u64 = const() {"value":696}
+  sql4__p_word53:u64 = call(sql4_s,sql4_d_word53,sql4_word53) {"function":"cp_put"}
+  sql4_word54:u64 = const() {"value":3346209845486297120}
+  sql4_d_word54:u64 = const() {"value":704}
+  sql4__p_word54:u64 = call(sql4_s,sql4_d_word54,sql4_word54) {"function":"cp_put"}
+  sql4_word55:u64 = const() {"value":8082963448720417136}
+  sql4_d_word55:u64 = const() {"value":712}
+  sql4__p_word55:u64 = call(sql4_s,sql4_d_word55,sql4_word55) {"function":"cp_put"}
+  sql4_word56:u64 = const() {"value":3203300028326438958}
+  sql4_d_word56:u64 = const() {"value":720}
+  sql4__p_word56:u64 = call(sql4_s,sql4_d_word56,sql4_word56) {"function":"cp_put"}
+  sql4_word57:u64 = const() {"value":8605931805035671152}
+  sql4_d_word57:u64 = const() {"value":728}
+  sql4__p_word57:u64 = call(sql4_s,sql4_d_word57,sql4_word57) {"function":"cp_put"}
+  sql4_word58:u64 = const() {"value":8391101590037820015}
+  sql4_d_word58:u64 = const() {"value":736}
+  sql4__p_word58:u64 = call(sql4_s,sql4_d_word58,sql4_word58) {"function":"cp_put"}
+  sql4_word59:u64 = const() {"value":8390047167831962721}
+  sql4_d_word59:u64 = const() {"value":744}
+  sql4__p_word59:u64 = call(sql4_s,sql4_d_word59,sql4_word59) {"function":"cp_put"}
+  sql4_word60:u64 = const() {"value":3342001208258617900}
+  sql4_d_word60:u64 = const() {"value":752}
+  sql4__p_word60:u64 = call(sql4_s,sql4_d_word60,sql4_word60) {"function":"cp_put"}
+  sql4_word61:u64 = const() {"value":3201040561996067439}
+  sql4_d_word61:u64 = const() {"value":760}
+  sql4__p_word61:u64 = call(sql4_s,sql4_d_word61,sql4_word61) {"function":"cp_put"}
+  sql4_word62:u64 = const() {"value":2314885437474811504}
+  sql4_d_word62:u64 = const() {"value":768}
+  sql4__p_word62:u64 = call(sql4_s,sql4_d_word62,sql4_word62) {"function":"cp_put"}
+  sql4_word63:u64 = const() {"value":2314885530818453536}
+  sql4_d_word63:u64 = const() {"value":776}
+  sql4__p_word63:u64 = call(sql4_s,sql4_d_word63,sql4_word63) {"function":"cp_put"}
+  sql4_word64:u64 = const() {"value":6998678824011833376}
+  sql4_d_word64:u64 = const() {"value":784}
+  sql4__p_word64:u64 = call(sql4_s,sql4_d_word64,sql4_word64) {"function":"cp_put"}
+  sql4_word65:u64 = const() {"value":2340027325873480558}
+  sql4_d_word65:u64 = const() {"value":792}
+  sql4__p_word65:u64 = call(sql4_s,sql4_d_word65,sql4_word65) {"function":"cp_put"}
+  sql4_word66:u64 = const() {"value":7070737491741515873}
+  sql4_d_word66:u64 = const() {"value":800}
+  sql4__p_word66:u64 = call(sql4_s,sql4_d_word66,sql4_word66) {"function":"cp_put"}
+  sql4_word67:u64 = const() {"value":2333463237026344812}
+  sql4_d_word67:u64 = const() {"value":808}
+  sql4__p_word67:u64 = call(sql4_s,sql4_d_word67,sql4_word67) {"function":"cp_put"}
+  sql4_word68:u64 = const() {"value":4423776381920366159}
+  sql4_d_word68:u64 = const() {"value":816}
+  sql4__p_word68:u64 = call(sql4_s,sql4_d_word68,sql4_word68) {"function":"cp_put"}
+  sql4_word69:u64 = const() {"value":2314885437474811489}
+  sql4_d_word69:u64 = const() {"value":824}
+  sql4__p_word69:u64 = call(sql4_s,sql4_d_word69,sql4_word69) {"function":"cp_put"}
+  sql4_word70:u64 = const() {"value":2314885530818453536}
+  sql4_d_word70:u64 = const() {"value":832}
+  sql4__p_word70:u64 = call(sql4_s,sql4_d_word70,sql4_word70) {"function":"cp_put"}
+  sql4_word71:u64 = const() {"value":5341361818848469024}
+  sql4_d_word71:u64 = const() {"value":840}
+  sql4__p_word71:u64 = call(sql4_s,sql4_d_word71,sql4_word71) {"function":"cp_put"}
+  sql4_word72:u64 = const() {"value":7165064700874344783}
+  sql4_d_word72:u64 = const() {"value":848}
+  sql4__p_word72:u64 = call(sql4_s,sql4_d_word72,sql4_word72) {"function":"cp_put"}
+  sql4_word73:u64 = const() {"value":2327885058135847787}
+  sql4_d_word73:u64 = const() {"value":856}
+  sql4__p_word73:u64 = call(sql4_s,sql4_d_word73,sql4_word73) {"function":"cp_put"}
+  sql4_word74:u64 = const() {"value":8083506396993760880}
+  sql4_d_word74:u64 = const() {"value":864}
+  sql4__p_word74:u64 = call(sql4_s,sql4_d_word74,sql4_word74) {"function":"cp_put"}
+  sql4_word75:u64 = const() {"value":5930994918710669921}
+  sql4_d_word75:u64 = const() {"value":872}
+  sql4__p_word75:u64 = call(sql4_s,sql4_d_word75,sql4_word75) {"function":"cp_put"}
+  sql4_word76:u64 = const() {"value":6998691961478726980}
+  sql4_d_word76:u64 = const() {"value":880}
+  sql4__p_word76:u64 = call(sql4_s,sql4_d_word76,sql4_word76) {"function":"cp_put"}
+  sql4_word77:u64 = const() {"value":7809644627772993326}
+  sql4_d_word77:u64 = const() {"value":888}
+  sql4__p_word77:u64 = call(sql4_s,sql4_d_word77,sql4_word77) {"function":"cp_put"}
+  sql4_p:u64 = const() {"value":2}
+  sql4_op:u64 = const() {"value":5}
+  sql4_size:u64 = const() {"value":640}
+  sql4_issued:u32 = call(sql4_s,sql4_p,sql4_op,sql4_size) {"function":"sr_issue"}
+  ret(sql4_issued)
+block route5(route5_s:mutbuf,route5_stage:u64)
+  route5_expected:u64 = const() {"value":5}
+  route5_hit:bool = compare.eq(route5_expected,route5_stage)
+  branch route5_hit sql5(route5_s) bad()
+block sql5(sql5_s:mutbuf)
+  sql5_sql_len:u64 = const() {"value":6}
+  sql5_d_sql_len:u64 = const() {"value":264}
+  sql5__p_sql_len:u64 = call(sql5_s,sql5_d_sql_len,sql5_sql_len) {"function":"cp_put"}
+  sql5_word0:u64 = const() {"value":92673806257987}
+  sql5_d_word0:u64 = const() {"value":272}
+  sql5__p_word0:u64 = call(sql5_s,sql5_d_word0,sql5_word0) {"function":"cp_put"}
+  sql5_p:u64 = const() {"value":2}
+  sql5_op:u64 = const() {"value":5}
+  sql5_size:u64 = const() {"value":22}
+  sql5_issued:u32 = call(sql5_s,sql5_p,sql5_op,sql5_size) {"function":"sr_issue"}
+  ret(sql5_issued)
+block bad()
+  bad_code:u32 = const() {"value":100}
+  ret(bad_code)
+end
+fn hct_column(entry_s:mutbuf,entry_i:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_s:mutbuf,entry_i:u64)
+  entry_d_i:u64 = const() {"value":72}
+  entry__p_i:u64 = call(entry_s,entry_d_i,entry_i) {"function":"cp_put"}
+  entry_phase:u64 = const() {"value":5}
+  entry_result:u32 = call(entry_s,entry_phase,entry_i) {"function":"sr_col"}
+  ret(entry_result)
+end
+fn hct_bind(entry_s:mutbuf,entry_i:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_s:mutbuf,entry_i:u64)
+  entry_d_i:u64 = const() {"value":56}
+  entry__p_i:u64 = call(entry_s,entry_d_i,entry_i) {"function":"cp_put"}
+  entry_d_i2:u64 = const() {"value":264}
+  entry__p_i2:u64 = call(entry_s,entry_d_i2,entry_i) {"function":"cp_put"}
+  entry_a_stmt:u64 = const() {"value":40}
+  entry_stmt:u64 = call(entry_s,entry_a_stmt) {"function":"cp_get"}
+  entry_d_stmt:u64 = const() {"value":256}
+  entry__p_stmt:u64 = call(entry_s,entry_d_stmt,entry_stmt) {"function":"cp_put"}
+  entry_four:u64 = const() {"value":4}
+  entry_limit:bool = compare.eq(entry_i,entry_four)
+  branch entry_limit int64(entry_s) ids(entry_s,entry_i)
+block int64(int64_s:mutbuf)
+  int64_kind:u64 = const() {"value":1}
+  int64_d_kind:u64 = const() {"value":272}
+  int64__p_kind:u64 = call(int64_s,int64_d_kind,int64_kind) {"function":"cp_put"}
+  int64_limit:u64 = const() {"value":64}
+  int64_d_limit:u64 = const() {"value":280}
+  int64__p_limit:u64 = call(int64_s,int64_d_limit,int64_limit) {"function":"cp_put"}
+  int64_p:u64 = const() {"value":3}
+  int64_op:u64 = const() {"value":6}
+  int64_size:u64 = const() {"value":32}
+  int64_issued:u32 = call(int64_s,int64_p,int64_op,int64_size) {"function":"sr_issue"}
+  ret(int64_issued)
+block ids(ids_s:mutbuf,ids_i:u64)
+  ids_kind:u64 = const() {"value":4}
+  ids_d_kind:u64 = const() {"value":272}
+  ids__p_kind:u64 = call(ids_s,ids_d_kind,ids_kind) {"function":"cp_put"}
+  ids_one:u64 = const() {"value":1}
+  ids_two:u64 = const() {"value":2}
+  ids_start:bool = compare.eq(ids_i,ids_one)
+  ids_after:bool = compare.eq(ids_i,ids_two)
+  ids_three:u64 = const() {"value":3}
+  ids_zero:u64 = const() {"value":0}
+  ids_a_mode:u64 = const() {"value":88}
+  ids_mode:u64 = call(ids_s,ids_a_mode) {"function":"cp_get"}
+  ids_m0:bool = compare.eq(ids_mode,ids_zero)
+  ids_m1:bool = compare.eq(ids_mode,ids_one)
+  ids_tmp:u64 = select(ids_m1,ids_one,ids_three)
+  ids_stop:u64 = select(ids_m0,ids_zero,ids_tmp)
+  ids_other:u64 = select(ids_after,ids_stop,ids_zero)
+  ids_head:u64 = select(ids_start,ids_three,ids_other)
+  ids_d_head:u64 = const() {"value":280}
+  ids__p_head:u64 = call(ids_s,ids_d_head,ids_head) {"function":"cp_put"}
+  ids_suffix:u64 = const() {"value":6293595036912670551}
+  ids_d_suffix:u64 = const() {"value":288}
+  ids__p_suffix:u64 = call(ids_s,ids_d_suffix,ids_suffix) {"function":"cp_put"}
+  ids_a2:u64 = const() {"value":296}
+  ids__s2:u64 = call(ids_s,ids_a2,ids_suffix) {"function":"cp_put"}
+  ids_a3:u64 = const() {"value":304}
+  ids__s3:u64 = call(ids_s,ids_a3,ids_suffix) {"function":"cp_put"}
+  ids_p:u64 = const() {"value":3}
+  ids_op:u64 = const() {"value":6}
+  ids_size:u64 = const() {"value":56}
+  ids_issued:u32 = call(ids_s,ids_p,ids_op,ids_size) {"function":"sr_issue"}
+  ret(ids_issued)
+end

@@ -1696,6 +1696,17 @@
       ]
     },
     {
+      "id": "node/history-cte-acquisition",
+      "node_integration_complete": false,
+      "scope": "Private fixed in-memory SQLite history CTE over four native-seeded synthetic rows. HIA owns literal SQL and true held typed-column acquisition via the unchanged TaskKernel provider. Projection only, no live Node, DB handles, packets, paths or authority.",
+      "source": "hia/src/node/history_cte_acquire.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_history_cte_acquire.py",
+        "hia/tests/rust_history_cte_acquire_reference.rs"
+      ]
+    },
+    {
       "id": "node/history-inline-record",
       "node_integration_complete": false,
       "scope": "Private original fixed-column SQLite storage-class and width projection of immutable already-held synthetic values. No Node database, history traversal, custody or authority.",
@@ -4591,6 +4602,7 @@
         "node/resource-snapshot-projection",
         "node/history-held-page-fold",
         "node/history-two-batch-cutoff",
+        "node/history-cte-acquisition",
         "state/integer-training-backward",
         "state/integer-training-batch-update",
         "model/cell-model-canonical",
