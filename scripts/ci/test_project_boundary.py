@@ -19,6 +19,8 @@ ROOT = Path(__file__).resolve().parents[2]
 BRANCH = 'fix/chain-boundary-regression'
 HTTPS = 'https://github.com/TrillionniumFoundation/Trillionnium-Chain'
 ORIGINS = (HTTPS, HTTPS + '.git', 'git@github.com:TrillionniumFoundation/Trillionnium-Chain.git')
+WORKFLOW = '.github/workflows/hia-native-migration.yml'
+SMALL_WORKFLOW = b'name: Boundary fixture\non: push\njobs: {}\n'
 
 
 class ProjectBoundaryTests(unittest.TestCase):
@@ -54,6 +56,7 @@ class ProjectBoundaryTests(unittest.TestCase):
                    '[package]\nname = "fixture"\nversion = "0.0.0"\n')
         self.write('config/portability-inventory-v1.json',
                    json.dumps({'packages': [{'package': 'fixture'}]}))
+        self.write(WORKFLOW, SMALL_WORKFLOW.decode('ascii'))
         self.git('init', '-b', BRANCH)
         self.git('config', 'user.name', 'Boundary regression fixture')
         self.git('config', 'user.email', 'boundary-regression@example.invalid')
@@ -178,6 +181,84 @@ class ProjectBoundaryTests(unittest.TestCase):
         self.rejected(self.preflight('--staged'), 'activation changed')
         self.passed(self.preflight('--push', updates=self.update()))
 
+    def sized_workflow(self, size):
+        # The comment includes multibyte UTF-8 and trailing whitespace. The
+        # final carriage return and line feed must both count as committed bytes.
+        prefix = SMALL_WORKFLOW + '# 汉字 '.encode('utf-8')
+        tail = b' \r\n'
+        payload = prefix + b' ' * (size - len(prefix) - len(tail)) + tail
+        self.assertEqual(len(payload), size)
+        self.assertLess(len(payload.decode('utf-8')), size)
+        return payload
+
+    def test_workflow_cap_checks_index_and_head_not_the_worktree(self):
+        workflow = self.root / WORKFLOW
+        workflow.write_bytes(self.sized_workflow(490_000))
+        self.git('add', WORKFLOW)
+        self.assertEqual(self.git('cat-file', '-s', ':' + WORKFLOW), '490000')
+        workflow.write_bytes(self.sized_workflow(490_001))
+        self.passed(self.preflight('--staged'))
+        self.passed(self.preflight('--push', updates=self.update()))
+        self.git('add', WORKFLOW)
+        workflow.write_bytes(SMALL_WORKFLOW)
+        self.rejected(self.preflight('--staged'), '490001 bytes outside 1..490000 in --staged source')
+        self.passed(self.preflight('--push', updates=self.update()))
+        self.git('commit', '-m', 'Record over-cap workflow object')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.git('add', WORKFLOW)
+        self.passed(self.preflight('--staged'))
+        self.rejected(self.preflight('--push', updates=self.update()),
+                      '490001 bytes outside 1..490000 in --push source')
+        self.git('commit', '-m', 'Restore admitted workflow size')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.passed(self.preflight('--push', updates=self.update()))
+
+    def test_workflow_guard_rejects_empty_and_invalid_utf8(self):
+        workflow = self.root / WORKFLOW
+        for payload, error in (
+            (b'', '0 bytes outside 1..490000'),
+            (SMALL_WORKFLOW + b'# \xff\n', 'invalid UTF-8'),
+        ):
+            with self.subTest(error=error):
+                workflow.write_bytes(payload)
+                self.git('add', WORKFLOW)
+                self.rejected(self.preflight('--staged'), error)
+                self.passed(self.preflight('--push', updates=self.update()))
+
+    def test_workflow_guard_rejects_missing_and_nonregular_git_entries(self):
+        workflow = self.root / WORKFLOW
+        expected = 'expected one regular workflow'
+        self.git('rm', WORKFLOW)
+        self.rejected(self.preflight('--staged'), expected)
+        self.git('commit', '-m', 'Fixture misses canonical workflow')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.write(WORKFLOW, SMALL_WORKFLOW.decode('ascii'))
+        self.rejected(self.preflight('--push', updates=self.update()), expected)
+        workflow.unlink()
+        workflow.symlink_to('other.yml')
+        self.git('add', WORKFLOW)
+        self.rejected(self.preflight('--staged'), expected)
+        self.git('commit', '-m', 'Fixture has symlink workflow')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.rejected(self.preflight('--push', updates=self.update()), expected)
+
+    def test_workflow_guard_refuses_unmerged_index_entry(self):
+        oid = self.git('rev-parse', 'HEAD:' + WORKFLOW)
+        self.git('update-index', '--force-remove', WORKFLOW)
+        subprocess.run(['git', 'update-index', '--index-info'], cwd=self.root,
+                       env=self.env, text=True, input=f'100644 {oid} 2\t{WORKFLOW}\n',
+                       capture_output=True, check=True, timeout=10)
+        self.rejected(self.preflight('--staged'), 'expected one regular workflow')
+        self.passed(self.preflight('--push', updates=self.update()))
+
+    def test_workflow_cap_does_not_apply_to_unrelated_workflows(self):
+        (self.root / '.github/workflows/fixture.yml').write_bytes(self.sized_workflow(490_001))
+        self.git('add', '.github/workflows/fixture.yml')
+        self.passed(self.preflight('--staged'))
+        self.git('commit', '-m', 'Unrelated workflow exceeds private HIA cap')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.passed(self.preflight('--push', updates=self.update()))
+
     def test_non_fast_forward_update_is_rejected(self):
         unrelated = self.git('commit-tree', self.git('rev-parse', 'HEAD^{tree}'),
                              '-m', 'Unrelated fixture history')
@@ -190,6 +271,14 @@ class ProjectBoundaryTests(unittest.TestCase):
             with self.subTest(sha=sha):
                 self.rejected(self.preflight('--push', updates=self.update(sha=sha)),
                               'only checked-out HEAD can be pushed')
+
+    def test_malformed_and_mixed_unchecked_push_updates_reject(self):
+        for record in ('not a push record\n', self.update().rstrip() + ' extra\n'):
+            with self.subTest(fields=len(record.split())):
+                self.rejected(self.preflight('--push', updates=self.update() + record),
+                              'project boundary failed')
+        self.rejected(self.preflight('--push', updates=self.update() + self.update(sha=self.old)),
+                      'only checked-out HEAD can be pushed')
 
     def test_new_branch_must_be_the_checked_out_continuation(self):
         self.passed(self.preflight('--push', updates=self.update(old='0' * 40)))
