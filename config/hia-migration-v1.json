@@ -2042,6 +2042,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-header-metadata",
+      "node_integration_complete": false,
+      "scope": "Pure standalone 1-MiB Safetensors JSON with complete original metadata 1024-key, 255-byte decoded key and 16384-byte decoded value limits, bounded sorted-run exact decoded UTF-8 duplicate detection. Tensor roster remains 128. No reader, storage, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_header_metadata.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_header_metadata.py",
+        "hia/tests/tensor_header_metadata_derivation.py",
+        "hia/tests/rust_cell_tensor_header_json_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-model-manifest",
       "node_integration_complete": false,
       "scope": "Pure original TMA1 one-call canonical TMR1/TMT1 and declared root ID, positional member size plus 10, and Base/Adapter coverage. Both emitters through the 1 MiB shared loan cap; larger valid original envelope observed in Rust only. No tensor/weight/payload IO, owner pin, trust, loader, authentication, network, adoption or production routing.",
