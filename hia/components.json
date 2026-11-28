@@ -8351,6 +8351,48 @@
         ]
       }
     ],
+    "src/data_availability/cell_version_retention_object_relation.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_equal_read"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_decode",
+          "cm_family_chars",
+          "cm_row_sizes"
+        ]
+      }
+    ],
     "src/data_availability/cell_version_retention_outer_terms.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

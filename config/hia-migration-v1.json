@@ -1714,6 +1714,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-retention-object-relation",
+      "node_integration_complete": false,
+      "scope": "Bounded original TCA3 ordered immutable manifest/object coverage, object terms, identity uniqueness/cross aliases and declared aligned capacity only; no full envelope acceptance, retention action, funding or authority",
+      "source": "hia/src/data_availability/cell_version_retention_object_relation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_retention_object_relation.py",
+        "hia/tests/rust_da_cell_version_retention_object_relation_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-retention-outer-terms",
       "node_integration_complete": false,
       "scope": "Original immutable TCA3 configuration and scalar outer identity/replica/lease/snapshot predicates only; no complete contract verification, commitment, funding, owner or store action",
@@ -3347,6 +3358,7 @@
         "data-availability/cell-manifest-binding",
         "data-availability/cell-periodic-snapshot-policy",
         "data-availability/cell-chunk-delta-value",
+        "data-availability/cell-version-retention-object-relation",
         "data-availability/cell-version-retention-outer-terms",
         "data-availability/cell-version-loader-pin-value",
         "data-availability/cell-version-catalog-anchor-value",
