@@ -1,0 +1,8 @@
+{
+  "stage": "read-only-cache-probe",
+  "attempt": 1,
+  "exit_code": 1,
+  "error": "TypeError: string indices must be integers, not str",
+  "cause": "closure file is mapping, probe incorrectly iterated keys; corrected to values",
+  "compilation_started": false
+}

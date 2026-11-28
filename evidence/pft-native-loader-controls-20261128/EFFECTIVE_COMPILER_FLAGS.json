@@ -1,0 +1,11 @@
+[
+  {
+    "path": "target/debug/.fingerprint/chain-pft-native-loader-controls-10dc4c8631f43bd3/test-lib-chain_pft_native_loader_controls.json",
+    "sha256": "9b095be0b0a98a4b6bea117f8f1f026b61be7035b44a2cb58c6c1b4051e259c1",
+    "rustflags": [
+      "-D",
+      "warnings"
+    ],
+    "features": "[]"
+  }
+]
