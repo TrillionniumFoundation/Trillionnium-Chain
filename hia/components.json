@@ -1,5 +1,27 @@
 {
   "includes": {
+    "src/node/history_page_fold.hepta": [
+      {
+        "functions": [
+          "tr_read",
+          "tr_put",
+          "tr_get"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "cp_copy"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "hir_span"
+        ],
+        "source": "src/node/history_inline_record.hepta"
+      }
+    ],
     "src/node/history_inline_record.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

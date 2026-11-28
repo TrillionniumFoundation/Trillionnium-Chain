@@ -1669,6 +1669,17 @@
       ]
     },
     {
+      "id": "node/history-held-page-fold",
+      "node_integration_complete": false,
+      "scope": "Private bounded one-query history ancestor fold over immutable held SQLite row projections, exact node record dimensions and child/parent heights, result window and original local/missing error order. No live database, active State, packets or authority.",
+      "source": "hia/src/node/history_page_fold.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_history_page_fold.py",
+        "hia/tests/rust_history_page_fold_reference.rs"
+      ]
+    },
+    {
       "id": "node/history-inline-record",
       "node_integration_complete": false,
       "scope": "Private original fixed-column SQLite storage-class and width projection of immutable already-held synthetic values. No Node database, history traversal, custody or authority.",
@@ -4551,6 +4562,7 @@
         "node/resource-request-value",
         "node/resource-vector-value",
         "node/resource-snapshot-projection",
+        "node/history-held-page-fold",
         "state/integer-training-backward",
         "state/integer-training-batch-update",
         "model/cell-model-canonical",
