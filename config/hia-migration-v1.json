@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_activation_profile",
+      "node_integration_complete": false,
+      "scope": "Private typed original checkpoint activation profile, digest grammar and static runtime field predicates under inert test pins; no raw parse/binding, runtime claim, material or authority.",
+      "source": "hia/src/checkpoint/tile_activation_profile.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_activation_profile.py",
+        "hia/tests/rust_checkpoint_tile_activation_profile_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_activation_value",
       "node_integration_complete": false,
       "scope": "Private ordered post-JSON checkpoint activation shape/token/hidden-hex decoding against genuine frozen original under inert test pins; no runtime, provenance, material or authority.",

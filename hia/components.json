@@ -19229,6 +19229,29 @@
         ]
       }
     ],
+    "src/checkpoint/tile_activation_profile.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_word",
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/model/source_revision.hepta",
+        "functions": [
+          "ms_nibble"
+        ]
+      }
+    ],
     "src/checkpoint/tile_activation_value.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
