@@ -81,8 +81,14 @@ end
 fn ct_value(r:readbuf,w:mutbuf,start:u64,t:bool) -> (u64) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,w:mutbuf,start:u64,t:bool)
   v50:u64 = const() {"value":8}
-  branch t train(r,w,start,v50) mask(r,w,start,v50,t)
-block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64)
+  vzero:u64 = const() {"value":0}
+  result:u64 = call(r,w,start,v50,t,vzero) {"function":"ct_emit_at"}
+  ret(result)
+end
+fn ct_emit_at(r:readbuf,w:mutbuf,start:u64,p:u64,t:bool,base:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,start:u64,p:u64,t:bool,base:u64)
+  branch t train(r,w,start,p,base) mask(r,w,start,p,t)
+block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64,tb:u64)
   v51:bool = const() {"value":true}
   v52:u64 = const() {"value":8}
   v53:u64 = const() {"value":7016450342558835323}
@@ -93,7 +99,8 @@ block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64)
   v58:u64 = call(tw,v55,v56,v57) {"function":"value_word"}
   v59:u64 = int.add.wrap(v55,v58)
   v60:u64 = const() {"value":8}
-  v61:u64 = call(tr,v60) {"function":"tr_read"}
+  arg_v61:u64 = int.add.wrap(tb,v60)
+  v61:u64 = call(tr,arg_v61) {"function":"tr_read"}
   v62:u64 = call(tw,v59,v61,v51) {"function":"wa_decimal"}
   v63:u64 = const() {"value":8}
   v64:u64 = const() {"value":7597135384059585068}
@@ -108,7 +115,8 @@ block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64)
   v73:u64 = call(tw,v70,v71,v72) {"function":"value_word"}
   v74:u64 = int.add.wrap(v70,v73)
   v75:u64 = const() {"value":16}
-  v76:u64 = call(tr,v75) {"function":"tr_read"}
+  arg_v76:u64 = int.add.wrap(tb,v75)
+  v76:u64 = call(tr,arg_v76) {"function":"tr_read"}
   v77:u64 = call(tw,v74,v76,v51) {"function":"wa_decimal"}
   v78:u64 = const() {"value":8}
   v79:u64 = const() {"value":7597135384059585068}
@@ -123,7 +131,8 @@ block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64)
   v88:u64 = call(tw,v85,v86,v87) {"function":"value_word"}
   v89:u64 = int.add.wrap(v85,v88)
   v90:u64 = const() {"value":24}
-  v91:u64 = call(tr,v90) {"function":"tr_read"}
+  arg_v91:u64 = int.add.wrap(tb,v90)
+  v91:u64 = call(tr,arg_v91) {"function":"tr_read"}
   v92:u64 = call(tw,v89,v91,v51) {"function":"wa_decimal"}
   v93:u64 = const() {"value":8}
   v94:u64 = const() {"value":8389754676533076524}
@@ -134,7 +143,8 @@ block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64)
   v99:u64 = call(tw,v96,v97,v98) {"function":"value_word"}
   v100:u64 = int.add.wrap(v96,v99)
   v101:u64 = const() {"value":32}
-  v102:u64 = call(tr,v101) {"function":"tr_read"}
+  arg_v102:u64 = int.add.wrap(tb,v101)
+  v102:u64 = call(tr,arg_v102) {"function":"tr_read"}
   v103:u64 = call(tw,v100,v102,v51) {"function":"wa_decimal"}
   v104:u64 = const() {"value":8}
   v105:u64 = const() {"value":8389754676533076524}
@@ -145,7 +155,8 @@ block train(tr:readbuf,tw:mutbuf,ts:u64,tq:u64)
   v110:u64 = call(tw,v107,v108,v109) {"function":"value_word"}
   v111:u64 = int.add.wrap(v107,v110)
   v112:u64 = const() {"value":40}
-  v113:u64 = call(tr,v112) {"function":"tr_read"}
+  arg_v113:u64 = int.add.wrap(tb,v112)
+  v113:u64 = call(tr,arg_v113) {"function":"tr_read"}
   v114:u64 = call(tw,v111,v113,v51) {"function":"wa_decimal"}
   v115:u64 = const() {"value":8}
   v116:u64 = const() {"value":7020664736370139692}
@@ -236,13 +247,18 @@ block entry(r:readbuf,w:mutbuf,s:u64,q:u64)
 end
 fn ct_row(r:readbuf,w:mutbuf,s:u64,q:u64) -> (u64) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,w:mutbuf,s:u64,q:u64)
-  v190:u64 = const() {"value":1}
-  v191:u64 = const() {"value":91}
-  v192:u64 = call(w,q,v190,v191) {"function":"value_word"}
-  v193:u64 = int.add.wrap(q,v192)
   v194:u64 = const() {"value":257}
   v195:u64 = int.add.wrap(s,v194)
-  jump item(r,w,s,v193,v195)
+  result:u64 = call(r,w,s,q,v195) {"function":"ct_row_at"}
+  ret(result)
+end
+fn ct_row_at(r:readbuf,w:mutbuf,s:u64,q:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,s:u64,q:u64,n:u64)
+  v1000:u64 = const() {"value":1}
+  v1001:u64 = const() {"value":91}
+  v1002:u64 = call(w,q,v1000,v1001) {"function":"value_word"}
+  v1003:u64 = int.add.wrap(q,v1002)
+  jump item(r,w,s,v1003,n)
 block item(ir:readbuf,iw:mutbuf,ix:u64,iq:u64,ie:u64)
   v196:usize = int.cast(ix) {"mode":"wrap"}
   v197:u8 = buffer.load(ir,v196)

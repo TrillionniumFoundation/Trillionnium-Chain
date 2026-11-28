@@ -2573,6 +2573,17 @@
       ]
     },
     {
+      "id": "model/cell-policy-value",
+      "node_integration_complete": false,
+      "scope": "Private bounded exact original canonical Policy object, ordered actions, bounded Boolean vectors and optional Training; no action, training, state validation or authority.",
+      "source": "hia/src/model/cell_policy_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_policy_value.py",
+        "hia/tests/rust_cell_policy_value_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-training-value",
       "node_integration_complete": false,
       "scope": "Private compact canonical original Training and TrainableMask, fixed full-size Boolean matrices and exact u64; no execution, admission or production.",
