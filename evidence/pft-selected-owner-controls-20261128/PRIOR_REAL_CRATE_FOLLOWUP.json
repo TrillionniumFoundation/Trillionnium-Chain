@@ -1,0 +1,124 @@
+{
+  "archive_bytes": 143129,
+  "archive_sha256": "514a0794e56b6a15ab549962dcf08291b24b4d730d95d9a3ca96325f41f1fcf2",
+  "host_permission": false,
+  "model_inference": false,
+  "native_readback": "version pinned; 3 chunks, decompressed archive and all 11 original members SHA verified",
+  "observation": {
+    "actual_crate_fingerprints": [
+      {
+        "effective_rustflags": [
+          "-D",
+          "warnings"
+        ],
+        "path": "target/debug/.fingerprint/trnm-data-availability-c7d35a44c3a2eeb0/test-lib-trnm_data_availability.json",
+        "profile_id": 1722584277633009122,
+        "sha256": "b59fcddf83598cb40063bbd7e2aa954fab2cf9c2a1dd6d330644570df40f54e5"
+      },
+      {
+        "effective_rustflags": [
+          "-D",
+          "warnings"
+        ],
+        "path": "target/debug/.fingerprint/trnm-pon-node-1a09b248bd06cbcc/lib-trnm_pon_node.json",
+        "profile_id": 17672942494452627365,
+        "sha256": "faf5867ef770fa0a7aea5e2d1651b116f857712b1287722d28d5a5692be8b770"
+      }
+    ],
+    "actual_pft_wrapper_executed": false,
+    "actual_pft_wrapper_typechecked": true,
+    "allocation": "300 seconds from the existing shared engineering pool; original 240-second gate remains failed",
+    "cargo_home_config_sha256": "20c1219bdfd99efd434b0ba6a2d2ad77fe22a461105fdd47b008780221cdd431",
+    "cargo_profiles_modified": false,
+    "commands": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "name": "project_preflight",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 173,
+        "stdout_sha256": "3ba29fb9511d6601276f396a5e5cab2dc4e2c0b6014a2006d2b42ced612994b3",
+        "timed_out": false,
+        "wall_ns": 100980585
+      },
+      {
+        "argv": [
+          "/home/qian-qi/.cargo/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::adoption::tests::selected_manifest::",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "name": "owner_sqlite_controls",
+        "stderr_bytes": 365,
+        "stderr_sha256": "854f1d53190e7d312530c555f30bdd8137032757a08ce2d8e7077d8a8622cd01",
+        "stdout_bytes": 373,
+        "stdout_sha256": "e444f24a2c641f7668aeb5dbd28bf13e5042a1b3d38bd19b34e26ec4bf63f7c4",
+        "timed_out": false,
+        "wall_ns": 60588615688
+      },
+      {
+        "argv": [
+          "/home/qian-qi/.cargo/bin/cargo",
+          "check",
+          "--offline",
+          "--locked",
+          "-p",
+          "trnm-pon-node",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "name": "actual_wrapper_check",
+        "stderr_bytes": 3613,
+        "stderr_sha256": "5313e8f937d169fb6338a36a1295bb46f3b6c20ef57bd58e77990e14a6737473",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "wall_ns": 57273509653
+      }
+    ],
+    "commit_tree": "2cc77da9bda193616f8831ad4cdc7037816080a9",
+    "compile_include_invocations": 116,
+    "compile_include_unique_paths": 91,
+    "compile_includes_scan_sha256": "87def2574ed95e3610d8c4b83c6fdcc23697e0c13be41388640f563d6ea6bd40",
+    "exact_rust_tree_blobs": 1717,
+    "finished_at": "2026-11-28T04:00:22.242891+00:00",
+    "head": "c471cba4aad9112dfb7226cd524b286093e176ea",
+    "old_9_loader_11_core_6_binding_controls_rerun": false,
+    "original_failure_sha256": {
+      "CONTINUATION_GATE.json": "b80ad3d5d08011230ec34d76023e231d6531afe0e28e9bd137cebf1455c46fbe",
+      "FIRST_GATE.json": "338c28e83df2fac825774721b2c3cfdc560ba80ae1f92a78dbb8c6d8f3bc0816"
+    },
+    "original_failures_unchanged": true,
+    "outer_elapsed_ns": 118449991303,
+    "outer_scope": "entry through commands, source/original-failure rechecks; final receipt serialization follows",
+    "real_owner_sqlite_control_groups_passed": 2,
+    "real_owner_sqlite_tests_executed": 2,
+    "result": "PASS",
+    "rust_subtree": "9db8871c16d333904670bcae5b16945dcd6ce8e6",
+    "rust_subtree_path": "trillionnium",
+    "schema": "chain-real-selected-owner-separately-allocated-followup-v1",
+    "single_absolute_cap_seconds": 300,
+    "source_unchanged_after": true,
+    "source_verified_before": true,
+    "started_at": "2026-11-28T03:58:23.808658+00:00"
+  },
+  "original_gate_sha256": "de9308772a4d394601febc544e60038537cef2f283302817e853a10352ea5c48",
+  "payment": false,
+  "quality": false,
+  "real_user_adoption": false,
+  "reward": false,
+  "schema": "chain-prior-real-owner-followup-derived-observation-v1",
+  "scope": "Earlier unchanged c471 source; original owner tests and actual wrapper typecheck, not the four new wrapper controls",
+  "source_pin_count": 1769
+}
