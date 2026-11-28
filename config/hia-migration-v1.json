@@ -1928,6 +1928,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-content-root-commitments",
+      "node_integration_complete": false,
+      "scope": "Original bounded TCV3 declared selected-root commitment list on the same wholly validated immutable TCV3 loan, reusing actual computed member TCV2 commitments and canonical root order. No external pins, actual payload, store, trusted roots, loader, network or production.",
+      "source": "hia/src/data_availability/cell_version_content_root_commitments.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_content_root_commitments.py",
+        "hia/tests/rust_cell_version_content_root_commitments_reference.rs",
+        "hia/tests/tcv3_roots_projection_derivation.py"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-content-lineage",
       "node_integration_complete": false,
       "scope": "Bounded canonical TCV3 declared lineage decode and exact content commitment; same-loan real TCV2 and TMR IDs before complete canonical root/alias/parent/reachability checks. Shared <=1 MiB and original 16-version bound. No actual content, owner pin, store, lineage authority, loader, network or production.",
