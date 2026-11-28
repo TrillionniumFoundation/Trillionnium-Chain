@@ -73,7 +73,8 @@ block shape(sr:readbuf,so:mutbuf,sn:usize,sc:u64,sm:u64,sf:u64,srows:u64)
   size_ok:bool = compare.eq(total_n,sn)
   branch size_ok validate(sr,so,sc,sm,sf,start,total) frame_bad()
 block validate(vr:readbuf,vo:mutbuf,vc:u64,vm:u64,vf:u64,vs:u64,vt:u64)
-  code:u32 = call(vr,vs,vt) {"function":"pes_validate"}
+  legacy_columns:u64 = const() {"value":0}
+  code:u32 = call(vr,vs,vt,legacy_columns) {"function":"pes_validate"}
   good:u32 = const() {"value":0}
   valid:bool = compare.eq(code,good)
   branch valid capacity(vr,vo,vc,vm,vf,vt) refused(code)
@@ -83,7 +84,9 @@ block capacity(ar:readbuf,ao:mutbuf,ac:u64,am:u64,af:u64,at:u64)
   ok:bool = compare.le(required,available)
   branch ok score(ar,ao,ac,am,af,at) space_bad()
 block score(rr:readbuf,ro:mutbuf,rc:u64,rm:u64,rf:u64,rt:u64)
-  _ = call(rr,ro,rc,rm,rf,rt) {"function":"pes_score"}
+  legacy_start:u64 = const() {"value":9}
+  legacy_reference:u64 = const() {"value":0}
+  _ = call(rr,ro,rc,rm,rf,legacy_start,rt,legacy_reference,legacy_reference) {"function":"pes_score"}
   success:u32 = const() {"value":0}
   ret(success)
 block refused(result:u32)
@@ -254,34 +257,34 @@ block entry(r:readbuf,a:u64)
   result:bool = bool.and(text,layout)
   ret(result)
 end
-fn pes_validate(r:readbuf,first:u64,end:u64) -> (u32) effects(read,trap) entry(entry)
-block entry(r:readbuf,first:u64,end:u64)
-  jump loop(r,first,end,first)
-block loop(lr:readbuf,lf:u64,le:u64,la:u64)
+fn pes_validate(r:readbuf,first:u64,end:u64,extras:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(r:readbuf,first:u64,end:u64,extras:u64)
+  jump loop(r,first,end,first,end,extras)
+block loop(lr:readbuf,lf:u64,le:u64,la:u64,lside:u64,lextras:u64)
   done:bool = compare.eq(la,le)
-  branch done success() syntax(lr,lf,le,la)
-block syntax(sr:readbuf,sf:u64,se:u64,sa:u64)
+  branch done success() syntax(lr,lf,le,la,lside,lextras)
+block syntax(sr:readbuf,sf:u64,se:u64,sa:u64,sside:u64,sextras:u64)
   valid:bool = call(sr,sa) {"function":"pes_row_shape"}
-  branch valid identity(sr,sf,se,sa) frame()
-block identity(ir:readbuf,ifirst:u64,ie:u64,ia:u64)
+  branch valid identity(sr,sf,se,sa,sside,sextras) frame()
+block identity(ir:readbuf,ifirst:u64,ie:u64,ia:u64,iside:u64,iextras:u64)
   missing:bool = call(ir,ia) {"function":"pes_empty"}
-  branch missing id_bad() duplicate(ir,ifirst,ie,ia)
-block duplicate(dr:readbuf,df:u64,de:u64,da:u64)
+  branch missing id_bad() duplicate(ir,ifirst,ie,ia,iside,iextras)
+block duplicate(dr:readbuf,df:u64,de:u64,da:u64,dside:u64,dextras:u64)
   by_id:bool = const() {"value":false}
   seen:bool = call(dr,df,da,da,by_id) {"function":"pes_seen"}
-  branch seen duplicate_bad() label(dr,df,de,da)
-block label(br:readbuf,bf:u64,be:u64,ba:u64)
+  branch seen duplicate_bad() label(dr,df,de,da,dside,dextras)
+block label(br:readbuf,bf:u64,be:u64,ba:u64,bside:u64,bextras:u64)
   off_l:u64 = const() {"value":96}
   lat:u64 = int.add.wrap(ba,off_l)
   l:u64 = call(br,lat) {"function":"pes_byte"}
   last_class:u64 = const() {"value":2}
   ok:bool = compare.le(l,last_class)
-  branch ok group(br,bf,be,ba) label_bad()
-block group(gr:readbuf,gf:u64,ge:u64,ga:u64)
+  branch ok group(br,bf,be,ba,bside,bextras) label_bad()
+block group(gr:readbuf,gf:u64,ge:u64,ga:u64,gside:u64,gextras:u64)
   g_at:u64 = call(gr,ga) {"function":"pes_group_at"}
   empty:bool = call(gr,g_at) {"function":"pes_empty"}
-  branch empty group_bad() binding(gr,gf,ge,ga,g_at)
-block binding(cr:readbuf,cf:u64,ce:u64,ca:u64,cg:u64)
+  branch empty group_bad() binding(gr,gf,ge,ga,gside,gextras,g_at)
+block binding(cr:readbuf,cf:u64,ce:u64,ca:u64,cside:u64,cextras:u64,cg:u64)
   p_off:u64 = const() {"value":100}
   p_at:u64 = int.add.wrap(ca,p_off)
   present:u64 = call(cr,p_at) {"function":"pes_byte"}
@@ -291,8 +294,8 @@ block binding(cr:readbuf,cf:u64,ce:u64,ca:u64,cg:u64)
   f_at:u64 = int.add.wrap(ca,f_off)
   matches:bool = call(cr,f_at,cg) {"function":"pes_equal"}
   bound:bool = bool.or(absent,matches)
-  branch bound predict(cr,cf,ce,ca) binding_bad()
-block predict(pr:readbuf,pf:u64,pe:u64,pa:u64)
+  branch bound predict(cr,cf,ce,ca,cside,cextras) binding_bad()
+block predict(pr:readbuf,pf:u64,pe:u64,pa:u64,pside:u64,pextras:u64)
   c_off:u64 = const() {"value":97}
   r_off:u64 = const() {"value":98}
   c_at:u64 = int.add.wrap(pa,c_off)
@@ -305,7 +308,10 @@ block predict(pr:readbuf,pf:u64,pe:u64,pa:u64)
   pok:bool = bool.and(cok,rok)
   stride:u64 = const() {"value":104}
   next:u64 = int.add.wrap(pa,stride)
-  branch pok loop(pr,pf,pe,next) predict_bad()
+  extr_valid:bool = call(pr,pside,pextras) {"function":"pes_extra_valid"}
+  combined:bool = bool.and(pok,extr_valid)
+  next_side:u64 = int.add.wrap(pside,pextras)
+  branch combined loop(pr,pf,pe,next,next_side,pextras) predict_bad()
 block success()
   a_ok:u32 = const() {"value":0}
   ret(a_ok)
@@ -331,27 +337,57 @@ block predict_bad()
   b_predict:u32 = const() {"value":10}
   ret(b_predict)
 end
-fn pes_group(r:readbuf,at:u64,end:u64,group:u64) -> (u64) effects(read,trap) entry(entry)
-block entry(r:readbuf,at:u64,end:u64,group:u64)
+fn pes_extra_valid(r:readbuf,side:u64,stride:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,side:u64,stride:u64)
+  zero:u64 = const() {"value":0}
+  absent:bool = compare.eq(stride,zero)
+  branch absent yes() inspect(r,side)
+block inspect(ir:readbuf,is:u64)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  b:u64 = int.add.wrap(is,one)
+  c:u64 = int.add.wrap(is,two)
+  p0:u64 = call(ir,is) {"function":"pes_byte"}
+  p1:u64 = call(ir,b) {"function":"pes_byte"}
+  p2:u64 = call(ir,c) {"function":"pes_byte"}
+  v0:bool = compare.le(p0,two)
+  v1:bool = compare.le(p1,two)
+  v2:bool = compare.le(p2,two)
+  v01:bool = bool.and(v0,v1)
+  all:bool = bool.and(v01,v2)
+  ret(all)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+end
+fn pes_group(r:readbuf,at:u64,end:u64,group:u64,side:u64,stride:u64,choice:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(r:readbuf,at:u64,end:u64,group:u64,side:u64,stride:u64,choice:u64)
   zero:u64 = const() {"value":0}
   bias:u64 = const() {"value":64}
-  jump loop(r,at,end,group,zero,bias)
-block loop(lr:readbuf,la:u64,le:u64,lg:u64,ln:u64,ld:u64)
+  jump loop(r,at,end,group,zero,bias,side,stride,choice)
+block loop(lr:readbuf,la:u64,le:u64,lg:u64,ln:u64,ld:u64,ls:u64,lstep:u64,lc:u64)
   done:bool = compare.eq(la,le)
-  branch done pack(ln,ld) test(lr,la,le,lg,ln,ld)
-block test(tr:readbuf,ta:u64,te:u64,tg:u64,tn:u64,td:u64)
+  branch done pack(ln,ld) test(lr,la,le,lg,ln,ld,ls,lstep,lc)
+block test(tr:readbuf,ta:u64,te:u64,tg:u64,tn:u64,td:u64,ts:u64,tstep:u64,tc:u64)
   g:u64 = call(tr,ta) {"function":"pes_group_at"}
   same:bool = call(tr,g,tg) {"function":"pes_equal"}
   width:u64 = const() {"value":104}
   next:u64 = int.add.wrap(ta,width)
-  branch same delta(tr,ta,next,te,tg,tn,td) loop(tr,next,te,tg,tn,td)
-block delta(dr:readbuf,da:u64,dx:u64,de:u64,dg:u64,dn:u64,dd:u64)
+  next_side:u64 = int.add.wrap(ts,tstep)
+  branch same delta(tr,ta,next,te,tg,tn,td,ts,next_side,tstep,tc) loop(tr,next,te,tg,tn,td,next_side,tstep,tc)
+block delta(dr:readbuf,da:u64,dx:u64,de:u64,dg:u64,dn:u64,dd:u64,ds:u64,dsn:u64,dstep:u64,dc:u64)
   l_off:u64 = const() {"value":96}
   c_off:u64 = const() {"value":97}
   r_off:u64 = const() {"value":98}
   l_at:u64 = int.add.wrap(da,l_off)
   c_at:u64 = int.add.wrap(da,c_off)
-  r_at:u64 = int.add.wrap(da,r_off)
+  primary:u64 = int.add.wrap(da,r_off)
+  one_choice:u64 = const() {"value":1}
+  z_choice:u64 = const() {"value":0}
+  primary_choice:bool = compare.eq(dc,z_choice)
+  tail_off:u64 = int.sub.wrap(dc,one_choice)
+  tail_at:u64 = int.add.wrap(ds,tail_off)
+  r_at:u64 = select(primary_choice,primary,tail_at)
   label:u64 = call(dr,l_at) {"function":"pes_byte"}
   candidate:u64 = call(dr,c_at) {"function":"pes_byte"}
   reference:u64 = call(dr,r_at) {"function":"pes_byte"}
@@ -364,7 +400,7 @@ block delta(dr:readbuf,da:u64,dx:u64,de:u64,dg:u64,dn:u64,dd:u64)
   add:u64 = int.add.wrap(dd,cv)
   diff:u64 = int.sub.wrap(add,rv)
   count:u64 = int.add.wrap(dn,one)
-  jump loop(dr,dx,de,dg,count,diff)
+  jump loop(dr,dx,de,dg,count,diff,dsn,dstep,dc)
 block pack(pn:u64,pd:u64)
   base:u64 = const() {"value":256}
   hi:u64 = int.mul.wrap(pn,base)
@@ -469,26 +505,30 @@ block byte(bo:mutbuf,ba:u64,be:u64,bv:u64)
 block finish()
   ret()
 end
-fn pes_score(r:readbuf,o:mutbuf,c:u64,m:u64,f:u64,end:u64) -> () effects(read,write,trap) entry(entry)
-block entry(r:readbuf,o:mutbuf,c:u64,m:u64,f:u64,end:u64)
-  start:u64 = const() {"value":9}
+fn pes_score(r:readbuf,o:mutbuf,c:u64,m:u64,f:u64,start:u64,end:u64,stride:u64,choice:u64) -> () effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,c:u64,m:u64,f:u64,start:u64,end:u64,stride:u64,choice:u64)
   zero:u64 = const() {"value":0}
   zero_s:i64 = const() {"value":0}
   den:u64 = const() {"value":1}
-  jump loop(r,o,c,m,f,end,start,zero,zero,zero,zero_s,den)
-block loop(lr:readbuf,lo:mutbuf,lc:u64,lm:u64,lf:u64,le:u64,la:u64,lg:u64,lw:u64,ll:u64,ln:i64,ld:u64)
+  jump loop(r,o,c,m,f,end,start,zero,zero,zero,zero_s,den,start,stride,choice)
+block loop(lr:readbuf,lo:mutbuf,lc:u64,lm:u64,lf:u64,le:u64,la:u64,lg:u64,lw:u64,ll:u64,ln:i64,ld:u64,lstart:u64,lstep:u64,lchoice:u64)
   done:bool = compare.eq(la,le)
-  branch done normalize(lo,lc,lm,lf,lg,lw,ll,ln,ld) test(lr,lo,lc,lm,lf,le,la,lg,lw,ll,ln,ld)
-block test(tr:readbuf,to:mutbuf,tc:u64,tm:u64,tf:u64,te:u64,ta:u64,tg:u64,tw:u64,tl:u64,tn:i64,td:u64)
+  branch done normalize(lo,lc,lm,lf,lg,lw,ll,ln,ld) test(lr,lo,lc,lm,lf,le,la,lg,lw,ll,ln,ld,lstart,lstep,lchoice)
+block test(tr:readbuf,to:mutbuf,tc:u64,tm:u64,tf:u64,te:u64,ta:u64,tg:u64,tw:u64,tl:u64,tn:i64,td:u64,tstart:u64,tstep:u64,tchoice:u64)
   key:u64 = call(tr,ta) {"function":"pes_group_at"}
-  first:u64 = const() {"value":9}
   group:bool = const() {"value":true}
-  seen:bool = call(tr,first,ta,key,group) {"function":"pes_seen"}
+  seen:bool = call(tr,tstart,ta,key,group) {"function":"pes_seen"}
   width:u64 = const() {"value":104}
   next:u64 = int.add.wrap(ta,width)
-  branch seen loop(tr,to,tc,tm,tf,te,next,tg,tw,tl,tn,td) sum(tr,to,tc,tm,tf,te,ta,next,tg,tw,tl,tn,td,key)
-block sum(sr:readbuf,so:mutbuf,sc:u64,sm:u64,sf:u64,se:u64,sa:u64,sx:u64,sg:u64,sw:u64,sl:u64,sn:i64,sd:u64,sk:u64)
-  packed:u64 = call(sr,sa,se,sk) {"function":"pes_group"}
+  branch seen loop(tr,to,tc,tm,tf,te,next,tg,tw,tl,tn,td,tstart,tstep,tchoice) sum(tr,to,tc,tm,tf,te,ta,tg,tw,tl,tn,td,key,tstart,tstep,tchoice)
+block sum(sr:readbuf,so:mutbuf,sc:u64,sm:u64,sf:u64,se:u64,sa:u64,sg:u64,sw:u64,sl:u64,sn:i64,sd:u64,sk:u64,sstart:u64,sstep:u64,schoice:u64)
+  row_width:u64 = const() {"value":104}
+  offset:u64 = int.sub.wrap(sa,sstart)
+  ordinal:u64 = int.div.checked(offset,row_width)
+  side_delta:u64 = int.mul.wrap(ordinal,sstep)
+  side:u64 = int.add.wrap(se,side_delta)
+  sx:u64 = int.add.wrap(sa,row_width)
+  packed:u64 = call(sr,sa,se,sk,side,sstep,schoice) {"function":"pes_group"}
   radix:u64 = const() {"value":256}
   sz:u64 = int.div.checked(packed,radix)
   biased:u64 = int.rem.checked(packed,radix)
@@ -511,7 +551,7 @@ block sum(sr:readbuf,so:mutbuf,sc:u64,sm:u64,sf:u64,se:u64,sa:u64,sx:u64,sg:u64,
   left:i64 = int.mul.checked(sn,sz_s)
   right:i64 = int.mul.checked(delta,sd_s)
   nnum:i64 = int.add.checked(left,right)
-  jump loop(sr,so,sc,sm,sf,se,sx,ng,nw,nl,nnum,ns)
+  jump loop(sr,so,sc,sm,sf,se,sx,ng,nw,nl,nnum,ns,sstart,sstep,schoice)
 block normalize(no:mutbuf,nc:u64,nm:u64,nf:u64,ngroup:u64,nwins:u64,nloss:u64,nn:i64,nd:u64)
   negated:i64 = int.neg.checked(nn)
   signed_zero:i64 = const() {"value":0}

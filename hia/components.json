@@ -23518,6 +23518,37 @@
         ]
       }
     ],
+    "src/model/calibrated_paired_evaluation.hepta": [
+      {
+        "functions": [
+          "pes_byte",
+          "pes_empty",
+          "pes_equal",
+          "pes_text",
+          "pes_group_at",
+          "pes_seen",
+          "pes_row_shape",
+          "pes_validate",
+          "pes_extra_valid",
+          "pes_group",
+          "pes_gcd",
+          "pes_tail",
+          "pes_gate",
+          "pes_store",
+          "pes_score"
+        ],
+        "source": "src/model/paired_evaluation_score.hepta"
+      },
+      {
+        "functions": [
+          "cal_validate",
+          "cal_group",
+          "cal_fraction",
+          "cal_score"
+        ],
+        "source": "src/model/held_calibration_select.hepta"
+      }
+    ],
     "src/model/held_calibration_select.hepta": [
       {
         "functions": [

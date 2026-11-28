@@ -3407,6 +3407,16 @@
       ]
     },
     {
+      "id": "model/calibrated-paired-evaluation",
+      "node_integration_complete": false,
+      "scope": "Private one-call original numeric held calibration then paired exploratory evaluation over two immutable typed sections, with chosen held control column derived inside HIA. No reference-lock, actual inference, independence, adoption or authority.",
+      "source": "hia/src/model/calibrated_paired_evaluation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_calibrated_paired_evaluation.py"
+      ]
+    },
+    {
       "id": "model/held-calibration-select",
       "node_integration_complete": false,
       "scope": "Private exact numeric selection among four original frozen formal controls over held inert typed predictions, winner name and reduced equal-source-group scores; no reference lock, inference, training, adoption or authority.",

@@ -1,0 +1,141 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_calibrated_paired_evaluation
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  length:usize = buffer.len(r)
+  header:usize = const() {"value":11}
+  enough:bool = compare.le(header,length)
+  branch enough identify(r,o,length) frame_bad()
+block identify(ir:readbuf,io:mutbuf,in:usize)
+  p0:u64 = const() {"value":0}
+  p1:u64 = const() {"value":1}
+  p2:u64 = const() {"value":2}
+  p3:u64 = const() {"value":3}
+  b0:u64 = call(ir,p0) {"function":"pes_byte"}
+  b1:u64 = call(ir,p1) {"function":"pes_byte"}
+  b2:u64 = call(ir,p2) {"function":"pes_byte"}
+  b3:u64 = call(ir,p3) {"function":"pes_byte"}
+  e0:u64 = const() {"value":67}
+  e1:u64 = const() {"value":65}
+  e2:u64 = const() {"value":69}
+  e3:u64 = const() {"value":49}
+  c0:bool = compare.eq(b0,e0)
+  c1:bool = compare.eq(b1,e1)
+  c2:bool = compare.eq(b2,e2)
+  c3:bool = compare.eq(b3,e3)
+  c01:bool = bool.and(c0,c1)
+  c23:bool = bool.and(c2,c3)
+  magic:bool = bool.and(c01,c23)
+  branch magic controls(ir,io,in) frame_bad()
+block controls(cr:readbuf,co:mutbuf,cn:usize)
+  m_at:u64 = const() {"value":6}
+  mask:u64 = call(cr,m_at) {"function":"pes_byte"}
+  k:u64 = const() {"value":15}
+  full:bool = compare.eq(mask,k)
+  branch full extents(cr,co,cn) controls_bad()
+block extents(er:readbuf,eo:mutbuf,en:usize)
+  ca_at:u64 = const() {"value":4}
+  ev_at:u64 = const() {"value":5}
+  cal_count:u64 = call(er,ca_at) {"function":"pes_byte"}
+  ev_count:u64 = call(er,ev_at) {"function":"pes_byte"}
+  one:u64 = const() {"value":1}
+  max:u64 = const() {"value":64}
+  cal_lo:bool = compare.le(one,cal_count)
+  cal_hi:bool = compare.le(cal_count,max)
+  ev_lo:bool = compare.le(one,ev_count)
+  ev_hi:bool = compare.le(ev_count,max)
+  cal_ok:bool = bool.and(cal_lo,cal_hi)
+  ev_ok:bool = bool.and(ev_lo,ev_hi)
+  counts_ok:bool = bool.and(cal_ok,ev_ok)
+  branch counts_ok shape(er,eo,en,cal_count,ev_count) count_bad()
+block shape(sr:readbuf,so:mutbuf,sn:usize,sc:u64,se:u64)
+  s0:u64 = const() {"value":11}
+  width:u64 = const() {"value":104}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  cal_rows:u64 = int.mul.wrap(sc,width)
+  cal_tail:u64 = int.mul.wrap(sc,two)
+  cal_end:u64 = int.add.wrap(s0,cal_rows)
+  ev_start:u64 = int.add.wrap(cal_end,cal_tail)
+  ev_rows:u64 = int.mul.wrap(se,width)
+  ev_tail:u64 = int.mul.wrap(se,three)
+  ev_end:u64 = int.add.wrap(ev_start,ev_rows)
+  end:u64 = int.add.wrap(ev_end,ev_tail)
+  wanted:usize = int.cast(end) {"mode":"wrap"}
+  valid_extent:bool = compare.eq(wanted,sn)
+  branch valid_extent calibration(sr,so,s0,cal_end,ev_start,ev_end) frame_bad()
+block calibration(ar:readbuf,ao:mutbuf,ac0:u64,ac1:u64,ae0:u64,ae1:u64)
+  a_code:u32 = call(ar,ac0,ac1) {"function":"cal_validate"}
+  a_good:u32 = const() {"value":0}
+  a_ok:bool = compare.eq(a_code,a_good)
+  branch a_ok policy(ar,ao,ac0,ac1,ae0,ae1) refused(a_code)
+block policy(pr:readbuf,po:mutbuf,pc0:u64,pc1:u64,pe0:u64,pe1:u64)
+  co_at:u64 = const() {"value":7}
+  n_c:u64 = call(pr,co_at) {"function":"pes_byte"}
+  c_min:u64 = const() {"value":4}
+  c_max:u64 = const() {"value":64}
+  pl:bool = compare.le(c_min,n_c)
+  ph:bool = compare.le(n_c,c_max)
+  cp_ok:bool = bool.and(pl,ph)
+  branch cp_ok minimum(pr,po,pc0,pc1,pe0,pe1,n_c) comparison_bad()
+block minimum(mr:readbuf,mo:mutbuf,mc0:u64,mc1:u64,me0:u64,me1:u64,mc:u64)
+  ml_at:u64 = const() {"value":8}
+  mh_at:u64 = const() {"value":9}
+  low:u64 = call(mr,ml_at) {"function":"pes_byte"}
+  high:u64 = call(mr,mh_at) {"function":"pes_byte"}
+  radix:u64 = const() {"value":256}
+  upper:u64 = int.mul.wrap(high,radix)
+  nm:u64 = int.add.wrap(low,upper)
+  min_floor:u64 = const() {"value":20}
+  min_ceil:u64 = const() {"value":4096}
+  min_low:bool = compare.le(min_floor,nm)
+  min_high:bool = compare.le(nm,min_ceil)
+  min_ok:bool = bool.and(min_low,min_high)
+  branch min_ok future(mr,mo,mc0,mc1,me0,me1,mc,nm) minimum_bad()
+block future(fr:readbuf,fo:mutbuf,fc0:u64,fc1:u64,fe0:u64,fe1:u64,fc:u64,fm:u64)
+  f_at:u64 = const() {"value":10}
+  ff:u64 = call(fr,f_at) {"function":"pes_byte"}
+  f_max:u64 = const() {"value":1}
+  f_ok:bool = compare.le(ff,f_max)
+  branch f_ok evaluation(fr,fo,fc0,fc1,fe0,fe1,fc,fm,ff) future_bad()
+block evaluation(vr:readbuf,vo:mutbuf,vc0:u64,vc1:u64,ve0:u64,ve1:u64,vc:u64,vm:u64,vf:u64)
+  extras:u64 = const() {"value":3}
+  v_code:u32 = call(vr,ve0,ve1,extras) {"function":"pes_validate"}
+  v_good:u32 = const() {"value":0}
+  v_ok:bool = compare.eq(v_code,v_good)
+  branch v_ok capacity(vr,vo,vc0,vc1,ve0,ve1,vc,vm,vf) refused(v_code)
+block capacity(br:readbuf,bo:mutbuf,bc0:u64,bc1:u64,be0:u64,be1:u64,bc:u64,bm:u64,bf:u64)
+  avail:usize = buffer.len(bo)
+  need:usize = const() {"value":168}
+  room:bool = compare.le(need,avail)
+  branch room publish(br,bo,bc0,bc1,be0,be1,bc,bm,bf) space_bad()
+block publish(rr:readbuf,ro:mutbuf,rc0:u64,rc1:u64,re0:u64,re1:u64,rc:u64,rm:u64,rf:u64)
+  cal_offset:u64 = const() {"value":88}
+  stride:u64 = const() {"value":3}
+  chosen:u64 = call(rr,ro,rc0,rc1,cal_offset) {"function":"cal_score"}
+  _ = call(rr,ro,rc,rm,rf,re0,re1,stride,chosen) {"function":"pes_score"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block refused(status:u32)
+  ret(status)
+block frame_bad()
+  bframe:u32 = const() {"value":100}
+  ret(bframe)
+block space_bad()
+  bspace:u32 = const() {"value":102}
+  ret(bspace)
+block count_bad()
+  bn:u32 = const() {"value":4}
+  ret(bn)
+block controls_bad()
+  bctrl:u32 = const() {"value":11}
+  ret(bctrl)
+block comparison_bad()
+  bcomp:u32 = const() {"value":1}
+  ret(bcomp)
+block minimum_bad()
+  bmin:u32 = const() {"value":2}
+  ret(bmin)
+block future_bad()
+  bfut:u32 = const() {"value":3}
+  ret(bfut)
+end
