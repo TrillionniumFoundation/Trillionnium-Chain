@@ -362,8 +362,7 @@ class NativeBenchMain(unittest.TestCase):
             new, new_ns = self.actual(f"terminal-cli-{i}-hia", self.native, args)
             self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
             self.assertEqual(stdout_observation(old.stdout, old_ns)[1], stdout_observation(new.stdout, new_ns)[1])
-        for i, args in enumerate(((b"--txs=1", b"--txs", b"-2"),
-                                  (b"--txs", b"--", b"--profile"),
+        for i, args in enumerate(((b"--txs", b"--", b"--profile"),
                                   (b"--help=true",), (b"--", b"--help"),
                                   (b"--reader-high-water-v1", b"--help"),
                                   (b"--reader-high-water-v1", b"--txs"),
@@ -419,7 +418,7 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", exact), args)
         for idx, args in enumerate(((b"A" * 128,), (b"--" + b"Z" * 126,),
                                     (b"",), (b"two words",), (b"two\nlines",), (b"bad\xff",),
-                                    (b"---unknown",), (b"-x",),
+                                    (b"---unknown",),
                                     (b"--", b"logfile"), (b"--", b"--tx"),
                                     (b"--txs", b"--worklod"),
                                     (b"--reader-high-water-v1", b"logfile"))):
@@ -453,7 +452,7 @@ class NativeBenchMain(unittest.TestCase):
                 (b"--unknown=" + b"Z" * (128 - len(b"--unknown=")),),
                 (b"--unknown=x\ny",), (b"--unknown=\tfoo",), (b"--unknown=\x7f",),
                 (b"--unknown=\xff",), (b"--=missing-name",), (b"--bad?=name",),
-                (b"logfile=value",), (b"-x=value",), (b"---unknown=value",),
+                (b"logfile=value",), (b"---unknown=value",),
                 (b"--help=value",), (b"--profile=true",), (b"--persist-profile=false",),
                 (b"--reader-high-water-v1=true",),
                 (b"--txs", b"--unknown=1"), (b"--", b"--unknown=1"))):
@@ -658,13 +657,76 @@ class NativeBenchMain(unittest.TestCase):
                                    (b"--keys=2", b"--txs=4", b"--" + b"Z"*123, b"--help"),
                                    (b"--unknown=invalid-value\xff", b"--help"),
                                    (b"--reader-high-water-v1", b"--ZZZZZ", b"--help"),
-                                   (b"--", b"--ZZZZZ", b"--help"),
-                                   (b"-x", b"--ZZZZZ", b"--help"))):
+                                   (b"--", b"--ZZZZZ", b"--help"))):
             native, _ = self.actual(f"first-unknown-outside-{i}", self.native, args)
             self.assertEqual((native.returncode, native.stdout, native.stderr), (2, b"", OUTSIDE), args)
         denied, _ = self.actual("first-unknown-env-fence", self.native, (b"--ZZZZZ", b"--help"),
                                 env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_ascii_short_option_diagnostic_and_pending_precedence(self):
+        prefixes = ((), (b"--profile",), (b"--keys=2", b"--txs=4"),
+                    (b"--keys=2", b"--txs"))
+        adornments = ((b"", ()), (b"rest", (b"--help",)),
+                      (b"=opaque\xff", (b"--txs", b"9")))
+        serial = 0
+        for first in range(32, 127):
+            if first in b"-h":
+                continue
+            token = bytes((45, first))
+            exact = (b"error: unexpected argument '" + token + b"' found\n\n"
+                     b"Usage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n")
+            for prefix in prefixes:
+                for attached, after in adornments:
+                    args = (*prefix, token + attached, *after)
+                    for owner, image in (("rust", self.original), ("hia", self.native)):
+                        result, _ = self.actual(f"short-actual-{serial}-{owner}", image, args)
+                        self.assertEqual((result.returncode, result.stdout, result.stderr),
+                                         (2, b"", exact), args)
+                    serial += 1
+        self.assertEqual(serial, 1116)
+        special = (
+            ((b"--txs=1", b"--txs", b"-2"), b"unexpected argument '-2'"),
+            ((b"--txs", b"-15"), b"unexpected argument '-1'"),
+            ((b"--txs", b"-1"), b"unexpected argument '-1'"),
+            ((b"-x=value",), b"unexpected argument '-x'"),
+            ((b"--txs=-15",), b"invalid value '-15'"),
+            ((b"--txs", b"-"), b"invalid value '-'"),
+            ((b"--profile", b"-", b"--help"), b"unexpected argument '-'"),
+            ((b"-",), b"unexpected argument '-'"),
+            ((b"-x", b"--ZZZZZ", b"--help"), b"unexpected argument '-x'"),
+            ((b"-x" + b"z"*125,), b"unexpected argument '-x'"),
+            ((b"-x", *(b"trailing",)*16), b"unexpected argument '-x'"),
+        )
+        for index, (args, message) in enumerate(special):
+            old, _ = self.actual(f"short-value-special-{index}-rust", self.original, args)
+            new, _ = self.actual(f"short-value-special-{index}-hia", self.native, args)
+            self.assertEqual((old.returncode, old.stdout), (2, b""))
+            self.assertIn(message, old.stderr)
+            self.assertEqual((new.returncode, new.stdout, new.stderr), (2,b"",old.stderr), args)
+        fields = (b"--txs", b"--keys", b"--read-fanout", b"--write-every", b"--workload",
+                  b"--strategy", b"--determinism-repeats")
+        help_clusters = (b"-hx", b"-h=tail", b"-hh", b"-h\xff", b"-h"+b"z"*125)
+        for x, field in enumerate(fields):
+            for y, cluster in enumerate(help_clusters):
+                args = (field, cluster, b"--help")
+                original, _ = self.actual(f"short-pending-help-{x}-{y}-rust", self.original, args)
+                native, _ = self.actual(f"short-pending-help-{x}-{y}-hia", self.native, args)
+                self.assertEqual((original.returncode, original.stdout), (2, b""))
+                self.assertIn(b"a value is required for '" + field, original.stderr)
+                self.assertEqual((native.returncode, native.stdout,native.stderr),
+                                 (2,b"",original.stderr), args)
+        for i, args in enumerate(((b"-x"+b"x"*126,), (b"-h=tail",), (b"-hx",),
+                                  (b"--keys=2", b"-hh"), (b"--txs", b"-h"+b"x"*126),
+                                  (b"-\xc3\xa9",), (b"-\x01suffix",),
+                                  (b"--reader-high-water-v1", b"-x"),
+                                  (b"-x", *(b"trailing",)*17))):
+            out, _ = self.actual(f"short-outside-{i}", self.native, args)
+            self.assertEqual((out.returncode,out.stdout,out.stderr), (2,b"",OUTSIDE), args)
+        out, _ = self.actual("short-outside-environment", self.native, (b"--profile", b"-x", b"--help"),
+                             env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
+        self.assertEqual((out.returncode,out.stdout,out.stderr), (2,b"",OUTSIDE))
         self.assertFalse(self.run_path.exists())
 
     def test_actual_plain_uint_cli_diagnostics_and_no_unbounded_echo(self):
@@ -695,7 +757,7 @@ class NativeBenchMain(unittest.TestCase):
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr), args)
         closed = ((b"--txs=\xff",), (b"--txs=bad\x01",), (b"--txs=bad\x1b[0m",),
                   (b"--write-every=\t",), (b"--read-fanout", b"0" * 127 + b"x"),
-                  (b"--txs", b"-1"), (b"--reader-high-water-v1", b"--txs=bad"))
+                  (b"--reader-high-water-v1", b"--txs=bad"))
         for i, args in enumerate(closed):
             new, _ = self.actual(f"uint-cli-closed-{i}-hia", self.native, args)
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE))

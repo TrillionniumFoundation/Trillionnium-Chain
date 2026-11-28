@@ -183,6 +183,18 @@ the suffix, and none of its bytes is added to a diagnostic. The existing
 17-token process intake limit is unchanged. An original `--` preceding a token,
 corrected-mode diagnostics, and malformed or nonprintable bytes in the
 selected token remain refused by this candidate.
+For a single-dash token with a printable ASCII short name, the diagnostic
+shows just the hyphen and that first unrecognized name, including punctuation
+or a digit. The original uses `[OPTIONS]`, even when earlier options completed.
+The remainder of the cluster or its attached spelling is opaque and does not
+appear in the diagnostic. A lone hyphen is positional unless absorbed as a
+pending value. A negative token split from a value option is interpreted as
+a short option here; an attached negative value still reaches numeric
+diagnostics. When a pending option expects a value, a short cluster beginning
+with `h` reports the missing value without running help; standalone help
+clusters other than the already admitted bare `-h` remain refused. The same
+bound applies to the complete selected token and the 17-token frame. This
+does not add non-ASCII or control short names, terminal modes, or accepted work.
 The HIA renderer reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted

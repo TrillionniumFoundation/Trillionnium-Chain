@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v12
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v13
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -102,7 +102,25 @@ block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   lead_fk:u8 = buffer.load(i_fk,at_fk)
   dash_fk:u8 = const() {"value":45}
   starts_dash:bool = compare.eq(lead_fk,dash_fk)
-  branch starts_dash free_long(i_fk,o_fk,p_fk,e_fk,eq_fk) free_positional(i_fk,o_fk,p_fk,e_fk,eq_fk)
+  branch starts_dash free_dash(i_fk,o_fk,p_fk,e_fk,eq_fk) free_positional(i_fk,o_fk,p_fk,e_fk,eq_fk)
+block free_dash(sh0_fd_i:readbuf,sh0_fd_o:mutbuf,sh0_fd_p:u64,sh0_fd_e:u64,sh0_fd_eq:u64)
+  sh0_one_fd:u64 = const() {"value":1}
+  sh0_q_fd:u64 = int.add.wrap(sh0_fd_p,sh0_one_fd)
+  sh0_alone_fd:bool = compare.eq(sh0_q_fd,sh0_fd_e)
+  branch sh0_alone_fd free_dash_echo(sh0_fd_i,sh0_fd_o,sh0_fd_p,sh0_fd_e) free_dash_kind(sh0_fd_i,sh0_fd_o,sh0_fd_p,sh0_fd_e,sh0_fd_eq,sh0_q_fd)
+block free_dash_kind(sh1_dk_i:readbuf,sh1_dk_o:mutbuf,sh1_dk_p:u64,sh1_dk_e:u64,sh1_dk_eq:u64,sh1_dk_q:u64)
+  sh1_kind_dk:u64 = call(sh1_dk_i,sh1_dk_q) {"function":"bc_short_kind"}
+  sh1_one_fdk:u64 = const() {"value":1}
+  sh1_dash_dk:u64 = const() {"value":3}
+  sh1_short_dk:bool = compare.eq(sh1_kind_dk,sh1_one_fdk)
+  sh1_long_dk:bool = compare.eq(sh1_kind_dk,sh1_dash_dk)
+  sh1_echo_to_dk:u64 = int.add.wrap(sh1_dk_q,sh1_one_fdk)
+  branch sh1_short_dk free_dash_echo(sh1_dk_i,sh1_dk_o,sh1_dk_p,sh1_echo_to_dk) free_maybe_long(sh1_dk_i,sh1_dk_o,sh1_dk_p,sh1_dk_e,sh1_dk_eq,sh1_long_dk)
+block free_maybe_long(sh2_ml_i:readbuf,sh2_ml_o:mutbuf,sh2_ml_p:u64,sh2_ml_e:u64,sh2_ml_eq:u64,sh2_ml_long:bool)
+  branch sh2_ml_long free_long(sh2_ml_i,sh2_ml_o,sh2_ml_p,sh2_ml_e,sh2_ml_eq) fail()
+block free_dash_echo(sh3_de_i:readbuf,sh3_de_o:mutbuf,sh3_de_p:u64,sh3_de_e:u64)
+  sh3_kind_de:u64 = const() {"value":90}
+  jump free_save(sh3_de_i,sh3_de_o,sh3_de_p,sh3_de_e,sh3_kind_de)
 block free_positional(i_px:readbuf,o_px:mutbuf,p_px:u64,e_px:u64,eq_px:u64)
   bare_px:bool = compare.eq(e_px,eq_px)
   branch bare_px free_plain(i_px,o_px,p_px,e_px) fail()
@@ -212,8 +230,8 @@ block detached_nonempty(i_dn:readbuf,o_dn:mutbuf,n_dn:u64,p_dn:u64,e_dn:u64,k_dn
   lead_dn:u8 = buffer.load(i_dn,off_dn)
   dash_dn:u8 = const() {"value":45}
   optional_dn:bool = compare.eq(lead_dn,dash_dn)
-  branch optional_dn pending(i_dn,o_dn,p_dn,e_dn,s_dn,k_dn,f_dn) value(i_dn,o_dn,n_dn,p_dn,e_dn,k_dn,f_dn)
-block pending(i_pe:readbuf,o_pe:mutbuf,p_pe:u64,e_pe:u64,s_pe:u64,k_pe:u64,f_pe:u64)
+  branch optional_dn pending(i_dn,o_dn,n_dn,p_dn,e_dn,s_dn,k_dn,f_dn) value(i_dn,o_dn,n_dn,p_dn,e_dn,k_dn,f_dn)
+block pending(i_pe:readbuf,o_pe:mutbuf,n_pe:u64,p_pe:u64,e_pe:u64,s_pe:u64,k_pe:u64,f_pe:u64)
   special_pe:u64 = call(i_pe,p_pe,s_pe) {"function":"bc_special"}
   zero_pe:u64 = const() {"value":0}
   help_pe:u64 = const() {"value":1}
@@ -223,7 +241,35 @@ block pending(i_pe:readbuf,o_pe:mutbuf,p_pe:u64,e_pe:u64,s_pe:u64,k_pe:u64,f_pe:
   last_pe:bool = compare.eq(k_pe,zero_pe)
   terminal_pe:bool = bool.and(last_pe,is_end_pe)
   recognized_pe:bool = bool.or(terminal_pe,is_help_pe)
-  branch recognized_pe missing(o_pe,f_pe) pending_long(i_pe,o_pe,p_pe,e_pe,f_pe)
+  branch recognized_pe missing(o_pe,f_pe) pending_kind(i_pe,o_pe,n_pe,p_pe,e_pe,k_pe,f_pe,s_pe)
+block pending_kind(sh4_pk_i:readbuf,sh4_pk_o:mutbuf,sh4_pk_n:u64,sh4_pk_p:u64,sh4_pk_e:u64,sh4_pk_k:u64,sh4_pk_f:u64,sh4_pk_s:u64)
+  sh4_one_pk:u64 = const() {"value":1}
+  sh4_q_pk:u64 = int.add.wrap(sh4_pk_p,sh4_one_pk)
+  sh4_k_pk:u64 = int.add.wrap(sh4_pk_k,sh4_one_pk)
+  sh4_tag_pk:u64 = call(sh4_pk_i,sh4_q_pk) {"function":"bc_short_kind"}
+  sh4_short_pk:bool = compare.eq(sh4_tag_pk,sh4_one_pk)
+  branch sh4_short_pk free_arg(sh4_pk_i,sh4_pk_o,sh4_pk_n,sh4_pk_p,sh4_k_pk,sh4_pk_e,sh4_pk_e) pending_secondary(sh4_pk_i,sh4_pk_o,sh4_pk_n,sh4_pk_p,sh4_pk_e,sh4_pk_k,sh4_pk_f,sh4_pk_s,sh4_tag_pk)
+block pending_secondary(sh5_ps_i:readbuf,sh5_ps_o:mutbuf,sh5_ps_n:u64,sh5_ps_p:u64,sh5_ps_e:u64,sh5_ps_k:u64,sh5_ps_f:u64,sh5_ps_s:u64,sh5_ps_tag:u64)
+  sh5_help_ps:u64 = const() {"value":2}
+  sh5_dash_ps:u64 = const() {"value":3}
+  sh5_is_help_ps:bool = compare.eq(sh5_ps_tag,sh5_help_ps)
+  sh5_is_long_ps:bool = compare.eq(sh5_ps_tag,sh5_dash_ps)
+  branch sh5_is_help_ps pending_short_help(sh5_ps_i,sh5_ps_o,sh5_ps_n,sh5_ps_e,sh5_ps_k,sh5_ps_f,sh5_ps_s) pending_maybe_long(sh5_ps_i,sh5_ps_o,sh5_ps_p,sh5_ps_e,sh5_ps_f,sh5_is_long_ps)
+block pending_maybe_long(sh6_pm_i:readbuf,sh6_pm_o:mutbuf,sh6_pm_p:u64,sh6_pm_e:u64,sh6_pm_f:u64,sh6_pm_long:bool)
+  branch sh6_pm_long pending_long(sh6_pm_i,sh6_pm_o,sh6_pm_p,sh6_pm_e,sh6_pm_f) fail()
+block pending_short_help(sh7_ph_i:readbuf,sh7_ph_o:mutbuf,sh7_ph_n:u64,sh7_ph_e:u64,sh7_ph_k:u64,sh7_ph_f:u64,sh7_ph_s:u64)
+  sh7_max_ph:u64 = const() {"value":127}
+  sh7_max_args_ph:u64 = const() {"value":17}
+  sh7_at_argc_ph:u64 = const() {"value":0}
+  sh7_one_ph:u64 = const() {"value":1}
+  sh7_argc_ph:u64 = call(sh7_ph_i,sh7_at_argc_ph) {"function":"bench_read"}
+  sh7_argc_ok_ph:bool = compare.le(sh7_argc_ph,sh7_max_args_ph)
+  sh7_size_ok_ph:bool = compare.le(sh7_ph_s,sh7_max_ph)
+  sh7_after_ph:u64 = int.add.wrap(sh7_ph_e,sh7_one_ph)
+  sh7_shape_ph:bool = call(sh7_ph_i,sh7_ph_n,sh7_after_ph,sh7_ph_k) {"function":"bc_tail_frame"}
+  sh7_bounded_ph:bool = bool.and(sh7_argc_ok_ph,sh7_size_ok_ph)
+  sh7_valid_ph:bool = bool.and(sh7_bounded_ph,sh7_shape_ph)
+  branch sh7_valid_ph missing(sh7_ph_o,sh7_ph_f) fail()
 block pending_long(i_plg:readbuf,o_plg:mutbuf,p_plg:u64,e_plg:u64,f_plg:u64)
   equal_plg:u64 = call(i_plg,p_plg,e_plg) {"function":"bc_equal"}
   size_plg:u64 = int.sub.wrap(equal_plg,p_plg)
@@ -1180,6 +1226,29 @@ block ok()
 block fail()
   no:bool = const() {"value":false}
   ret(no)
+end
+
+fn bc_short_kind(i:readbuf,at:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(i:readbuf,at:u64)
+  byte_at:usize = int.cast(at) {"mode":"wrap"}
+  b:u8 = buffer.load(i,byte_at)
+  lo:u8 = const() {"value":32}
+  hi:u8 = const() {"value":126}
+  dash:u8 = const() {"value":45}
+  help:u8 = const() {"value":104}
+  first_ok:bool = compare.ge(b,lo)
+  last_ok:bool = compare.le(b,hi)
+  visible:bool = bool.and(first_ok,last_ok)
+  is_long:bool = compare.eq(b,dash)
+  is_help:bool = compare.eq(b,help)
+  none:u64 = const() {"value":0}
+  short:u64 = const() {"value":1}
+  h:u64 = const() {"value":2}
+  l:u64 = const() {"value":3}
+  norm:u64 = select(visible,short,none)
+  help_or_norm:u64 = select(is_help,h,norm)
+  result:u64 = select(is_long,l,help_or_norm)
+  ret(result)
 end
 
 fn bc_tail_frame(i:readbuf,n:u64,at:u64,count:u64) -> (bool) effects(read,trap) entry(entry)
