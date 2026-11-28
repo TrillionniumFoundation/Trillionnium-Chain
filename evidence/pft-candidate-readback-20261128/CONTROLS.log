@@ -1,0 +1,20 @@
+test_bounded_input_and_explicit_cli_expectations (test_pft_candidate_readback.PftCandidateTests.test_bounded_input_and_explicit_cli_expectations) ... ok
+test_contract_epoch_or_feature_semantics_cannot_be_self_retargeted (test_pft_candidate_readback.PftCandidateTests.test_contract_epoch_or_feature_semantics_cannot_be_self_retargeted) ... ok
+test_contract_object_must_match_its_original_canonical_text (test_pft_candidate_readback.PftCandidateTests.test_contract_object_must_match_its_original_canonical_text) ... ok
+test_duplicate_root_key_is_not_silently_last_value_wins (test_pft_candidate_readback.PftCandidateTests.test_duplicate_root_key_is_not_silently_last_value_wins) ... ok
+test_each_independent_pin_is_required (test_pft_candidate_readback.PftCandidateTests.test_each_independent_pin_is_required) ... ok
+test_exact_candidate_bytes_do_not_accept_whitespace_rewrite (test_pft_candidate_readback.PftCandidateTests.test_exact_candidate_bytes_do_not_accept_whitespace_rewrite) ... ok
+test_exact_synthetic_candidate_matches_without_authority (test_pft_candidate_readback.PftCandidateTests.test_exact_synthetic_candidate_matches_without_authority) ... ok
+test_extra_authority_field_and_schema_or_encoding_upgrades_refuse (test_pft_candidate_readback.PftCandidateTests.test_extra_authority_field_and_schema_or_encoding_upgrades_refuse) ... ok
+test_fixed_ieee754_little_endian_row_order_and_signed_zero (test_pft_candidate_readback.PftCandidateTests.test_fixed_ieee754_little_endian_row_order_and_signed_zero) ... ok
+test_head_revision_order_duplicates_and_contract_are_checked (test_pft_candidate_readback.PftCandidateTests.test_head_revision_order_duplicates_and_contract_are_checked) ... ok
+test_noncanonical_or_duplicate_nested_contract_refuses (test_pft_candidate_readback.PftCandidateTests.test_noncanonical_or_duplicate_nested_contract_refuses) ... ok
+test_nonfinite_json_and_overflowed_real_refuse (test_pft_candidate_readback.PftCandidateTests.test_nonfinite_json_and_overflowed_real_refuse) ... ok
+test_recomputed_candidate_digest_cannot_hide_different_weight (test_pft_candidate_readback.PftCandidateTests.test_recomputed_candidate_digest_cannot_hide_different_weight) ... ok
+test_research_contract_limits_and_native_family_substitution_refuse (test_pft_candidate_readback.PftCandidateTests.test_research_contract_limits_and_native_family_substitution_refuse) ... ok
+test_strict_count_shape_and_weight_scalar_types (test_pft_candidate_readback.PftCandidateTests.test_strict_count_shape_and_weight_scalar_types) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.116s
+
+OK

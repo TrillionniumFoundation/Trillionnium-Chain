@@ -1,0 +1,11 @@
+{
+  "scope": "prior 15-control run with locally retained private historical fixture; not final public-fixture tests",
+  "tests": 15,
+  "errors": 0,
+  "failures": 0,
+  "candidate_sha256": "001f322da2ac470f83a9e502971b79e47c0dca3baa9211fc4abd10ba10b115ae",
+  "reader_sha256": "f6763f59cf205160b3b6935b66857447e31d15ef3ed4990bda2099d2ab1fb16d",
+  "test_sha256": "6f787f65499c2ad43f2430b03cb1457fb6df7a30e912e6d8cd0ae5cd60e25d77",
+  "execution_authority": false,
+  "production_activation": false
+}
