@@ -1668,6 +1668,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-retention-contract-value",
+      "node_integration_complete": false,
+      "scope": "Original immutable Cell retention contract hash using one complete native TCM1 decode and derived manifest ID, exact declared terms and optional successor; no store, funding, authority, custody or effects",
+      "source": "hia/src/data_availability/cell_retention_contract_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_retention_contract_value.py",
+        "hia/tests/rust_da_cell_retention_contract_value_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-release-manifest",
       "node_integration_complete": false,
       "scope": "Pure original TCR1 immutable declared set decode, exact order, full 32760 rows and domain SHA-256 identity. No external pin authority, files, release, cache, network, payload validation, selection or adoption.",
@@ -3155,6 +3166,7 @@
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",
         "data-availability/cell-periodic-snapshot-policy",
+        "data-availability/cell-retention-contract-value",
         "data-availability/cell-release-manifest",
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",

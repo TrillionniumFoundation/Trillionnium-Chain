@@ -1,0 +1,105 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_retention_contract_value_v1
+fn f0(raw:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,output:mutbuf,work:mutbuf)
+  n:usize = buffer.len(raw)
+  extent:u64 = int.cast(n) {"mode":"wrap"}
+  base:u64 = const() {"value":129}
+  fit:bool = compare.ge(extent,base)
+  branch fit header(raw,output,work,extent,base) malformed()
+block header(hi:readbuf,ho:mutbuf,hw:mutbuf,he:u64,hb:u64)
+  pos:u64 = const() {"value":0}
+  seen:u64 = call(hi,pos) {"function":"tr_read"}
+  mark:u64 = const() {"value":3544385890586608462}
+  tag_ok:bool = compare.eq(seen,mark)
+  branch tag_ok option(hi,ho,hw,he,hb) malformed()
+block option(oi:readbuf,oo:mutbuf,ow:mutbuf,oe:u64,ob:u64)
+  flag_at:usize = const() {"value":128}
+  flag:u8 = buffer.load(oi,flag_at)
+  z:u8 = const() {"value":0}
+  one:u8 = const() {"value":1}
+  absent:bool = compare.eq(flag,z)
+  present:bool = compare.eq(flag,one)
+  valid:bool = bool.or(absent,present)
+  no_data:u64 = const() {"value":0}
+  data:u64 = const() {"value":64}
+  legacy_extra:u64 = select(present,data,no_data)
+  manifest_at:u64 = int.add.wrap(ob,legacy_extra)
+  in_input:bool = compare.ge(oe,manifest_at)
+  shape:bool = bool.and(valid,in_input)
+  branch shape decode(oi,oo,ow,oe,manifest_at,legacy_extra) malformed()
+block decode(di:readbuf,do_:mutbuf,dw:mutbuf,de:u64,dm:u64,dx:u64)
+  length:u64 = int.sub.wrap(de,dm)
+  result:u32,_rows:u64,_count:u64 = call(di,dm,length) {"function":"cm_decode"}
+  okay:u32 = const() {"value":0}
+  good:bool = compare.eq(result,okay)
+  branch good capacity(di,do_,dw,dm,length,dx) rejected(result)
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf,cm:u64,cl:u64,cx:u64)
+  required_out:usize = const() {"value":32}
+  required_work:usize = const() {"value":1457}
+  out_size:usize = buffer.len(co)
+  work_size:usize = buffer.len(cw)
+  out_ok:bool = compare.ge(out_size,required_out)
+  work_ok:bool = compare.ge(work_size,required_work)
+  both:bool = bool.and(out_ok,work_ok)
+  branch both manifest(ci,co,cw,cm,cl,cx) short()
+block manifest(mi:readbuf,mo:mutbuf,mw:mutbuf,mp:u64,ml:u64,mx:u64)
+  mh:u64 = call(mi,mp,ml,mw) {"function":"cm_hash"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(mh,zero)
+  branch ready retention(mi,mo,mw,mx) internal()
+block retention(ri:readbuf,ro:mutbuf,rw:mutbuf,rx:u64)
+  digest_pos:u64 = const() {"value":1168}
+  manifest_field:u64 = const() {"value":1336}
+  digest_size:u64 = const() {"value":32}
+  carried:u64 = call(rw,digest_pos,manifest_field,digest_size) {"function":"cp_wcopy"}
+  init:u64 = call(rw) {"function":"tr_sha_init"}
+  hp0:u64 = const() {"value":1208}
+  hd0:u64 = const() {"value":7810758179799593588}
+  put0:u64 = call(rw,hp0,hd0) {"function":"tr_put"}
+  hp8:u64 = const() {"value":1216}
+  hd8:u64 = const() {"value":8389754706430405996}
+  put8:u64 = call(rw,hp8,hd8) {"function":"tr_put"}
+  hp16:u64 = const() {"value":1224}
+  hd16:u64 = const() {"value":8389765627592470377}
+  put16:u64 = call(rw,hp16,hd16) {"function":"tr_put"}
+  hp24:u64 = const() {"value":1232}
+  hd24:u64 = const() {"value":13922215752065394}
+  put24:u64 = call(rw,hp24,hd24) {"function":"tr_put"}
+  id_input:u64 = const() {"value":8}
+  id_dest:u64 = const() {"value":1240}
+  id_len:u64 = const() {"value":96}
+  id_set:u64 = call(ri,id_input,rw,id_dest,id_len) {"function":"cp_copy"}
+  term_input:u64 = const() {"value":104}
+  term_dest:u64 = const() {"value":1368}
+  fixed_terms:u64 = const() {"value":25}
+  term_len:u64 = int.add.wrap(fixed_terms,rx)
+  set_terms:u64 = call(ri,term_input,rw,term_dest,term_len) {"function":"cp_copy"}
+  hash_input:u64 = const() {"value":1208}
+  short_extent:u64 = const() {"value":185}
+  extent_all:u64 = int.add.wrap(short_extent,rx)
+  fed:u64 = call(rw,hash_input,extent_all) {"function":"tr_sha_update_work"}
+  sealed:u64 = call(rw) {"function":"tr_sha_final"}
+  first_pair:u64 = bit.or(init,fed)
+  all_parts:u64 = bit.or(first_pair,sealed)
+  valid_hash:u64 = const() {"value":0}
+  success_hash:bool = compare.eq(all_parts,valid_hash)
+  branch success_hash publish(ro,rw) internal()
+block publish(po:mutbuf,pw:mutbuf)
+  digest:u64 = const() {"value":1168}
+  zero_pos:u64 = const() {"value":0}
+  width:u64 = const() {"value":32}
+  published:u64 = call(pw,digest,po,zero_pos,width) {"function":"cp_wout"}
+  okay_:u32 = const() {"value":0}
+  ret(okay_)
+block malformed()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block short()
+  bad_work:u32 = const() {"value":102}
+  ret(bad_work)
+block internal()
+  bad_hash:u32 = const() {"value":103}
+  ret(bad_hash)
+block rejected(code:u32)
+  ret(code)
+end
