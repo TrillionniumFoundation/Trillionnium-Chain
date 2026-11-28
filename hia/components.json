@@ -9076,6 +9076,67 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/state/routed_int257_factored_multibatch.hepta": [
+      {
+        "functions": [
+          "rio_i32",
+          "rio_features",
+          "rio_dot",
+          "rio_argmax"
+        ],
+        "source": "src/state/routed_int257_ordinary.hepta"
+      },
+      {
+        "functions": [
+          "rim_validate"
+        ],
+        "source": "src/state/routed_int257_model_commitment.hepta"
+      },
+      {
+        "functions": [
+          "rif_prepare",
+          "rif_coeffs",
+          "rif_range",
+          "rif_compare",
+          "rif_compare_row",
+          "rif_contract"
+        ],
+        "source": "src/state/routed_int257_factor_preparation.hepta"
+      },
+      {
+        "functions": [
+          "rid_index",
+          "rid_groups",
+          "rid_copy"
+        ],
+        "source": "src/state/routed_int257_direct.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "rix_slot",
+          "rix_row",
+          "rix_hidden",
+          "rix_delta",
+          "rix_valid",
+          "rix_record",
+          "rix_counts"
+        ],
+        "source": "src/state/routed_int257_factored.hepta"
+      }
+    ],
     "src/state/routed_int257_factored.hepta": [
       {
         "functions": [
