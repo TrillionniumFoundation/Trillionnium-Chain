@@ -1148,6 +1148,17 @@
       ]
     },
     {
+      "id": "state/cell-held-train",
+      "node_integration_complete": false,
+      "scope": "Pure same-loan held Cell route/logit/recurrent active-row -> frozen loss/gradient/optimizer numeric result, no externally supplied gradients, action/state commitment or production owner.",
+      "source": "hia/src/state/cell_held_train.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_held_train.py",
+        "hia/tests/rust_cell_held_train_reference.rs"
+      ]
+    },
+    {
       "id": "state/cell-held-rows",
       "node_integration_complete": false,
       "scope": "Pure bounded held Cell expert selection, logits, recurrent memory and remaining-step active trainer projection, compared to genuine frozen execute; no inference provenance, actions, training, owner or deployment.",
@@ -4491,6 +4502,7 @@
         "model/cell-model-canonical",
         "state/integer-training-fused",
         "state/cell-held-rows",
+        "state/cell-held-train",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",

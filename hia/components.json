@@ -7658,12 +7658,67 @@
         ]
       }
     ],
+    "src/state/cell_held_train.hepta": [
+      {
+        "source": "src/state/cell_held_rows.hepta",
+        "functions": [
+          "cr_between",
+          "cr_validate",
+          "cr_route",
+          "cr_class",
+          "cr_store3",
+          "cr_records"
+        ]
+      },
+      {
+        "source": "src/state/integer_training_backward.hepta",
+        "functions": [
+          "train_backward",
+          "train_row_word"
+        ]
+      },
+      {
+        "source": "src/state/integer_training_batch_update.hepta",
+        "functions": [
+          "train_update_domain",
+          "train_input_gradient",
+          "train_gradient",
+          "train_update"
+        ]
+      },
+      {
+        "source": "src/model/cell_training_coordinate.hepta",
+        "functions": [
+          "opt_coordinate",
+          "opt_abs",
+          "opt_signed",
+          "opt_add"
+        ]
+      },
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_load64",
+          "cw_store64"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_read",
+          "cp_put",
+          "cp_copy"
+        ]
+      }
+    ],
     "src/state/integer_training_fused.hepta": [
       {
         "source": "src/state/integer_training_backward.hepta",
         "functions": [
           "train_rows",
-          "train_backward"
+          "train_backward",
+          "train_row_word"
         ]
       },
       {

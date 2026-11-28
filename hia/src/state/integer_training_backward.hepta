@@ -155,10 +155,10 @@ block start(hi:readbuf,ho:mutbuf,hn:usize,he:usize,first_row:usize)
   no_rows:bool = compare.eq(hn,first_row)
   branch no_rows done() row(hi,ho,hn,first_row,he,initial_total)
 block row(ji:readbuf,jo:mutbuf,jn:usize,jp:usize,jout:usize,jtotal:u64)
-  path:u64 = call(ji,jp) {"function":"cw_read64"}
+  path:u64 = call(ji,jo,jp) {"function":"train_row_word"}
   truth_at_offset:usize = const() {"value":8}
   truth_at:usize = int.add.wrap(jp,truth_at_offset)
-  truth:u64 = call(ji,truth_at) {"function":"cw_read64"}
+  truth:u64 = call(ji,jo,truth_at) {"function":"train_row_word"}
   route_idx:usize = int.cast(path) {"mode":"wrap"}
   matrix_width:usize = const() {"value":6168}
   route_span:usize = int.mul.wrap(route_idx,matrix_width)
@@ -176,7 +176,7 @@ block class(li:readbuf,lo:mutbuf,ln:usize,lp:usize,lout:usize,lt:u64,ll:u64,ld:u
   logbase_offset:usize = const() {"value":16}
   logbase:usize = int.add.wrap(lp,logbase_offset)
   logit_at:usize = int.add.wrap(logbase,classoff)
-  logit:u64 = call(li,logit_at) {"function":"cw_read64"}
+  logit:u64 = call(li,lo,logit_at) {"function":"train_row_word"}
   chosen:bool = compare.eq(lc,ll)
   branch chosen component(li,lo,ln,lp,lout,lt,ll,ld,lc,ls,classoff,logit,target_hi) component(li,lo,ln,lp,lout,lt,ll,ld,lc,ls,classoff,logit,target_lo)
 block component(mi:readbuf,mo:mutbuf,mn:usize,mp:usize,mo2:usize,mt:u64,ml:u64,md:usize,mc:u64,ms:u64,moff:usize,mv:u64,mg:u64)
@@ -204,7 +204,7 @@ block component(mi:readbuf,mo:mutbuf,mn:usize,mp:usize,mo2:usize,mt:u64,ml:u64,m
   feat_stop:usize = int.add.wrap(mp,feat_stop_offset)
   jump backward(mi,mo,mn,mp,mo2,mt,ml,md,mc,rloss,derivative,base_class,route_class,feat_at,feat_stop)
 block backward(vi:readbuf,vo:mutbuf,vn:usize,vp:usize,vout:usize,vt:u64,vl:u64,vd:usize,vc:u64,vs:u64,dd:u64,vb:usize,vr:usize,vf:usize,ve:usize)
-  feature_value:u64 = call(vi,vf) {"function":"cw_read64"}
+  feature_value:u64 = call(vi,vo,vf) {"function":"train_row_word"}
   gradient:u64 = int.mul.wrap(feature_value,dd)
   before_base:u64 = call(vo,vb) {"function":"cw_load64"}
   before_route:u64 = call(vo,vr) {"function":"cw_load64"}
@@ -244,4 +244,17 @@ block result(zo:mutbuf,zt:u64)
 block done()
   status_done:u32 = const() {"value":0}
   ret(status_done)
+end
+
+fn train_row_word(i:readbuf,w:mutbuf,at:usize) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,at:usize)
+  internal_start:usize = const() {"value":262144}
+  external:bool = compare.lt(at,internal_start)
+  branch external raw(i,at) prepared(w,at)
+block raw(ri:readbuf,ra:usize)
+  value:u64 = call(ri,ra) {"function":"cw_read64"}
+  ret(value)
+block prepared(pw:mutbuf,pa:usize)
+  held:u64 = call(pw,pa) {"function":"cw_load64"}
+  ret(held)
 end
