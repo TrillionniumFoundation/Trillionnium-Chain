@@ -1,0 +1,21 @@
+{
+  "schema": "trnm-pft-native-loader-controls-summary-v1",
+  "attempt": 1,
+  "scope": "isolated exact-source two-layer loader controls; full crate remains CI",
+  "core_controls_in_this_layer": 4,
+  "adversarial_controls_in_stacked_layer": 5,
+  "combined_first_passed": 9,
+  "combined_first_failed": 0,
+  "old_core_controls_filtered": 11,
+  "first_original_receipt_sha256": "f21eedfd0f91b4d4c3ddd8d9a8547de02658b3d3d7dd47fc6a9839d95ac60e4b",
+  "first_controls_stdout_sha256": "05eebd3ec63adac0d992db794f50aca9bebb80d61a61a2c564fc0d221e6dcc4b",
+  "source_authentication": false,
+  "normal_equations_verified": false,
+  "native_adoption": false,
+  "current_permission": false,
+  "quality_improved": false,
+  "final_use": false,
+  "real_user_b": false,
+  "payment": false,
+  "full_crate_build": false
+}

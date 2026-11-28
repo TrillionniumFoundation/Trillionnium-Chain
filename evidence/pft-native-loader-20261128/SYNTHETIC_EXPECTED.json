@@ -1,0 +1,21 @@
+{
+  "candidate_sha256": "8604161da990568566993ed0acd2f2421c03e845b8832e1faf20d977a46aa61a",
+  "contract_sha256": "5592c556a2cbb94f89b410bf7fa768cd7385f386f39ff347e98e9f0f375b53d7",
+  "dimension": 2,
+  "feature_binary_sha256": "f8d9947976ff8e80e4683d46dc16fab34a1acc152977052002b8bbfaa6ba8a4e",
+  "feature_packet_sha256": "586e403ad3e67e6de2d6189c6f053d1578732f8ea2349bca3daf38871652d220",
+  "feature_program_sha256": "f74afeb8af8de2dfb777c5e725f606d7bc67de65355df3e35ff9877603c08e75",
+  "head": "5dd522d3edb47a163b358754dfd2bdae1ebd79556efc3ff8411def58d438288b",
+  "normalization_sha256": "00a168ce045f39ec514709f9a256b5282089f08528214a9199071afe84f5ad1e",
+  "objective_sha256": "c11b9851087c86fa9ec04a3b036eb58219a7ba5837fa0b63ff0b33019cfba3f2",
+  "output_le_hex": "000000000000004000000000000014c000000000000010c00000000000002440",
+  "outputs": 2,
+  "parent_model_sha256": "69e9ae46e33ab57ee3c7e615397a2cca66d3a0568852bbc1246190091e6bfa3b",
+  "request_id": "858bf441fa8534a0788282216726cdb7daebff4f6968b8861d3fbbad1645b336",
+  "row_ids_sha256": "bd2bd0b0c4330176f2c1c1ba73ab79064ae7adebdeae34f5e192f1a717c6f8d8",
+  "rows": 2,
+  "source_sha256": "8ae4d6427a6d5aa4c3c119afffb057d4b2dbd57014e12275bebddf125a4a9016",
+  "synthetic_only": true,
+  "time_semantics_sha256": "6f46adfc435897bacb44eed94f5fae5f57885933b028e8676d8e1b42f5bb9acb",
+  "weight_sha256": "2f9f5cc0426bc1b216ef1dfca42387a516befcf0be43fde5f71708cf85c0c203"
+}
