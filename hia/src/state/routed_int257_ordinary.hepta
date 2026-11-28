@@ -1,0 +1,226 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_routed_int257_ordinary
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  actual:usize = buffer.len(r)
+  width:u64 = int.cast(actual) {"mode":"wrap"}
+  min:u64 = const() {"value":15424}
+  enough:bool = compare.ge(width,min)
+  branch enough frame(r,o,width,min) malformed()
+block frame(r1:readbuf,o1:mutbuf,width1:u64,min1:u64)
+  pos:u64 = const() {"value":0}
+  count:u64 = call(r1,pos) {"function":"daav_u32"}
+  stride:u64 = const() {"value":1028}
+  rows:u64 = int.mul.wrap(count,stride)
+  need:u64 = int.add.wrap(min1,rows)
+  exact:bool = compare.eq(width1,need)
+  branch exact model(r1,o1,count,min1) malformed()
+block model(r2:readbuf,o2:mutbuf,count2:u64,end2:u64)
+  good2:bool = call(r2,end2) {"function":"rio_coefficients"}
+  branch good2 batch(r2,o2,count2,end2) coefficient_error()
+block batch(r3:readbuf,o3:mutbuf,count3:u64,end3:u64)
+  lo3:u64 = const() {"value":1}
+  hi3:u64 = const() {"value":64}
+  lower:bool = compare.ge(count3,lo3)
+  upper:bool = compare.le(count3,hi3)
+  valid:bool = bool.and(lower,upper)
+  branch valid features(r3,o3,count3,end3) batch_error()
+block features(r4:readbuf,o4:mutbuf,count4:u64,end4:u64)
+  inputs:bool = call(r4,count4,end4) {"function":"rio_features"}
+  branch inputs capacity(r4,o4,count4,end4) inputs_error()
+block capacity(r5:readbuf,o5:mutbuf,count5:u64,first5:u64)
+  result:usize = buffer.len(o5)
+  n5:u64 = int.cast(result) {"mode":"wrap"}
+  stride5:u64 = const() {"value":26}
+  total5:u64 = int.mul.wrap(count5,stride5)
+  room5:bool = compare.ge(n5,total5)
+  branch room5 begin(r5,o5,count5,first5) short()
+block begin(r6:readbuf,o6:mutbuf,count6:u64,first6:u64)
+  zero6:u64 = const() {"value":0}
+  jump row(r6,o6,first6,zero6,count6)
+block row(r7:readbuf,o7:mutbuf,feature7:u64,out7:u64,left7:u64)
+  _row:u64 = call(r7,o7,feature7,out7) {"function":"rio_emit"}
+  one7:u64 = const() {"value":1}
+  step7:u64 = const() {"value":1028}
+  width7:u64 = const() {"value":26}
+  next7:u64 = int.add.wrap(feature7,step7)
+  out_next:u64 = int.add.wrap(out7,width7)
+  remaining:u64 = int.sub.wrap(left7,one7)
+  done7:bool = compare.eq(left7,one7)
+  branch done7 success() row(r7,o7,next7,out_next,remaining)
+block malformed()
+  malformed_code:u32 = const() {"value":100}
+  ret(malformed_code)
+block coefficient_error()
+  coefficient_code:u32 = const() {"value":3}
+  ret(coefficient_code)
+block batch_error()
+  batch_code:u32 = const() {"value":4}
+  ret(batch_code)
+block inputs_error()
+  input_code:u32 = const() {"value":5}
+  ret(input_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block success()
+  success_code:u32 = const() {"value":0}
+  ret(success_code)
+end
+
+fn rio_i32(r:readbuf,at:u64) -> (i64) effects(read,trap) entry(entry)
+block entry(r:readbuf,at:u64)
+  raw:u64 = call(r,at) {"function":"daav_u32"}
+  narrow:i32 = int.cast(raw) {"mode":"wrap"}
+  extended:i64 = int.cast(narrow) {"mode":"wrap"}
+  ret(extended)
+end
+
+fn rio_coefficients(r:readbuf,end:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,end:u64)
+  first:u64 = const() {"value":4}
+  jump next(r,first,end)
+block next(r1:readbuf,at1:u64,end1:u64)
+  lower:i64 = const() {"value":-32767}
+  upper:i64 = const() {"value":32767}
+  x:i64 = call(r1,at1) {"function":"rio_i32"}
+  lo:bool = compare.ge(x,lower)
+  hi:bool = compare.le(x,upper)
+  pass:bool = bool.and(lo,hi)
+  branch pass advance(r1,at1,end1) bad()
+block advance(r2:readbuf,at2:u64,end2:u64)
+  step:u64 = const() {"value":4}
+  next2:u64 = int.add.wrap(at2,step)
+  done:bool = compare.eq(next2,end2)
+  branch done okay() next(r2,next2,end2)
+block okay()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rio_features(r:readbuf,count:u64,start:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,count:u64,start:u64)
+  jump row(r,count,start)
+block row(r1:readbuf,count1:u64,start1:u64)
+  bias:u64 = const() {"value":1024}
+  last:u64 = int.add.wrap(start1,bias)
+  x:i64 = call(r1,last) {"function":"rio_i32"}
+  eight:i64 = const() {"value":8}
+  okay1:bool = compare.eq(x,eight)
+  branch okay1 coord(r1,count1,start1,last) bad()
+block coord(r2:readbuf,count2:u64,at2:u64,last2:u64)
+  lo2:i64 = const() {"value":-8}
+  hi2:i64 = const() {"value":8}
+  x2:i64 = call(r2,at2) {"function":"rio_i32"}
+  lower2:bool = compare.ge(x2,lo2)
+  upper2:bool = compare.le(x2,hi2)
+  good2:bool = bool.and(lower2,upper2)
+  branch good2 move(r2,count2,at2,last2) bad()
+block move(r3:readbuf,count3:u64,at3:u64,last3:u64)
+  d3:u64 = const() {"value":4}
+  next3:u64 = int.add.wrap(at3,d3)
+  end3:bool = compare.eq(next3,last3)
+  branch end3 next_row(r3,count3,last3,d3) coord(r3,count3,next3,last3)
+block next_row(r4:readbuf,count4:u64,last4:u64,d4:u64)
+  one4:u64 = const() {"value":1}
+  remainder4:u64 = int.sub.wrap(count4,one4)
+  next4:u64 = int.add.wrap(last4,d4)
+  done4:bool = compare.eq(count4,one4)
+  branch done4 good() row(r4,remainder4,next4)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rio_dot(r:readbuf,coefficient:u64,delta:u64,feature:u64,merged:bool) -> (i64) effects(read,trap) entry(entry)
+block entry(r:readbuf,coefficient:u64,delta:u64,feature:u64,merged:bool)
+  zero:i64 = const() {"value":0}
+  run:u64 = const() {"value":257}
+  jump next(r,coefficient,delta,feature,merged,run,zero)
+block next(r1:readbuf,coef1:u64,delta1:u64,x1:u64,merged1:bool,left1:u64,sum1:i64)
+  raw1:i64 = call(r1,coef1) {"function":"rio_i32"}
+  feature1:i64 = call(r1,x1) {"function":"rio_i32"}
+  branch merged1 pair(r1,coef1,delta1,x1,merged1,left1,sum1,raw1,feature1) accumulate(r1,coef1,delta1,x1,merged1,left1,sum1,raw1,feature1)
+block pair(r2:readbuf,coef2:u64,delta2:u64,x2:u64,merged2:bool,left2:u64,sum2:i64,raw2:i64,feature2:i64)
+  change2:i64 = call(r2,delta2) {"function":"rio_i32"}
+  weight2:i64 = int.add.wrap(raw2,change2)
+  jump accumulate(r2,coef2,delta2,x2,merged2,left2,sum2,weight2,feature2)
+block accumulate(r3:readbuf,coef3:u64,delta3:u64,x3:u64,merged3:bool,left3:u64,sum3:i64,weight3:i64,feature3:i64)
+  multiplication:i64 = int.mul.wrap(weight3,feature3)
+  result3:i64 = int.add.wrap(sum3,multiplication)
+  one3:u64 = const() {"value":1}
+  step3:u64 = const() {"value":4}
+  more3:u64 = int.sub.wrap(left3,one3)
+  co3:u64 = int.add.wrap(coef3,step3)
+  de3:u64 = int.add.wrap(delta3,step3)
+  fx3:u64 = int.add.wrap(x3,step3)
+  finish:bool = compare.eq(left3,one3)
+  branch finish done(result3) next(r3,co3,de3,fx3,merged3,more3,result3)
+block done(observed:i64)
+  ret(observed)
+end
+
+fn rio_argmax(lo:i64,mid:i64,hi:i64) -> (u64) effects() entry(entry)
+block entry(lo:i64,mid:i64,hi:i64)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  second:bool = compare.gt(mid,lo)
+  first_idx:u64 = select(second,one,zero)
+  first_value:i64 = select(second,mid,lo)
+  third:bool = compare.gt(hi,first_value)
+  result:u64 = select(third,two,first_idx)
+  ret(result)
+end
+
+fn rio_emit(r:readbuf,o:mutbuf,x:u64,out:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,x:u64,out:u64)
+  base0:u64 = const() {"value":4}
+  base1:u64 = const() {"value":1032}
+  base2:u64 = const() {"value":2060}
+  router0:u64 = const() {"value":3088}
+  router1:u64 = const() {"value":4116}
+  router2:u64 = const() {"value":5144}
+  delta0:u64 = const() {"value":6172}
+  row:u64 = const() {"value":1028}
+  matrix:u64 = const() {"value":3084}
+  simple:bool = const() {"value":false}
+  merged:bool = const() {"value":true}
+  r0:i64 = call(r,router0,base0,x,simple) {"function":"rio_dot"}
+  r1:i64 = call(r,router1,base0,x,simple) {"function":"rio_dot"}
+  r2:i64 = call(r,router2,base0,x,simple) {"function":"rio_dot"}
+  expert:u64 = call(r0,r1,r2) {"function":"rio_argmax"}
+  base_delta:u64 = int.mul.wrap(expert,matrix)
+  d0:u64 = int.add.wrap(delta0,base_delta)
+  d1:u64 = int.add.wrap(d0,row)
+  d2:u64 = int.add.wrap(d1,row)
+  a:i64 = call(r,base0,d0,x,merged) {"function":"rio_dot"}
+  b:i64 = call(r,base1,d1,x,merged) {"function":"rio_dot"}
+  c:i64 = call(r,base2,d2,x,merged) {"function":"rio_dot"}
+  best:u64 = call(a,b,c) {"function":"rio_argmax"}
+  step8:u64 = const() {"value":8}
+  step24:u64 = const() {"value":24}
+  u1:u64 = int.add.wrap(out,step8)
+  u2:u64 = int.add.wrap(u1,step8)
+  bits0:u64 = int.cast(a) {"mode":"wrap"}
+  bits1:u64 = int.cast(b) {"mode":"wrap"}
+  bits2:u64 = int.cast(c) {"mode":"wrap"}
+  _l0:u64 = call(o,out,bits0) {"function":"tr_put"}
+  _l1:u64 = call(o,u1,bits1) {"function":"tr_put"}
+  _l2:u64 = call(o,u2,bits2) {"function":"tr_put"}
+  lu:u64 = int.add.wrap(out,step24)
+  idx:usize = int.cast(lu) {"mode":"wrap"}
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(idx,one)
+  ex:u8 = int.cast(expert) {"mode":"wrap"}
+  pred:u8 = int.cast(best) {"mode":"wrap"}
+  _ = buffer.store(o,idx,ex)
+  _ = buffer.store(o,next,pred)
+  zero:u64 = const() {"value":0}
+  ret(zero)
+end
