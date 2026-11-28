@@ -134,8 +134,9 @@ values and malformed text. Zero numeric workload counts retain the original
 one-minimum normalization. The subset admits at most 20,000 transactions and
 the original inclusive zero through 1,000 replays. A parsed count over 1,000
 renders the exact original diagnostic and exit 2 before workload or clock
-work, including with parsed values outside candidate bounds. A terminal
-`--` also admits the same unmarked invocation and does not admit positionals.
+work, including with parsed values outside candidate bounds. A final
+`--` still admits the same unmarked invocation. A nonfinal `--` never admits
+positional work; the plain diagnostic is described below.
 The optional bare `--reader-high-water-v1` explicitly selects the corrected
 scope below. Unsupported work stays closed and never falls back to Rust.
 
@@ -191,9 +192,17 @@ precedence over later options, including `--help`, a duplicate, a missing or
 invalid value, a positional and `--`. The parser verifies only the exact
 remaining count, NUL boundaries, and total frame extent. It does not interpret
 the suffix, and none of its bytes is added to a diagnostic. The existing
-17-token process intake limit is unchanged. An original `--` preceding a token,
-corrected-mode diagnostics, and malformed or nonprintable bytes in the
-selected token remain refused by this candidate.
+17-token process intake limit is unchanged. In the ordinary lane the first
+token following a nonfinal `--` is instead classified literally, even when it
+spells an option, help, another terminator or an assignment. Its complete
+printable ASCII text (including empty, spaces and punctuation) is echoed in
+the original unexpected-argument stderr with `[OPTIONS]`, not a suggestion.
+The remaining tokens affect only framing. The locked parser reports this
+literal before a split value is committed; earlier committed errors and bare
+help retain precedence. Final `--` still leaves a pending value missing.
+The same 127-byte token limit and diagnostic destination-stream and environment
+fences apply. Corrected-mode diagnostics and malformed or nonprintable bytes
+in the selected token remain refused by this candidate.
 For a single-dash token with a printable ASCII short name, the diagnostic
 shows just the hyphen and that first unrecognized name, including punctuation
 or a digit. The original uses `[OPTIONS]`, even when earlier options completed.

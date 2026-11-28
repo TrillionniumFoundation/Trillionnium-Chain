@@ -54,15 +54,47 @@ block special(i_sp:readbuf,o_sp:mutbuf,n_sp:u64,p_sp:u64,k_sp:u64,e_sp:u64)
 block special_end(i_se:readbuf,o_se:mutbuf,n_se:u64,p_se:u64,k_se:u64,e_se:u64,t_se:u64)
   end_se:u64 = const() {"value":2}
   ending:bool = compare.eq(t_se,end_se)
-  branch ending terminator(o_se,n_se,k_se,e_se) name(i_se,o_se,n_se,p_se,k_se,e_se)
-block terminator(o_te:mutbuf,n_te:u64,k_te:u64,e_te:u64)
+  branch ending terminator(i_se,o_se,n_se,k_se,e_se) name(i_se,o_se,n_se,p_se,k_se,e_se)
+block terminator(te_i:readbuf,o_te:mutbuf,n_te:u64,k_te:u64,e_te:u64)
   one_te:u64 = const() {"value":1}
   tail_te:bool = compare.eq(k_te,one_te)
   past_te:u64 = int.add.wrap(e_te,one_te)
-  marked_te:bool = call(o_te) {"function":"bc_marked"}
-  ordinary_te:bool = bool.not(marked_te)
-  accepted_te:bool = bool.and(tail_te,ordinary_te)
-  branch accepted_te finish(o_te,n_te,past_te) fail()
+  left_te:u64 = int.sub.wrap(k_te,one_te)
+  branch tail_te terminator_final(o_te,n_te,past_te) terminator_tail(te_i,o_te,n_te,past_te,left_te)
+block terminator_final(tf_o:mutbuf,tf_n:u64,tf_after:u64)
+  marked_tf:bool = call(tf_o) {"function":"bc_marked"}
+  branch marked_tf fail() finish(tf_o,tf_n,tf_after)
+block terminator_tail(tt_i:readbuf,tt_o:mutbuf,tt_n:u64,tt_p:u64,tt_k:u64)
+  tt_zero:u64 = const() {"value":0}
+  tt_argc:u64 = call(tt_i,tt_zero) {"function":"bench_read"}
+  tt_limit:u64 = const() {"value":17}
+  tt_count:bool = compare.le(tt_argc,tt_limit)
+  tt_marked:bool = call(tt_o) {"function":"bc_marked"}
+  tt_unmarked:bool = bool.not(tt_marked)
+  tt_good:bool = bool.and(tt_count,tt_unmarked)
+  branch tt_good terminator_token(tt_i,tt_o,tt_n,tt_p,tt_k) fail()
+block terminator_token(tn_i:readbuf,tn_o:mutbuf,tn_n:u64,tn_p:u64,tn_k:u64)
+  tn_end:u64 = call(tn_i,tn_p,tn_n) {"function":"bc_end"}
+  tn_one:u64 = const() {"value":1}
+  tn_after:u64 = int.add.wrap(tn_end,tn_one)
+  tn_left:u64 = int.sub.wrap(tn_k,tn_one)
+  tn_len:u64 = int.sub.wrap(tn_end,tn_p)
+  tn_max:u64 = const() {"value":127}
+  tn_closed:bool = compare.lt(tn_end,tn_n)
+  tn_bounded:bool = compare.le(tn_len,tn_max)
+  tn_good:bool = bool.and(tn_closed,tn_bounded)
+  branch tn_good terminator_frame(tn_i,tn_o,tn_n,tn_p,tn_end,tn_after,tn_left) fail()
+block terminator_frame(tfr_i:readbuf,tfr_o:mutbuf,tfr_n:u64,tfr_p:u64,tfr_end:u64,tfr_after:u64,tfr_left:u64)
+  tfr_valid:bool = call(tfr_i,tfr_n,tfr_after,tfr_left) {"function":"bc_tail_frame"}
+  branch tfr_valid terminator_echo(tfr_i,tfr_o,tfr_p,tfr_end) fail()
+block terminator_echo(ter_i:readbuf,ter_o:mutbuf,ter_p:u64,ter_e:u64)
+  ter_dest:u64 = const() {"value":96}
+  ter_ascii:bool = call(ter_i,ter_o,ter_p,ter_e,ter_dest) {"function":"bc_numeric_echo"}
+  ter_at:u64 = const() {"value":72}
+  ter_len:u64 = int.sub.wrap(ter_e,ter_p)
+  _ter_saved:u64 = call(ter_o,ter_at,ter_len) {"function":"bench_put"}
+  ter_diag:u64 = const() {"value":90}
+  branch ter_ascii free_return(ter_diag) fail()
 block help(o_he:mutbuf)
   marked_he:bool = call(o_he) {"function":"bc_marked"}
   branch marked_he fail() help_plain()
@@ -265,9 +297,13 @@ block pending(i_pe:readbuf,o_pe:mutbuf,n_pe:u64,p_pe:u64,e_pe:u64,s_pe:u64,k_pe:
   is_help_pe:bool = compare.eq(special_pe,help_pe)
   is_end_pe:bool = compare.eq(special_pe,end_pe)
   last_pe:bool = compare.eq(k_pe,zero_pe)
-  terminal_pe:bool = bool.and(last_pe,is_end_pe)
-  recognized_pe:bool = bool.or(terminal_pe,is_help_pe)
-  branch recognized_pe missing(o_pe,f_pe) pending_kind(i_pe,o_pe,n_pe,p_pe,e_pe,k_pe,f_pe,s_pe)
+  branch is_end_pe pending_terminator(i_pe,o_pe,n_pe,e_pe,k_pe,f_pe,last_pe) pending_help_or_kind(i_pe,o_pe,n_pe,p_pe,e_pe,k_pe,f_pe,s_pe,is_help_pe)
+block pending_terminator(pt_i:readbuf,pt_o:mutbuf,pt_n:u64,pt_e:u64,pt_k:u64,pt_f:u64,pt_last:bool)
+  pt_one:u64 = const() {"value":1}
+  pt_next:u64 = int.add.wrap(pt_e,pt_one)
+  branch pt_last missing(pt_o,pt_f) terminator_tail(pt_i,pt_o,pt_n,pt_next,pt_k)
+block pending_help_or_kind(phk_i:readbuf,phk_o:mutbuf,phk_n:u64,phk_p:u64,phk_e:u64,phk_k:u64,phk_f:u64,phk_size:u64,phk_help:bool)
+  branch phk_help missing(phk_o,phk_f) pending_kind(phk_i,phk_o,phk_n,phk_p,phk_e,phk_k,phk_f,phk_size)
 block pending_kind(sh4_pk_i:readbuf,sh4_pk_o:mutbuf,sh4_pk_n:u64,sh4_pk_p:u64,sh4_pk_e:u64,sh4_pk_k:u64,sh4_pk_f:u64,sh4_pk_s:u64)
   sh4_one_pk:u64 = const() {"value":1}
   sh4_q_pk:u64 = int.add.wrap(sh4_pk_p,sh4_one_pk)
@@ -327,7 +363,18 @@ block detached_peek_long(dl_i:readbuf,dl_o:mutbuf,dl_n:u64,dl_p:u64,dl_e:u64,dl_
   dl_one:u64 = const() {"value":1}
   dl_attached:bool = compare.ne(dl_field,dl_zero)
   dl_left:u64 = int.sub.wrap(dl_k,dl_one)
-  branch dl_attached attached_flag(dl_i,dl_o,dl_n,dl_next,dl_end,dl_eq,dl_left,dl_field) value(dl_i,dl_o,dl_n,dl_p,dl_e,dl_k,dl_f)
+  branch dl_attached attached_flag(dl_i,dl_o,dl_n,dl_next,dl_end,dl_eq,dl_left,dl_field) detached_peek_terminator(dl_i,dl_o,dl_n,dl_p,dl_e,dl_k,dl_f,dl_next,dl_end,dl_left)
+block detached_peek_terminator(dt_i:readbuf,dt_o:mutbuf,dt_n:u64,dt_p:u64,dt_e:u64,dt_k:u64,dt_f:u64,dt_next:u64,dt_end:u64,dt_left:u64)
+  dt_span:u64 = int.sub.wrap(dt_end,dt_next)
+  dt_special:u64 = call(dt_i,dt_next,dt_span) {"function":"bc_special"}
+  dt_two:u64 = const() {"value":2}
+  dt_zero:u64 = const() {"value":0}
+  dt_one:u64 = const() {"value":1}
+  dt_endopt:bool = compare.eq(dt_special,dt_two)
+  dt_has_tail:bool = compare.gt(dt_left,dt_zero)
+  dt_literal:bool = bool.and(dt_endopt,dt_has_tail)
+  dt_after:u64 = int.add.wrap(dt_end,dt_one)
+  branch dt_literal terminator_tail(dt_i,dt_o,dt_n,dt_after,dt_left) value(dt_i,dt_o,dt_n,dt_p,dt_e,dt_k,dt_f)
 block attached_flag(af_i:readbuf,af_o:mutbuf,af_n:u64,af_p:u64,af_e:u64,af_eq:u64,af_left:u64,af_field:u64)
   af_zero:u64 = const() {"value":0}
   af_one:u64 = const() {"value":1}

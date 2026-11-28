@@ -47,7 +47,10 @@ block load_row(l_i:readbuf,l_o:mutbuf,l_s:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_
   got_text:bool = compare.gt(l_vlen,z_row)
   ordinary_shape:bool = compare.eq(requires_text,got_text)
   attached_shape:bool = call(l_code) {"function":"diag_attached_kind"}
-  token_shape:bool = bool.or(ordinary_shape,attached_shape)
+  positional_code:u64 = const() {"value":90}
+  positional_shape:bool = compare.eq(l_code,positional_code)
+  optional_text:bool = bool.or(positional_shape,attached_shape)
+  token_shape:bool = bool.or(ordinary_shape,optional_text)
   both:bool = bool.and(bare,nonempty)
   shape:bool = bool.and(both,token_shape)
   both_pieces:bool = compare.gt(b,z_row)
