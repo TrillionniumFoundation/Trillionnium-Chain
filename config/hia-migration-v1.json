@@ -361,6 +361,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_path",
+      "node_integration_complete": false,
+      "scope": "Private original Borsh archive inclusion path after complete native admission of an unchanged bounded full batch; ordinary local deterministic bytes only, no trust, signing or store.",
+      "source": "hia/src/task_kernel/archive_path.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_path.py",
+        "hia/tests/rust_task_archive_path_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_variable_batch",
       "node_integration_complete": false,
       "scope": "Complete read-only native canonical Task archive batch verification for one to eight real records: policy/seal, per-record retention, unique order, checked sums, odd-tail Merkle and seal range. No deletion, storage or production authority.",

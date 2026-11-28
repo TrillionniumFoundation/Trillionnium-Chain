@@ -3,6 +3,11 @@ fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(e
 block entry(raw:readbuf,out:mutbuf,w:mutbuf)
   nn:usize = buffer.len(raw)
   n:u64 = int.cast(nn) {"mode":"wrap"}
+  status:u32 = call(raw,w,n) {"function":"ar_batch_check"}
+  ret(status)
+end
+fn ar_batch_check(raw:readbuf,w:mutbuf,n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,n:u64)
   min:u64 = const() {"value":678}
   max:u64 = const() {"value":7548}
   base:bool = compare.ge(n,min)
