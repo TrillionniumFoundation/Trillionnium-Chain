@@ -1693,6 +1693,16 @@
       ]
     },
     {
+      "id": "node/history-page-cutoff",
+      "node_integration_complete": false,
+      "scope": "Immutable retained-window ID and already-bounded wire-length cutoff against exact old history packet loop; no packets, ancestry, requester, authority or I/O",
+      "source": "hia/src/node/history_page_cutoff.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_history_page_cutoff.py"
+      ]
+    },
+    {
       "id": "node/resource-profile-value",
       "node_integration_complete": false,
       "scope": "Exact immutable typed local resource profile validation and Serde JSON ID from public original ResourceProfileV1; not admission, owner issuance, or resource accounting",
@@ -4558,6 +4568,7 @@
         "transport/authenticated-response",
         "transport/signed-response",
         "node/settings-development",
+        "node/history-page-cutoff",
         "node/resource-profile-value",
         "node/resource-request-value",
         "node/resource-vector-value",

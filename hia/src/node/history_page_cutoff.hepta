@@ -1,0 +1,109 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_history_retained_packet_cutoff_v1
+fn f0(i:readbuf,o:mutbuf,a:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,a:mutbuf)
+  extent:usize = buffer.len(i)
+  hdr:usize = const() {"value":16}
+  header_ok:bool = compare.le(hdr,extent)
+  branch header_ok frame(i,o,extent) bad()
+block frame(fi:readbuf,fo:mutbuf,fnn:usize)
+  magic_at:usize = const() {"value":0}
+  magic:u64 = call(fi,magic_at) {"function":"cw_read64"}
+  count_at:usize = const() {"value":8}
+  count:u64 = call(fi,count_at) {"function":"cw_read64"}
+  magic_expected:u64 = const() {"value":3544385890568851528}
+  tag_ok:bool = compare.eq(magic,magic_expected)
+  max_count:u64 = const() {"value":16}
+  count_ok:bool = compare.le(count,max_count)
+  well_formed:bool = bool.and(tag_ok,count_ok)
+  branch well_formed size(fi,fo,fnn,count) bad()
+block size(si:readbuf,so:mutbuf,sn:usize,sc:u64)
+  count_usize:usize = int.cast(sc) {"mode":"wrap"}
+  row_byte:usize = const() {"value":40}
+  bytes_extra:usize = int.mul.wrap(count_usize,row_byte)
+  header_size:usize = const() {"value":16}
+  expected:usize = int.add.wrap(bytes_extra,header_size)
+  zero:u64 = const() {"value":0}
+  length_ok:bool = compare.eq(sn,expected)
+  branch length_ok scan(si,so,sn,sn,zero,zero) bad()
+block scan(ri:readbuf,ro:mutbuf,rend:usize,rp:usize,rc:u64,rt:u64)
+  begin:usize = const() {"value":16}
+  consumed_all:bool = compare.eq(rp,begin)
+  branch consumed_all capacity(ri,ro,rend,rc,rt) length(ri,ro,rend,rp,rc,rt)
+block length(li:readbuf,lo:mutbuf,lend:usize,lp:usize,lc:u64,lt:u64)
+  word_width:usize = const() {"value":8}
+  len_at:usize = int.sub.wrap(lp,word_width)
+  candidate_len:u64 = call(li,len_at) {"function":"cw_read64"}
+  min_wire:u64 = const() {"value":49508}
+  fits_min:bool = compare.le(min_wire,candidate_len)
+  max_wire:u64 = const() {"value":1048576}
+  fits_max:bool = compare.le(candidate_len,max_wire)
+  length_valid:bool = bool.and(fits_min,fits_max)
+  branch length_valid cutoff(li,lo,lend,lp,lc,lt,candidate_len) bad()
+block cutoff(ci:readbuf,co:mutbuf,cend:usize,cp:usize,cc:u64,ct:u64,cl:u64)
+  next_sum:u64 = int.add.wrap(ct,cl)
+  no_records:u64 = const() {"value":0}
+  budget:u64 = const() {"value":800000}
+  is_first:bool = compare.eq(cc,no_records)
+  fits_budget:bool = compare.le(next_sum,budget)
+  include:bool = bool.or(is_first,fits_budget)
+  branch include advance(ci,co,cend,cp,cc,next_sum) capacity(ci,co,cend,cc,ct)
+block advance(vi:readbuf,vo:mutbuf,vend:usize,vp:usize,vc:u64,vt:u64)
+  input_width:usize = const() {"value":40}
+  next_row:usize = int.sub.wrap(vp,input_width)
+  inc:u64 = const() {"value":1}
+  next_count:u64 = int.add.wrap(vc,inc)
+  jump scan(vi,vo,vend,next_row,next_count,vt)
+block capacity(di:readbuf,do:mutbuf,dend:usize,dc:u64,dt:u64)
+  count_cast:usize = int.cast(dc) {"mode":"wrap"}
+  id_width:usize = const() {"value":32}
+  out_payload:usize = int.mul.wrap(count_cast,id_width)
+  out_header:usize = const() {"value":16}
+  out_need:usize = int.add.wrap(out_payload,out_header)
+  out_available:usize = buffer.len(do)
+  fits_output:bool = compare.le(out_need,out_available)
+  branch fits_output header(di,do,dend,dc,dt,out_need) short()
+block header(hi:readbuf,ho:mutbuf,hend:usize,hc:u64,ht:u64,hn:usize)
+  out_count:usize = const() {"value":0}
+  _chosen:u32 = call(ho,out_count,hc) {"function":"cw_store64"}
+  out_bytes:usize = const() {"value":8}
+  _chosen_wire_bytes:u32 = call(ho,out_bytes,ht) {"function":"cw_store64"}
+  first_id_out:usize = const() {"value":16}
+  empty_page:bool = compare.eq(hn,first_id_out)
+  branch empty_page success() emit(hi,ho,hend,first_id_out,hn)
+block emit(ei:readbuf,eo:mutbuf,ep:usize,ec:usize,en:usize)
+  input_row:usize = const() {"value":40}
+  prev_id:usize = int.sub.wrap(ep,input_row)
+  id0:u64 = call(ei,prev_id) {"function":"cw_read64"}
+  _id0:u32 = call(eo,ec,id0) {"function":"cw_store64"}
+  id1_at_offset:usize = const() {"value":8}
+  id1_at:usize = int.add.wrap(prev_id,id1_at_offset)
+  id1:u64 = call(ei,id1_at) {"function":"cw_read64"}
+  id_out1_offset:usize = const() {"value":8}
+  id_out1:usize = int.add.wrap(ec,id_out1_offset)
+  _id1:u32 = call(eo,id_out1,id1) {"function":"cw_store64"}
+  id2_at_offset:usize = const() {"value":16}
+  id2_at:usize = int.add.wrap(prev_id,id2_at_offset)
+  id2:u64 = call(ei,id2_at) {"function":"cw_read64"}
+  id_out2_offset:usize = const() {"value":16}
+  id_out2:usize = int.add.wrap(ec,id_out2_offset)
+  _id2:u32 = call(eo,id_out2,id2) {"function":"cw_store64"}
+  id3_at_offset:usize = const() {"value":24}
+  id3_at:usize = int.add.wrap(prev_id,id3_at_offset)
+  id3:u64 = call(ei,id3_at) {"function":"cw_read64"}
+  id_out3_offset:usize = const() {"value":24}
+  id_out3:usize = int.add.wrap(ec,id_out3_offset)
+  _id3:u32 = call(eo,id_out3,id3) {"function":"cw_store64"}
+  next_out_offset:usize = const() {"value":32}
+  next_out:usize = int.add.wrap(ec,next_out_offset)
+  all_written:bool = compare.eq(next_out,en)
+  branch all_written success() emit(ei,eo,prev_id,next_out,en)
+block success()
+  status_success:u32 = const() {"value":0}
+  ret(status_success)
+block bad()
+  status_bad:u32 = const() {"value":100}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":102}
+  ret(status_short)
+end

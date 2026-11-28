@@ -1,5 +1,14 @@
 {
   "includes": {
+    "src/node/history_page_cutoff.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_store64"
+        ]
+      }
+    ],
     "src/node/history_page_fold.hepta": [
       {
         "functions": [
