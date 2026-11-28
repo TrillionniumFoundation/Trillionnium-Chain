@@ -1948,6 +1948,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-content-manifest-observe",
+      "node_integration_complete": false,
+      "scope": "Original declared-only canonical TCM2 observation with independent ModelManifest context, pure fresh budget counters and shared native CCH1 SHA-512. No payload reads, owner budget, storage or authority.",
+      "source": "hia/src/data_availability/cell_content_manifest_observe.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_content_manifest_observe.py",
+        "hia/tests/rust_da_cell_content_manifest_observe_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-content-manifest-value",
       "node_integration_complete": false,
       "scope": "Private exact TCM2 model metadata and typed CCH1 payload claim declaration parsing; no payload observation, pin authority, keys, storage or activation.",
@@ -3985,6 +3996,7 @@
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-content-manifest-value",
+        "data-availability/cell-content-manifest-observe",
         "data-availability/cell-content-closure-value",
         "data-availability/cell-content-closure-observe",
         "data-availability/cell-manifest",

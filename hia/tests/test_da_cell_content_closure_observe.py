@@ -24,9 +24,9 @@ OUT = b"\xa5" * 238
 DOMAIN = b"TRNM/CPQ1/FullContent/SHA512/v1\0"
 
 
-def original(target, data):
+def original(target, data, witness=WITNESS):
     manifest = TARGET / "Cargo.toml"
-    bound = [manifest, TARGET / "Cargo.lock", DA / "Cargo.toml", PROTO / "Cargo.toml", WITNESS,
+    bound = [manifest, TARGET / "Cargo.lock", DA / "Cargo.toml", PROTO / "Cargo.toml", witness,
              ROOT / "rust-toolchain.toml"]
     before = {str(p.relative_to(ROOT)): sha(p.read_bytes()) for p in bound}
     rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
@@ -61,7 +61,7 @@ def original(target, data):
     if not native.is_relative_to(target):
         raise ValueError("original linked SQLite library outside actual target")
     libraries = {k:sha(v.read_bytes()) for k,v in paths.items()}
-    argv = [rustc,"--edition=2024","-O","-Dwarnings",str(WITNESS)]
+    argv = [rustc,"--edition=2024","-O","-Dwarnings",str(witness)]
     for k,v in paths.items():
         argv += ["--extern", f"{k}={v}"]
     exe = target / "exact-tcc2-observe"
@@ -125,55 +125,58 @@ def matrix():
             yield frame(x,c,3,len(x)),35
 
 
+def qualify_observation(self, cases, source, witness):
+    data = b"".join(struct.pack("<I",len(x))+x for x,_ in cases)
+    self.assertEqual(pins(),PINNED)
+    with tempfile.TemporaryDirectory(prefix="trnm-declared-tcc2-original-") as t:
+        answer, proof = original(Path(t),data,witness)
+    self.assertEqual(pins(),PINNED)
+    i = 0
+    tested = []
+    for j,(raw,expected) in enumerate(cases):
+        status=answer[i]
+        i+=1
+        self.assertEqual(status,expected,j)
+        record=b""
+        if not status:
+            record=answer[i:i+229]
+            i+=229
+            declaration=raw[157:]
+            metadata=raw[:141]+struct.pack(">Q",len(declaration))
+            digest=hashlib.sha512(DOMAIN+metadata+declaration).digest()
+            self.assertEqual(record,metadata+digest+struct.pack(">QQ",1,len(declaration)+1))
+        tested.append((raw,OUT,WORK,status,record))
+    self.assertEqual(i,len(answer))
+    print(json.dumps(dict(proof,original_matches=len(cases),
+                          status_counts=Counter(s for _,s in cases),original_pins=PINNED),
+                     sort_keys=True),flush=True)
+    admitted = tested[0]
+    controls = [(admitted[0],OUT[:228],WORK,102,b""),
+                (admitted[0],OUT,WORK[:131231],102,b""),
+                (admitted[0],OUT[:0],WORK[:0],102,b""),
+                (admitted[0],OUT[:229],WORK[:131232],0,admitted[4]),
+                (tested[2][0],OUT[:0],WORK[:0],35,b""),
+                (tested[10][0],OUT[:0],WORK[:0],tested[10][3],b"")]
+    for backend in ("direct","selfhost"):
+        with self.subTest(backend=backend),NativeModule(source,byte_exports=("f0",),backend=backend) as n:
+            group = tested+controls
+            for start in range(0,len(group),7):
+                batch=group[start:start+7]
+                got=n.call_many([("f0",list(r[:3])) for r in batch],timeout=60)
+                for j,((raw,out,w,status,record),v) in enumerate(zip(batch,got,strict=True),start):
+                    self.assertEqual(v.require_returned().value,status,(backend,j))
+                    self.assertEqual(v.arguments[0],raw)
+                    self.assertEqual(v.arguments[1],record+out[len(record):])
+                    if status:
+                        self.assertEqual(v.arguments[2],w)
+                    else:
+                        self.assertEqual(v.arguments[2][1544:131168],w[1544:131168])
+                        self.assertEqual(v.arguments[2][131232:],w[131232:])
+            print(json.dumps(dict(backend=backend,native_elf=n.artifact_sha256,
+                                  original_matches=len(cases),abi_controls=len(controls)),
+                             sort_keys=True),flush=True)
+
+
 class DaCellContentClosureObserve(unittest.TestCase):
     def test_actual_declared_tcc2_observation_and_fresh_budget_both_stock(self):
-        cases = list(matrix())
-        data = b"".join(struct.pack("<I",len(x))+x for x,_ in cases)
-        self.assertEqual(pins(),PINNED)
-        with tempfile.TemporaryDirectory(prefix="trnm-declared-tcc2-original-") as t:
-            answer, proof = original(Path(t),data)
-        self.assertEqual(pins(),PINNED)
-        i = 0
-        tested = []
-        for j,(raw,expected) in enumerate(cases):
-            status=answer[i]
-            i+=1
-            self.assertEqual(status,expected,j)
-            record=b""
-            if not status:
-                record=answer[i:i+229]
-                i+=229
-                declaration=raw[157:]
-                metadata=raw[:141]+struct.pack(">Q",len(declaration))
-                digest=hashlib.sha512(DOMAIN+metadata+declaration).digest()
-                self.assertEqual(record,metadata+digest+struct.pack(">QQ",1,len(declaration)+1))
-            tested.append((raw,OUT,WORK,status,record))
-        self.assertEqual(i,len(answer))
-        print(json.dumps(dict(proof,original_matches=len(cases),
-                              status_counts=Counter(s for _,s in cases),original_pins=PINNED),
-                         sort_keys=True),flush=True)
-        admitted = tested[0]
-        controls = [(admitted[0],OUT[:228],WORK,102,b""),
-                    (admitted[0],OUT,WORK[:131231],102,b""),
-                    (admitted[0],OUT[:0],WORK[:0],102,b""),
-                    (admitted[0],OUT[:229],WORK[:131232],0,admitted[4]),
-                    (tested[2][0],OUT[:0],WORK[:0],35,b""),
-                    (tested[10][0],OUT[:0],WORK[:0],tested[10][3],b"")]
-        for backend in ("direct","selfhost"):
-            with self.subTest(backend=backend),NativeModule(SOURCE,byte_exports=("f0",),backend=backend) as n:
-                group = tested+controls
-                for start in range(0,len(group),7):
-                    batch=group[start:start+7]
-                    got=n.call_many([("f0",list(r[:3])) for r in batch],timeout=60)
-                    for j,((raw,out,w,status,record),v) in enumerate(zip(batch,got,strict=True),start):
-                        self.assertEqual(v.require_returned().value,status,(backend,j))
-                        self.assertEqual(v.arguments[0],raw)
-                        self.assertEqual(v.arguments[1],record+out[len(record):])
-                        if status:
-                            self.assertEqual(v.arguments[2],w)
-                        else:
-                            self.assertEqual(v.arguments[2][1544:131168],w[1544:131168])
-                            self.assertEqual(v.arguments[2][131232:],w[131232:])
-                print(json.dumps(dict(backend=backend,native_elf=n.artifact_sha256,
-                                      original_matches=len(cases),abi_controls=len(controls)),
-                                 sort_keys=True),flush=True)
+        qualify_observation(self, list(matrix()), SOURCE, WITNESS)

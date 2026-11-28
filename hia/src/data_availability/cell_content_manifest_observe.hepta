@@ -1,0 +1,23 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_content_manifest_observe
+fn f0(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf)
+  entry_n_:usize = buffer.len(entry_r)
+  entry_n:u64 = int.cast(entry_n_) {"mode":"wrap"}
+  entry_offset:u64 = const() {"value":157}
+  entry_ok:bool = compare.ge(entry_n,entry_offset)
+  entry_size:u64 = int.sub.wrap(entry_n,entry_offset)
+  branch entry_ok parse(entry_r,entry_o,entry_w,entry_offset,entry_size) frame()
+block parse(parse_r:readbuf,parse_o:mutbuf,parse_w:mutbuf,parse_base:u64,parse_n:u64)
+  parse_status:u32,parse_payload:u64 = call(parse_r,parse_base,parse_n) {"function":"ccm_manifest"}
+  parse_zero:u32 = const() {"value":0}
+  parse_ok:bool = compare.eq(parse_status,parse_zero)
+  branch parse_ok observe(parse_r,parse_o,parse_w,parse_base,parse_n,parse_payload) refuse(parse_status)
+block observe(r_obs:readbuf,o_obs:mutbuf,w_obs:mutbuf,b_obs:u64,n_obs:u64,p_obs:u64)
+  observed_s:u32 = call(r_obs,o_obs,w_obs,b_obs,n_obs,p_obs) {"function":"tco_observe"}
+  ret(observed_s)
+block frame()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block refuse(refused:u32)
+  ret(refused)
+end
