@@ -1148,6 +1148,16 @@
       ]
     },
     {
+      "id": "state/integer-training-batch-update",
+      "node_integration_complete": false,
+      "scope": "Immutable typed Cell train-stage optimizer batch over preceding integer gradients with shared coordinate arithmetic, ordered failure and all-or-none borrowed result; original full Rust and both native stocks; no live operation, model admission, adoption, proof or authority",
+      "source": "hia/src/state/integer_training_batch_update.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_training_batch_update.py"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -4422,6 +4432,7 @@
         "node/resource-vector-value",
         "node/resource-snapshot-projection",
         "state/integer-training-backward",
+        "state/integer-training-batch-update",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",

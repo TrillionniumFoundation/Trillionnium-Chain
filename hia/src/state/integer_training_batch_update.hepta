@@ -1,0 +1,197 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_training_batch_update_v1
+fn f0(i:readbuf,o:mutbuf,a:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,a:mutbuf)
+  size:usize = buffer.len(i)
+  exact_size:usize = const() {"value":98768}
+  input_size:bool = compare.eq(size,exact_size)
+  branch input_size header(i,o,a) bad()
+block header(hi:readbuf,ho:mutbuf,ha:mutbuf)
+  hmagic_off:usize = const() {"value":0}
+  hmagic:u64 = call(hi,hmagic_off) {"function":"cw_read64"}
+  count_off:usize = const() {"value":8}
+  count:u64 = call(hi,count_off) {"function":"cw_read64"}
+  total_loss_off:usize = const() {"value":16}
+  total_loss:u64 = call(hi,total_loss_off) {"function":"cw_read64"}
+  present_off:usize = const() {"value":24}
+  present:u64 = call(hi,present_off) {"function":"cw_read64"}
+  old_step_off:usize = const() {"value":32}
+  old_step:u64 = call(hi,old_step_off) {"function":"cw_read64"}
+  wire_magic:u64 = const() {"value":3544385890804913219}
+  magic_ok:bool = compare.eq(hmagic,wire_magic)
+  h_one:u64 = const() {"value":1}
+  h_zero:u64 = const() {"value":0}
+  row_cap:u64 = const() {"value":64}
+  count_ok:bool = compare.le(count,row_cap)
+  presence_ok:bool = compare.le(present,h_one)
+  some:bool = compare.eq(present,h_one)
+  step_none:bool = compare.eq(old_step,h_zero)
+  canonical_step:bool = bool.or(some,step_none)
+  opt_header:bool = bool.and(presence_ok,canonical_step)
+  typed_header:bool = bool.and(count_ok,opt_header)
+  hdr_ok:bool = bool.and(magic_ok,typed_header)
+  branch hdr_ok policy(hi,ho,ha,count,total_loss,present,old_step) bad()
+block policy(pi:readbuf,po:mutbuf,pa:mutbuf,pc:u64,pl:u64,pp:u64,ps:u64)
+  lrn_off:usize = const() {"value":40}
+  lrn:u64 = call(pi,lrn_off) {"function":"cw_read64"}
+  lrd_off:usize = const() {"value":48}
+  lrd:u64 = call(pi,lrd_off) {"function":"cw_read64"}
+  mn_off:usize = const() {"value":56}
+  mn:u64 = call(pi,mn_off) {"function":"cw_read64"}
+  md_off:usize = const() {"value":64}
+  md:u64 = call(pi,md_off) {"function":"cw_read64"}
+  clip_off:usize = const() {"value":72}
+  clip:u64 = call(pi,clip_off) {"function":"cw_read64"}
+  p_one:u64 = const() {"value":1}
+  max_lrn:u64 = const() {"value":1048576}
+  lrn_ok:bool = compare.le(lrn,max_lrn)
+  min_lrd:bool = compare.le(p_one,lrd)
+  max_lrd:u64 = const() {"value":4294967296}
+  lrd_ok:bool = compare.le(lrd,max_lrd)
+  strict_m:bool = compare.lt(mn,md)
+  max_md:u64 = const() {"value":65536}
+  md_ok:bool = compare.le(md,max_md)
+  min_clip:bool = compare.le(p_one,clip)
+  max_clip:u64 = const() {"value":1099511627776}
+  clip_ok:bool = compare.le(clip,max_clip)
+  loss_per_row:u64 = const() {"value":54476154403160832}
+  loss_max:u64 = int.mul.wrap(pc,loss_per_row)
+  loss_ok:bool = compare.le(pl,loss_max)
+  policy_check0:bool = bool.and(lrn_ok,min_lrd)
+  policy_check1:bool = bool.and(policy_check0,lrd_ok)
+  policy_check2:bool = bool.and(policy_check1,strict_m)
+  policy_check3:bool = bool.and(policy_check2,md_ok)
+  policy_check4:bool = bool.and(policy_check3,min_clip)
+  policy_check5:bool = bool.and(policy_check4,clip_ok)
+  policy_check6:bool = bool.and(policy_check5,loss_ok)
+  gradient_per_row:u64 = const() {"value":2156068608}
+  gradient_max:u64 = int.mul.wrap(pc,gradient_per_row)
+  first_coord:usize = const() {"value":80}
+  branch policy_check6 verify(pi,po,pa,pc,pp,ps,lrn,lrd,mn,md,clip,gradient_max,first_coord) bad()
+block verify(vi:readbuf,vo:mutbuf,va:mutbuf,vc:u64,vp:u64,vs:u64,vn:u64,vd:u64,vmn:u64,vmd:u64,vl:u64,vg:u64,vx:usize)
+  w:u64 = call(vi,vx) {"function":"cw_read64"}
+  m_at_offset:usize = const() {"value":24672}
+  m_at:usize = int.add.wrap(vx,m_at_offset)
+  m:u64 = call(vi,m_at) {"function":"cw_read64"}
+  mask_at_offset:usize = const() {"value":49344}
+  mask_at:usize = int.add.wrap(vx,mask_at_offset)
+  mask:u64 = call(vi,mask_at) {"function":"cw_read64"}
+  gradient_at_offset:usize = const() {"value":74016}
+  gradient_at:usize = int.add.wrap(vx,gradient_at_offset)
+  gradient:u64 = call(vi,gradient_at) {"function":"cw_read64"}
+  wabs:u64,ws:bool = call(w) {"function":"opt_abs"}
+  mabs:u64,ms:bool = call(m) {"function":"opt_abs"}
+  gabs:u64,gs:bool = call(gradient) {"function":"opt_abs"}
+  v_one:u64 = const() {"value":1}
+  v_zero:u64 = const() {"value":0}
+  w_bound:u64 = const() {"value":32767}
+  valid_w:bool = compare.le(wabs,w_bound)
+  m_bound:u64 = const() {"value":9223372036854775807}
+  valid_m:bool = compare.le(mabs,m_bound)
+  valid_gradient:bool = compare.le(gabs,vg)
+  valid_mask:bool = compare.le(mask,v_one)
+  m0:bool = compare.eq(m,v_zero)
+  v_some:bool = compare.eq(vp,v_one)
+  canonical_m:bool = bool.or(m0,v_some)
+  low_gradient:u64 = bit.and(gabs,v_one)
+  valid_even:bool = compare.eq(low_gradient,v_zero)
+  weights_and_moment:bool = bool.and(valid_w,valid_m)
+  mask_and_gradient:bool = bool.and(valid_gradient,valid_mask)
+  fields:bool = bool.and(weights_and_moment,mask_and_gradient)
+  domain_tail:bool = bool.and(canonical_m,valid_even)
+  full_coord:bool = bool.and(fields,domain_tail)
+  branch full_coord verify_next(vi,vo,va,vc,vp,vs,vn,vd,vmn,vmd,vl,vg,vx) bad()
+block verify_next(ci:readbuf,co:mutbuf,ca:mutbuf,cc:u64,cp:u64,cs:u64,cn:u64,cd:u64,cmn:u64,cmd:u64,cl:u64,cg:u64,cx:usize)
+  vnext_offset:usize = const() {"value":8}
+  vnext:usize = int.add.wrap(cx,vnext_offset)
+  verify_end:usize = const() {"value":24752}
+  v_done:bool = compare.eq(vnext,verify_end)
+  branch v_done step(ci,co,ca,cc,cp,cs,cn,cd,cmn,cmd,cl) verify(ci,co,ca,cc,cp,cs,cn,cd,cmn,cmd,cl,cg,vnext)
+block step(si:readbuf,so:mutbuf,sa:mutbuf,sc:u64,sp:u64,ss:u64,sn:u64,sd:u64,smn:u64,smd:u64,sl:u64)
+  s_zero:u64 = const() {"value":0}
+  s_empty:bool = compare.eq(sc,s_zero)
+  branch s_empty scratch(si,so,sa,sp,ss,s_zero,sn,sd,smn,smd,sl) increment(si,so,sa,ss,sn,sd,smn,smd,sl)
+block increment(ni:readbuf,no:mutbuf,na:mutbuf,ns:u64,nn:u64,nd:u64,nmn:u64,nmd:u64,nl:u64)
+  step_limit:u64 = const() {"value":18446744073709551615}
+  n_one:u64 = const() {"value":1}
+  next_step:u64 = int.add.wrap(ns,n_one)
+  step_full:bool = compare.eq(ns,step_limit)
+  branch step_full step_overflow() scratch(ni,no,na,n_one,next_step,n_one,nn,nd,nmn,nmd,nl)
+block scratch(xi:readbuf,xo:mutbuf,xa:mutbuf,xp:u64,xs:u64,xap:u64,xn:u64,xd:u64,xmn:u64,xmd:u64,xl:u64)
+  scratch_len:usize = buffer.len(xa)
+  scratch_need:usize = const() {"value":123392}
+  scratch_fits:bool = compare.le(scratch_need,scratch_len)
+  branch scratch_fits init(xi,xo,xa,xp,xs,xap,xn,xd,xmn,xmd,xl) short()
+block init(ii:readbuf,io:mutbuf,ia:mutbuf,ip:u64,is_:u64,iap:u64,in_:u64,id:u64,imn:u64,imd:u64,il:u64)
+  changed_zero:u64 = const() {"value":0}
+  presence_word:usize = const() {"value":0}
+  _presence:u32 = call(ia,presence_word,ip) {"function":"cw_store64"}
+  step_word:usize = const() {"value":8}
+  _step:u32 = call(ia,step_word,is_) {"function":"cw_store64"}
+  applied_word:usize = const() {"value":16}
+  _applied:u32 = call(ia,applied_word,iap) {"function":"cw_store64"}
+  changed_word:usize = const() {"value":24}
+  _changed:u32 = call(ia,changed_word,changed_zero) {"function":"cw_store64"}
+  ix:usize = const() {"value":80}
+  iy:usize = const() {"value":32}
+  jump coordinate(ii,io,ia,iap,in_,id,imn,imd,il,ix,iy)
+block coordinate(ji:readbuf,jo:mutbuf,ja:mutbuf,jap:u64,jn:u64,jd:u64,jmn:u64,jmd:u64,jl:u64,jx:usize,jy:usize)
+  weight:u64 = call(ji,jx) {"function":"cw_read64"}
+  moment_at_offset:usize = const() {"value":24672}
+  moment_at:usize = int.add.wrap(jx,moment_at_offset)
+  moment:u64 = call(ji,moment_at) {"function":"cw_read64"}
+  mask2_at_offset:usize = const() {"value":49344}
+  mask2_at:usize = int.add.wrap(jx,mask2_at_offset)
+  mask2:u64 = call(ji,mask2_at) {"function":"cw_read64"}
+  raw2_at_offset:usize = const() {"value":74016}
+  raw2_at:usize = int.add.wrap(jx,raw2_at_offset)
+  raw2:u64 = call(ji,raw2_at) {"function":"cw_read64"}
+  active_mask:u64 = bit.and(mask2,jap)
+  next_pos:u64 = int.cast(jy) {"mode":"wrap"}
+  status:u32 = call(ja,next_pos,active_mask,weight,moment,raw2,jn,jd,jmn,jmd,jl) {"function":"opt_coordinate"}
+  okay:u32 = const() {"value":0}
+  good_coord:bool = compare.eq(status,okay)
+  branch good_coord check_change(ji,jo,ja,jap,jn,jd,jmn,jmd,jl,jx,jy,weight) failure(status)
+block failure(f:u32)
+  ret(f)
+block check_change(ui:readbuf,uo:mutbuf,ua:mutbuf,uap:u64,un:u64,ud:u64,umn:u64,umd:u64,ul:u64,ux:usize,uy:usize,uw:u64)
+  produced_weight:u64 = call(ua,uy) {"function":"cw_load64"}
+  weight_same:bool = compare.eq(uw,produced_weight)
+  branch weight_same advance(ui,uo,ua,uap,un,ud,umn,umd,ul,ux,uy) changed(ui,uo,ua,uap,un,ud,umn,umd,ul,ux,uy)
+block changed(fi:readbuf,fo:mutbuf,fa:mutbuf,fap:u64,fn_:u64,fd:u64,fmn:u64,fmd:u64,fl:u64,fx:usize,fy:usize)
+  changed_at:usize = const() {"value":24}
+  changed_yes:u64 = const() {"value":1}
+  _changed_bit:u32 = call(fa,changed_at,changed_yes) {"function":"cw_store64"}
+  jump advance(fi,fo,fa,fap,fn_,fd,fmn,fmd,fl,fx,fy)
+block advance(zi:readbuf,zo:mutbuf,za:mutbuf,zap:u64,zn:u64,zd:u64,zmn:u64,zmd:u64,zl:u64,zx:usize,zy:usize)
+  nextx_offset:usize = const() {"value":8}
+  nextx:usize = int.add.wrap(zx,nextx_offset)
+  nexty_offset:usize = const() {"value":40}
+  nexty:usize = int.add.wrap(zy,nexty_offset)
+  end_update:usize = const() {"value":123392}
+  update_complete:bool = compare.eq(nexty,end_update)
+  branch update_complete output_size(zo,za,end_update) coordinate(zi,zo,za,zap,zn,zd,zmn,zmd,zl,nextx,nexty)
+block output_size(bo:mutbuf,ba:mutbuf,be:usize)
+  out_len:usize = buffer.len(bo)
+  out_start:usize = const() {"value":0}
+  output_fits:bool = compare.le(be,out_len)
+  branch output_fits emit(bo,ba,out_start,be) short()
+block emit(eo:mutbuf,ea:mutbuf,ep:usize,ee:usize)
+  word:u64 = call(ea,ep) {"function":"cw_load64"}
+  _output:u32 = call(eo,ep,word) {"function":"cw_store64"}
+  out_next_offset:usize = const() {"value":8}
+  out_next:usize = int.add.wrap(ep,out_next_offset)
+  emit_done:bool = compare.eq(out_next,ee)
+  branch emit_done done() emit(eo,ea,out_next,ee)
+block done()
+  flag_done:u32 = const() {"value":0}
+  ret(flag_done)
+block bad()
+  flag_bad:u32 = const() {"value":100}
+  ret(flag_bad)
+block short()
+  flag_short:u32 = const() {"value":102}
+  ret(flag_short)
+block step_overflow()
+  flag_step_overflow:u32 = const() {"value":201}
+  ret(flag_step_overflow)
+end

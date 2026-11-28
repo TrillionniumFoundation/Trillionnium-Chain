@@ -7648,6 +7648,31 @@
         ]
       }
     ],
+    "src/state/integer_training_batch_update.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_load64",
+          "cw_store64"
+        ]
+      },
+      {
+        "source": "src/model/cell_training_coordinate.hepta",
+        "functions": [
+          "opt_coordinate",
+          "opt_abs",
+          "opt_signed",
+          "opt_add"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_put"
+        ]
+      }
+    ],
     "src/state/integer_training_backward.hepta": [
       {
         "source": "src/consensus/work.hepta",

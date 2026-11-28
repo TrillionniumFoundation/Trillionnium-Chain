@@ -16,52 +16,76 @@ block step(si:readbuf,so:mutbuf,sone:u64)
   max:u64 = const() {"value":18446744073709551615}
   room:bool = compare.lt(old_step,max)
   next_step:u64 = int.add.wrap(old_step,sone)
-  branch room mask(si,so,next_step) step_overflow()
-block mask(mi:readbuf,mo:mutbuf,ms:u64)
-  mask_at:u64 = const() {"value":0}
-  weight_at:u64 = const() {"value":16}
-  moment_at:u64 = const() {"value":24}
-  mask_:u64 = call(mi,mask_at) {"function":"cp_read"}
-  weight:u64 = call(mi,weight_at) {"function":"cp_read"}
-  moment:u64 = call(mi,moment_at) {"function":"cp_read"}
-  frozen:bool = compare.eq(mask_,mask_at)
-  branch frozen output(mo,ms,weight,moment,mask_at,mask_at,mask_at) clip(mi,mo,ms,weight,moment)
-block clip(ci:readbuf,co:mutbuf,cs:u64,cw:u64,cm:u64)
-  raw_at:u64 = const() {"value":32}
-  clip_at:u64 = const() {"value":72}
-  raw:u64 = call(ci,raw_at) {"function":"cp_read"}
-  mx:u64 = call(ci,clip_at) {"function":"cp_read"}
-  r_abs:u64,r_sign:bool = call(raw) {"function":"opt_abs"}
-  trunc:bool = compare.lt(mx,r_abs)
-  g_abs:u64 = select(trunc,mx,r_abs)
+  branch room coordinate(si,so,next_step) step_overflow()
+block coordinate(ci:readbuf,co:mutbuf,cs:u64)
+  at_mask:u64 = const() {"value":0}
+  mask:u64 = call(ci,at_mask) {"function":"cp_read"}
+  at_weight:u64 = const() {"value":16}
+  weight:u64 = call(ci,at_weight) {"function":"cp_read"}
+  at_moment:u64 = const() {"value":24}
+  moment:u64 = call(ci,at_moment) {"function":"cp_read"}
+  at_raw:u64 = const() {"value":32}
+  raw:u64 = call(ci,at_raw) {"function":"cp_read"}
+  at_lrn:u64 = const() {"value":40}
+  lrn:u64 = call(ci,at_lrn) {"function":"cp_read"}
+  at_lrd:u64 = const() {"value":48}
+  lrd:u64 = call(ci,at_lrd) {"function":"cp_read"}
+  at_mn:u64 = const() {"value":56}
+  mn:u64 = call(ci,at_mn) {"function":"cp_read"}
+  at_md:u64 = const() {"value":64}
+  md:u64 = call(ci,at_md) {"function":"cp_read"}
+  at_cap:u64 = const() {"value":72}
+  cap:u64 = call(ci,at_cap) {"function":"cp_read"}
+
+  position:u64 = const() {"value":8}
+  status:u32 = call(co,position,mask,weight,moment,raw,lrn,lrd,mn,md,cap) {"function":"opt_coordinate"}
+  all_good:u32 = const() {"value":0}
+  success:bool = compare.eq(status,all_good)
+  branch success publish(co,cs) failure(status)
+block publish(po:mutbuf,ps:u64)
+  at_zero:u64 = const() {"value":0}
+  _updated:u64 = call(po,at_zero,ps) {"function":"cp_put"}
+  pass:u32 = const() {"value":0}
+  ret(pass)
+block failure(f:u32)
+  ret(f)
+block domain()
+  malformed:u32 = const() {"value":100}
+  ret(malformed)
+block step_overflow()
+  step_err:u32 = const() {"value":201}
+  ret(step_err)
+end
+
+fn opt_coordinate(o:mutbuf,p:u64,m:u64,w:u64,old:u64,raw:u64,lrn:u64,lrd:u64,mn:u64,md:u64,clip:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,p:u64,m:u64,w:u64,old:u64,raw:u64,lrn:u64,lrd:u64,mn:u64,md:u64,clip:u64)
+  nil:u64 = const() {"value":0}
+  frozen:bool = compare.eq(m,nil)
+  branch frozen capacity(o,p,w,old,nil,nil,nil) active(o,p,w,old,raw,lrn,lrd,mn,md,clip)
+block active(ao:mutbuf,ap:u64,aw:u64,am:u64,ar:u64,an:u64,ad:u64,amn:u64,amd:u64,acl:u64)
+  r_abs:u64,r_sign:bool = call(ar) {"function":"opt_abs"}
+  trunc:bool = compare.lt(acl,r_abs)
+  g_abs:u64 = select(trunc,acl,r_abs)
   clipped:u64 = call(g_abs,r_sign) {"function":"opt_signed"}
-  old_abs:u64,old_sign:bool = call(cm) {"function":"opt_abs"}
-  mnum_at:u64 = const() {"value":56}
-  mden_at:u64 = const() {"value":64}
-  mnum:u64 = call(ci,mnum_at) {"function":"cp_read"}
-  mden:u64 = call(ci,mden_at) {"function":"cp_read"}
-  quot:u64 = int.div.checked(old_abs,mden)
-  rem:u64 = int.rem.checked(old_abs,mden)
-  whole:u64 = int.mul.wrap(quot,mnum)
-  before_div:u64 = int.mul.wrap(rem,mnum)
-  part:u64 = int.div.checked(before_div,mden)
+  old_abs:u64,old_sign:bool = call(am) {"function":"opt_abs"}
+  quot:u64 = int.div.checked(old_abs,amd)
+  rem:u64 = int.rem.checked(old_abs,amd)
+  whole:u64 = int.mul.wrap(quot,amn)
+  before_div:u64 = int.mul.wrap(rem,amn)
+  part:u64 = int.div.checked(before_div,amd)
   scaled:u64 = int.add.wrap(whole,part)
   next_abs:u64,next_sign:bool = call(scaled,old_sign,g_abs,r_sign) {"function":"opt_add"}
   max_next:u64 = const() {"value":9223372036854775807}
   next_fit:bool = compare.le(next_abs,max_next)
-  branch next_fit learn(ci,co,cs,cw,raw,clipped,next_abs,next_sign) moment_overflow()
-block learn(li:readbuf,lo:mutbuf,ls:u64,lw:u64,lr:u64,lc:u64,la:u64,ln:bool)
-  lr_at:u64 = const() {"value":40}
-  num:u64 = call(li,lr_at) {"function":"cp_read"}
+  branch next_fit learn(ao,ap,aw,ar,clipped,next_abs,next_sign,an,ad) moment_overflow()
+block learn(lo:mutbuf,lp:u64,lw:u64,lr:u64,lc:u64,la:u64,ln:bool,lnum:u64,lden:u64)
   zero:u64 = const() {"value":0}
-  no_update:bool = compare.eq(num,zero)
+  no_update:bool = compare.eq(lnum,zero)
   moment_next:u64 = call(la,ln) {"function":"opt_signed"}
-  branch no_update output(lo,ls,lw,moment_next,lr,lc,zero) check_weight(li,lo,ls,lw,lr,lc,la,ln,num,moment_next)
-block check_weight(ki:readbuf,ko:mutbuf,ks:u64,kw:u64,kr:u64,kc:u64,ka:u64,kn:bool,knum:u64,km:u64)
+  branch no_update capacity(lo,lp,lw,moment_next,lr,lc,zero) check_weight(lo,lp,lw,lr,lc,la,ln,lnum,moment_next,lden)
+block check_weight(ko:mutbuf,kp:u64,kw:u64,kr:u64,kc:u64,ka:u64,kn:bool,knum:u64,km:u64,den:u64)
   bound:u64 = const() {"value":32767}
   one2:u64 = const() {"value":1}
-  den_pos:u64 = const() {"value":48}
-  den:u64 = call(ki,den_pos) {"function":"cp_read"}
   head_negative:u64 = int.sub.wrap(bound,kw)
   head_positive:u64 = int.add.wrap(bound,kw)
   head:u64 = select(kn,head_negative,head_positive)
@@ -70,42 +94,42 @@ block check_weight(ki:readbuf,ko:mutbuf,ks:u64,kw:u64,kr:u64,kc:u64,ka:u64,kn:bo
   below:u64 = int.sub.wrap(ceil_product,one2)
   largest:u64 = int.div.checked(below,knum)
   admissible:bool = compare.le(ka,largest)
-  branch admissible exact_delta(ko,ks,kw,kr,kc,ka,kn,knum,km,den) weight_range()
-block exact_delta(eo:mutbuf,es:u64,ew:u64,er:u64,ec:u64,ea:u64,en:bool,enu:u64,em:u64,ed:u64)
+  branch admissible exact_delta(ko,kp,kw,kr,kc,ka,kn,knum,km,den) weight_range()
+block exact_delta(eo:mutbuf,ep:u64,ew:u64,er:u64,ec:u64,ea:u64,en:bool,enu:u64,em:u64,ed:u64)
   prod:u64 = int.mul.wrap(ea,enu)
   ch:u64 = int.div.checked(prod,ed)
   delta:u64 = call(ch,en) {"function":"opt_signed"}
   new_weight:u64 = int.sub.wrap(ew,delta)
-  jump output(eo,es,new_weight,em,er,ec,delta)
-block output(oo:mutbuf,os:u64,ow:u64,om:u64,or_:u64,oc:u64,od:u64)
-  avail:usize = buffer.len(oo)
-  need:usize = const() {"value":48}
-  fits:bool = compare.le(need,avail)
-  branch fits write(oo,os,ow,om,or_,oc,od) capacity()
-block write(xo:mutbuf,xs:u64,xw:u64,xm:u64,xr:u64,xc:u64,xd:u64)
-  b0:u64 = const() {"value":0}
-  b1:u64 = const() {"value":8}
-  b2:u64 = const() {"value":16}
-  b3:u64 = const() {"value":24}
-  b4:u64 = const() {"value":32}
-  b5:u64 = const() {"value":40}
-  r0:u64 = call(xo,b0,xs) {"function":"cp_put"}
-  r1:u64 = call(xo,b1,xw) {"function":"cp_put"}
-  r2:u64 = call(xo,b2,xm) {"function":"cp_put"}
-  r3:u64 = call(xo,b3,xr) {"function":"cp_put"}
-  r4:u64 = call(xo,b4,xc) {"function":"cp_put"}
-  r5:u64 = call(xo,b5,xd) {"function":"cp_put"}
+  jump capacity(eo,ep,new_weight,em,er,ec,delta)
+block capacity(co:mutbuf,cp:u64,cw:u64,cm:u64,cr:u64,cc:u64,cd:u64)
+  extent:usize = buffer.len(co)
+  available:u64 = int.cast(extent) {"mode":"wrap"}
+  within:bool = compare.le(cp,available)
+  branch within extent_ok(co,cp,cw,cm,cr,cc,cd,available) too_short()
+block extent_ok(l_eo:mutbuf,l_ep:u64,l_ew:u64,l_em:u64,l_er:u64,l_ec:u64,l_ed:u64,l_len:u64)
+  remaining:u64 = int.sub.wrap(l_len,l_ep)
+  need:u64 = const() {"value":40}
+  fit:bool = compare.le(need,remaining)
+  branch fit write(l_eo,l_ep,l_ew,l_em,l_er,l_ec,l_ed) too_short()
+block write(xo:mutbuf,xp:u64,xw:u64,xm:u64,xr:u64,xc:u64,xd:u64)
+  _weight:u64 = call(xo,xp,xw) {"function":"cp_put"}
+  byte_moment:u64 = const() {"value":8}
+  pos_moment:u64 = int.add.wrap(xp,byte_moment)
+  _moment:u64 = call(xo,pos_moment,xm) {"function":"cp_put"}
+  byte_masked:u64 = const() {"value":16}
+  pos_masked:u64 = int.add.wrap(xp,byte_masked)
+  _masked:u64 = call(xo,pos_masked,xr) {"function":"cp_put"}
+  byte_clipped:u64 = const() {"value":24}
+  pos_clipped:u64 = int.add.wrap(xp,byte_clipped)
+  _clipped:u64 = call(xo,pos_clipped,xc) {"function":"cp_put"}
+  byte_delta:u64 = const() {"value":32}
+  pos_delta:u64 = int.add.wrap(xp,byte_delta)
+  _delta:u64 = call(xo,pos_delta,xd) {"function":"cp_put"}
   okay_:u32 = const() {"value":0}
   ret(okay_)
-block domain()
-  malformed:u32 = const() {"value":100}
-  ret(malformed)
-block capacity()
-  too_short:u32 = const() {"value":102}
-  ret(too_short)
-block step_overflow()
-  step_err:u32 = const() {"value":201}
-  ret(step_err)
+block too_short()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
 block moment_overflow()
   moment_err:u32 = const() {"value":202}
   ret(moment_err)
