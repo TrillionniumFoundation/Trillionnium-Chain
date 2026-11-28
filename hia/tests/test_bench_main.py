@@ -466,7 +466,8 @@ class NativeBenchMain(unittest.TestCase):
             self.assertTrue(old.stderr)
             strict = any(fragment in old.stderr for fragment in (
                 b"a value is required", b"cannot be used multiple times",
-                b"invalid digit found in string", b"number too large to fit in target type", b"[possible values:"))
+                b"invalid digit found in string", b"number too large to fit in target type",
+                b"[possible values:", b"unexpected value"))
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr if strict else OUTSIDE))
 
     def test_actual_plain_cli_help_terminator_and_strict_grammar(self):
@@ -511,7 +512,7 @@ class NativeBenchMain(unittest.TestCase):
             self.assertEqual((old.returncode, new.returncode, old.stderr, new.stderr), (0, 0, b"", b""))
             self.assertEqual(stdout_observation(old.stdout, old_ns)[1], stdout_observation(new.stdout, new_ns)[1])
         for i, args in enumerate(((b"--txs", b"--", b"--profile"),
-                                  (b"--help=true",), (b"--", b"--help"),
+                                  (b"--", b"--help"),
                                   (b"--reader-high-water-v1", b"--help"),
                                   (b"--reader-high-water-v1", b"--txs"),
                                   (b"--profile", b"--workload=mixed", b"--strategy=auto-adaptive"),
@@ -522,6 +523,58 @@ class NativeBenchMain(unittest.TestCase):
             actual, _ = self.actual(f"plain-cli-env-denied-{name}", self.native, args,
                                     env={b"HIA_BENCH_TEST_ONLY": b"synthetic-not-read"})
             self.assertEqual((actual.returncode, actual.stdout, actual.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_boolean_long_attached_value_diagnostics(self):
+        flags = (b"--profile", b"--persist-profile", b"--help")
+        prefixes = ((), (b"--keys=1",), (b"--keys", b"1"),
+                    (b"--profile",), (b"--persist-profile",), (b"--workload",),
+                    (b"--txs=4", b"--workload"), (b"--keys", b"1", b"--txs"),
+                    (b"--txs", b"4", b"--keys", b"1"),
+                    (b"--keys=1", b"--txs", b"4", b"--profile"),
+                    (b"--keys", b"invalid"), (b"--txs", b""),
+                    (b"--workload", b"not-a-workload"), (b"--strategy", b"bad-strategy"),
+                    (b"--txs", b"18446744073709551616"),
+                    (b"--keys=4", b"--keys", b"duplicate-split"),
+                    (b"--keys", b"4", b"--keys", b"duplicate-split"))
+        tails = ((), (b"--help",), (b"--write-every", b"0", b"--profile"),
+                 (b"--txs=bad", b"--", b"opaque"), (b"\xff",))
+        for fi, flag in enumerate(flags):
+            values = (b"", b"false", b"=true", b" quote's \\ value --help ",
+                      b"V" * (127 - len(flag) - 1))
+            for pi, prefix in enumerate(prefixes):
+                for vi, value in enumerate(values):
+                    args = (*prefix, flag+b"="+value, *tails[(pi+vi) % len(tails)])
+                    tag = f"attached-boolean-{fi}-{pi}-{vi}"
+                    old, _ = self.actual(tag+"-rust", self.original, args)
+                    new, _ = self.actual(tag+"-hia", self.native, args)
+                    self.assertEqual((old.returncode, old.stdout), (2, b""), args)
+                    self.assertTrue(old.stderr.startswith(b"error: unexpected value '"+value+
+                                    b"' for '"+flag+b"' found; no more were expected\n"), args)
+                    self.assertEqual((new.returncode,new.stdout,new.stderr),
+                                     (2,b"",old.stderr), args)
+            for j, (args, env) in enumerate((
+                    ((flag+b"="+b"V"*(128-len(flag)-1),), {}),
+                    ((flag+b"=\xff",), {}),
+                    ((flag+b"=\x1b",), {}),
+                    ((b"--reader-high-water-v1",flag+b"=true"), {}),
+                    ((flag+b"=false",), {b"LANG": b"C"}),
+                    ((b"--txs", flag+b"=false"), {b"HIA_BENCH_TEST_ONLY":b"opaque"}),
+                    ((flag+b"=x",)+(b"ignored",)*17, {}))):
+                refused, _ = self.actual(f"attached-boolean-{fi}-refusal-{j}", self.native, args, env=env)
+                self.assertEqual((refused.returncode,refused.stdout,refused.stderr),
+                                 (2,b"",OUTSIDE), args)
+        earlier = ((b"--txs=bad", b"--help=no"),
+                   (b"--txs", b"-1", b"--profile=false"),
+                   (b"--profile", b"--profile", b"--help=no"),
+                   (b"--keys", b"broken", b"--txs", b"--profile=unreachable"),
+                   (b"--help", b"--profile=unreachable"))
+        for j, args in enumerate(earlier):
+            old, _ = self.actual(f"attached-boolean-earlier-{j}-rust", self.original, args)
+            new, _ = self.actual(f"attached-boolean-earlier-{j}-hia", self.native, args)
+            self.assertEqual((new.returncode,new.stdout,new.stderr),
+                             (old.returncode,old.stdout,old.stderr), args)
+            self.assertNotIn(b"unexpected value", old.stderr)
         self.assertFalse(self.run_path.exists())
 
     def test_actual_free_standing_cli_diagnostic(self):
@@ -601,7 +654,6 @@ class NativeBenchMain(unittest.TestCase):
                 (b"--unknown=x\ny",), (b"--unknown=\tfoo",), (b"--unknown=\x7f",),
                 (b"--unknown=\xff",), (b"--=missing-name",), (b"--bad?=name",),
                 (b"logfile=value",), (b"---unknown=value",),
-                (b"--help=value",), (b"--profile=true",), (b"--persist-profile=false",),
                 (b"--reader-high-water-v1=true",),
                 (b"--txs", b"--unknown=1"), (b"--", b"--unknown=1"))):
             new, _ = self.actual(f"assign-{idx}-outside", self.native, args)
@@ -1035,22 +1087,37 @@ class NativeBenchMain(unittest.TestCase):
             self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
         self.assertFalse(self.run_path.exists())
 
-    def test_plain_cli_help_refuses_native_terminal_without_emitting_help(self):
-        master, slave = pty.openpty()
-        fd = sealed_executable(self.native, "plain-help-terminal")
-        try:
-            actual = subprocess.run([b"trnm-bench", b"-h"], executable=f"/proc/self/fd/{fd}", pass_fds=(fd,),
-                                    stdin=subprocess.DEVNULL, stdout=slave, stderr=subprocess.PIPE, env={},
-                                    cwd=self.root, timeout=25)
-        finally:
-            os.close(fd)
-            os.close(slave)
-            os.close(master)
-        self.assertEqual((actual.returncode, actual.stderr), (2, OUTSIDE))
+    def test_plain_cli_refuses_native_terminal_without_emitting_help_or_diagnostics(self):
+        for label, argv, stderr_terminal in (
+                ("help", (b"-h",), False),
+                ("attached-help", (b"--help=x",), True),
+                ("attached-profile", (b"--profile=x",), True)):
+            master, slave = pty.openpty()
+            fd = sealed_executable(self.native, f"plain-cli-terminal-{label}")
+            try:
+                actual = subprocess.run([b"trnm-bench", *argv], executable=f"/proc/self/fd/{fd}",
+                                        pass_fds=(fd,), stdin=subprocess.DEVNULL,
+                                        stdout=subprocess.PIPE if stderr_terminal else slave,
+                                        stderr=slave if stderr_terminal else subprocess.PIPE,
+                                        env={}, cwd=self.root, timeout=25)
+                os.set_blocking(master, False)
+                try:
+                    terminal = os.read(master, 2048)
+                except BlockingIOError:
+                    terminal = b""
+            finally:
+                os.close(fd)
+                os.close(slave)
+                os.close(master)
+            self.assertEqual(actual.returncode, 2)
+            if stderr_terminal:
+                self.assertEqual((actual.stdout,terminal),(b"",OUTSIDE.replace(b"\n",b"\r\n")))
+            else:
+                self.assertEqual((actual.stderr,terminal),(OUTSIDE,b""))
         self.assertFalse(self.run_path.exists())
 
     def test_unsupported_original_modes_never_success_or_write_a_file(self):
-        for index, args in enumerate(((b"--profile=true",), (b"--workload=mixed",),
+        for index, args in enumerate(((b"--reader-high-water-v1=true",), (b"--workload=mixed",),
                                       (b"--workload=hot-streak",), (b"--strategy=footprint-desc", b"--keys=1999"),
                                       (b"--txs=20001",),
                                       (b"--workload=mixed", b"--txs=32", b"--keys=2", b"--write-every=31"),

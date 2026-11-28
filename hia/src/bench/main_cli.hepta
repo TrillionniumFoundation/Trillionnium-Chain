@@ -75,7 +75,7 @@ block name(i_name:readbuf,o_name:mutbuf,n_name:u64,p_name:u64,k_name:u64,e_name:
   opt:u64 = call(i_name,p_name,w_name) {"function":"bc_option"}
   max_field:u64 = const() {"value":9}
   known:bool = compare.le(opt,max_field)
-  branch known flag_or_arg(i_name,o_name,n_name,k_name,e_name,equal_at,opt) free_arg(i_name,o_name,n_name,p_name,k_name,e_name,equal_at)
+  branch known flag_or_arg(i_name,o_name,n_name,p_name,k_name,e_name,equal_at,opt) free_arg(i_name,o_name,n_name,p_name,k_name,e_name,equal_at)
 block free_arg(i_fa:readbuf,o_fa:mutbuf,n_fa:u64,p_fa:u64,k_fa:u64,e_fa:u64,eq_fa:u64)
   one_fa:u64 = const() {"value":1}
   max_args_fa:u64 = const() {"value":17}
@@ -167,7 +167,12 @@ block free_assignment(i_fx:readbuf,o_fx:mutbuf,p_fx:u64,name_fx:u64,e_fx:u64,eq_
   unknown_fx:bool = compare.eq(special_fx,zero_fx)
   tail_ascii:bool = call(i_fx,tail_fx,e_fx) {"function":"bc_ascii_assignment"}
   assignment_ok:bool = bool.and(unknown_fx,tail_ascii)
-  branch assignment_ok free_flag(i_fx,o_fx,name_fx,eq_fx) fail()
+  branch assignment_ok free_flag(i_fx,o_fx,name_fx,eq_fx) free_assignment_help(i_fx,o_fx,p_fx,e_fx,eq_fx,special_fx,tail_ascii)
+block free_assignment_help(bh_i:readbuf,bh_o:mutbuf,bh_p:u64,bh_e:u64,bh_eq:u64,bh_special:u64,bh_ascii:bool)
+  bh_one:u64 = const() {"value":1}
+  bh_help:bool = compare.eq(bh_special,bh_one)
+  bh_admit:bool = bool.and(bh_help,bh_ascii)
+  branch bh_admit attached_flag_save(bh_i,bh_o,bh_eq,bh_e,bh_one) fail()
 block free_flag(i_ff:readbuf,o_ff:mutbuf,p_ff:u64,e_ff:u64)
   kind_ff:u64 = const() {"value":91}
   jump free_echo(i_ff,o_ff,p_ff,e_ff,kind_ff)
@@ -188,7 +193,7 @@ block free_save(i_fs:readbuf,o_fs:mutbuf,p_fs:u64,e_fs:u64,code_fs:u64)
 block free_return(code_fr:u64)
   result_fr:u32 = int.cast(code_fr) {"mode":"wrap"}
   ret(result_fr)
-block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_k:u64,fo_e:u64,fo_at:u64,fo_field:u64)
+block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_p:u64,fo_k:u64,fo_e:u64,fo_at:u64,fo_field:u64)
   profile_field:u64 = const() {"value":3}
   persist_field:u64 = const() {"value":7}
   profile:bool = compare.eq(fo_field,profile_field)
@@ -197,8 +202,8 @@ block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_k:u64,fo_e:u64,fo_at:u64,
   corrected:bool = compare.eq(fo_field,corrected_field)
   ordinary_flag:bool = bool.or(profile,persist)
   boolean:bool = bool.or(ordinary_flag,corrected)
-  branch boolean profile_flag(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at,fo_field) sep(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at,fo_field)
-block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_k:u64,pf_e:u64,pf_at:u64,pf_field:u64)
+  branch boolean profile_flag(fo_i,fo_o,fo_n,fo_p,fo_k,fo_e,fo_at,fo_field) sep(fo_i,fo_o,fo_n,fo_k,fo_e,fo_at,fo_field)
+block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_p:u64,pf_k:u64,pf_e:u64,pf_at:u64,pf_field:u64)
   bare:bool = compare.eq(pf_e,pf_at)
   marks:u64 = const() {"value":24}
   bitmap:u64 = call(pf_o,marks) {"function":"bench_get"}
@@ -208,12 +213,15 @@ block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_k:u64,pf_e:u64,pf_at:u64
   zero_pf:u64 = const() {"value":0}
   fresh_pf:bool = compare.eq(already,zero_pf)
   valid_pf:bool = bool.and(bare,fresh_pf)
-  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag,pf_field) flag_reject(pf_o,pf_field,bare)
-block flag_reject(o_fr:mutbuf,f_fr:u64,bare_fr:bool)
-  corrected_fr:u64 = const() {"value":9}
-  normal_fr:bool = compare.lt(f_fr,corrected_fr)
-  dupe_fr:bool = bool.and(normal_fr,bare_fr)
-  branch dupe_fr duplicate(o_fr,f_fr) fail()
+  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag,pf_field) flag_reject(pf_i,pf_o,pf_n,pf_p,pf_k,pf_e,pf_at,pf_field,bare)
+block flag_reject(fr_i:readbuf,frj_o:mutbuf,fr_n:u64,fr_p:u64,fr_k:u64,fr_e:u64,fr_eq:u64,fr_field:u64,fr_bare:bool)
+  fr_normal:u64 = const() {"value":9}
+  frj_ordinary:bool = compare.lt(fr_field,fr_normal)
+  branch frj_ordinary flag_reject_ordinary(fr_i,frj_o,fr_n,fr_p,fr_k,fr_e,fr_eq,fr_field,fr_bare) fail()
+block flag_reject_ordinary(bo_i:readbuf,bo_o:mutbuf,bo_n:u64,bo_p:u64,bo_k:u64,bo_e:u64,bo_eq:u64,bo_f:u64,bo_bare:bool)
+  bo_one:u64 = const() {"value":1}
+  bo_left:u64 = int.sub.wrap(bo_k,bo_one)
+  branch bo_bare duplicate(bo_o,bo_f) attached_flag(bo_i,bo_o,bo_n,bo_p,bo_e,bo_eq,bo_left,bo_f)
 block keep_flag(kf_i:readbuf,kf_o:mutbuf,kf_n:u64,kf_k:u64,kf_e:u64,kf_at:u64,kf_bits:u64,kf_flag:u64,kf_field:u64)
   with_profile:u64 = bit.or(kf_bits,kf_flag)
   _profile:u64 = call(kf_o,kf_at,with_profile) {"function":"bench_put"}
@@ -242,13 +250,13 @@ block detached_kind(i_dk:readbuf,o_dk:mutbuf,n_dk:u64,p_dk:u64,e_dk:u64,k_dk:u64
   size_dk:u64 = int.sub.wrap(e_dk,p_dk)
   one_dk:u64 = const() {"value":1}
   compound_dk:bool = compare.gt(size_dk,one_dk)
-  branch compound_dk detached_nonempty(i_dk,o_dk,n_dk,p_dk,e_dk,k_dk,f_dk,size_dk) value(i_dk,o_dk,n_dk,p_dk,e_dk,k_dk,f_dk)
+  branch compound_dk detached_nonempty(i_dk,o_dk,n_dk,p_dk,e_dk,k_dk,f_dk,size_dk) detached_value(i_dk,o_dk,n_dk,p_dk,e_dk,k_dk,f_dk)
 block detached_nonempty(i_dn:readbuf,o_dn:mutbuf,n_dn:u64,p_dn:u64,e_dn:u64,k_dn:u64,f_dn:u64,s_dn:u64)
   off_dn:usize = int.cast(p_dn) {"mode":"wrap"}
   lead_dn:u8 = buffer.load(i_dn,off_dn)
   dash_dn:u8 = const() {"value":45}
   optional_dn:bool = compare.eq(lead_dn,dash_dn)
-  branch optional_dn pending(i_dn,o_dn,n_dn,p_dn,e_dn,s_dn,k_dn,f_dn) value(i_dn,o_dn,n_dn,p_dn,e_dn,k_dn,f_dn)
+  branch optional_dn pending(i_dn,o_dn,n_dn,p_dn,e_dn,s_dn,k_dn,f_dn) detached_value(i_dn,o_dn,n_dn,p_dn,e_dn,k_dn,f_dn)
 block pending(i_pe:readbuf,o_pe:mutbuf,n_pe:u64,p_pe:u64,e_pe:u64,s_pe:u64,k_pe:u64,f_pe:u64)
   special_pe:u64 = call(i_pe,p_pe,s_pe) {"function":"bc_special"}
   zero_pe:u64 = const() {"value":0}
@@ -276,7 +284,7 @@ block pending_secondary(sh5_ps_i:readbuf,sh5_ps_o:mutbuf,sh5_ps_n:u64,sh5_ps_p:u
 block pending_maybe_long(ul_i:readbuf,ul_o:mutbuf,ul_n:u64,ul_p:u64,ul_e:u64,ul_k:u64,ul_f:u64,ul_long:bool)
   one_ul:u64 = const() {"value":1}
   count_ul:u64 = int.add.wrap(ul_k,one_ul)
-  branch ul_long pending_long(ul_i,ul_o,ul_p,ul_e,ul_f) free_arg(ul_i,ul_o,ul_n,ul_p,count_ul,ul_e,ul_e)
+  branch ul_long pending_long(ul_i,ul_o,ul_n,ul_p,ul_e,ul_k,ul_f) free_arg(ul_i,ul_o,ul_n,ul_p,count_ul,ul_e,ul_e)
 block pending_short_help(sh7_ph_i:readbuf,sh7_ph_o:mutbuf,sh7_ph_n:u64,sh7_ph_e:u64,sh7_ph_k:u64,sh7_ph_f:u64,sh7_ph_s:u64)
   sh7_max_ph:u64 = const() {"value":127}
   sh7_max_args_ph:u64 = const() {"value":17}
@@ -290,22 +298,81 @@ block pending_short_help(sh7_ph_i:readbuf,sh7_ph_o:mutbuf,sh7_ph_n:u64,sh7_ph_e:
   sh7_bounded_ph:bool = bool.and(sh7_argc_ok_ph,sh7_size_ok_ph)
   sh7_valid_ph:bool = bool.and(sh7_bounded_ph,sh7_shape_ph)
   branch sh7_valid_ph missing(sh7_ph_o,sh7_ph_f) fail()
-block pending_long(i_plg:readbuf,o_plg:mutbuf,p_plg:u64,e_plg:u64,f_plg:u64)
+block pending_long(i_plg:readbuf,o_plg:mutbuf,n_plg:u64,p_plg:u64,e_plg:u64,k_plg:u64,f_plg:u64)
   equal_plg:u64 = call(i_plg,p_plg,e_plg) {"function":"bc_equal"}
-  size_plg:u64 = int.sub.wrap(equal_plg,p_plg)
-  option_plg:u64 = call(i_plg,p_plg,size_plg) {"function":"bc_option"}
-  corrected_plg:u64 = const() {"value":9}
-  profile_plg:u64 = const() {"value":3}
-  persist_plg:u64 = const() {"value":7}
-  known_plg:bool = compare.lt(option_plg,corrected_plg)
-  profile_flag_plg:bool = compare.eq(option_plg,profile_plg)
-  persist_flag_plg:bool = compare.eq(option_plg,persist_plg)
-  flag_plg:bool = bool.or(profile_flag_plg,persist_flag_plg)
-  grammar_eq_plg:bool = compare.ne(equal_plg,e_plg)
-  bad_plg:bool = bool.and(flag_plg,grammar_eq_plg)
-  safe_plg:bool = bool.not(bad_plg)
-  missing_plg:bool = bool.and(known_plg,safe_plg)
-  branch missing_plg missing(o_plg,f_plg) fail()
+  field_plg:u64 = call(i_plg,p_plg,e_plg,equal_plg) {"function":"bc_attached_field"}
+  zero_plg:u64 = const() {"value":0}
+  needs_diag_plg:bool = compare.ne(field_plg,zero_plg)
+  branch needs_diag_plg attached_flag(i_plg,o_plg,n_plg,p_plg,e_plg,equal_plg,k_plg,field_plg) pending_known(i_plg,o_plg,p_plg,equal_plg,f_plg)
+block pending_known(pk_i:readbuf,pk_o:mutbuf,pk_p:u64,pk_eq:u64,pk_f:u64)
+  pk_size:u64 = int.sub.wrap(pk_eq,pk_p)
+  pk_opt:u64 = call(pk_i,pk_p,pk_size) {"function":"bc_option"}
+  pk_bound:u64 = const() {"value":9}
+  pk_known:bool = compare.lt(pk_opt,pk_bound)
+  branch pk_known missing(pk_o,pk_f) fail()
+block detached_value(dv_i:readbuf,dv_o:mutbuf,dv_n:u64,dv_p:u64,dv_e:u64,dv_k:u64,dv_f:u64)
+  dv_zero:u64 = const() {"value":0}
+  dv_has_next:bool = compare.gt(dv_k,dv_zero)
+  branch dv_has_next detached_peek(dv_i,dv_o,dv_n,dv_p,dv_e,dv_k,dv_f) value(dv_i,dv_o,dv_n,dv_p,dv_e,dv_k,dv_f)
+block detached_peek(dp2_i:readbuf,dp2_o:mutbuf,dp2_n:u64,dp2_p:u64,dp2_e:u64,dp2_k:u64,dp2_f:u64)
+  dp2_one:u64 = const() {"value":1}
+  dp2_next:u64 = int.add.wrap(dp2_e,dp2_one)
+  dp2_end:u64 = call(dp2_i,dp2_next,dp2_n) {"function":"bc_end"}
+  dp2_closed:bool = compare.lt(dp2_end,dp2_n)
+  branch dp2_closed detached_peek_long(dp2_i,dp2_o,dp2_n,dp2_p,dp2_e,dp2_k,dp2_f,dp2_next,dp2_end) value(dp2_i,dp2_o,dp2_n,dp2_p,dp2_e,dp2_k,dp2_f)
+block detached_peek_long(dl_i:readbuf,dl_o:mutbuf,dl_n:u64,dl_p:u64,dl_e:u64,dl_k:u64,dl_f:u64,dl_next:u64,dl_end:u64)
+  dl_eq:u64 = call(dl_i,dl_next,dl_end) {"function":"bc_equal"}
+  dl_field:u64 = call(dl_i,dl_next,dl_end,dl_eq) {"function":"bc_attached_field"}
+  dl_zero:u64 = const() {"value":0}
+  dl_one:u64 = const() {"value":1}
+  dl_attached:bool = compare.ne(dl_field,dl_zero)
+  dl_left:u64 = int.sub.wrap(dl_k,dl_one)
+  branch dl_attached attached_flag(dl_i,dl_o,dl_n,dl_next,dl_end,dl_eq,dl_left,dl_field) value(dl_i,dl_o,dl_n,dl_p,dl_e,dl_k,dl_f)
+block attached_flag(af_i:readbuf,af_o:mutbuf,af_n:u64,af_p:u64,af_e:u64,af_eq:u64,af_left:u64,af_field:u64)
+  af_zero:u64 = const() {"value":0}
+  af_one:u64 = const() {"value":1}
+  af_argc:u64 = call(af_i,af_zero) {"function":"bench_read"}
+  af_max_args:u64 = const() {"value":17}
+  af_max_token:u64 = const() {"value":127}
+  af_ordinary:bool = call(af_o) {"function":"bc_marked"}
+  af_unmarked:bool = bool.not(af_ordinary)
+  af_count_ok:bool = compare.le(af_argc,af_max_args)
+  af_size:u64 = int.sub.wrap(af_e,af_p)
+  af_size_ok:bool = compare.le(af_size,af_max_token)
+  af_after:u64 = int.add.wrap(af_e,af_one)
+  af_frame_ok:bool = call(af_i,af_n,af_after,af_left) {"function":"bc_tail_frame"}
+  af_scope_ok:bool = bool.and(af_unmarked,af_count_ok)
+  af_span_ok:bool = bool.and(af_size_ok,af_frame_ok)
+  af_valid:bool = bool.and(af_scope_ok,af_span_ok)
+  branch af_valid attached_flag_save(af_i,af_o,af_eq,af_e,af_field) fail()
+block attached_flag_save(as_i:readbuf,as_o:mutbuf,as_eq:u64,as_e:u64,as_field:u64)
+  as_one:u64 = const() {"value":1}
+  as_dest:u64 = const() {"value":96}
+  as_start:u64 = int.add.wrap(as_eq,as_one)
+  as_ascii:bool = call(as_i,as_o,as_start,as_e,as_dest) {"function":"bc_numeric_echo"}
+  as_len:u64 = int.sub.wrap(as_e,as_start)
+  branch as_ascii attached_flag_code(as_o,as_len,as_field) fail()
+block attached_flag_code(ac_o:mutbuf,ac_len:u64,ac_field:u64)
+  ac_zero:u64 = const() {"value":0}
+  ac_one:u64 = const() {"value":1}
+  ac_two:u64 = const() {"value":2}
+  ac_profile:u64 = const() {"value":3}
+  ac_len_at:u64 = const() {"value":72}
+  ac_history_at:u64 = const() {"value":80}
+  ac_mask:u64 = const() {"value":15}
+  ac_history:u64 = call(ac_o,ac_history_at) {"function":"bench_get"}
+  ac_count:u64 = bit.and(ac_history,ac_mask)
+  ac_grouped:bool = compare.gt(ac_count,ac_zero)
+  ac_short:u64 = const() {"value":86}
+  ac_group:u64 = const() {"value":92}
+  ac_base:u64 = select(ac_grouped,ac_group,ac_short)
+  ac_help:bool = compare.eq(ac_field,ac_one)
+  ac_prof:bool = compare.eq(ac_field,ac_profile)
+  ac_flags:u64 = select(ac_prof,ac_zero,ac_one)
+  ac_index:u64 = select(ac_help,ac_two,ac_flags)
+  ac_code:u64 = int.add.wrap(ac_base,ac_index)
+  _ac_len:u64 = call(ac_o,ac_len_at,ac_len) {"function":"bench_put"}
+  jump free_return(ac_code)
 block missing(o_mi:mutbuf,f_mi:u64)
   marked_mi:bool = call(o_mi) {"function":"bc_marked"}
   branch marked_mi fail() missing_plain(f_mi)
@@ -1139,6 +1206,36 @@ block entry(o:mutbuf)
   selected:u64 = bit.and(current,bit)
   answer:bool = compare.ne(selected,none)
   ret(answer)
+end
+
+fn bc_attached_field(i:readbuf,p:u64,e:u64,eq:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(i:readbuf,p:u64,e:u64,eq:u64)
+  separate:bool = compare.lt(eq,e)
+  w:u64 = int.sub.wrap(eq,p)
+  min:u64 = const() {"value":6}
+  max:u64 = const() {"value":17}
+  enough:bool = compare.ge(w,min)
+  not_long:bool = compare.le(w,max)
+  size_good:bool = bool.and(enough,not_long)
+  attached:bool = bool.and(size_good,separate)
+  branch attached lookup_attached(i,p,w) not_attached()
+block lookup_attached(li:readbuf,lp:u64,lw:u64)
+  opt:u64 = call(li,lp,lw) {"function":"bc_option"}
+  sp:u64 = call(li,lp,lw) {"function":"bc_special"}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  profile:u64 = const() {"value":3}
+  persist:u64 = const() {"value":7}
+  is_profile:bool = compare.eq(opt,profile)
+  is_persist:bool = compare.eq(opt,persist)
+  is_help:bool = compare.eq(sp,one)
+  is_flag:bool = bool.or(is_profile,is_persist)
+  maybe_flag:u64 = select(is_flag,opt,zero)
+  code:u64 = select(is_help,one,maybe_flag)
+  ret(code)
+block not_attached()
+  no:u64 = const() {"value":0}
+  ret(no)
 end
 
 fn bc_special(i:readbuf,p:u64,w:u64) -> (u64) effects(read,trap) entry(entry)

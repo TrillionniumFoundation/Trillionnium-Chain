@@ -74,10 +74,11 @@ def diagnostics_catalog(raw: bytes) -> bytes:
     numeric = {base + i for base in (64, 80, 96) for i in numeric_fields}
     enums = {102, 103}
     unexpected_arguments = {90, 91}
+    attached_value = {86, 87, 88, 92, 93, 94}
     reflected = numeric | enums | unexpected_arguments
     if (set(source) != {"schema", "entries", "suggestions", "long_options"}
-            or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v3"
-            or set(source["entries"]) != {str(code) for code in existing | reflected}):
+            or source["schema"] != "trnm.hia.bench-plain-diagnostic-text.v4"
+            or set(source["entries"]) != {str(code) for code in existing | reflected | {86}}):
         raise ValueError("Incorrect diagnostic text roster")
     words = source["suggestions"]
     if (type(words) is not list or len(words) != 11 or len(set(words[:10])) != 10
@@ -104,11 +105,21 @@ def diagnostics_catalog(raw: bytes) -> bytes:
     words = words + [name for name, _ in long_options] + tails + [tip_leader]
     table = bytearray(104 * 8 + len(words) * 4)
     payload = bytearray()
-    for code in sorted(existing | reflected):
+    for code in sorted(existing | reflected | {86}):
         row = source["entries"][str(code)]
         if type(row) is not list or len(row) != 2 or any(type(text) is not str for text in row):
             raise ValueError("Incorrect diagnostic text definition")
         before, after = (text.encode("ascii") for text in row)
+        if code == 86:
+            if ((len(before), len(after)) != (25, 258) or before != b"error: unexpected value '"
+                    or not after.startswith(b"' for '--' found; no more were expected\n\nUsage: trnm-bench ")
+                    or not after.endswith(b">>")
+                    or any(b != 10 and not 32 <= b <= 126 for b in after)):
+                raise ValueError("Incorrect shared attached-value diagnostic fragments")
+            for alias in attached_value:
+                struct.pack_into("<4H", table, alias * 8, len(table) + len(payload), len(before), len(after), 0)
+            payload += before + after
+            continue
         if (not before or bool(after) != (code in reflected) or not (after or before).endswith(b"\n")
                 or any(b != 10 and not 32 <= b <= 126 for b in before + after)
                 or len(before) + len(after) + (127 if code in reflected else 0) > 2048):

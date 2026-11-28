@@ -163,8 +163,17 @@ placeholder only for an option that takes a value. This does not execute or
 accept the suggested option. For an unknown long option with an attached
 `=value`, the complete token must still fit 127 bytes and the attached value
 must be empty or printable ASCII. Only the name before the first `=` is
-scored and printed, as in the locked CLI. This does not admit attached values
-on boolean flags, help or the corrected-mode marker. The diagnostic may
+scored and printed, as in the locked CLI. An attached value on an original
+no-value long flag (`--profile`, `--persist-profile` or `--help`) is not
+accepted: it reports Clap's exact unexpected-value message, with the selected
+printable ASCII value (including empty) and its original compact or grouped
+usage. The grouped usage tracks previously committed options. If a split
+value is still pending in the locked parser, the attached-value error wins
+before that split value is committed or validated, including malformed and
+duplicate split values. Earlier committed validation errors and bare help
+still win. The suffix is checked only for count and framing. This never
+enables profile work or help execution on the invalid flag, nor applies to
+the corrected-mode marker. The diagnostic may
 follow a completed prefix of up to all nine original options. It shows the completed options in argv order and adds a distinct
 suggested option last, without repeating an already listed option. The
 original positional diagnostic uses `[OPTIONS]` even with preceding options.
