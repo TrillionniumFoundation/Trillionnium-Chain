@@ -23831,6 +23831,126 @@
         "source": "src/data_availability/batch_chunk_root.hepta"
       }
     ],
+    "src/task_kernel/archive_retained_plan.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_header.hepta",
+        "functions": [
+          "archive_digest_match",
+          "archive_equal",
+          "archive_u32"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_hash.hepta",
+        "functions": [
+          "archive_value_digest"
+        ]
+      },
+      {
+        "source": "src/service_settlement/arithmetic.hepta",
+        "functions": [
+          "ss_disjoint",
+          "ss_range",
+          "ss_u128_mul"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_get",
+          "cs_put",
+          "cs_put_integer",
+          "cs_zero"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_variable_batch.hepta",
+        "functions": [
+          "ar_multi_lex",
+          "ar_multi_leaf_at",
+          "ar_multi_copy",
+          "ar_multi_merkle"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_singleton_batch.hepta",
+        "functions": [
+          "archive_batch_charge",
+          "archive_batch_policy_bounds",
+          "archive_batch_schema",
+          "archive_record_admission"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_selection.hepta",
+        "functions": [
+          "as_row",
+          "as_ord",
+          "as_hold",
+          "as_selected",
+          "as_offset",
+          "as_sort",
+          "as_find",
+          "as_validate",
+          "as_mark_holds",
+          "as_choose",
+          "as_project",
+          "as_run",
+          "as_typed_mode",
+          "as_typed_slot",
+          "as_record_field",
+          "as_policy_field",
+          "as_typed_admit",
+          "as_plan",
+          "as_sum_charge"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_fold.hepta",
+        "functions": [
+          "archive_node_digest"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_typed_selection.hepta",
+        "functions": [
+          "ats_entry",
+          "typed_selected_records",
+          "archive_sealed_project",
+          "sealed_taken",
+          "sealed_pack",
+          "sealed_slot",
+          "sealed_span",
+          "sealed_write_rows",
+          "sealed_header",
+          "ats_retained"
+        ]
+      }
+    ],
     "src/task_kernel/archive_sealed_plan.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
@@ -23939,6 +24059,7 @@
         "source": "src/task_kernel/archive_typed_selection.hepta",
         "functions": [
           "ats_entry",
+          "ats_retained",
           "typed_selected_records",
           "archive_sealed_project",
           "sealed_taken",

@@ -10,7 +10,11 @@ fn ats_entry(raw:readbuf,out:mutbuf,w:mutbuf,mode:u64) -> (u32) effects(read,wri
 block entry(raw:readbuf,out:mutbuf,w:mutbuf,mode:u64)
   ns:usize = buffer.len(raw)
   full:u64 = int.cast(ns) {"mode":"wrap"}
-  n:u64 = int.sub.wrap(full,mode)
+  sealed_width:u64 = const() {"value":32}
+  no_suffix:u64 = const() {"value":0}
+  sealed_mode:bool = compare.eq(mode,sealed_width)
+  suffix_bytes:u64 = select(sealed_mode,sealed_width,no_suffix)
+  n:u64 = int.sub.wrap(full,suffix_bytes)
   smallest:u64 = const() {"value":154}
   hi:u64 = const() {"value":7018}
   a:bool = compare.ge(n,smallest)
@@ -43,12 +47,16 @@ block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64,cp:u64,cc:u64,ch:u64,am3:u6
   wlen:usize = buffer.len(cw)
   one_size:usize = const() {"value":6276}
   work_size:usize = const() {"value":1496}
-  oz:usize = const() {"value":0}
   sealed_out:usize = const() {"value":6914}
   sealed_work:usize = const() {"value":1824}
   suffix:usize = int.cast(am3) {"mode":"wrap"}
-  seal:bool = compare.ne(suffix,oz)
-  required_o:usize = select(seal,sealed_out,one_size)
+  seal_mode:usize = const() {"value":32}
+  retain_mode:usize = const() {"value":1}
+  retained_out:usize = const() {"value":6100}
+  seal:bool = compare.eq(suffix,seal_mode)
+  retained:bool = compare.eq(suffix,retain_mode)
+  bounded_out:usize = select(retained,retained_out,one_size)
+  required_o:usize = select(seal,sealed_out,bounded_out)
   required_w:usize = select(seal,sealed_work,work_size)
   fits:bool = compare.ge(olen,required_o)
   ready:bool = compare.ge(wlen,required_w)
@@ -135,9 +143,16 @@ block selected(lr:readbuf,lo:mutbuf,lw:mutbuf,lc:u64,lh:u64,la:u64,am15:u64)
   success:bool = compare.eq(status,ok_status)
   branch success route(lr,lo,lw,lc,am15) refused(status)
 block route(ar:readbuf,ao:mutbuf,aw:mutbuf,ac:u64,az:u64)
-  zroute:u64 = const() {"value":0}
-  sealed:bool = compare.ne(az,zroute)
-  branch sealed make_batch(ar,ao,aw,ac) legacy(ar,ao,aw,ac)
+  seal_route:u64 = const() {"value":32}
+  sealed:bool = compare.eq(az,seal_route)
+  branch sealed make_batch(ar,ao,aw,ac) unsealed(ar,ao,aw,ac,az)
+block unsealed(ur0:readbuf,uo0:mutbuf,uw0:mutbuf,un0:u64,um0:u64)
+  retain_route:u64 = const() {"value":1}
+  retained_only:bool = compare.eq(um0,retain_route)
+  branch retained_only retain(ur0,uo0,uw0,un0) legacy(ur0,uo0,uw0,un0)
+block retain(rr0:readbuf,ro0:mutbuf,rw0:mutbuf,rn0:u64)
+  retained_status:u32 = call(rr0,ro0,rw0,rn0) {"function":"ats_retained"}
+  ret(retained_status)
 block make_batch(er:readbuf,eo:mutbuf,ew:mutbuf,ec:u64)
   sealed_status:u32 = call(er,eo,ew,ec) {"function":"archive_sealed_project"}
   ret(sealed_status)
@@ -516,4 +531,42 @@ block entry(r:readbuf,o:mutbuf,w:mutbuf,count:u64,l:u64,h:u64,plen:u64)
   first_record:u64 = const() {"value":224}
   at:u64 = int.add.wrap(base,first_record)
   ret(at)
+end
+
+fn ats_retained(r:readbuf,o:mutbuf,w:mutbuf,n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,n:u64)
+  start:u64 = const() {"value":4}
+  z:u64 = const() {"value":0}
+  jump scan(r,o,w,n,z,start,z)
+block scan(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,si:u64,sp:u64,sc:u64)
+  more:bool = compare.lt(si,sn)
+  branch more filter(sr,so,sw,sn,si,sp,sc) done(so,sc)
+block filter(fr:readbuf,fo:mutbuf,fw:mutbuf,fn0:u64,fi:u64,fp:u64,fc:u64)
+  picked:bool = call(fw,fi) {"function":"sealed_taken"}
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(fi,one)
+  branch picked scan(fr,fo,fw,fn0,next,fp,fc) append(fr,fo,fw,fn0,fi,fp,fc,next)
+block append(ar:readbuf,ao:mutbuf,aw:mutbuf,an:u64,ai:u64,ap:u64,ac:u64,ax:u64)
+  order:u64 = call(ai) {"function":"as_ord"}
+  index:u64 = call(aw,order) {"function":"tr_get"}
+  slot:u64 = call(index) {"function":"as_typed_slot"}
+  word:u64 = const() {"value":8}
+  limit:u64 = int.add.wrap(slot,word)
+  start0:u64 = call(aw,slot) {"function":"tr_get"}
+  end0:u64 = call(aw,limit) {"function":"tr_get"}
+  nbytes:u64 = int.sub.wrap(end0,start0)
+  src:usize = int.cast(start0) {"mode":"wrap"}
+  dst:usize = int.cast(ap) {"mode":"wrap"}
+  len:usize = int.cast(nbytes) {"mode":"wrap"}
+  _ = buffer.copy_range(ao,ar,dst,src,len)
+  endp:u64 = int.add.wrap(ap,nbytes)
+  add_one:u64 = const() {"value":1}
+  count:u64 = int.add.wrap(ac,add_one)
+  jump scan(ar,ao,aw,an,ax,endp,count)
+block done(doo:mutbuf,dc:u64)
+  zero:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  _count:u64 = call(doo,zero,four,dc) {"function":"cs_put_integer"}
+  success:u32 = const() {"value":0}
+  ret(success)
 end

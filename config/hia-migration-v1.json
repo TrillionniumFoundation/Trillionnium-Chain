@@ -361,6 +361,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_retained_plan",
+      "node_integration_complete": false,
+      "scope": "Private original typed read-only archive retained-record projection, exact complete bounded Borsh records and original order. No persistence, removal, authorization or production.",
+      "source": "hia/src/task_kernel/archive_retained_plan.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_retained_plan.py",
+        "hia/tests/rust_task_archive_retained_plan_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_path",
       "node_integration_complete": false,
       "scope": "Private original Borsh archive inclusion path after complete native admission of an unchanged bounded full batch; ordinary local deterministic bytes only, no trust, signing or store.",
