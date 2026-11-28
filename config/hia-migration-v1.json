@@ -964,6 +964,18 @@
       ]
     },
     {
+      "id": "state/routed-int257-batch-preparation",
+      "node_integration_complete": false,
+      "scope": "Synthetic typed Int257 batch preparation validation and canonical input commitment; no clock, statement, proof or production authority.",
+      "source": "hia/src/state/routed_int257_batch_preparation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_routed_int257_batch_preparation.py",
+        "hia/tests/rust_routed_int257_batch_preparation_reference.rs",
+        "hia/tests/test_routed_int257_ordinary.py"
+      ]
+    },
+    {
       "id": "state/routed-int257-model-commitment",
       "node_integration_complete": false,
       "scope": "Canonical public-model Int257 commitment over version, original geometry and signed validated matrices, exact frozen domain/length framing; no admission, proofs or production authority.",
@@ -3195,6 +3207,7 @@
         "state/routed-int257-ordinary",
         "state/routed-int257-direct",
         "state/routed-int257-grouped",
+        "state/routed-int257-batch-preparation",
         "state/routed-int257-model-commitment"
       ],
       "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
