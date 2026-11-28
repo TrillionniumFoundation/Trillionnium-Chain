@@ -21065,6 +21065,71 @@
         ]
       }
     ],
+    "src/checkpoint/tile_tensor_header.hepta": [
+      {
+        "source": "src/checkpoint/tile_activation_raw.hepta",
+        "functions": [
+          "tar_object",
+          "tar_string",
+          "tar_duplicate",
+          "tar_equal",
+          "tar_value",
+          "tar_primitive",
+          "tar_mark",
+          "tar_count"
+        ]
+      },
+      {
+        "source": "src/checkpoint/tile_activation_typed.hepta",
+        "functions": [
+          "tat_array",
+          "tat_find"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/oracle/serde_json.hepta",
+        "functions": [
+          "oj_ws",
+          "oj_peek",
+          "oj_utf8",
+          "oj_ident"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json.hepta",
+        "functions": [
+          "hj_uint"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_wcopy"
+        ]
+      }
+    ],
     "src/checkpoint/tile_activation_root_sequence.hepta": [
       {
         "source": "src/checkpoint/tile_activation_composed.hepta",

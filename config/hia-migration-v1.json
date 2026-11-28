@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_tensor_header",
+      "node_integration_complete": false,
+      "scope": "Private bounded original checkpoint BF16 target header typed metadata, sorted row checks and coverage on a declared extent; no checkpoint bytes, I/O, observer, proof or authority.",
+      "source": "hia/src/checkpoint/tile_tensor_header.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_tensor_header.py",
+        "hia/tests/rust_checkpoint_tile_tensor_header_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_activation_root_sequence",
       "node_integration_complete": false,
       "scope": "Private bounded original composed activation on four root/runtime named/positional representations from one held raw value; no I/O, observer, model execution, provenance, live activation or authority.",
