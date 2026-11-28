@@ -163,6 +163,7 @@ def sources():
         "hia/src/data_availability/CELL_CONTENT_CLOSURE_VALUE.md",
         "hia/src/data_availability/CELL_CONTENT_CLOSURE_OBSERVE.md",
         "hia/src/data_availability/CELL_CONTENT_MANIFEST_OBSERVE.md",
+        "hia/src/data_availability/CELL_CONTENT_MANIFEST_CONSTRUCT.md",
         "hia/src/data_availability/CELL_CONTENT_CLAIM_VERIFY.md",
         "hia/src/data_availability/CELL_VERSION_RETENTION_OBJECT_RELATION.md",
         "hia/src/data_availability/CELL_VERSION_RETENTION_OUTER_TERMS.md",

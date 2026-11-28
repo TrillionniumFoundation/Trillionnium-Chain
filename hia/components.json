@@ -7915,6 +7915,76 @@
         "source": "src/crypto/sha512_stream.hepta"
       }
     ],
+    "src/data_availability/cell_content_manifest_construct.hepta": [
+      {
+        "functions": [
+          "tco_hash",
+          "tco_store_be64"
+        ],
+        "source": "src/data_availability/cell_content_closure_observe.hepta"
+      },
+      {
+        "functions": [
+          "ccm_claim"
+        ],
+        "source": "src/data_availability/cell_content_manifest_value.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32",
+          "daav_copy"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "utf8"
+        ],
+        "source": "src/verification/closed_round.hepta"
+      },
+      {
+        "functions": [
+          "cm_family_chars"
+        ],
+        "source": "src/data_availability/cell_manifest.hepta"
+      },
+      {
+        "functions": [
+          "cch_nonzero64"
+        ],
+        "source": "src/release_bundle/content_claim_frame.hepta"
+      },
+      {
+        "functions": [
+          "root_be64"
+        ],
+        "source": "src/release_bundle/root_recovery_checkpoint_v3.hepta"
+      },
+      {
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final",
+          "s512_read64"
+        ],
+        "source": "src/crypto/sha512_stream.hepta"
+      }
+    ],
     "src/data_availability/cell_content_manifest_observe.hepta": [
       {
         "functions": [
