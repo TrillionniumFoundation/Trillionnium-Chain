@@ -2284,6 +2284,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-layout",
+      "node_integration_complete": false,
+      "scope": "4-MiB immutable selected Safetensors file readback plus the original complete verified canonical tensor range offsets and lengths over the same content-digest-matched bytes. No TensorView, file owner, live I/O, loading, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_layout.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_layout.py",
+        "hia/tests/tensor_readback_layout_derivation.py",
+        "hia/tests/tensor_layout_original.py",
+        "hia/tests/rust_da_cell_tensor_reader_layout_fixture.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-metadata",
       "node_integration_complete": false,
       "scope": "Stock three-loan immutable Safetensors public-value readback with full original 1024-key metadata and 1-MiB JSON, actual selected layout and final native SHA over identical bytes. Private 2 MiB logical frame and 128-tensor profile; no live reader, storage, or authority.",
