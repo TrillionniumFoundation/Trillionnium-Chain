@@ -2529,6 +2529,17 @@
       ]
     },
     {
+      "id": "model/cell-training-value",
+      "node_integration_complete": false,
+      "scope": "Private compact canonical original Training and TrainableMask, fixed full-size Boolean matrices and exact u64; no execution, admission or production.",
+      "source": "hia/src/model/cell_training_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_training_value.py",
+        "hia/tests/rust_cell_training_value_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-state-value",
       "node_integration_complete": false,
       "scope": "Private original immutable CellState canonical JSON typed value for null optimizer and bounded ASCII/vector; no validation, installation, training or execution.",
