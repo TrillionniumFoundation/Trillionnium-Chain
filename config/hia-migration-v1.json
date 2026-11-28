@@ -2265,6 +2265,17 @@
       ]
     },
     {
+      "id": "release-bundle/root-recovery-checkpoint-v3",
+      "node_integration_complete": false,
+      "scope": "Read-only typed RootRecovery V3 canonical dual-family roster/DER shape and original SHA-512 public identities/order, policy commitment and empty-only bootstrap checkpoint for generated fixture scope/time. No signatures, key expansion, operation admission, storage or authority.",
+      "source": "hia/src/release_bundle/root_recovery_checkpoint_v3.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_root_recovery_checkpoint.py",
+        "hia/tests/rust_root_recovery_checkpoint_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/pq-bundle-checkpoint",
       "node_integration_complete": false,
       "scope": "Pure native shadow continuation over one borrowed typed metadata and state descriptor: shared guard, canonical signing transcript, original proposed checkpoint SHA-256 and domain-separated borrowed snapshot identity. Only a staged Rust differential; no same-call quorum token, trusted live snapshot or persistent transition.",
@@ -2976,6 +2987,7 @@
         "release-bundle/file-descriptor",
         "release-bundle/pq-bundle-callback-quorum",
         "release-bundle/pq-bundle-checkpoint",
+        "release-bundle/root-recovery-checkpoint-v3",
         "release-bundle/pq-bundle-state",
         "release-bundle/pq-quorum",
         "release-bundle/pq-role-identity",

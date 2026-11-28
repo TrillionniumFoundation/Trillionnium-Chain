@@ -22166,6 +22166,39 @@
           "rc_nibble"
         ]
       }
+    ],
+    "src/release_bundle/root_recovery_checkpoint_v3.hepta": [
+      {
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "source": "src/crypto/sha512_stream.hepta",
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final",
+          "s512_read64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ]
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"
