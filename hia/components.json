@@ -7633,6 +7633,16 @@
         ]
       }
     ],
+    "src/state/integer_training_backward.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_load64",
+          "cw_store64"
+        ]
+      }
+    ],
     "src/state/integer_model_project.hepta": [
       {
         "functions": [

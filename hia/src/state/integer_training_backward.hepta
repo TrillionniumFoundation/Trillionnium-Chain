@@ -1,0 +1,223 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_training_projection_v1
+fn f0(i:readbuf,o:mutbuf,a:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,a:mutbuf)
+  n:usize = buffer.len(i)
+  head:usize = const() {"value":16}
+  enough:bool = compare.ge(n,head)
+  branch enough frame(i,o,n) bad()
+block frame(fi:readbuf,fo:mutbuf,fnn:usize)
+  z:usize = const() {"value":0}
+  magic:u64 = call(fi,z) {"function":"cw_read64"}
+  tag:u64 = const() {"value":3544385890771162179}
+  magic_ok:bool = compare.eq(magic,tag)
+  count_at_offset:usize = const() {"value":8}
+  count_at:usize = int.add.wrap(z,count_at_offset)
+  count:u64 = call(fi,count_at) {"function":"cw_read64"}
+  cap:u64 = const() {"value":64}
+  count_ok:bool = compare.le(count,cap)
+  header_ok:bool = bool.and(magic_ok,count_ok)
+  branch header_ok shape(fi,fo,fnn,count) bad()
+block shape(si:readbuf,so:mutbuf,sn:usize,sc:u64)
+  count2:usize = int.cast(sc) {"mode":"wrap"}
+  first:usize = const() {"value":16}
+  rowbytes:usize = const() {"value":2096}
+  input_payload:usize = int.mul.wrap(count2,rowbytes)
+  input_extent:usize = int.add.wrap(input_payload,first)
+  input_exact:bool = compare.eq(input_extent,sn)
+  branch input_exact check_rows(si,so,sn,first,count2) bad()
+block check_rows(ci:readbuf,co:mutbuf,cn:usize,cp:usize,cc:usize)
+  checks_done:bool = compare.eq(cn,cp)
+  branch checks_done buffers(ci,co,cn,cc) check_row(ci,co,cn,cp,cc)
+block check_row(ri:readbuf,ro:mutbuf,rn:usize,rp:usize,rc:usize)
+  route:u64 = call(ri,rp) {"function":"cw_read64"}
+  label_at_offset:usize = const() {"value":8}
+  label_at:usize = int.add.wrap(rp,label_at_offset)
+  label:u64 = call(ri,label_at) {"function":"cw_read64"}
+  enum_top:u64 = const() {"value":2}
+  route_ok:bool = compare.le(route,enum_top)
+  label_ok:bool = compare.le(label,enum_top)
+  enums_ok:bool = bool.and(route_ok,label_ok)
+  logit_min:i64 = const() {"value":-134746096}
+  logit_max:i64 = const() {"value":134746096}
+  raw_l0_at_offset:usize = const() {"value":16}
+  raw_l0_at:usize = int.add.wrap(rp,raw_l0_at_offset)
+  raw_l0:u64 = call(ri,raw_l0_at) {"function":"cw_read64"}
+  l0:i64 = int.cast(raw_l0) {"mode":"wrap"}
+  left0:bool = compare.ge(l0,logit_min)
+  right0:bool = compare.le(l0,logit_max)
+  l_ok0:bool = bool.and(left0,right0)
+  lg0:bool = bool.and(enums_ok,l_ok0)
+  raw_l1_at_offset:usize = const() {"value":24}
+  raw_l1_at:usize = int.add.wrap(rp,raw_l1_at_offset)
+  raw_l1:u64 = call(ri,raw_l1_at) {"function":"cw_read64"}
+  l1:i64 = int.cast(raw_l1) {"mode":"wrap"}
+  left1:bool = compare.ge(l1,logit_min)
+  right1:bool = compare.le(l1,logit_max)
+  l_ok1:bool = bool.and(left1,right1)
+  lg1:bool = bool.and(lg0,l_ok1)
+  raw_l2_at_offset:usize = const() {"value":32}
+  raw_l2_at:usize = int.add.wrap(rp,raw_l2_at_offset)
+  raw_l2:u64 = call(ri,raw_l2_at) {"function":"cw_read64"}
+  l2:i64 = int.cast(raw_l2) {"mode":"wrap"}
+  left2:bool = compare.ge(l2,logit_min)
+  right2:bool = compare.le(l2,logit_max)
+  l_ok2:bool = bool.and(left2,right2)
+  lg2:bool = bool.and(lg1,l_ok2)
+  bias_at_offset:usize = const() {"value":2088}
+  bias_at:usize = int.add.wrap(rp,bias_at_offset)
+  bias:u64 = call(ri,bias_at) {"function":"cw_read64"}
+  eight:u64 = const() {"value":8}
+  bias_exact:bool = compare.eq(bias,eight)
+  row_ok:bool = bool.and(lg2,bias_exact)
+  abs0:u64 = const() {"value":0}
+  feature_base_offset:usize = const() {"value":40}
+  feature_base:usize = int.add.wrap(rp,feature_base_offset)
+  feature_end_offset:usize = const() {"value":2088}
+  feature_end:usize = int.add.wrap(rp,feature_end_offset)
+  branch row_ok check_features(ri,ro,rn,rc,feature_base,feature_end,abs0) bad()
+block check_features(ki:readbuf,ko:mutbuf,kn:usize,kc:usize,kp:usize,ke:usize,ka:u64)
+  encoded:u64 = call(ki,kp) {"function":"cw_read64"}
+  feature:i64 = int.cast(encoded) {"mode":"wrap"}
+  min_feature:i64 = const() {"value":-8}
+  max_feature:i64 = const() {"value":8}
+  zero_feature:i64 = const() {"value":0}
+  ge_min:bool = compare.ge(feature,min_feature)
+  le_max:bool = compare.le(feature,max_feature)
+  feature_range:bool = bool.and(ge_min,le_max)
+  branch feature_range sign(ki,ko,kn,kc,kp,ke,ka,feature,zero_feature) bad()
+block sign(ti:readbuf,to:mutbuf,tn:usize,tc:usize,tp:usize,te:usize,ta:u64,tf:i64,tz:i64)
+  nonnegative:bool = compare.ge(tf,tz)
+  nonneg:u64 = int.cast(tf) {"mode":"wrap"}
+  negate:i64 = int.sub.wrap(tz,tf)
+  negative:u64 = int.cast(negate) {"mode":"wrap"}
+  branch nonnegative feature_advance(ti,to,tn,tc,tp,te,ta,nonneg) feature_advance(ti,to,tn,tc,tp,te,ta,negative)
+block feature_advance(ui:readbuf,uo:mutbuf,un:usize,uc:usize,up:usize,ue:usize,ua:u64,um:u64)
+  abs_sum:u64 = int.add.wrap(ua,um)
+  token_cap:u64 = const() {"value":1024}
+  within_tokens:bool = compare.le(abs_sum,token_cap)
+  branch within_tokens feature_next(ui,uo,un,uc,up,ue,abs_sum) bad()
+block feature_next(xi:readbuf,xo:mutbuf,xn:usize,xc:usize,xp:usize,xe:usize,xa:u64)
+  next_feature_offset:usize = const() {"value":8}
+  next_feature:usize = int.add.wrap(xp,next_feature_offset)
+  next_header_offset:usize = const() {"value":8}
+  next_header:usize = int.add.wrap(xe,next_header_offset)
+  finished_features:bool = compare.eq(next_feature,xe)
+  branch finished_features check_rows(xi,xo,xn,next_header,xc) check_features(xi,xo,xn,xc,next_feature,xe,xa)
+block buffers(bi:readbuf,bo:mutbuf,bn:usize,bc:usize)
+  outbase:usize = const() {"value":30848}
+  outrow:usize = const() {"value":80}
+  row_payload:usize = int.mul.wrap(bc,outrow)
+  resultlen:usize = int.add.wrap(row_payload,outbase)
+  available:usize = buffer.len(bo)
+  clear0:usize = const() {"value":0}
+  fits:bool = compare.ge(available,resultlen)
+  branch fits clear(bi,bo,bn,clear0,outbase) short()
+block clear(ai:readbuf,ao:mutbuf,an:usize,ap:usize,ae:usize)
+  nil:u64 = const() {"value":0}
+  _zero:u32 = call(ao,ap,nil) {"function":"cw_store64"}
+  nextclear_offset:usize = const() {"value":8}
+  nextclear:usize = int.add.wrap(ap,nextclear_offset)
+  clear_done:bool = compare.eq(nextclear,ae)
+  branch clear_done start(ai,ao,an,ae) clear(ai,ao,an,nextclear,ae)
+block start(hi:readbuf,ho:mutbuf,hn:usize,he:usize)
+  first_row:usize = const() {"value":16}
+  initial_total:u64 = const() {"value":0}
+  no_rows:bool = compare.eq(hn,first_row)
+  branch no_rows done() row(hi,ho,hn,first_row,he,initial_total)
+block row(ji:readbuf,jo:mutbuf,jn:usize,jp:usize,jout:usize,jtotal:u64)
+  path:u64 = call(ji,jp) {"function":"cw_read64"}
+  truth_at_offset:usize = const() {"value":8}
+  truth_at:usize = int.add.wrap(jp,truth_at_offset)
+  truth:u64 = call(ji,truth_at) {"function":"cw_read64"}
+  route_idx:usize = int.cast(path) {"mode":"wrap"}
+  matrix_width:usize = const() {"value":6168}
+  route_span:usize = int.mul.wrap(route_idx,matrix_width)
+  routed_base_offset:usize = const() {"value":6176}
+  routed_base:usize = int.add.wrap(route_span,routed_base_offset)
+  first_class:u64 = const() {"value":0}
+  row_loss0:u64 = const() {"value":0}
+  jump class(ji,jo,jn,jp,jout,jtotal,truth,routed_base,first_class,row_loss0)
+block class(li:readbuf,lo:mutbuf,ln:usize,lp:usize,lout:usize,lt:u64,ll:u64,ld:usize,lc:u64,ls:u64)
+  target_hi:u64 = const() {"value":8192}
+  target_lo:u64 = const() {"value":0}
+  class_idx:usize = int.cast(lc) {"mode":"wrap"}
+  wordbytes:usize = const() {"value":8}
+  classoff:usize = int.mul.wrap(class_idx,wordbytes)
+  logbase_offset:usize = const() {"value":16}
+  logbase:usize = int.add.wrap(lp,logbase_offset)
+  logit_at:usize = int.add.wrap(logbase,classoff)
+  logit:u64 = call(li,logit_at) {"function":"cw_read64"}
+  chosen:bool = compare.eq(lc,ll)
+  branch chosen component(li,lo,ln,lp,lout,lt,ll,ld,lc,ls,classoff,logit,target_hi) component(li,lo,ln,lp,lout,lt,ll,ld,lc,ls,classoff,logit,target_lo)
+block component(mi:readbuf,mo:mutbuf,mn:usize,mp:usize,mo2:usize,mt:u64,ml:u64,md:usize,mc:u64,ms:u64,moff:usize,mv:u64,mg:u64)
+  error:u64 = int.sub.wrap(mv,mg)
+  derivative:u64 = int.add.wrap(error,error)
+  square:u64 = int.mul.wrap(error,error)
+  rloss:u64 = int.add.wrap(square,ms)
+  target_at:usize = int.add.wrap(mo2,moff)
+  _target:u32 = call(mo,target_at,mg) {"function":"cw_store64"}
+  error_at_offset:usize = const() {"value":24}
+  error_at:usize = int.add.wrap(target_at,error_at_offset)
+  _error:u32 = call(mo,error_at,error) {"function":"cw_store64"}
+  derivative_at_offset:usize = const() {"value":48}
+  derivative_at:usize = int.add.wrap(target_at,derivative_at_offset)
+  _derivative:u32 = call(mo,derivative_at,derivative) {"function":"cw_store64"}
+  cl_idx:usize = int.cast(mc) {"mode":"wrap"}
+  classWidth:usize = const() {"value":2056}
+  section:usize = int.mul.wrap(cl_idx,classWidth)
+  base_class_offset:usize = const() {"value":8}
+  base_class:usize = int.add.wrap(section,base_class_offset)
+  route_class:usize = int.add.wrap(md,section)
+  feat_at_offset:usize = const() {"value":40}
+  feat_at:usize = int.add.wrap(mp,feat_at_offset)
+  feat_stop_offset:usize = const() {"value":2096}
+  feat_stop:usize = int.add.wrap(mp,feat_stop_offset)
+  jump backward(mi,mo,mn,mp,mo2,mt,ml,md,mc,rloss,derivative,base_class,route_class,feat_at,feat_stop)
+block backward(vi:readbuf,vo:mutbuf,vn:usize,vp:usize,vout:usize,vt:u64,vl:u64,vd:usize,vc:u64,vs:u64,dd:u64,vb:usize,vr:usize,vf:usize,ve:usize)
+  feature_value:u64 = call(vi,vf) {"function":"cw_read64"}
+  gradient:u64 = int.mul.wrap(feature_value,dd)
+  before_base:u64 = call(vo,vb) {"function":"cw_load64"}
+  before_route:u64 = call(vo,vr) {"function":"cw_load64"}
+  base_plus:u64 = int.add.wrap(before_base,gradient)
+  _base:u32 = call(vo,vb,base_plus) {"function":"cw_store64"}
+  route_plus:u64 = int.add.wrap(before_route,gradient)
+  _route:u32 = call(vo,vr,route_plus) {"function":"cw_store64"}
+  nextb_offset:usize = const() {"value":8}
+  nextb:usize = int.add.wrap(vb,nextb_offset)
+  nextr_offset:usize = const() {"value":8}
+  nextr:usize = int.add.wrap(vr,nextr_offset)
+  nextf_offset:usize = const() {"value":8}
+  nextf:usize = int.add.wrap(vf,nextf_offset)
+  end_coords:bool = compare.eq(nextf,ve)
+  branch end_coords next_class(vi,vo,vn,vp,vout,vt,vl,vd,vc,vs) backward(vi,vo,vn,vp,vout,vt,vl,vd,vc,vs,dd,nextb,nextr,nextf,ve)
+block next_class(wi:readbuf,wo:mutbuf,wn:usize,wp:usize,wout:usize,wt:u64,wl:u64,wd:usize,wc:u64,ws:u64)
+  class_one:u64 = const() {"value":1}
+  class_count:u64 = const() {"value":3}
+  next_class_idx:u64 = int.add.wrap(wc,class_one)
+  last_class:bool = compare.eq(next_class_idx,class_count)
+  branch last_class next_row(wi,wo,wn,wp,wout,wt,ws) class(wi,wo,wn,wp,wout,wt,wl,wd,next_class_idx,ws)
+block next_row(yi:readbuf,yo:mutbuf,yn:usize,yp:usize,yout:usize,yt:u64,ys:u64)
+  row_loss_at_offset:usize = const() {"value":72}
+  row_loss_at:usize = int.add.wrap(yout,row_loss_at_offset)
+  _row_loss:u32 = call(yo,row_loss_at,ys) {"function":"cw_store64"}
+  loss_total:u64 = int.add.wrap(yt,ys)
+  next_row_at_offset:usize = const() {"value":2096}
+  next_row_at:usize = int.add.wrap(yp,next_row_at_offset)
+  next_row_out_offset:usize = const() {"value":80}
+  next_row_out:usize = int.add.wrap(yout,next_row_out_offset)
+  finished:bool = compare.eq(next_row_at,yn)
+  branch finished result(yo,loss_total) row(yi,yo,yn,next_row_at,next_row_out,loss_total)
+block result(zo:mutbuf,zt:u64)
+  total_at:usize = const() {"value":0}
+  _total:u32 = call(zo,total_at,zt) {"function":"cw_store64"}
+  jump done()
+block done()
+  status_done:u32 = const() {"value":0}
+  ret(status_done)
+block bad()
+  status_bad:u32 = const() {"value":1}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":2}
+  ret(status_short)
+end

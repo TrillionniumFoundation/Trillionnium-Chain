@@ -1138,6 +1138,16 @@
       ]
     },
     {
+      "id": "state/integer-training-backward",
+      "node_integration_complete": false,
+      "scope": "Frozen integer ActiveRow training loss/backward projection: targets, errors, row/total loss, derivatives, base and routed deltas, zero router; no parameter update, sampling, execution, live data, adoption or authority",
+      "source": "hia/src/state/integer_training_backward.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_training_backward.py"
+      ]
+    },
+    {
       "id": "protocol/pnx1",
       "node_integration_complete": false,
       "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
@@ -4378,6 +4388,7 @@
         "node/resource-request-value",
         "node/resource-vector-value",
         "node/resource-snapshot-projection",
+        "state/integer-training-backward",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",
