@@ -3220,6 +3220,20 @@
       ]
     },
     {
+      "id": "task_kernel/archive-sqlite-held-snapshot",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Actual native acquisition of header, schema, typed metadata, live rows, complete sealed batches and reacquired archived rows inside one held original DELETE-journal fixture transaction. The exact captured bytes are reborrowed by the existing native held audit only after actual qualified provider close. No production path, WAL admission, repair or mutation.",
+      "sources": [
+        "hia/platform/task_kernel/archive_snapshot_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/task_kernel/archive_schema_fixture_host.py",
+        "hia/tests/test_task_archive_snapshot_read.py",
+        "hia/tests/rust_task_archive_store_seal_chain_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive-sqlite-schema-read",
       "node_integration_complete": false,
       "retirement_accepted": false,

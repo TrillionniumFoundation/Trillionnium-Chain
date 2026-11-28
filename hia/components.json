@@ -22085,6 +22085,87 @@
           "value_utf8"
         ]
       }
+    ],
+    "platform/task_kernel/archive_snapshot_read.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_copy"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": [
+          "sr_issue",
+          "sr_handle",
+          "sr_col",
+          "sr_status",
+          "sr_value"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "platform/task_kernel/archive_schema_read.hepta",
+        "functions": [
+          "arc_schema_entry",
+          "arc_path",
+          "arc_path_from",
+          "arc_opened",
+          "arc_closed",
+          "arc_prepare_begin",
+          "arc_prepared_begin",
+          "arc_stepped_begin",
+          "arc_finalized_begin",
+          "arc_prepare_header",
+          "arc_prepared_header",
+          "arc_stepped_header",
+          "arc_column_header",
+          "arc_finalized_header",
+          "arc_prepare_schema",
+          "arc_prepared_schema",
+          "arc_stepped_schema",
+          "arc_column_schema",
+          "arc_finalized_schema",
+          "arc_prepare_meta",
+          "arc_prepared_meta",
+          "arc_stepped_meta",
+          "arc_column_meta",
+          "arc_finalized_meta",
+          "arc_prepare_commit",
+          "arc_prepared_commit",
+          "arc_stepped_commit",
+          "arc_finalized_commit",
+          "arc_header_value",
+          "arc_meta_value",
+          "arc_schema_value",
+          "arc_literal",
+          "arc_compare_definition",
+          "arc_codepoint",
+          "arc_cont_byte",
+          "arc_space",
+          "arc_lower"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/row_commitment.hepta",
+        "functions": [
+          "rc_octet",
+          "rc_nibble"
+        ]
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"

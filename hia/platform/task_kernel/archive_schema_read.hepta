@@ -1,6 +1,11 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_archive_schema_reader_v1
 fn f0(r:readbuf,s:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,s:mutbuf,w:mutbuf)
+  status:u32 = call(r,s,w) {"function":"arc_schema_entry"}
+  ret(status)
+end
+fn arc_schema_entry(r:readbuf,s:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,s:mutbuf,w:mutbuf)
   ms:usize = buffer.len(s)
   ws:usize = buffer.len(w)
   extent:usize = const() {"value":1048576}
@@ -174,27 +179,35 @@ block entry(r:readbuf,s:mutbuf,w_1:mutbuf)
   fits:bool = bool.and(a,b)
   branch fits open(r,s,n) bad()
 block open(rr:readbuf,ss:mutbuf,z:usize)
-  w_2:u64 = int.cast(z) {"mode":"wrap"}
+  old_zero:u64 = const() {"value":0}
+  old_rc:u32 = call(rr,ss,old_zero,z) {"function":"arc_path_from"}
+  ret(old_rc)
+block bad()
+  fail:u32 = const() {"value":100}
+  ret(fail)
+end
+
+fn arc_path_from(rr:readbuf,ss:mutbuf,start:u64,z:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(rr:readbuf,ss:mutbuf,start:u64,z:usize)
+  extent:u64 = int.cast(z) {"mode":"wrap"}
+  remain:u64 = int.sub.wrap(extent,start)
   front:u64 = const() {"value":64}
-  path_width:u64 = int.sub.wrap(w_2,front)
-  zero:u64 = const() {"value":0}
-  _expect:u64 = call(rr,zero,ss,front,front) {"function":"cp_copy"}
+  path_at_raw:u64 = int.add.wrap(start,front)
+  path_width:u64 = int.sub.wrap(remain,front)
+  _expect:u64 = call(rr,start,ss,front,front) {"function":"cp_copy"}
   at:u64 = const() {"value":256}
   len_at:u64 = const() {"value":264}
   path_at:u64 = const() {"value":272}
   flag:u64 = const() {"value":16777217}
   _flag:u64 = call(ss,at,flag) {"function":"cp_put"}
   _width:u64 = call(ss,len_at,path_width) {"function":"cp_put"}
-  _path:u64 = call(rr,front,ss,path_at,path_width) {"function":"cp_copy"}
+  _path:u64 = call(rr,path_at_raw,ss,path_at,path_width) {"function":"cp_copy"}
   num:u64 = const() {"value":1}
   op:u64 = const() {"value":2}
   overhead:u64 = const() {"value":16}
   width:u64 = int.add.wrap(path_width,overhead)
   status:u32 = call(ss,num,op,width) {"function":"sr_issue"}
   ret(status)
-block bad()
-  fail:u32 = const() {"value":100}
-  ret(fail)
 end
 
 fn arc_opened(r:readbuf,s:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)

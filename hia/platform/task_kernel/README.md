@@ -481,3 +481,27 @@ not an original writable open, filesystem identity/path admission, SQLite
 replacement, production routing, or authority. A read-only SQLite open on
 an out-of-profile WAL database can create WAL/SHM sidecars before a SQL
 header refusal; this qualification neither opens nor owns such files.
+
+### Native archive-store snapshot capture and opaque audit handoff
+
+The separate `archive_snapshot_read.hepta` continuation reuses the
+qualified header/schema/metadata admission. While the same existing
+provider's read-only DELETE-journal transaction is held, HIA selects
+a fixed typed query for actual live rows, complete sealed batches and
+reacquired records sorted by their real SQLite generation. HIA decodes
+the typed results and derives all extents, group counts and packet frames
+for the existing held audit. No host code constructs or interprets those
+rows. This private reader accepts exact Borsh policy and an explicit
+expected policy identity before the fixture path.
+
+The capture remains private until actual statement finalization,
+COMMIT and connection close. Since the pinned backend does not retag a
+mutable buffer as an immutable reference, the fixture transport then
+copies exactly the frozen bytes into a disjoint immutable borrow for the
+existing native audit. Only the audit's checked root is returned to the
+qualification caller; the transport records the raw packet length and
+digest solely to prove exact mechanical correspondence. Scratch and packet
+limits do not expand the shared provider. This is scoped to original
+generated owned DELETE-mode databases without sidecars; WAL, arbitrary
+path admission, driver ownership, database writes/deletion and production
+routing remain outside the qualified contract.
