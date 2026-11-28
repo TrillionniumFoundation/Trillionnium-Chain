@@ -19,7 +19,8 @@ block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
   space:bool = bool.and(a,b)
   branch space policy_prefix(cr,co,cw,cn) short()
 block policy_prefix(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
-  stamp:bool = call(pr,pw) {"function":"root_policy_header"}
+  prefix_at:u64 = const() {"value":72}
+  stamp:bool = call(pr,pw,prefix_at) {"function":"root_policy_header"}
   branch stamp policy_span(pr,po,pw,pn) codec()
 block policy_span(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64)
   at:u64 = const() {"value":108}
@@ -37,10 +38,12 @@ block roster(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,re:u64,rl:u64)
   shaped:bool = compare.eq(want,rl)
   branch shaped rule(rr,ro,rw,rn,re) roster_bad()
 block rule(ur:readbuf,uo:mutbuf,uw:mutbuf,un:u64,ue:u64)
-  prefix_ok:bool = call(ur,uw) {"function":"root_roster_header"}
+  rules_at:u64 = const() {"value":112}
+  prefix_ok:bool = call(ur,uw,rules_at) {"function":"root_roster_header"}
   branch prefix_ok roster_entries(ur,uo,uw,un,ue) roster_bad()
 block roster_entries(xr:readbuf,xo:mutbuf,xw:mutbuf,xn:u64,xe:u64)
-  decoded:u32 = call(xr,xw,xe) {"function":"root_read_roster"}
+  entries_at:u64 = const() {"value":146}
+  decoded:u32 = call(xr,xw,xe,entries_at) {"function":"root_read_roster"}
   z:u32 = const() {"value":0}
   accepted:bool = compare.eq(decoded,z)
   branch accepted integrity(xr,xo,xw,xn,xe) done(decoded)
@@ -146,9 +149,8 @@ block done(number:u64)
   ret(number)
 end
 
-fn root_read_roster(r:readbuf,w:mutbuf,end_at:u64) -> (u32) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,end_at:u64)
-  start:u64 = const() {"value":146}
+fn root_read_roster(r:readbuf,w:mutbuf,end_at:u64,start:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,end_at:u64,start:u64)
   zero:u64 = const() {"value":0}
   jump loop(r,w,end_at,start,zero)
 block loop(lr:readbuf,lw:mutbuf,le:u64,la:u64,li:u64)
@@ -454,8 +456,8 @@ block done(n:u64)
   ret(n)
 end
 
-fn root_policy_header(r:readbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf)
+fn root_policy_header(r:readbuf,w:mutbuf,start:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,start:u64)
   prefix_a0:u64 = const() {"value":131808}
   prefix_b0:u64 = const() {"value":8029727023738802772}
   _prefix_w0:u64 = call(w,prefix_a0,prefix_b0) {"function":"tr_put"}
@@ -468,15 +470,14 @@ block entry(r:readbuf,w:mutbuf)
   prefix_a24:u64 = const() {"value":131832}
   prefix_b24:u64 = const() {"value":3372591}
   _prefix_w24:u64 = call(w,prefix_a24,prefix_b24) {"function":"tr_put"}
-  start:u64 = const() {"value":72}
   dest:u64 = const() {"value":131808}
   width:u64 = const() {"value":28}
   same:bool = call(r,w,start,dest,width) {"function":"root_compare_literal"}
   ret(same)
 end
 
-fn root_roster_header(r:readbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf)
+fn root_roster_header(r:readbuf,w:mutbuf,start:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,start:u64)
   prefix_a0:u64 = const() {"value":131808}
   prefix_b0:u64 = const() {"value":8029727023738802772}
   _prefix_w0:u64 = call(w,prefix_a0,prefix_b0) {"function":"tr_put"}
@@ -492,7 +493,6 @@ block entry(r:readbuf,w:mutbuf)
   prefix_a32:u64 = const() {"value":131840}
   prefix_b32:u64 = const() {"value":770}
   _prefix_w32:u64 = call(w,prefix_a32,prefix_b32) {"function":"tr_put"}
-  start:u64 = const() {"value":112}
   dest:u64 = const() {"value":131808}
   width:u64 = const() {"value":34}
   same:bool = call(r,w,start,dest,width) {"function":"root_compare_literal"}

@@ -22167,6 +22167,68 @@
         ]
       }
     ],
+    "src/release_bundle/root_successor_identity_v3.hepta": [
+      {
+        "source": "src/release_bundle/root_recovery_checkpoint_v3.hepta",
+        "functions": [
+          "root_be32",
+          "root_be64",
+          "root_read_roster",
+          "root_key_slot",
+          "root_id_slot",
+          "root_roster_integrity",
+          "root_compare_ids",
+          "root_unique",
+          "root_ordered",
+          "root_emit64",
+          "root_copy64",
+          "root_policy_header",
+          "root_roster_header",
+          "root_key_header",
+          "root_compare_literal",
+          "root_key_digest",
+          "root_simple_hash"
+        ]
+      },
+      {
+        "source": "src/release_bundle/root_release_intent_v3.hepta",
+        "functions": [
+          "nonzero",
+          "write_big"
+        ]
+      },
+      {
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "source": "src/crypto/sha512_stream.hepta",
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final",
+          "s512_read64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ]
+      }
+    ],
     "src/release_bundle/root_release_intent_v3.hepta": [
       {
         "functions": [

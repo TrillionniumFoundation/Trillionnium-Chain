@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use trnm_crypto_primitives::pq_root_v3::{DualFamilyRosterV3, RootCryptoErrorV3, RootPublicKeyV3, RootSuiteV3};
 use trnm_release_bundle::root_recovery_v3::{RootErrorV3, RootPolicyV3, RootStateV3};
 
-fn roster(seed:u8) -> DualFamilyRosterV3 {
+pub(crate) fn roster(seed:u8) -> DualFamilyRosterV3 {
     let ml = b"\x30\x82\x0a\x32\x30\x0b\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x13\x03\x82\x0a\x21\x00";
     let slh = b"\x30\x50\x30\x0b\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x18\x03\x41\x00";
     let mut out = Vec::new();
@@ -21,7 +21,7 @@ fn roster(seed:u8) -> DualFamilyRosterV3 {
     DualFamilyRosterV3::from_keys(out).unwrap()
 }
 
-fn status(e:RootErrorV3) -> u32 {
+pub(crate) fn status(e:RootErrorV3) -> u32 {
     match e {
         RootErrorV3::Codec => 1, RootErrorV3::Policy => 2, RootErrorV3::Capacity => 3,
         RootErrorV3::Crypto(s) => {
