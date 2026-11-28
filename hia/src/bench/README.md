@@ -347,12 +347,15 @@ profile bytes and real file effects, separate clocks, replay, and refusal of
 unmarked 20,000-transaction defaults, nonexact corrected shapes, and nonempty
 environments. This corrected path is distinct from the bounded ordinary path.
 
-For ordinary Mixed/HotStreak FootprintDesc the CLI admits no more than 64
-transactions and 64 keys, with the existing fanout limit of eight and the
-original one-key or one-writer compatibility predicate described above.
-Output is unmarked, the environment must be empty and neither `--profile` nor
-`--persist-profile` is admitted. The existing Classic and corrected-mode
-paths are unchanged. Footprint ordering does not affect the compatibility
+Ordinary Mixed/HotStreak FootprintDesc admits up to the existing limits of
+20,000 transactions, 2,000 keys and fanout eight, under the one-key or
+one-writer compatibility predicate described above. With more than 64
+transactions or keys, it admits at most one deterministic replay, matching
+the existing full-size ordinary Classic FootprintDesc replay limit. The
+small-domain replay bound is unchanged. Output remains unmarked, the
+environment must be empty and neither `--profile` nor `--persist-profile`
+is admitted. This does not enlarge any arena or change the existing Classic
+and corrected-mode paths. Footprint ordering does not affect the compatibility
 proof: prior reads before the sole writer are at group zero, and no later
 writer can consult a reader counter on a different object. With one key,
 reader groups do not regress. The bounded actual test compares the original

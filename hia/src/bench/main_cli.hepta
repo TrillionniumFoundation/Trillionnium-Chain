@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v15
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v16
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -513,17 +513,28 @@ block ordinary_footprint(op_o:mutbuf,op_classic:bool,op_seen:u64)
 block ordinary_footprint_shape(fs_o:mutbuf,fs_small:bool,fs_classic:bool,fs_txs:u64,fs_keys:u64)
   branch fs_small ordinary_footprint_small(fs_o,fs_classic) ordinary_footprint_large(fs_o,fs_classic,fs_txs,fs_keys)
 block ordinary_footprint_small(ft_o:mutbuf,ft_classic:bool)
-  branch ft_classic repeat_bound(ft_o) ordinary_footprint_parity(ft_o)
-block ordinary_footprint_parity(fp_o2:mutbuf)
+  small_ft:bool = const() {"value":false}
+  branch ft_classic repeat_bound(ft_o) ordinary_footprint_parity(ft_o,small_ft)
+block ordinary_footprint_parity(fp_o2:mutbuf,large_fp:bool)
   fan_at_fp:u64 = const() {"value":32}
   fan_limit_fp:u64 = const() {"value":8}
   fan_fp:u64 = call(fp_o2,fan_at_fp) {"function":"bench_get"}
   fan_ok_fp:bool = compare.le(fan_fp,fan_limit_fp)
   shape_fp:bool = call(fp_o2) {"function":"bc_parity_shape"}
   admitted_fp:bool = bool.and(fan_ok_fp,shape_fp)
-  branch admitted_fp repeat_bound(fp_o2) fail()
+  branch admitted_fp ordinary_footprint_replay(fp_o2,large_fp) fail()
+block ordinary_footprint_replay(ofr_o:mutbuf,ofr_large:bool)
+  branch ofr_large ordinary_footprint_default_repeat(ofr_o) repeat_bound(ofr_o)
 block ordinary_footprint_large(large_o:mutbuf,large_classic:bool,large_txs:u64,large_keys:u64)
-  branch large_classic ordinary_footprint_default(large_o,large_txs,large_keys) fail()
+  branch large_classic ordinary_footprint_default(large_o,large_txs,large_keys) ordinary_footprint_large_parity(large_o,large_txs,large_keys)
+block ordinary_footprint_large_parity(lp_o:mutbuf,lp_txs:u64,lp_keys:u64)
+  cap_lp_n:u64 = const() {"value":20000}
+  cap_lp_k:u64 = const() {"value":2000}
+  fits_lp_n:bool = compare.le(lp_txs,cap_lp_n)
+  fits_lp_k:bool = compare.le(lp_keys,cap_lp_k)
+  both_lp:bool = bool.and(fits_lp_n,fits_lp_k)
+  yes_lp:bool = const() {"value":true}
+  branch both_lp ordinary_footprint_parity(lp_o,yes_lp) fail()
 block ordinary_footprint_default(fd_o:mutbuf,fd_txs:u64,fd_keys:u64)
   fd_default_txs:u64 = const() {"value":20000}
   fd_default_keys:u64 = const() {"value":2000}
