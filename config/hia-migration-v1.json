@@ -2495,6 +2495,17 @@
       ]
     },
     {
+      "id": "model/cell-source-snippet-value",
+      "node_integration_complete": false,
+      "scope": "Private original canonical ASCII SourceSnippet object and ordered bounded list with exact u8 label and inert text; no source decoding, provenance, admission or training.",
+      "source": "hia/src/model/cell_source_snippet.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_source_snippet.py",
+        "hia/tests/rust_cell_source_snippet_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-state-value",
       "node_integration_complete": false,
       "scope": "Private original immutable CellState canonical JSON typed value for null optimizer and bounded ASCII/vector; no validation, installation, training or execution.",
