@@ -455,3 +455,29 @@ unchanged. Fixture comparison uses the immutable full original cold Rust
 audit and both native emitters. No path, SQLite connection/DDL/header/table
 ownership, production admission, repair, deletion or storage writes are
 moved by this scope.
+
+### Original archive SQLite schema and typed metadata acquisition
+
+`archive_schema_read.hepta` owns a private held read transaction on the
+existing checked mechanical provider. It opens only its disposable fixture
+with `READONLY | NOFOLLOW`. Inside the transaction, HIA directs the header
+observation (original application ID, user version, DELETE journaling and
+FULL synchronous), the complete ordered `sqlite_master` row stream filtered
+as in original Rust, and the typed singleton metadata read. The exact five
+original object kinds/names and normalized DDL are checked against embedded
+bytes; only DDL is case-folded and stripped of original Unicode whitespace.
+For comparison to the all-ASCII expected definitions, non-ASCII lower-case
+results cannot match, except U+212A which folds to ASCII `k`.
+
+The private request carries a 64-byte uppercase hexadecimal expected policy
+identity followed by the owned path. The exact 240 ASCII bytes are three
+16-hex-digit fields (schema, generation, sequence) and three 64-hex-digit
+digests (seal, live root and policy). No data is published until statement
+finalize, transaction commit and real SQLite close all succeed. On refusal
+the existing provider resets retained resources and no metadata is returned.
+The separate existing held typed audit remains necessary for archive rows and
+journal/inventory reconstruction. The tested path is read-only qualification of original DELETE-mode fixtures,
+not an original writable open, filesystem identity/path admission, SQLite
+replacement, production routing, or authority. A read-only SQLite open on
+an out-of-profile WAL database can create WAL/SHM sidecars before a SQL
+header refusal; this qualification neither opens nor owns such files.

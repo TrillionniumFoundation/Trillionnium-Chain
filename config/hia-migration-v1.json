@@ -3207,6 +3207,20 @@
       ]
     },
     {
+      "id": "task_kernel/archive-sqlite-schema-read",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Actual native READONLY archive SQLite header, exact original closed schema and policy-bound typed singleton metadata inside one held original DELETE-journal fixture transaction. Published only after statement, transaction and connection closure. No production path, WAL admission, repair, mutation, or archive-row owner.",
+      "sources": [
+        "hia/platform/task_kernel/archive_schema_read.hepta"
+      ],
+      "tests": [
+        "hia/platform/task_kernel/archive_schema_fixture_host.py",
+        "hia/tests/test_task_archive_schema_read.py",
+        "hia/tests/rust_task_archive_store_seal_chain_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/sqlite-cold-read-projection",
       "node_integration_complete": false,
       "retirement_accepted": false,

@@ -140,6 +140,7 @@ fn main() {
     let args: Vec<_> = std::env::args_os().collect();
     match args[1].to_str().unwrap() {
         "policy" => io::stdout().write_all(&borsh::to_vec(&policy()).unwrap()).unwrap(),
+        "policy-hash" => io::stdout().write_all(&policy().policy_hash().unwrap().0).unwrap(),
         "changed-batch" => revised_value(true),
         "changed-row" => revised_value(false),
         "wrong-link" => wrong_link(),

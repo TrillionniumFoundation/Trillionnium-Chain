@@ -21895,6 +21895,38 @@
           "inv_begin_digest"
         ]
       }
+    ],
+    "platform/task_kernel/archive_schema_read.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_copy"
+        ]
+      },
+      {
+        "source": "platform/state_import_sqlite/cold_read.hepta",
+        "functions": [
+          "sr_issue",
+          "sr_handle",
+          "sr_col",
+          "sr_status",
+          "sr_value"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      }
     ]
   },
   "schema": "trnm.hia.component-includes.v1"
