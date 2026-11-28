@@ -22,6 +22,25 @@
         ]
       }
     ],
+    "src/consensus/work_schedule_profile.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_store64"
+        ]
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
     "src/data_availability/availability_certificate_verify.hepta": [
       {
         "source": "src/data_availability/committee_id.hepta",

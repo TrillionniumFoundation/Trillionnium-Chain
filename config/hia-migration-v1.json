@@ -1330,6 +1330,17 @@
       ]
     },
     {
+      "id": "consensus/work-schedule-profile",
+      "node_integration_complete": false,
+      "scope": "Immutable research metadata validation and exact PoN ID of original Profile::new(ProfileInputs), including fixed and anchored policies; no node settings, history, proof or admission",
+      "source": "hia/src/consensus/work_schedule_profile.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_consensus_work_schedule_profile.py",
+        "hia/tests/rust_consensus_work_schedule_profile_reference.rs"
+      ]
+    },
+    {
       "id": "consensus/work",
       "node_integration_complete": false,
       "scope": "Complete original pure M02 512-bit Work arithmetic, target conversion, work credit, retarget, parent window and median-time policy; emitted-native and actual original Rust independently exercised",
@@ -3283,6 +3294,7 @@
         "node/settings-development",
         "consensus/work",
         "consensus/asert-target",
+        "consensus/work-schedule-profile",
         "mempool/raw-bindings-owner",
         "mempool/local-pool-policy"
       ],

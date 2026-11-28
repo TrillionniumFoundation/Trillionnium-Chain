@@ -120,6 +120,7 @@ def sources():
               ROOT / "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
               ROOT / "trillionnium/crates/trnm-mempool/Cargo.toml",
               ROOT / "hia/src/mempool/OWNER.md"]
+    # Work profile docs are tied to the immutable original schedule and PoN hash inputs below.
     # The complete original M02 module is actually compiled by the independent
     # reference; bind its bytes and both pre-existing integer vector corpora.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/consensus.rs",
@@ -129,6 +130,7 @@ def sources():
               ROOT / "trillionnium/crates/trnm-pon-node/Cargo.toml",
               ROOT / "formal/pon-nakamoto-v1/vectors/quantum-daa-asert-bchn-v1.json",
               ROOT / "hia/src/consensus/ASERT_TARGET.md",
+              ROOT / "hia/src/consensus/WORK_SCHEDULE_PROFILE.md",
               ROOT / "hia/src/consensus/README.md"]
     # Exact original data/owner bodies and their complete native contracts.
     paths += [ROOT / name for name in (
