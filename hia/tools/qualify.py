@@ -110,6 +110,7 @@ def sources():
         "formal/pon-nakamoto-v1/contract_wire.py",
         "formal/pon-nakamoto-v1/evaluation.py",
         "hia/src/model/PAIRED_EVALUATION_SCORE.md",
+        "hia/src/model/HELD_CALIBRATION_SELECT.md",
         "formal/pon-nakamoto-v1/vectors/header.bin",
         "formal/pon-nakamoto-v1/vectors/header-short.bin",
         "formal/pon-nakamoto-v1/vectors/header-version.bin",

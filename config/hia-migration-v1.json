@@ -3395,6 +3395,16 @@
       ]
     },
     {
+      "id": "model/held-calibration-select",
+      "node_integration_complete": false,
+      "scope": "Private exact numeric selection among four original frozen formal controls over held inert typed predictions, winner name and reduced equal-source-group scores; no reference lock, inference, training, adoption or authority.",
+      "source": "hia/src/model/held_calibration_select.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_held_calibration_select.py"
+      ]
+    },
+    {
       "id": "model/paired-evaluation-score",
       "node_integration_complete": false,
       "scope": "Private exact bounded original equal-source-group paired assessor over inert supplied labels and predictions; signed reduced mean and exploratory score only, no inference, training, adoption, independence, reward or authority.",

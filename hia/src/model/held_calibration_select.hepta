@@ -1,0 +1,321 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_held_calibration_select
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  length:usize = buffer.len(r)
+  minimum:usize = const() {"value":9}
+  enough:bool = compare.le(minimum,length)
+  branch enough identify(r,o,length) frame_bad()
+block identify(ir:readbuf,io:mutbuf,in:usize)
+  z:u64 = const() {"value":0}
+  i1:u64 = const() {"value":1}
+  i2:u64 = const() {"value":2}
+  i3:u64 = const() {"value":3}
+  i6:u64 = const() {"value":6}
+  i7:u64 = const() {"value":7}
+  i8:u64 = const() {"value":8}
+  b0:u64 = call(ir,z) {"function":"pes_byte"}
+  b1:u64 = call(ir,i1) {"function":"pes_byte"}
+  b2:u64 = call(ir,i2) {"function":"pes_byte"}
+  b3:u64 = call(ir,i3) {"function":"pes_byte"}
+  e0:u64 = const() {"value":67}
+  e1:u64 = const() {"value":65}
+  e2:u64 = const() {"value":76}
+  e3:u64 = const() {"value":49}
+  c0:bool = compare.eq(b0,e0)
+  c1:bool = compare.eq(b1,e1)
+  c2:bool = compare.eq(b2,e2)
+  c3:bool = compare.eq(b3,e3)
+  c6:bool = call(ir,i6) {"function":"pes_empty"}
+  c7:bool = call(ir,i7) {"function":"pes_empty"}
+  c8:bool = call(ir,i8) {"function":"pes_empty"}
+  c01:bool = bool.and(c0,c1)
+  c23:bool = bool.and(c2,c3)
+  c67:bool = bool.and(c6,c7)
+  wr:bool = bool.and(c67,c8)
+  magic:bool = bool.and(c01,c23)
+  frame:bool = bool.and(magic,wr)
+  branch frame control(ir,io,in) frame_bad()
+block control(cr:readbuf,co:mutbuf,cn:usize)
+  mask_at:u64 = const() {"value":5}
+  mask:u64 = call(cr,mask_at) {"function":"pes_byte"}
+  full:u64 = const() {"value":15}
+  all:bool = compare.eq(mask,full)
+  branch all count(cr,co,cn) controls_bad()
+block count(nr:readbuf,no:mutbuf,nn:usize)
+  count_at:u64 = const() {"value":4}
+  rows:u64 = call(nr,count_at) {"function":"pes_byte"}
+  one:u64 = const() {"value":1}
+  max:u64 = const() {"value":64}
+  low:bool = compare.le(one,rows)
+  high:bool = compare.le(rows,max)
+  valid:bool = bool.and(low,high)
+  branch valid shape(nr,no,nn,rows) count_bad()
+block shape(sr:readbuf,so:mutbuf,sn:usize,srows:u64)
+  width:u64 = const() {"value":104}
+  two:u64 = const() {"value":2}
+  begin:u64 = const() {"value":9}
+  primary:u64 = int.mul.wrap(width,srows)
+  extra:u64 = int.mul.wrap(two,srows)
+  tail:u64 = int.add.wrap(begin,primary)
+  total:u64 = int.add.wrap(tail,extra)
+  phys:usize = int.cast(total) {"mode":"wrap"}
+  size_ok:bool = compare.eq(phys,sn)
+  branch size_ok validate(sr,so,begin,tail) frame_bad()
+block validate(vr:readbuf,vo:mutbuf,vstart:u64,vtail:u64)
+  code:u32 = call(vr,vstart,vtail) {"function":"cal_validate"}
+  zero:u32 = const() {"value":0}
+  good:bool = compare.eq(code,zero)
+  branch good capacity(vr,vo,vstart,vtail) refused(code)
+block capacity(ar:readbuf,ao:mutbuf,astart:u64,atail:u64)
+  avail:usize = buffer.len(ao)
+  need:usize = const() {"value":80}
+  enough_out:bool = compare.le(need,avail)
+  branch enough_out compute(ar,ao,astart,atail) space_bad()
+block compute(rr:readbuf,ro:mutbuf,rstart:u64,rtail:u64)
+  _ = call(rr,ro,rstart,rtail) {"function":"cal_score"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refused(result:u32)
+  ret(result)
+block frame_bad()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block space_bad()
+  bad_space:u32 = const() {"value":102}
+  ret(bad_space)
+block controls_bad()
+  bad_controls:u32 = const() {"value":11}
+  ret(bad_controls)
+block count_bad()
+  bad_count:u32 = const() {"value":4}
+  ret(bad_count)
+end
+fn cal_validate(r:readbuf,first:u64,tail:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(r:readbuf,first:u64,tail:u64)
+  jump loop(r,first,tail,first,tail)
+block loop(lr:readbuf,lf:u64,lt:u64,la:u64,lx:u64)
+  done:bool = compare.eq(la,lt)
+  branch done success() syntax(lr,lf,lt,la,lx)
+block syntax(sr:readbuf,sf:u64,st:u64,sa:u64,sx:u64)
+  valid:bool = call(sr,sa) {"function":"pes_row_shape"}
+  branch valid identity(sr,sf,st,sa,sx) frame()
+block identity(ir:readbuf,ifirst:u64,it:u64,ia:u64,ix:u64)
+  missing:bool = call(ir,ia) {"function":"pes_empty"}
+  branch missing id_bad() duplicate(ir,ifirst,it,ia,ix)
+block duplicate(dr:readbuf,df:u64,dt:u64,da:u64,dx:u64)
+  by_id:bool = const() {"value":false}
+  seen:bool = call(dr,df,da,da,by_id) {"function":"pes_seen"}
+  branch seen duplicate_bad() label(dr,df,dt,da,dx)
+block label(br:readbuf,bf:u64,bt:u64,ba:u64,bx:u64)
+  off_l:u64 = const() {"value":96}
+  lat:u64 = int.add.wrap(ba,off_l)
+  l:u64 = call(br,lat) {"function":"pes_byte"}
+  last_class:u64 = const() {"value":2}
+  ok:bool = compare.le(l,last_class)
+  branch ok group(br,bf,bt,ba,bx) label_bad()
+block group(gr:readbuf,gf:u64,gt:u64,ga:u64,gx:u64)
+  g_at:u64 = call(gr,ga) {"function":"pes_group_at"}
+  empty:bool = call(gr,g_at) {"function":"pes_empty"}
+  branch empty group_bad() binding(gr,gf,gt,ga,gx,g_at)
+block binding(cr:readbuf,cf:u64,ct:u64,ca:u64,cx:u64,cg:u64)
+  p_off:u64 = const() {"value":100}
+  p_at:u64 = int.add.wrap(ca,p_off)
+  present:u64 = call(cr,p_at) {"function":"pes_byte"}
+  z:u64 = const() {"value":0}
+  absent:bool = compare.eq(present,z)
+  f_off:u64 = const() {"value":64}
+  f_at:u64 = int.add.wrap(ca,f_off)
+  matches:bool = call(cr,f_at,cg) {"function":"pes_equal"}
+  bound:bool = bool.or(absent,matches)
+  branch bound predict(cr,cf,ct,ca,cx) binding_bad()
+block predict(pr:readbuf,pf:u64,pt:u64,pa:u64,px:u64)
+  off0:u64 = const() {"value":97}
+  off1:u64 = const() {"value":98}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  at0:u64 = int.add.wrap(pa,off0)
+  at1:u64 = int.add.wrap(pa,off1)
+  at3:u64 = int.add.wrap(px,one)
+  p0:u64 = call(pr,at0) {"function":"pes_byte"}
+  p1:u64 = call(pr,at1) {"function":"pes_byte"}
+  p2:u64 = call(pr,px) {"function":"pes_byte"}
+  p3:u64 = call(pr,at3) {"function":"pes_byte"}
+  k0:bool = compare.le(p0,two)
+  k1:bool = compare.le(p1,two)
+  k2:bool = compare.le(p2,two)
+  k3:bool = compare.le(p3,two)
+  k01:bool = bool.and(k0,k1)
+  k23:bool = bool.and(k2,k3)
+  k:bool = bool.and(k01,k23)
+  stride:u64 = const() {"value":104}
+  next:u64 = int.add.wrap(pa,stride)
+  next_side:u64 = int.add.wrap(px,two)
+  branch k loop(pr,pf,pt,next,next_side) predict_bad()
+block success()
+  a_ok:u32 = const() {"value":0}
+  ret(a_ok)
+block frame()
+  a_bad:u32 = const() {"value":100}
+  ret(a_bad)
+block id_bad()
+  b_id:u32 = const() {"value":5}
+  ret(b_id)
+block duplicate_bad()
+  b_dup:u32 = const() {"value":6}
+  ret(b_dup)
+block label_bad()
+  b_label:u32 = const() {"value":7}
+  ret(b_label)
+block group_bad()
+  b_group:u32 = const() {"value":8}
+  ret(b_group)
+block binding_bad()
+  b_binding:u32 = const() {"value":9}
+  ret(b_binding)
+block predict_bad()
+  b_predict:u32 = const() {"value":10}
+  ret(b_predict)
+end
+fn cal_group(r:readbuf,at:u64,end:u64,group:u64,side:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(r:readbuf,at:u64,end:u64,group:u64,side:u64)
+  z:u64 = const() {"value":0}
+  jump loop(r,at,end,group,side,z)
+block loop(lr:readbuf,la:u64,le:u64,lg:u64,lx:u64,lp:u64)
+  done:bool = compare.eq(la,le)
+  branch done answer(lp) test(lr,la,le,lg,lx,lp)
+block test(tr:readbuf,ta:u64,te:u64,tg:u64,tx:u64,tp:u64)
+  g:u64 = call(tr,ta) {"function":"pes_group_at"}
+  same:bool = call(tr,g,tg) {"function":"pes_equal"}
+  width:u64 = const() {"value":104}
+  side_width:u64 = const() {"value":2}
+  next:u64 = int.add.wrap(ta,width)
+  next_side:u64 = int.add.wrap(tx,side_width)
+  branch same add(tr,ta,next,te,tg,tx,next_side,tp) loop(tr,next,te,tg,next_side,tp)
+block add(dr:readbuf,da:u64,dnext:u64,de:u64,dg:u64,dx:u64,dxnext:u64,dp:u64)
+  lo:u64 = const() {"value":96}
+  po0:u64 = const() {"value":97}
+  po1:u64 = const() {"value":98}
+  one:u64 = const() {"value":1}
+  label_at:u64 = int.add.wrap(da,lo)
+  p0_at:u64 = int.add.wrap(da,po0)
+  p1_at:u64 = int.add.wrap(da,po1)
+  p3_at:u64 = int.add.wrap(dx,one)
+  label:u64 = call(dr,label_at) {"function":"pes_byte"}
+  p0:u64 = call(dr,p0_at) {"function":"pes_byte"}
+  p1:u64 = call(dr,p1_at) {"function":"pes_byte"}
+  p2:u64 = call(dr,dx) {"function":"pes_byte"}
+  p3:u64 = call(dr,p3_at) {"function":"pes_byte"}
+  g0:bool = compare.eq(p0,label)
+  g1:bool = compare.eq(p1,label)
+  g2:bool = compare.eq(p2,label)
+  g3:bool = compare.eq(p3,label)
+  zero:u64 = const() {"value":0}
+  b0:u64 = const() {"value":128}
+  b1:u64 = const() {"value":16384}
+  b2:u64 = const() {"value":2097152}
+  b3:u64 = const() {"value":268435456}
+  t0:u64 = select(g0,b0,zero)
+  t1:u64 = select(g1,b1,zero)
+  t2:u64 = select(g2,b2,zero)
+  t3:u64 = select(g3,b3,zero)
+  a0:u64 = int.add.wrap(dp,one)
+  a1:u64 = int.add.wrap(a0,t0)
+  a2:u64 = int.add.wrap(a1,t1)
+  a3:u64 = int.add.wrap(a2,t2)
+  packed:u64 = int.add.wrap(a3,t3)
+  jump loop(dr,dnext,de,dg,dxnext,packed)
+block answer(packed_result:u64)
+  ret(packed_result)
+end
+fn cal_fraction(o:mutbuf,at:u64,n:u64,d:u64) -> () effects(write,trap) entry(entry)
+block entry(o:mutbuf,at:u64,n:u64,d:u64)
+  g:u64 = call(n,d) {"function":"pes_gcd"}
+  rn:u64 = int.div.checked(n,g)
+  rd:u64 = int.div.checked(d,g)
+  eight:u64 = const() {"value":8}
+  at_d:u64 = int.add.wrap(at,eight)
+  _ = call(o,at,rn) {"function":"pes_store"}
+  _ = call(o,at_d,rd) {"function":"pes_store"}
+  ret()
+end
+fn cal_score(r:readbuf,o:mutbuf,first:u64,end:u64) -> () effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,first:u64,end:u64)
+  z:u64 = const() {"value":0}
+  den:u64 = const() {"value":1}
+  jump loop(r,o,first,end,first,end,z,den,z,z,z,z)
+block loop(lr:readbuf,lo:mutbuf,lf:u64,le:u64,la:u64,lx:u64,lg:u64,ld:u64,l0:u64,l1:u64,l2:u64,l3:u64)
+  done:bool = compare.eq(la,le)
+  branch done choose(lo,lg,ld,l0,l1,l2,l3) next(lr,lo,lf,le,la,lx,lg,ld,l0,l1,l2,l3)
+block next(nr:readbuf,no:mutbuf,nf:u64,ne:u64,na:u64,nx:u64,ng:u64,nd:u64,n0:u64,n1:u64,n2:u64,n3:u64)
+  key:u64 = call(nr,na) {"function":"pes_group_at"}
+  groups:bool = const() {"value":true}
+  seen:bool = call(nr,nf,na,key,groups) {"function":"pes_seen"}
+  stride:u64 = const() {"value":104}
+  side_stride:u64 = const() {"value":2}
+  na_next:u64 = int.add.wrap(na,stride)
+  nx_next:u64 = int.add.wrap(nx,side_stride)
+  branch seen loop(nr,no,nf,ne,na_next,nx_next,ng,nd,n0,n1,n2,n3) sum(nr,no,nf,ne,na,nx,na_next,nx_next,ng,nd,n0,n1,n2,n3,key)
+block sum(sr:readbuf,so:mutbuf,sf:u64,se:u64,sa:u64,sx:u64,sa_next:u64,sx_next:u64,sg:u64,sd:u64,s0:u64,s1:u64,s2:u64,s3:u64,sk:u64)
+  current:u64 = call(sr,sa,se,sk,sx) {"function":"cal_group"}
+  radix:u64 = const() {"value":128}
+  seven:u64 = const() {"value":7}
+  size:u64 = int.rem.checked(current,radix)
+  one:u64 = const() {"value":1}
+  g_next:u64 = int.add.wrap(sg,one)
+  d_next:u64 = int.mul.checked(sd,size)
+  shift0:u64 = int.shr.checked(current,seven)
+  group0:u64 = int.rem.checked(shift0,radix)
+  old0:u64 = int.mul.checked(s0,size)
+  add0:u64 = int.mul.checked(group0,sd)
+  next0:u64 = int.add.checked(old0,add0)
+  shift1:u64 = int.shr.checked(shift0,seven)
+  group1:u64 = int.rem.checked(shift1,radix)
+  old1:u64 = int.mul.checked(s1,size)
+  add1:u64 = int.mul.checked(group1,sd)
+  next1:u64 = int.add.checked(old1,add1)
+  shift2:u64 = int.shr.checked(shift1,seven)
+  group2:u64 = int.rem.checked(shift2,radix)
+  old2:u64 = int.mul.checked(s2,size)
+  add2:u64 = int.mul.checked(group2,sd)
+  next2:u64 = int.add.checked(old2,add2)
+  shift3:u64 = int.shr.checked(shift2,seven)
+  group3:u64 = int.rem.checked(shift3,radix)
+  old3:u64 = int.mul.checked(s3,size)
+  add3:u64 = int.mul.checked(group3,sd)
+  next3:u64 = int.add.checked(old3,add3)
+  jump loop(sr,so,sf,se,sa_next,sx_next,g_next,d_next,next0,next1,next2,next3)
+block choose(co:mutbuf,cg:u64,cd:u64,c0:u64,c1:u64,c2:u64,c3:u64)
+  c01:bool = compare.lt(c0,c1)
+  max01:u64 = select(c01,c1,c0)
+  c12:bool = compare.lt(max01,c2)
+  max12:u64 = select(c12,c2,max01)
+  c23:bool = compare.lt(max12,c3)
+  name0a:u64 = const() {"value":32772479289292131}
+  name0b:u64 = const() {"value":0}
+  name1a:u64 = const() {"value":7956017070539498850}
+  name1b:u64 = const() {"value":6646887}
+  name2a:u64 = const() {"value":8243114949612758381}
+  name2b:u64 = const() {"value":25959}
+  name3a:u64 = const() {"value":110386773716848}
+  name3b:u64 = const() {"value":0}
+  name01a:u64 = select(c01,name1a,name0a)
+  name12a:u64 = select(c12,name2a,name01a)
+  besta:u64 = select(c23,name3a,name12a)
+  name01b:u64 = select(c01,name1b,name0b)
+  name12b:u64 = select(c12,name2b,name01b)
+  bestb:u64 = select(c23,name3b,name12b)
+  denominator:u64 = int.mul.checked(cd,cg)
+  off0:u64 = const() {"value":0}
+  off1:u64 = const() {"value":8}
+  off2:u64 = const() {"value":16}
+  off3:u64 = const() {"value":32}
+  off4:u64 = const() {"value":48}
+  off5:u64 = const() {"value":64}
+  _ = call(co,off0,besta) {"function":"pes_store"}
+  _ = call(co,off1,bestb) {"function":"pes_store"}
+  _ = call(co,off2,c0,denominator) {"function":"cal_fraction"}
+  _ = call(co,off3,c1,denominator) {"function":"cal_fraction"}
+  _ = call(co,off4,c2,denominator) {"function":"cal_fraction"}
+  _ = call(co,off5,c3,denominator) {"function":"cal_fraction"}
+  ret()
+end
