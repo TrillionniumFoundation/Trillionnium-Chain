@@ -1703,6 +1703,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-declared-recovery-placement",
+      "node_integration_complete": false,
+      "scope": "Original bounded pure evaluation of synthetic declared part and provider scopes, exact metered budget and canonical worst case; no loader, network, retrieval, recovery action, authority or independence proof",
+      "source": "hia/src/data_availability/cell_declared_recovery_placement.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_declared_recovery_placement.py",
+        "hia/tests/rust_da_cell_declared_recovery_placement_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-recovery-placement-policy-value",
       "node_integration_complete": false,
       "scope": "Original immutable empty-placement typed provider/fault policy validation and SHA-512 commitment only; no provider observation, recovery, authorization or independence claim",
@@ -3247,6 +3258,7 @@
         "data-availability/cell-manifest-binding",
         "data-availability/cell-periodic-snapshot-policy",
         "data-availability/cell-chunk-delta-value",
+        "data-availability/cell-declared-recovery-placement",
         "data-availability/cell-recovery-placement-policy-value",
         "data-availability/cell-retention-contract-value",
         "data-availability/cell-release-manifest",

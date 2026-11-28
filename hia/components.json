@@ -8253,6 +8253,35 @@
         ]
       }
     ],
+    "src/data_availability/cell_declared_recovery_placement.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_equal_read",
+          "cp_copy"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/data_availability/committee_definition.hepta",
+        "functions": [
+          "dac_lex_less"
+        ]
+      }
+    ],
     "src/data_availability/cell_recovery_placement_policy_value.hepta": [
       {
         "source": "src/crypto/sha512_arena.hepta",
