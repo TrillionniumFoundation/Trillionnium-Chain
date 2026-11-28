@@ -1,0 +1,165 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_recovery_placement_policy_value_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  n0:usize = buffer.len(i)
+  n:u64 = int.cast(n0) {"mode":"wrap"}
+  min:u64 = const() {"value":12}
+  ok:bool = compare.ge(n,min)
+  branch ok tag(i,o,w,n) bad_frame()
+block tag(ti:readbuf,to:mutbuf,tw:mutbuf,tn:u64)
+  z:u64 = const() {"value":0}
+  got:u64 = call(ti,z) {"function":"tr_read"}
+  want:u64 = const() {"value":3544385890804585038}
+  good:bool = compare.eq(got,want)
+  branch good shape(ti,to,tw,tn) bad_frame()
+block shape(si:readbuf,so:mutbuf,sw:mutbuf,sn:u64)
+  two:u64 = const() {"value":2}
+  p:u64 = const() {"value":8}
+  start:u64 = const() {"value":10}
+  len:u64 = call(si,p,two) {"function":"ca_read_be"}
+  stride:u64 = const() {"value":160}
+  edge:u64 = int.mul.wrap(len,stride)
+  tail:u64 = int.add.wrap(start,edge)
+  axes:u64 = int.add.wrap(tail,two)
+  enough:bool = compare.le(axes,sn)
+  branch enough limits(si,so,sw,sn,start,tail,axes,len) bad_frame()
+block limits(li:readbuf,lo:mutbuf,lw:mutbuf,ln:u64,ls:u64,lt:u64,la:u64,ll:u64)
+  lpos:usize = int.cast(lt) {"mode":"wrap"}
+  lone:usize = const() {"value":1}
+  next:usize = int.add.wrap(lpos,lone)
+  lloss:u8 = buffer.load(li,lpos)
+  ac8:u8 = buffer.load(li,next)
+  laxes:u64 = int.cast(ac8) {"mode":"wrap"}
+  size:u64 = int.add.wrap(la,laxes)
+  exact:bool = compare.eq(size,ln)
+  branch exact bounds(li,lo,lw,ln,ls,lt,la,ll,lloss,laxes) bad_frame()
+block bounds(bi:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,bs:u64,bt:u64,ba:u64,bl:u64,loss:u8,ac:u64)
+  bone:u64 = const() {"value":1}
+  pmax:u64 = const() {"value":16}
+  amax:u64 = const() {"value":3}
+  lmax:u8 = const() {"value":2}
+  small:bool = compare.ge(bl,bone)
+  big:bool = compare.le(bl,pmax)
+  axis:bool = compare.le(ac,amax)
+  lost:bool = compare.le(loss,lmax)
+  pool:bool = bool.and(small,big)
+  policy:bool = bool.and(axis,lost)
+  fit:bool = bool.and(pool,policy)
+  branch fit axis_start(bi,bo,bw,bn,bs,bt,ba,loss,ac) bad_bounds()
+block axis_start(ai:readbuf,ao:mutbuf,aw:mutbuf,an:u64,as_:u64,at:u64,ap:u64,al:u8,ac_:u64)
+  azero:u8 = const() {"value":0}
+  zc:u64 = const() {"value":0}
+  zero_loss:bool = compare.eq(al,azero)
+  selected:bool = compare.gt(ac_,zc)
+  okay:bool = bool.or(zero_loss,selected)
+  branch okay axes_scan(ai,ao,aw,an,as_,at,ap,azero) bad_axes()
+block axes_scan(xi:readbuf,xo:mutbuf,xw:mutbuf,xn:u64,xs:u64,xt:u64,xp:u64,last:u8)
+  another:bool = compare.lt(xp,xn)
+  branch another axis_row(xi,xo,xw,xn,xs,xt,xp,last) order_start(xi,xo,xw,xn,xs,xt)
+block axis_row(ri:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rs:u64,rt:u64,rp:u64,rl:u8)
+  ip:usize = int.cast(rp) {"mode":"wrap"}
+  v:u8 = buffer.load(ri,ip)
+  max:u8 = const() {"value":3}
+  ascend:bool = compare.gt(v,rl)
+  known:bool = compare.le(v,max)
+  axis_ok:bool = bool.and(ascend,known)
+  one:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(rp,one)
+  branch axis_ok axes_scan(ri,ro,rw,rn,rs,rt,after,v) bad_axes()
+block order_start(oi:readbuf,oo:mutbuf,ow:mutbuf,on:u64,os:u64,ot:u64)
+  width:u64 = const() {"value":160}
+  second:u64 = int.add.wrap(os,width)
+  jump order(oi,oo,ow,on,os,ot,os,second)
+block order(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,ps:u64,pt:u64,prev:u64,pos:u64)
+  more:bool = compare.lt(pos,pt)
+  branch more ordered(pi,po,pw,pn,ps,pt,prev,pos) ids(pi,po,pw,pn,pt,ps)
+block ordered(yi:readbuf,yo:mutbuf,yw:mutbuf,yn:u64,ys:u64,yt:u64,yp:u64,ycur:u64)
+  good_order:bool = call(yi,yp,ycur) {"function":"dac_lex_less"}
+  stride_y:u64 = const() {"value":160}
+  next_y:u64 = int.add.wrap(ycur,stride_y)
+  branch good_order order(yi,yo,yw,yn,ys,yt,ycur,next_y) bad_order()
+block ids(ii:readbuf,io:mutbuf,iw:mutbuf,in_:u64,it:u64,ip_:u64)
+  more_i:bool = compare.lt(ip_,it)
+  branch more_i ident(ii,io,iw,in_,it,ip_) capacity(ii,io,iw,in_)
+block ident(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_:u64,ft:u64,fp:u64)
+  n8:u64 = const() {"value":8}
+  n16:u64 = const() {"value":16}
+  n24:u64 = const() {"value":24}
+  n32:u64 = const() {"value":32}
+  s1:u64 = int.add.wrap(fp,n8)
+  s2:u64 = int.add.wrap(fp,n16)
+  s3:u64 = int.add.wrap(fp,n24)
+  x0:u64 = call(fi,fp) {"function":"tr_read"}
+  x1:u64 = call(fi,s1) {"function":"tr_read"}
+  x2:u64 = call(fi,s2) {"function":"tr_read"}
+  x3:u64 = call(fi,s3) {"function":"tr_read"}
+  p01:u64 = bit.or(x0,x1)
+  p23:u64 = bit.or(x2,x3)
+  word:u64 = bit.or(p01,p23)
+  zf:u64 = const() {"value":0}
+  is_good:bool = compare.ne(word,zf)
+  after_f:u64 = int.add.wrap(fp,n32)
+  branch is_good ids(fi,fo,fw,fn_,ft,after_f) bad_id()
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
+  want_o:usize = const() {"value":64}
+  want_w:usize = const() {"value":131264}
+  on_:usize = buffer.len(co)
+  wn_:usize = buffer.len(cw)
+  ok_o:bool = compare.ge(on_,want_o)
+  ok_w:bool = compare.ge(wn_,want_w)
+  room:bool = bool.and(ok_o,ok_w)
+  branch room hash(ci,co,cw,cn) too_short()
+block hash(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
+  init:u64 = call(hw) {"function":"s512_init"}
+  p0:u64 = const() {"value":131232}
+  p1:u64 = const() {"value":131240}
+  p2:u64 = const() {"value":131248}
+  p3:u64 = const() {"value":131256}
+  d0:u64 = const() {"value":7810722999183495764}
+  d1:u64 = const() {"value":7311153517774909292}
+  d2:u64 = const() {"value":7882815992862112114}
+  d3:u64 = const() {"value":54383672061541}
+  _q0:u64 = call(hw,p0,d0) {"function":"tr_put"}
+  _q1:u64 = call(hw,p1,d1) {"function":"tr_put"}
+  _q2:u64 = call(hw,p2,d2) {"function":"tr_put"}
+  _q3:u64 = call(hw,p3,d3) {"function":"tr_put"}
+  prefix_size:u64 = const() {"value":31}
+  prefix:u64 = call(hw,p0,prefix_size) {"function":"s512_update_work"}
+  bodypos:u64 = const() {"value":8}
+  bodylen:u64 = int.sub.wrap(hn,bodypos)
+  body:u64 = call(hi,bodypos,bodylen,hw) {"function":"s512_update"}
+  finish:u64 = call(hw) {"function":"s512_final"}
+  pair1:u64 = bit.or(init,prefix)
+  pair2:u64 = bit.or(body,finish)
+  all:u64 = bit.or(pair1,pair2)
+  zh:u64 = const() {"value":0}
+  good_h:bool = compare.eq(all,zh)
+  branch good_h publish(ho,hw,zh) internal()
+block publish(go:mutbuf,gw:mutbuf,gz:u64)
+  from:u64 = const() {"value":131168}
+  nbytes:u64 = const() {"value":64}
+  _cp:u64 = call(gw,from,go,gz,nbytes) {"function":"cp_wout"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block bad_frame()
+  a:u32 = const() {"value":100}
+  ret(a)
+block bad_bounds()
+  b:u32 = const() {"value":20}
+  ret(b)
+block bad_axes()
+  c:u32 = const() {"value":21}
+  ret(c)
+block bad_order()
+  d:u32 = const() {"value":22}
+  ret(d)
+block bad_id()
+  e:u32 = const() {"value":23}
+  ret(e)
+block too_short()
+  f:u32 = const() {"value":102}
+  ret(f)
+block internal()
+  g:u32 = const() {"value":103}
+  ret(g)
+end

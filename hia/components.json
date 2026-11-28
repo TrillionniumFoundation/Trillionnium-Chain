@@ -8253,6 +8253,56 @@
         ]
       }
     ],
+    "src/data_availability/cell_recovery_placement_policy_value.hepta": [
+      {
+        "source": "src/crypto/sha512_arena.hepta",
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_stream.hepta",
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_wout"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/data_availability/committee_definition.hepta",
+        "functions": [
+          "dac_lex_less"
+        ]
+      }
+    ],
     "src/data_availability/cell_release_snapshot_metadata.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

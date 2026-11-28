@@ -146,6 +146,7 @@ def sources():
         "hia/src/mempool/LOCAL_POOL_POLICY.md", "hia/src/mempool/local_pool_policy_abi.json",
         "hia/src/data_availability/CELL_PERIODIC_SNAPSHOT_POLICY.md",
         "hia/src/data_availability/CELL_CHUNK_DELTA_VALUE.md",
+        "hia/src/data_availability/CELL_RECOVERY_PLACEMENT_POLICY_VALUE.md",
         "hia/src/data_availability/CELL_RETENTION_CONTRACT_VALUE.md",
         "hia/src/data_availability/README.md", "hia/src/control_plane/README.md",
         "hia/src/escrow/README.md", "hia/src/governance/README.md", "hia/src/bench/README.md",
