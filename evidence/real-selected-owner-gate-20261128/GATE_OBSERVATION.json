@@ -1,0 +1,133 @@
+{
+  "actual_wrapper_check_started": false,
+  "actual_wrapper_typechecked": false,
+  "complete_repository_checkout": false,
+  "current_permission": false,
+  "exact_rust_tree_blobs": 1717,
+  "final_use": false,
+  "jobs": 2,
+  "lockfile_sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+  "native_adoption": false,
+  "no_budget_reset": true,
+  "observations": [
+    {
+      "commands": [
+        {
+          "argv": [
+            "/home/qian-qi/.cargo/bin/cargo",
+            "test",
+            "--offline",
+            "--locked",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::adoption::tests::selected_manifest::",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 101,
+          "name": "owner_sqlite_controls",
+          "stderr_bytes": 9911,
+          "stderr_sha256": "08bd1c753d87aba32067da59613b3922078a688669a684b04616694d5055b999",
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false,
+          "wall_ns": 98444729368
+        }
+      ],
+      "finished_at": "2026-11-28T03:42:04.324341+00:00",
+      "original_receipt": {
+        "bytes": 256783,
+        "name": "FIRST_GATE.json",
+        "sha256": "338c28e83df2fac825774721b2c3cfdc560ba80ae1f92a78dbb8c6d8f3bc0816"
+      },
+      "original_stderr": "owner_sqlite_controls.stderr",
+      "result": "FIRST_GATE_FAILURE",
+      "schema": "chain-real-selected-owner-and-wrapper-first-gate-v1",
+      "source_pin_count": 1761,
+      "source_unchanged_after": true,
+      "started_at": "2026-11-28T03:40:24.725675+00:00",
+      "total_wall_ns": 99200832278
+    },
+    {
+      "commands": [
+        {
+          "argv": [
+            "/home/qian-qi/.cargo/bin/cargo",
+            "test",
+            "--offline",
+            "--locked",
+            "-p",
+            "trnm-data-availability",
+            "--lib",
+            "cell::adoption::tests::selected_manifest::",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": -9,
+          "name": "owner_sqlite_controls",
+          "stderr_bytes": 146,
+          "stderr_sha256": "b4214debe75c3e17a3de08d79a68f61455d837e5fa9149391fa66c450452c07f",
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": true,
+          "wall_ns": 29446099349
+        }
+      ],
+      "correction": "hydrate eight existing fixed-head concat include fixtures; no Rust source or profile change",
+      "finished_at": "2026-11-28T03:44:25.154145+00:00",
+      "original_absolute_deadline_preserved": true,
+      "original_deadline_unix": 1795837464.725675,
+      "original_receipt": {
+        "bytes": 258320,
+        "name": "CONTINUATION_GATE.json",
+        "sha256": "b80ad3d5d08011230ec34d76023e231d6531afe0e28e9bd137cebf1455c46fbe"
+      },
+      "original_stderr": "continuation_owner_sqlite_controls.stderr",
+      "remaining_seconds_at_correction_start": 29.616950035095215,
+      "result": "FIRST_GATE_FAILURE",
+      "schema": "chain-real-selected-owner-and-wrapper-capsule-correction-v1",
+      "source_pin_count": 1769,
+      "source_unchanged_after": true,
+      "started_at": "2026-11-28T03:43:55.106430+00:00",
+      "total_wall_ns": 29656729595
+    }
+  ],
+  "offline_locked": true,
+  "original_absolute_deadline_unix": 1795837464.725675,
+  "original_profiles_preserved": true,
+  "owner_sqlite_tests_executed": 0,
+  "owner_sqlite_tests_planned": 2,
+  "payment": false,
+  "planned_wrapper_command": [
+    "cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "-p",
+    "trnm-pon-node",
+    "--lib"
+  ],
+  "post_deadline_cleanup_and_source_readback_seconds": 0.42847,
+  "previous_9_loader_11_core_6_binding_controls_rerun": false,
+  "production_activation": false,
+  "quality_improved": false,
+  "real_user_b": false,
+  "registry_archives_verified_against_lockfile": 162,
+  "rustflags": "-D warnings",
+  "schema": "chain-real-selected-owner-gate-derived-observation-v1",
+  "scientific_experiment_completed": false,
+  "scope": "Derived summary of retained original receipts; not a new test execution",
+  "single_original_absolute_cap_seconds": 240,
+  "source": {
+    "commit_tree": "2cc77da9bda193616f8831ad4cdc7037816080a9",
+    "gate_repeated_for_label": false,
+    "head": "c471cba4aad9112dfb7226cd524b286093e176ea",
+    "original_receipts_preserved": true,
+    "reason": "Prior commentary 'native HEAD/tree' omitted the trillionnium subtree path; frozen rust-tree manifest and actual source were unchanged.",
+    "rust_subtree": "9db8871c16d333904670bcae5b16945dcd6ce8e6",
+    "rust_subtree_path": "trillionnium",
+    "schema": "chain-source-tree-label-clarification-v1"
+  },
+  "workspace_packages_from_actual_cargo_metadata": 26
+}

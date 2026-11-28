@@ -1,0 +1,78 @@
+{
+  "archive": {
+    "bytes": 573081,
+    "sha256": "16b183e7899569df53302a9ac977d61ac45eec01af7ae69daadc089eb57b747f"
+  },
+  "archive_format": "zlib compressed JSON, base64 original members and per-member SHA-256",
+  "decompressed_archive_sha256": "9464f38d896a2d2efde1c5fc3a41aca6b9bdc07f0bed61303a904679cd35a43c",
+  "full_archive_included_here": false,
+  "members": {
+    "CONCAT_INCLUDES_PREPARATION.json": {
+      "bytes": 1178,
+      "sha256": "d0ac4249abd4d32438a26bba477ad8941a5298f774419029070177101ad47732"
+    },
+    "CONTINUATION_GATE.json": {
+      "bytes": 258320,
+      "sha256": "b80ad3d5d08011230ec34d76023e231d6531afe0e28e9bd137cebf1455c46fbe"
+    },
+    "FIRST_GATE.json": {
+      "bytes": 256783,
+      "sha256": "338c28e83df2fac825774721b2c3cfdc560ba80ae1f92a78dbb8c6d8f3bc0816"
+    },
+    "LITERAL_INCLUDES_PREPARATION.json": {
+      "bytes": 8016,
+      "sha256": "c2c195150e5a523c8fa72bc4616fc6fa5df3a1fe35e7a7a6b09fc8142f68c29d"
+    },
+    "PREPARATION_PACKET_SHA256.txt": {
+      "bytes": 64,
+      "sha256": "02814488e3759d322ae11dd7f34f7f0d1c8e8b422667e72821a3cf80ac8164b2"
+    },
+    "PREPARATION_RESULT.json": {
+      "bytes": 283755,
+      "sha256": "f0014205e8a833f59b2e4a9e1b0e03b73e4cae0c276bdfaedbbf20372ea06eb5"
+    },
+    "SOURCE_MANIFEST.json": {
+      "bytes": 285685,
+      "sha256": "7e23c5007b3f0a121bc8b8968565bde3218254647ac7ac080fe31e5afd758b61"
+    },
+    "continuation_owner_sqlite_controls.stderr": {
+      "bytes": 146,
+      "sha256": "b4214debe75c3e17a3de08d79a68f61455d837e5fa9149391fa66c450452c07f"
+    },
+    "continuation_owner_sqlite_controls.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "isolated-cargo-home/config.toml": {
+      "bytes": 161,
+      "sha256": "20c1219bdfd99efd434b0ba6a2d2ad77fe22a461105fdd47b008780221cdd431"
+    },
+    "metadata.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "metadata.stdout": {
+      "bytes": 862082,
+      "sha256": "3eac92ff969d7149333e909a08fca3d1442a39a699c33d946cef880dc85bf879"
+    },
+    "owner_sqlite_controls.stderr": {
+      "bytes": 9911,
+      "sha256": "08bd1c753d87aba32067da59613b3922078a688669a684b04616694d5055b999"
+    },
+    "owner_sqlite_controls.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.stdout": {
+      "bytes": 173,
+      "sha256": "3ba29fb9511d6601276f396a5e5cab2dc4e2c0b6014a2006d2b42ced612994b3"
+    }
+  },
+  "original_native_directory": "/tmp/hepta-chain-6523704f97df-real-crate-attempt-1",
+  "readback": "Version-pinned native file_info plus nine bounded binary_read chunks; chunk, archive, decompressed and member hashes checked",
+  "schema": "chain-real-selected-owner-original-artifact-inventory-v1"
+}

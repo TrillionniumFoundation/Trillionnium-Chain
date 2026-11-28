@@ -1,0 +1,127 @@
+{
+  "CI_rerun": false,
+  "acceptance_passed": false,
+  "acceptance_window_changed": false,
+  "all_named_tests_passed": true,
+  "artifact_id": 15246075425,
+  "artifact_zip": {
+    "bytes": 9719226,
+    "sha256": "de9610450279a5daaccb8fce62781d15ed06a6b75889e701746136baa40519e2"
+  },
+  "confirmation_report": {
+    "bytes": 15906370,
+    "sha256": "4f687f23a6a4200c81080c00547e3495b1e7092b50ead9060168087d43c07fcc"
+  },
+  "failures": [
+    "CONFIRMATION_TARGET"
+  ],
+  "finite_target_met": false,
+  "invariant_target_met": true,
+  "job_id": 140823211374,
+  "manifest": {
+    "bytes": 79702,
+    "sha256": "256ddbc45c4581a1f1a166079a7eefd6619a3b8896b54b9d78230e577962d00f"
+  },
+  "named_tests_executed": 5,
+  "native_execution_completed": true,
+  "phases": [
+    {
+      "business": {
+        "business_start_delay_ns": 100929,
+        "business_started_before_original_window_end": true,
+        "independent_confirmed_transactions_per_window_second": 0.25,
+        "lower_bound_reaches_original_window_end": null,
+        "observed_success_latency_ns": 2798563002,
+        "original_window_remaining_at_business_start_ns": 3999899071,
+        "pre_business_window_overrun_ns": 0,
+        "reported_finite_business_target_met": true,
+        "reported_independently_confirmed_in_window": 1,
+        "required_signed_transactions": 1,
+        "successful_latency": {
+          "max_ns": 2798563002,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": 2798563002,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 1
+        },
+        "unconfirmed": 0,
+        "unconfirmed_latency_lower_bound_ns": null,
+        "unknown": 0
+      },
+      "mode": "attack-free-baseline",
+      "verification_errors": [],
+      "window_ns": 4000000000,
+      "workers": 0
+    },
+    {
+      "business": {
+        "business_start_delay_ns": 93991245,
+        "business_started_before_original_window_end": true,
+        "independent_confirmed_transactions_per_window_second": 0.0,
+        "lower_bound_reaches_original_window_end": true,
+        "observed_success_latency_ns": null,
+        "original_window_remaining_at_business_start_ns": 3906008755,
+        "pre_business_window_overrun_ns": 0,
+        "reported_finite_business_target_met": false,
+        "reported_independently_confirmed_in_window": 0,
+        "required_signed_transactions": 1,
+        "successful_latency": {
+          "max_ns": null,
+          "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+          "min_ns": null,
+          "minimum_samples": {
+            "p50": 2,
+            "p95": 20,
+            "p99": 100
+          },
+          "missing_samples": 0,
+          "p50_ns": null,
+          "p95_ns": null,
+          "p99_ns": null,
+          "samples": 0
+        },
+        "unconfirmed": 1,
+        "unconfirmed_latency_lower_bound_ns": 3906008755,
+        "unknown": 0
+      },
+      "mode": "from-zero-pressure",
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "window_ns": 4000000000,
+      "workers": 16
+    }
+  ],
+  "production_activation": false,
+  "pull_request": 1019,
+  "schema": "chain-priority-first-failure-derived-observation-v1",
+  "scope": "Independent earlier PR #1019 remote CI; no causal attribution to PFT changes",
+  "source": {
+    "commit": "4f0a1ea9c37a545a454dd17b3901cf800340311e",
+    "test_sha256": "fe281e79c9b5ba6a6796e31ce20d05d6ad1d87e36668e7f0579d56ad4fb7524c",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "4f0a1ea9c37a545a454dd17b3901cf800340311e",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "4f0a1ea9c37a545a454dd17b3901cf800340311e",
+      "tested_tree": "acc4382ada910e6d7d282a1cc25c100f40f44d5f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 4006004274,
+      "tracked_entries": 42051,
+      "tracked_worktree_verified": true
+    },
+    "tree": "acc4382ada910e6d7d282a1cc25c100f40f44d5f"
+  },
+  "workflow_attempt": 1,
+  "workflow_run_id": 46094675971
+}
