@@ -1574,6 +1574,16 @@
       ]
     },
     {
+      "id": "node/resource-request-value",
+      "node_integration_complete": false,
+      "scope": "Immutable typed ResourceRequestV1 validation and execution-plus-cleanup totals against the exact frozen Rust relation; no clock, admission, resource owner, effect, or authority",
+      "source": "hia/src/node/resource_request.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_resource_request.py"
+      ]
+    },
+    {
       "id": "consensus/work-schedule-profile",
       "node_integration_complete": false,
       "scope": "Immutable research metadata validation and exact PoN ID of original Profile::new(ProfileInputs), including fixed and anchored policies; no node settings, history, proof or admission",
@@ -4250,6 +4260,7 @@
         "transport/signed-response",
         "node/settings-development",
         "node/resource-profile-value",
+        "node/resource-request-value",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",

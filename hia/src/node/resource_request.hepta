@@ -1,0 +1,142 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_local_resource_request_value_v1
+fn f0(input:readbuf,output:mutbuf,arena:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,arena:mutbuf)
+  size:usize = buffer.len(input)
+  exact:usize = const() {"value":184}
+  ok:bool = compare.eq(size,exact)
+  branch ok frame(input,output) bad_frame()
+block frame(fi:readbuf,fo:mutbuf)
+  magic_at:usize = const() {"value":0}
+  flags_at:usize = const() {"value":112}
+  magic:u64 = call(fi,magic_at) {"function":"cw_read64"}
+  expect:u64 = const() {"value":3544385890821493326}
+  flags:u64 = call(fi,flags_at) {"function":"cw_read64"}
+  mask:u64 = const() {"value":255}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  eight:u64 = const() {"value":8}
+  six16:u64 = const() {"value":16}
+  zero:u64 = const() {"value":0}
+  class:u64 = bit.and(flags,mask)
+  option_word:u64 = int.shr.checked(flags,eight)
+  present:u64 = bit.and(option_word,mask)
+  reserved:u64 = int.shr.checked(flags,six16)
+  tagged:bool = compare.eq(magic,expect)
+  class_ok:bool = compare.le(class,two)
+  option_ok:bool = compare.le(present,one)
+  no_reserved:bool = compare.eq(reserved,zero)
+  tags:bool = bool.and(class_ok,option_ok)
+  metadata:bool = bool.and(tags,no_reserved)
+  shape:bool = bool.and(tagged,metadata)
+  branch shape option_payload(fi,fo,class,present) bad_frame()
+block option_payload(pi:readbuf,po:mutbuf,pc:u64,pp:u64)
+  p_at:usize = const() {"value":152}
+  p_some:bool = call(pi,p_at) {"function":"rq_nonzero_id"}
+  p_zero:u64 = const() {"value":0}
+  p_present:bool = compare.ne(pp,p_zero)
+  p_payload_empty:bool = bool.not(p_some)
+  p_ok:bool = bool.or(p_present,p_payload_empty)
+  branch p_ok binding(pi,po,pc,p_present) bad_frame()
+block binding(bi:readbuf,bo:mutbuf,bc:u64,bp:bool)
+  id_at:usize = const() {"value":8}
+  digest_at:usize = const() {"value":40}
+  deadline_at:usize = const() {"value":104}
+  zero_b:u64 = const() {"value":0}
+  id:bool = call(bi,id_at) {"function":"rq_nonzero_id"}
+  digest:bool = call(bi,digest_at) {"function":"rq_nonzero_id"}
+  deadline:u64 = call(bi,deadline_at) {"function":"cw_read64"}
+  has_deadline:bool = compare.ne(deadline,zero_b)
+  ids:bool = bool.and(id,digest)
+  checked:bool = bool.and(ids,has_deadline)
+  branch checked units(bi,bo,bc,bp) bad_binding()
+block units(ui:readbuf,uo:mutbuf,uc:u64,up:bool)
+  exec_cpu_at:usize = const() {"value":120}
+  exec_io_at:usize = const() {"value":128}
+  clean_cpu_at:usize = const() {"value":136}
+  clean_io_at:usize = const() {"value":144}
+  exec_cpu:u64 = call(ui,exec_cpu_at) {"function":"cw_read64"}
+  exec_io:u64 = call(ui,exec_io_at) {"function":"cw_read64"}
+  clean_cpu:u64 = call(ui,clean_cpu_at) {"function":"cw_read64"}
+  clean_io:u64 = call(ui,clean_io_at) {"function":"cw_read64"}
+  bound:u64 = const() {"value":1152921504606846976}
+  a:bool = compare.le(exec_cpu,bound)
+  b:bool = compare.le(exec_io,bound)
+  c:bool = compare.le(clean_cpu,bound)
+  d:bool = compare.le(clean_io,bound)
+  exec_ok:bool = bool.and(a,b)
+  clean_ok:bool = bool.and(c,d)
+  all_ok:bool = bool.and(exec_ok,clean_ok)
+  branch all_ok reservation(uo,uc,up,exec_cpu,exec_io,clean_cpu,clean_io,bound) bad_units()
+block reservation(ro:mutbuf,rc:u64,rp:bool,re_cpu:u64,re_io:u64,rl_cpu:u64,rl_io:u64,rmax:u64)
+  zero_r:u64 = const() {"value":0}
+  re_some:bool = compare.ne(re_cpu,zero_r)
+  rl_some:bool = compare.ne(rl_cpu,zero_r)
+  both:bool = bool.and(re_some,rl_some)
+  branch both aggregate(ro,rc,rp,re_cpu,re_io,rl_cpu,rl_io,rmax) bad_reservation()
+block aggregate(ao:mutbuf,ac:u64,ap:bool,ae_cpu:u64,ae_io:u64,al_cpu:u64,al_io:u64,amax:u64)
+  acpu:u64 = int.add.wrap(ae_cpu,al_cpu)
+  aio:u64 = int.add.wrap(ae_io,al_io)
+  fits_cpu:bool = compare.le(acpu,amax)
+  fits_io:bool = compare.le(aio,amax)
+  both_a:bool = bool.and(fits_cpu,fits_io)
+  branch both_a recovery(ao,ac,ap,acpu,aio) bad_units()
+block recovery(co:mutbuf,cc:u64,cp:bool,c_cpu:u64,c_io:u64)
+  rec:u64 = const() {"value":2}
+  recovery_class:bool = compare.eq(cc,rec)
+  no_link:bool = bool.not(cp)
+  not_recovery:bool = bool.not(recovery_class)
+  linked:bool = bool.and(recovery_class,cp)
+  ordinary:bool = bool.and(not_recovery,no_link)
+  consistent:bool = bool.or(linked,ordinary)
+  branch consistent capacity(co,c_cpu,c_io) bad_recovery()
+block capacity(oo:mutbuf,ocpu:u64,oio:u64)
+  available:usize = buffer.len(oo)
+  required:usize = const() {"value":16}
+  enough:bool = compare.ge(available,required)
+  branch enough emit(oo,ocpu,oio) bad_output()
+block emit(eo:mutbuf,ecpu:u64,eio:u64)
+  cpu_at:usize = const() {"value":0}
+  io_at:usize = const() {"value":8}
+  _cpu:u32 = call(eo,cpu_at,ecpu) {"function":"cw_store64"}
+  _io:u32 = call(eo,io_at,eio) {"function":"cw_store64"}
+  good:u32 = const() {"value":0}
+  ret(good)
+block bad_frame()
+  bf:u32 = const() {"value":1}
+  ret(bf)
+block bad_output()
+  bout:u32 = const() {"value":2}
+  ret(bout)
+block bad_binding()
+  bb:u32 = const() {"value":32}
+  ret(bb)
+block bad_units()
+  bu:u32 = const() {"value":33}
+  ret(bu)
+block bad_reservation()
+  br:u32 = const() {"value":34}
+  ret(br)
+block bad_recovery()
+  bre:u32 = const() {"value":35}
+  ret(bre)
+end
+
+fn rq_nonzero_id(i:readbuf,p:usize) -> (bool) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,p:usize)
+  at1:usize = const() {"value":8}
+  at2:usize = const() {"value":16}
+  at3:usize = const() {"value":24}
+  p1:usize = int.add.wrap(p,at1)
+  p2:usize = int.add.wrap(p,at2)
+  p3:usize = int.add.wrap(p,at3)
+  id0:u64 = call(i,p) {"function":"cw_read64"}
+  id1:u64 = call(i,p1) {"function":"cw_read64"}
+  id2:u64 = call(i,p2) {"function":"cw_read64"}
+  id3:u64 = call(i,p3) {"function":"cw_read64"}
+  first:u64 = bit.or(id0,id1)
+  last:u64 = bit.or(id2,id3)
+  bits:u64 = bit.or(first,last)
+  zero:u64 = const() {"value":0}
+  nonzero:bool = compare.ne(bits,zero)
+  ret(nonzero)
+end

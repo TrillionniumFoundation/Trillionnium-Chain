@@ -19647,6 +19647,15 @@
         "source": "src/crypto/sha256_arena.hepta"
       }
     ],
+    "src/node/resource_request.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_store64"
+        ]
+      }
+    ],
     "src/protocol/pnx1.hepta": [
       {
         "functions": [
