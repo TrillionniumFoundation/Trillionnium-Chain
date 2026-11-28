@@ -167,3 +167,6 @@ fn parser_and_packet_allocation_limits_are_checked() {
         Err(NativePftErrorV1::Limit)
     ));
 }
+
+#[path = "adversarial_tests.rs"]
+mod adversarial_tests;

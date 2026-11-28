@@ -1,0 +1,9 @@
+[package]
+name = "chain-pft-native-loader-controls"
+version = "0.0.0"
+edition = "2021"
+[lib]
+path = "trillionnium/crates/trnm-pon-node/src/harness.rs"
+[dependencies]
+sha2 = "=0.10.9"
+serde_json = { version = "=1.0.149", features = ["arbitrary_precision"] }
