@@ -1,5 +1,14 @@
 # Bench report bytes
 
+The private report literal dispatch keeps the same 151 IDs and exact bytes.
+Full little-endian words share a cursor advance. A final partial word stores
+only its declared one to seven bytes, not padding. The renderer's input/output
+schema, palette and all admission bounds are unchanged. This compacts the
+native report object without raising the freestanding executable's packing
+limit. The qualification roster independently reconstructs all 2,637 literal
+bytes and checks the original ordered ID, extent and byte commitment.
+
+
 `report.hepta` renders the original ordered Bench output, complete profile,
 adaptive decision fields, persistence metadata, and the two bounded replay
 error messages. All production arithmetic, decimal/date formatting, line

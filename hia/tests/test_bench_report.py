@@ -14,6 +14,7 @@ import json
 import os
 from pathlib import Path
 import random
+import re
 import struct
 import subprocess
 import tempfile
@@ -206,6 +207,45 @@ class BenchReportTests(unittest.TestCase):
             self.assertTrue(file.endswith(("profile.report.output_bytes=" + str(len(file)) + "\n").encode()))
             self.assertIn(("profile.report.output_line_count=" + str(file.count(b"\n")) + "\n").encode(), file)
         return code, stdout, stderr, file
+
+    def test_exact_packed_literal_roster(self):
+        source = (ROOT / "hia/src/bench/report.hepta").read_text()
+        blocks = re.findall(
+            r"^block text_(\d+)\((\w+):mutbuf,(\w+):u64\)\n(.*?)(?=^block |^end$)",
+            source, re.M | re.S)
+        self.assertEqual([int(row[0]) for row in blocks], list(range(151)))
+        encoded = bytearray()
+        for raw_id, out, cursor, body in blocks:
+            size_or_word = {}
+            raw = bytearray()
+            tail = False
+            rows = body.splitlines()
+            for line in rows[:-1]:
+                word = re.fullmatch(r'  (\w+):u64 = const\(\) \{"value":(\d+)\}', line)
+                if word:
+                    self.assertNotIn(word[1], size_or_word)
+                    size_or_word[word[1]] = int(word[2])
+                    continue
+                call = re.fullmatch(
+                    r'  (\w+):u64 = call\((\w+),(\w+),(\w+)(?:,(\w+))?\) '
+                    r'\{"function":"br_append_(word|tail)"\}', line)
+                self.assertIsNotNone(call, (raw_id, line))
+                self.assertEqual((call[2], call[3]), (out, cursor))
+                self.assertFalse(tail, raw_id)
+                tail = call[6] == "tail"
+                self.assertEqual(tail, call[5] is not None)
+                width = size_or_word.pop(call[5]) if tail else 8
+                self.assertIn(width, range(1, 8) if tail else (8,))
+                raw.extend(size_or_word.pop(call[4]).to_bytes(width, "little"))
+                cursor = call[1]
+            self.assertEqual(rows[-1], f"  ret({cursor})")
+            self.assertFalse(size_or_word)
+            encoded.extend(struct.pack("<HH", int(raw_id), len(raw)) + raw)
+        self.assertEqual(len(encoded), 3241)
+        # Derived independently from all 151 old dispatch blocks' original
+        # LE64 calls, byte stores, write offsets and return extents.
+        self.assertEqual(digest(encoded), "eb062a16d35b7621a3522202ac762970547133c92e5ae91c0dace3508a8fdc05")
+        self.completed.append("packed-literal-roster")
 
     def test_decimal_integer_width_and_full_u128(self):
         rng = random.Random(0x42545854)
