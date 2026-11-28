@@ -1529,6 +1529,17 @@
       ]
     },
     {
+      "id": "data-availability/bep52-chunk-proof-value",
+      "node_integration_complete": false,
+      "scope": "Pure native generation and canonical shape decode of a single CBP1 from original BEP52 geometry. Generation revalidates independently pinned TCM1, derives canonical info hash and order-sensitive siblings, and standalone decode checks exact extent, index, depth and entirely padded subtrees. No payload, availability or authority.",
+      "source": "hia/src/data_availability/bep52_chunk_proof.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_bep52_chunk_proof.py",
+        "hia/tests/rust_da_bep52_chunk_proof_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/rs46-codeword-value",
       "node_integration_complete": false,
       "scope": "Pure standalone CRC1 decode and exact canonical wire/domain digest against independently supplied pins, revalidating complete borrowed TCM1 and its selected original chunk, with six nonzero unique slots. No repair, source retrieval, storage, custody or authority.",
@@ -3658,6 +3669,7 @@
         "data-availability/rs46-codeword-value",
         "data-availability/rs46-committed-slot",
         "data-availability/bep52-binding-value",
+        "data-availability/bep52-chunk-proof-value",
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",
