@@ -1,0 +1,7 @@
+
+running 2 tests
+test cell::adoption::tests::selected_manifest::selected_manifest_comes_from_the_catalog_under_the_original_writer_fence ... ok
+test cell::adoption::tests::selected_manifest::wrong_selection_or_execution_never_exposes_manifest_and_errors_release_fence ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 941 filtered out; finished in 1.07s
+

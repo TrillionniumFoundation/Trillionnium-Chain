@@ -4,6 +4,8 @@
 use trnm_data_availability::cell::{CellAdoptionUseV1, CellErrorV1, CellFileRoleV1};
 
 mod binding;
+#[cfg(test)]
+mod owner_tests;
 pub use binding::{
     loader_profile_digest, no_tokenizer_digest, PftSelectedBindingErrorV1, PftSelectedInspectionV1,
     CANDIDATE_PATH, PROFILE,
