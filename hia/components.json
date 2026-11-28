@@ -18127,6 +18127,80 @@
         ]
       }
     ],
+    "src/model/tasks_root.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_word"
+        ]
+      },
+      {
+        "source": "src/state/json_string.hepta",
+        "functions": [
+          "json_short_escape"
+        ]
+      },
+      {
+        "source": "src/sqlite_io_boundary/lifecycle_json_emit.hepta",
+        "functions": [
+          "mje_escape",
+          "mje_hex_digit",
+          "mje_string"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_put_integer",
+          "cs_wcopy",
+          "cs_zero"
+        ]
+      },
+      {
+        "source": "src/model/cell_state_value.hepta",
+        "functions": [
+          "csv_ascii"
+        ]
+      },
+      {
+        "source": "src/model/source_revision.hepta",
+        "functions": [
+          "ms_claim",
+          "ms_decode",
+          "ms_nibble",
+          "ms_order",
+          "ms_path",
+          "ms_rows",
+          "ms_segment",
+          "ms_sha"
+        ]
+      },
+      {
+        "source": "src/task_kernel/archive_inclusion_header.hepta",
+        "functions": [
+          "archive_digest_match",
+          "archive_equal"
+        ]
+      }
+    ],
     "src/model/source_revision.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

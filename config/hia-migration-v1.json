@@ -2707,6 +2707,17 @@
       ]
     },
     {
+      "id": "model/tasks-root",
+      "node_integration_complete": false,
+      "scope": "Private original model tasks root over immutable validated inert source snapshot, exact ASCII signed token features/row hashes and JSON root; no admission, W1, training, signing, I/O or trust.",
+      "source": "hia/src/model/tasks_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_model_tasks_root.py",
+        "hia/tests/rust_model_tasks_root_reference.rs"
+      ]
+    },
+    {
       "id": "model/source-revision",
       "node_integration_complete": false,
       "scope": "Private original in-memory ordered model source revision with actual content byte and digest validation, canonical JSON snapshot SHA-256, no I/O, provenance, windows, training or trust.",
