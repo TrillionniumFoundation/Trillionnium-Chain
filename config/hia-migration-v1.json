@@ -1156,7 +1156,9 @@
       "tests": [
         "hia/tests/test_cell_source_train.py",
         "hia/tests/rust_cell_source_train_reference.rs",
-        "hia/tests/test_cell_cct_trained_model_held_forward.py"
+        "hia/tests/test_cell_cct_trained_model_held_forward.py",
+        "hia/tests/test_cell_source_train_held_link.py",
+        "hia/tests/rust_cell_source_train_held_link.rs"
       ]
     },
     {

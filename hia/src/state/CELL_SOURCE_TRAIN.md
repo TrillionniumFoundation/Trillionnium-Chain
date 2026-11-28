@@ -76,3 +76,19 @@ numeric observation plus the final numeric projection, including one
 1,024 admitted tokens per row.
 
     python3 -B -m unittest -v hia.tests.test_cell_source_train
+
+A separate test installs the unchanged, import- and relocation-free
+stock Selfhost CCT object into the source-pinned x86-64 Linux Rust
+fixture. The Rust caller borrows the very typed snippet strings, model,
+policy and prior values used by the unchanged original computation.
+It rebuilds the native byte loan from those held values and compares
+the original source-stage, product, active-row and report bytes and
+refusal statuses before publishing each observation. Only three
+disjoint bounded byte spans reach the native symbol; no pointer to a
+Rust model or source value is given to native code. The test verifies
+the linked executable's exact unmodified .text at `f0` before and
+after execution. This is a private static qualification, not a runtime
+handoff or an additional production owner. The independent stock dual
+tests remain unchanged.
+
+    python3 -B -m unittest -v hia.tests.test_cell_source_train_held_link
