@@ -1,0 +1,364 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_runtime_files_plan
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  nl:usize = buffer.len(r)
+  n:u64 = int.cast(nl) {"mode":"wrap"}
+  min:u64 = const() {"value":210}
+  max:u64 = const() {"value":333649}
+  low:bool = compare.le(min,n)
+  high:bool = compare.le(n,max)
+  frame:bool = bool.and(low,high)
+  branch frame header(r,o,w,n) wire()
+block header(hr:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
+  p0:u64 = const() {"value":0}
+  p8:u64 = const() {"value":8}
+  p16:u64 = const() {"value":16}
+  p24:u64 = const() {"value":24}
+  magic:u64 = call(hr,p0) {"function":"tr_read"}
+  expected:u64 = const() {"value":827344466}
+  rl:u64 = call(hr,p8) {"function":"tr_read"}
+  ceiling:u64 = call(hr,p16) {"function":"tr_read"}
+  clen:u64 = call(hr,p24) {"function":"tr_read"}
+  known:bool = compare.eq(magic,expected)
+  cmin:u64 = const() {"value":162}
+  cmax:u64 = const() {"value":225}
+  min_ok:bool = compare.le(cmin,clen)
+  max_ok:bool = compare.le(clen,cmax)
+  ctx_ok:bool = bool.and(min_ok,max_ok)
+  hdr_ok:bool = bool.and(known,ctx_ok)
+  branch hdr_ok bounds(hr,ho,hw,hn,rl,ceiling,clen) wire()
+block bounds(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,brl:u64,bcap:u64,bcl:u64)
+  starts:u64 = const() {"value":32}
+  rp:u64 = int.add.wrap(starts,bcl)
+  cidx:usize = int.cast(starts) {"mode":"wrap"}
+  fam8:u8 = buffer.load(br,cidx)
+  fam:u64 = int.cast(fam8) {"mode":"wrap"}
+  context_overhead:u64 = const() {"value":161}
+  actual_context:u64 = int.add.wrap(fam,context_overhead)
+  right_ctx:bool = compare.eq(actual_context,bcl)
+  present:bool = compare.le(rp,bn)
+  remain:u64 = int.sub.wrap(bn,rp)
+  rfr_ok:bool = compare.le(brl,remain)
+  extent:bool = bool.and(present,rfr_ok)
+  okay:bool = bool.and(right_ctx,extent)
+  re:u64 = int.add.wrap(rp,brl)
+  branch okay capacity(br,bo,bw,bn,rp,re,bcap,bcl) wire()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64,cp:u64,ce:u64,ccap:u64,ccl:u64)
+  ol:usize = buffer.len(co)
+  needed:usize = const() {"value":16}
+  room:bool = compare.le(needed,ol)
+  branch room sequence(cr,co,cw,cn,cp,ce,ccap,ccl) short()
+block sequence(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sp:u64,se:u64,scap:u64,scl:u64)
+  no_publish:usize = const() {"value":32}
+  status:u32 = call(sr,sw,sp,se,no_publish) {"function":"rfr_scan"}
+  zero:u32 = const() {"value":0}
+  admitted:bool = compare.eq(zero,status)
+  branch admitted count(sr,so,sn,sp,se,scap,scl) refusal(status)
+block count(qr:readbuf,qo:mutbuf,qn:u64,qp:u64,qe:u64,qcap:u64,qcl:u64)
+  eight:u64 = const() {"value":8}
+  pos:u64 = int.add.wrap(qp,eight)
+  count:u64 = call(qr,pos) {"function":"tr_read"}
+  top:u64 = const() {"value":64}
+  profile:bool = compare.le(count,top)
+  branch profile run(qr,qo,qn,qp,qe,qcap,qcl,count) private_cap()
+block run(ar:readbuf,ao:mutbuf,an:u64,ap:u64,ae:u64,acap:u64,acl:u64,ac:u64)
+  totals_status:u32,payload:u64,metadata:u64 = call(ar,an,ap,ae,acap,acl,ac) {"function":"rfp_rows"}
+  ok_code:u32 = const() {"value":0}
+  good:bool = compare.eq(totals_status,ok_code)
+  branch good publish(ao,payload,metadata) refusal(totals_status)
+block publish(po:mutbuf,pp:u64,pm:u64)
+  zero_out:u64 = const() {"value":0}
+  eight_out:u64 = const() {"value":8}
+  wrp:u64 = call(po,zero_out,pp) {"function":"tr_put"}
+  wrm:u64 = call(po,eight_out,pm) {"function":"tr_put"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refusal(err:u32)
+  ret(err)
+block wire()
+  err_wire:u32 = const() {"value":100}
+  ret(err_wire)
+block short()
+  err_short:u32 = const() {"value":102}
+  ret(err_short)
+block private_cap()
+  err_cap:u32 = const() {"value":101}
+  ret(err_cap)
+end
+
+fn rfp_rows(r:readbuf,n:u64,p:u64,e:u64,cap:u64,cl:u64,k:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,n:u64,p:u64,e:u64,cap:u64,cl:u64,k:u64)
+  head:u64 = const() {"value":16}
+  begin:u64 = int.add.wrap(p,head)
+  zero:u64 = const() {"value":0}
+  jump row(r,n,begin,begin,e,cap,cl,k,zero,zero)
+block row(rr:readbuf,rn:u64,rb:u64,rp:u64,rs:u64,rc:u64,rl:u64,rk:u64,rt:u64,rm:u64)
+  plen:u64 = call(rr,rp) {"function":"rfr_be64"}
+  eight:u64 = const() {"value":8}
+  path:u64 = int.add.wrap(rp,eight)
+  tail:u64 = int.add.wrap(path,plen)
+  file_size_at:u64 = const() {"value":1}
+  size_at:u64 = int.add.wrap(tail,file_size_at)
+  fsize:u64 = call(rr,size_at) {"function":"rfr_be64"}
+  collides:bool = call(rr,rb,rp,path,plen) {"function":"rfp_ancestor"}
+  branch collides collision() budgets(rr,rn,rb,rs,rc,rl,rk,rt,rm,plen,tail,fsize)
+block budgets(br:readbuf,bn:u64,bb:u64,bs:u64,bc:u64,bl:u64,bk:u64,bt:u64,bm:u64,bp:u64,ba:u64,bf:u64)
+  new_payload:u64 = int.add.wrap(bt,bf)
+  overflow:bool = compare.lt(new_payload,bt)
+  row_overhead:u64 = const() {"value":128}
+  row_meta:u64 = int.add.wrap(bp,row_overhead)
+  new_meta:u64 = int.add.wrap(bm,row_meta)
+  branch overflow payload_fail() individual(br,bn,bb,bs,bc,bl,bk,new_payload,new_meta,ba,bf)
+block individual(ir:readbuf,in:u64,ib:u64,is:u64,ic:u64,il:u64,ik:u64,it:u64,im:u64,ia:u64,if_:u64)
+  host:u64 = const() {"value":2147483648}
+  individual_ok:bool = compare.le(if_,host)
+  payload_ok:bool = compare.le(it,host)
+  meta_ok:bool = compare.le(im,ic)
+  plan_ok:bool = bool.and(payload_ok,meta_ok)
+  branch individual_ok aggregate(ir,in,ib,is,ic,il,ik,it,im,ia,if_,plan_ok) individual_fail()
+block aggregate(ar:readbuf,an:u64,ab:u64,as_:u64,ac:u64,al:u64,ak:u64,at:u64,am:u64,aa:u64,af:u64,aok:bool)
+  branch aok cells(ar,an,ab,as_,ac,al,ak,at,am,aa,af) plan_fail()
+block cells(cr:readbuf,cn:u64,cb:u64,cs:u64,cc:u64,cell_ctx:u64,ck:u64,ct:u64,cm:u64,ca:u64,cf:u64)
+  cstatus:u32,cp_next:u64,combined:u64 = call(cr,cs,cn,cc,cell_ctx,cm) {"function":"rfp_cells"}
+  low_word:u64 = const() {"value":4294967295}
+  word_bits:u64 = const() {"value":32}
+  bytes:u64 = bit.and(combined,low_word)
+  cm_next:u64 = int.shr.checked(combined,word_bits)
+  valid:u32 = const() {"value":0}
+  passed:bool = compare.eq(cstatus,valid)
+  branch passed check_coverage(cr,cn,cb,cp_next,cc,cell_ctx,ck,ct,cm_next,ca,cf,bytes) refusal(cstatus)
+block check_coverage(dr:readbuf,dn:u64,db:u64,ds:u64,dc:u64,dl:u64,dk:u64,dt:u64,dm:u64,da:u64,df:u64,dbs:u64)
+  covered:bool = compare.eq(df,dbs)
+  branch covered check_empty(dr,dn,db,ds,dc,dl,dk,dt,dm,da,df) coverage_fail()
+block check_empty(er:readbuf,en:u64,eb:u64,es:u64,ec:u64,el:u64,ek:u64,et:u64,em:u64,ea:u64,ef:u64)
+  none:u64 = const() {"value":0}
+  empty:bool = compare.eq(ef,none)
+  empty_allowed:bool = call(er,ea) {"function":"rfp_empty"}
+  nonempty:bool = bool.not(empty)
+  accepts:bool = bool.or(nonempty,empty_allowed)
+  branch accepts advance(er,en,eb,es,ec,el,ek,et,em,ea) empty_fail()
+block advance(vr:readbuf,vn:u64,vb:u64,vs:u64,vc:u64,vl:u64,vk:u64,vt:u64,vm:u64,va:u64)
+  one:u64 = const() {"value":1}
+  trailer:u64 = const() {"value":41}
+  row_next:u64 = int.add.wrap(va,trailer)
+  todo:u64 = int.sub.wrap(vk,one)
+  none_left:u64 = const() {"value":0}
+  finished:bool = compare.eq(todo,none_left)
+  branch finished last(vn,vs,vt,vm) row(vr,vn,vb,row_next,vs,vc,vl,todo,vt,vm)
+block last(ln:u64,ls:u64,lt:u64,lm:u64)
+  exact:bool = compare.eq(ln,ls)
+  branch exact accept(lt,lm) wire()
+block accept(pt:u64,pm:u64)
+  success:u32 = const() {"value":0}
+  ret(success,pt,pm)
+block collision()
+  err_c:u32 = const() {"value":4}
+  jump refusal(err_c)
+block payload_fail()
+  err_p:u32 = const() {"value":5}
+  jump refusal(err_p)
+block individual_fail()
+  err_i:u32 = const() {"value":6}
+  jump refusal(err_i)
+block plan_fail()
+  err_b:u32 = const() {"value":7}
+  jump refusal(err_b)
+block coverage_fail()
+  err_cov:u32 = const() {"value":10}
+  jump refusal(err_cov)
+block empty_fail()
+  err_emp:u32 = const() {"value":11}
+  jump refusal(err_emp)
+block wire()
+  err_wire:u32 = const() {"value":100}
+  jump refusal(err_wire)
+block refusal(err:u32)
+  absent:u64 = const() {"value":0}
+  ret(err,absent,absent)
+end
+
+fn rfp_cells(r:readbuf,p:u64,n:u64,cap:u64,cl:u64,meta:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,n:u64,cap:u64,cl:u64,meta:u64)
+  left:u64 = int.sub.wrap(n,p)
+  eight:u64 = const() {"value":8}
+  fits:bool = compare.le(eight,left)
+  branch fits extent(r,p,n,cap,cl,meta) wire()
+block extent(er:readbuf,ep:u64,en:u64,ec:u64,el:u64,em:u64)
+  count:u64 = call(er,ep) {"function":"tr_read"}
+  max:u64 = const() {"value":4}
+  okay:bool = compare.le(count,max)
+  count_eight:u64 = const() {"value":8}
+  begin:u64 = int.add.wrap(ep,count_eight)
+  zero:u64 = const() {"value":0}
+  branch okay each(er,begin,en,ec,el,em,count,zero) cap_fail()
+block each(ar:readbuf,ap:u64,an:u64,ac:u64,al:u64,am:u64,ak:u64,as_:u64)
+  zero_n:u64 = const() {"value":0}
+  done:bool = compare.eq(ak,zero_n)
+  branch done accept(ap,am,as_) check(ar,ap,an,ac,al,am,ak,as_)
+block check(cr:readbuf,cp:u64,cn:u64,cc:u64,check_ctx:u64,cm:u64,ck:u64,cs:u64)
+  left_c:u64 = int.sub.wrap(cn,cp)
+  eight_c:u64 = const() {"value":8}
+  length_fits:bool = compare.le(eight_c,left_c)
+  branch length_fits extent_cell(cr,cp,cn,cc,check_ctx,cm,ck,cs) wire()
+block extent_cell(xr:readbuf,xp:u64,xn:u64,xc:u64,xl:u64,xm:u64,xk:u64,xs:u64)
+  length:u64 = call(xr,xp) {"function":"tr_read"}
+  eight_x:u64 = const() {"value":8}
+  bytes_at:u64 = int.add.wrap(xp,eight_x)
+  left_x:u64 = int.sub.wrap(xn,bytes_at)
+  cap_x:u64 = const() {"value":1024}
+  fits_x:bool = compare.le(length,left_x)
+  small:bool = compare.le(length,cap_x)
+  branch fits_x bounded(xr,bytes_at,xn,xc,xl,xm,xk,xs,length,small) wire()
+block bounded(br:readbuf,bp:u64,bn:u64,bc:u64,bl:u64,bm:u64,bk:u64,bs:u64,b_len:u64,b_ok:bool)
+  branch b_ok decode(br,bp,bn,bc,bl,bm,bk,bs,b_len) cap_fail()
+block decode(dr:readbuf,dp:u64,dn:u64,dc:u64,dl:u64,dm:u64,dk:u64,ds:u64,d_len:u64)
+  z:u32 = const() {"value":0}
+  decode_status:u32,rows:u64,chunks:u64 = call(dr,dp,d_len) {"function":"cm_decode"}
+  good:bool = compare.eq(z,decode_status)
+  branch good policy(dr,dp,dn,dc,dl,dm,dk,ds,d_len,rows,chunks) wire()
+block policy(fr:readbuf,fp:u64,fn_:u64,fc:u64,fl:u64,fm:u64,fk:u64,fs:u64,f_len:u64,f_rows:u64,f_chunks:u64)
+  size_delta:u64 = const() {"value":48}
+  size_at:u64 = int.sub.wrap(f_rows,size_delta)
+  size:u64 = call(fr,size_at) {"function":"rfr_be64"}
+  four:u64 = const() {"value":4}
+  one:u64 = const() {"value":1}
+  ctx:u64 = int.add.wrap(fp,four)
+  ctx_extent:u64 = int.sub.wrap(size_at,ctx)
+  expect:u64 = const() {"value":32}
+  same_extent:bool = compare.eq(ctx_extent,fl)
+  compare_extent:u64 = select(same_extent,fl,four)
+  same_ctx:bool = call(fr,ctx,expect,compare_extent) {"function":"rfp_equal"}
+  shape:bool = bool.and(same_extent,same_ctx)
+  one_chunk:bool = compare.eq(one,f_chunks)
+  max_size:u64 = const() {"value":4194304}
+  modest:bool = compare.le(size,max_size)
+  geom:bool = bool.and(one_chunk,modest)
+  binds:bool = bool.and(geom,shape)
+  branch binds account(fr,fp,fn_,fc,fl,fm,fk,fs,f_len,size) segment_fail()
+block account(pr:readbuf,pp:u64,pn:u64,pc:u64,pl:u64,pm:u64,pk:u64,ps:u64,p_len:u64,p_size:u64)
+  next_meta:u64 = int.add.wrap(pm,p_len)
+  next_size:u64 = int.add.wrap(ps,p_size)
+  next_pos:u64 = int.add.wrap(pp,p_len)
+  one_a:u64 = const() {"value":1}
+  left_cells:u64 = int.sub.wrap(pk,one_a)
+  within:bool = compare.le(next_meta,pc)
+  branch within each(pr,next_pos,pn,pc,pl,next_meta,left_cells,next_size) meta_fail()
+block accept(ap_:u64,am_:u64,as_more:u64)
+  okay_code:u32 = const() {"value":0}
+  high_bits:u64 = const() {"value":32}
+  shifted_meta:u64 = int.shl.checked(am_,high_bits)
+  packed:u64 = bit.or(shifted_meta,as_more)
+  ret(okay_code,ap_,packed)
+block wire()
+  wire_code:u32 = const() {"value":100}
+  jump failure(wire_code)
+block cap_fail()
+  cap_code:u32 = const() {"value":101}
+  jump failure(cap_code)
+block segment_fail()
+  segment_code:u32 = const() {"value":8}
+  jump failure(segment_code)
+block meta_fail()
+  meta_code:u32 = const() {"value":9}
+  jump failure(meta_code)
+block failure(code:u32)
+  empty_no:u64 = const() {"value":0}
+  ret(code,empty_no,empty_no)
+end
+
+fn rfp_equal(r:readbuf,a:u64,b:u64,n:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,a:u64,b:u64,n:u64)
+  jump check(r,a,b,n)
+block check(cr:readbuf,ca:u64,cb:u64,cn:u64)
+  zero:u64 = const() {"value":0}
+  done:bool = compare.eq(cn,zero)
+  branch done yes() bytes(cr,ca,cb,cn)
+block bytes(br:readbuf,ba:u64,bb:u64,bn:u64)
+  aidx:usize = int.cast(ba) {"mode":"wrap"}
+  bidx:usize = int.cast(bb) {"mode":"wrap"}
+  x:u8 = buffer.load(br,aidx)
+  y:u8 = buffer.load(br,bidx)
+  equal:bool = compare.eq(x,y)
+  one:u64 = const() {"value":1}
+  an:u64 = int.add.wrap(ba,one)
+  bp:u64 = int.add.wrap(bb,one)
+  left:u64 = int.sub.wrap(bn,one)
+  branch equal check(br,an,bp,left) no()
+block yes()
+  t:bool = const() {"value":true}
+  ret(t)
+block no()
+  f:bool = const() {"value":false}
+  ret(f)
+end
+
+fn rfp_ancestor(r:readbuf,p:u64,e:u64,path:u64,n:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,p:u64,e:u64,path:u64,n:u64)
+  jump scan(r,p,e,path,n)
+block scan(sr:readbuf,sp:u64,se:u64,s_path:u64,sn:u64)
+  done:bool = compare.eq(sp,se)
+  branch done no() candidate(sr,sp,se,s_path,sn)
+block candidate(cr:readbuf,cp:u64,ce:u64,c_path:u64,cn:u64)
+  c_n:u64 = call(cr,cp) {"function":"rfr_be64"}
+  head:u64 = const() {"value":8}
+  c_at:u64 = int.add.wrap(cp,head)
+  trailer:u64 = const() {"value":41}
+  e_at:u64 = int.add.wrap(c_at,c_n)
+  next:u64 = int.add.wrap(e_at,trailer)
+  shorter:bool = compare.lt(c_n,cn)
+  branch shorter prefix(cr,next,ce,c_path,cn,c_at,c_n) scan(cr,next,ce,c_path,cn)
+block prefix(pr:readbuf,pp:u64,pe:u64,p_path:u64,pn:u64,pa:u64,pl:u64)
+  at:u64 = int.add.wrap(p_path,pl)
+  idx:usize = int.cast(at) {"mode":"wrap"}
+  byte:u8 = buffer.load(pr,idx)
+  slash:u8 = const() {"value":47}
+  is_break:bool = compare.eq(byte,slash)
+  branch is_break compare(pr,pp,pe,p_path,pn,pa,pl) scan(pr,pp,pe,p_path,pn)
+block compare(fr:readbuf,fp:u64,fe:u64,f_path:u64,fn_:u64,fa:u64,fl:u64)
+  same:bool = call(fr,fa,f_path,fl) {"function":"rfp_equal"}
+  branch same yes() scan(fr,fp,fe,f_path,fn_)
+block yes()
+  t:bool = const() {"value":true}
+  ret(t)
+block no()
+  f:bool = const() {"value":false}
+  ret(f)
+end
+
+fn rfp_empty(r:readbuf,at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,at:u64)
+  idx:usize = int.cast(at) {"mode":"wrap"}
+  typ:u8 = buffer.load(r,idx)
+  interpreter:u8 = const() {"value":0}
+  native:u8 = const() {"value":3}
+  launcher:u8 = const() {"value":7}
+  i:bool = compare.eq(typ,interpreter)
+  n:bool = compare.eq(typ,native)
+  l:bool = compare.eq(typ,launcher)
+  a:bool = bool.or(i,n)
+  executable:bool = bool.or(a,l)
+  not_exec:bool = bool.not(executable)
+  nine:u64 = const() {"value":9}
+  p0:u64 = int.add.wrap(at,nine)
+  eight:u64 = const() {"value":8}
+  p1:u64 = int.add.wrap(p0,eight)
+  p2:u64 = int.add.wrap(p1,eight)
+  p3:u64 = int.add.wrap(p2,eight)
+  h0:u64 = call(r,p0) {"function":"tr_read"}
+  h1:u64 = call(r,p1) {"function":"tr_read"}
+  h2:u64 = call(r,p2) {"function":"tr_read"}
+  h3:u64 = call(r,p3) {"function":"tr_read"}
+  e0:u64 = const() {"value":1449310910991872227}
+  e1:u64 = const() {"value":2646268962349054874}
+  e2:u64 = const() {"value":5517924826087534119}
+  e3:u64 = const() {"value":6176777564751238564}
+  q0:bool = compare.eq(h0,e0)
+  q1:bool = compare.eq(h1,e1)
+  q2:bool = compare.eq(h2,e2)
+  q3:bool = compare.eq(h3,e3)
+  left:bool = bool.and(q0,q1)
+  right:bool = bool.and(q2,q3)
+  digest:bool = bool.and(left,right)
+  empty_ok:bool = bool.and(not_exec,digest)
+  ret(empty_ok)
+end

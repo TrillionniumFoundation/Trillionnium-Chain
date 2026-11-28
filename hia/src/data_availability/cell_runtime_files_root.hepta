@@ -1,39 +1,64 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_cell_runtime_files_root
 fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  output_extent:usize = buffer.len(out)
+  whole:usize = buffer.len(raw)
+  past:u64 = int.cast(whole) {"mode":"wrap"}
+  begin:u64 = const() {"value":0}
+  status:u32 = call(raw,work,begin,past,output_extent) {"function":"rfr_scan"}
+  good:u32 = const() {"value":0}
+  accepted:bool = compare.eq(status,good)
+  branch accepted publish(out,work) refusal(status)
+block publish(uo:mutbuf,uw:mutbuf)
+  digest_at:u64 = const() {"value":1168}
+  out_at:u64 = const() {"value":0}
+  extent_out:u64 = const() {"value":32}
+  copied:u64 = call(uw,digest_at,uo,out_at,extent_out) {"function":"cs_wcopy"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refusal(result:u32)
+  ret(result)
+end
+fn rfr_scan(raw:readbuf,work:mutbuf,base:u64,end:u64,output_extent:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,base:u64,end:u64,output_extent:usize)
   len:usize = buffer.len(raw)
-  n:u64 = int.cast(len) {"mode":"wrap"}
+  avail:u64 = int.cast(len) {"mode":"wrap"}
+  start_ok:bool = compare.le(base,end)
+  end_ok:bool = compare.le(end,avail)
+  in_range:bool = bool.and(start_ok,end_ok)
+  branch in_range basic(raw,work,base,end,output_extent) wire()
+block basic(xr:readbuf,xw:mutbuf,xb:u64,xe:u64,xo:usize)
+  n:u64 = int.sub.wrap(xe,xb)
   head:u64 = const() {"value":16}
   cap:u64 = const() {"value":274704}
   min_ok:bool = compare.le(head,n)
   max_ok:bool = compare.le(n,cap)
   extent:bool = bool.and(min_ok,max_ok)
-  branch extent header(raw,out,work,n) wire()
-block header(hr:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
-  zero:u64 = const() {"value":0}
-  magic:u64 = call(hr,zero) {"function":"tr_read"}
+  branch extent header(xr,xw,xb,xe,xo) wire()
+block header(hr:readbuf,hw:mutbuf,hb:u64,hn:u64,ho:usize)
+  magic:u64 = call(hr,hb) {"function":"tr_read"}
   expected:u64 = const() {"value":827475538}
   match_magic:bool = compare.eq(magic,expected)
-  branch match_magic counts(hr,ho,hw,hn) wire()
-block counts(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
-  count_at:u64 = const() {"value":8}
+  branch match_magic counts(hr,hw,hb,hn,ho) wire()
+block counts(cr:readbuf,cw:mutbuf,cb:u64,cn:u64,co:usize)
+  count_delta:u64 = const() {"value":8}
+  count_at:u64 = int.add.wrap(cb,count_delta)
   count:u64 = call(cr,count_at) {"function":"tr_read"}
   one:u64 = const() {"value":1}
   max_count:u64 = const() {"value":256}
   nonempty:bool = compare.le(one,count)
   bounded:bool = compare.le(count,max_count)
   valid_count:bool = bool.and(nonempty,bounded)
-  branch valid_count capacity(cr,co,cw,cn,count) count_fail()
-block capacity(ar:readbuf,ao:mutbuf,aw:mutbuf,an:u64,ac:u64)
-  out_len:usize = buffer.len(ao)
+  branch valid_count capacity(cr,cw,cb,cn,count,co) count_fail()
+block capacity(ar:readbuf,aw:mutbuf,ab:u64,an:u64,ac:u64,ao:usize)
   work_len:usize = buffer.len(aw)
   out_size:usize = const() {"value":32}
   work_size:usize = const() {"value":1504}
-  out_ok:bool = compare.le(out_size,out_len)
+  out_ok:bool = compare.le(out_size,ao)
   work_ok:bool = compare.le(work_size,work_len)
   space:bool = bool.and(out_ok,work_ok)
-  branch space start(ar,ao,aw,an,ac) short()
-block start(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sc:u64)
+  branch space start(ar,aw,ab,an,ac) short()
+block start(sr:readbuf,sw:mutbuf,sb:u64,sn:u64,sc:u64)
   setup:u64 = call(sw) {"function":"rfr_literals"}
   init:u64 = call(sw) {"function":"tr_sha_init"}
   dom_at:u64 = const() {"value":1208}
@@ -42,43 +67,44 @@ block start(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sc:u64)
   partial:u64 = bit.or(init,dom)
   combined:u64 = bit.or(partial,setup)
   zero_old:u64 = const() {"value":0}
-  first:u64 = const() {"value":16}
+  first_delta:u64 = const() {"value":16}
+  first:u64 = int.add.wrap(sb,first_delta)
   began:bool = compare.eq(combined,zero_old)
-  branch began next_row(sr,so,sw,sn,sc,first,zero_old,zero_old) hash_fail()
-block next_row(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rc:u64,rp:u64,rl:u64,re:u64)
+  branch began next_row(sr,sw,sn,sc,first,zero_old,zero_old) hash_fail()
+block next_row(rr:readbuf,rw:mutbuf,rn:u64,rc:u64,rp:u64,rl:u64,re:u64)
   left:u64 = int.sub.wrap(rn,rp)
   fixed:u64 = const() {"value":49}
   fits:bool = compare.le(fixed,left)
-  branch fits span(rr,ro,rw,rn,rc,rp,rl,re,left) wire()
-block span(fr:readbuf,fo:mutbuf,fw:mutbuf,fn:u64,fc:u64,fp:u64,fl:u64,fe:u64,flft:u64)
+  branch fits span(rr,rw,rn,rc,rp,rl,re,left) wire()
+block span(fr:readbuf,fw:mutbuf,fn:u64,fc:u64,fp:u64,fl:u64,fe:u64,flft:u64)
   length:u64 = call(fr,fp) {"function":"rfr_be64"}
   fixed_row:u64 = const() {"value":49}
   available:u64 = int.sub.wrap(flft,fixed_row)
   span_ok:bool = compare.le(length,available)
-  branch span_ok path(fr,fo,fw,fn,fc,fp,fl,fe,length) wire()
-block path(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pc:u64,pp:u64,pl:u64,pe:u64,psz:u64)
+  branch span_ok path(fr,fw,fn,fc,fp,fl,fe,length) wire()
+block path(pr:readbuf,pw:mutbuf,pn:u64,pc:u64,pp:u64,pl:u64,pe:u64,psz:u64)
   len_size:u64 = const() {"value":8}
   path_start:u64 = int.add.wrap(pp,len_size)
   path_end:u64 = int.add.wrap(path_start,psz)
   max_path:u64 = const() {"value":1024}
   path_bound:bool = compare.le(psz,max_path)
-  branch path_bound path_bytes(pr,po,pw,pn,pc,pp,pl,pe,path_start,path_end) path_fail()
-block path_bytes(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,bc:u64,bp:u64,bl:u64,be:u64,bs:u64,bt:u64)
+  branch path_bound path_bytes(pr,pw,pn,pc,pp,pl,pe,path_start,path_end) path_fail()
+block path_bytes(br:readbuf,bw:mutbuf,bn:u64,bc:u64,bp:u64,bl:u64,be:u64,bs:u64,bt:u64)
   legal:bool = call(br,bs,bt) {"function":"rfr_alphabet"}
   segments:bool = call(br,bs,bt) {"function":"ms_path"}
   valid_path:bool = bool.and(legal,segments)
-  branch valid_path order(br,bo,bw,bn,bc,bp,bl,be,bs,bt) path_fail()
-block order(qr:readbuf,qo:mutbuf,qw:mutbuf,qn:u64,qc:u64,qp:u64,ql:u64,qe:u64,qs:u64,qt:u64)
+  branch valid_path order(br,bw,bn,bc,bp,bl,be,bs,bt) path_fail()
+block order(qr:readbuf,qw:mutbuf,qn:u64,qc:u64,qp:u64,ql:u64,qe:u64,qs:u64,qt:u64)
   ordered:bool = call(qr,ql,qe,qs,qt) {"function":"ms_order"}
-  branch ordered role(qr,qo,qw,qn,qc,qp,qs,qt) order_fail()
-block role(kr:readbuf,ko:mutbuf,kw:mutbuf,kn:u64,kc:u64,kp:u64,ks:u64,kt:u64)
+  branch ordered role(qr,qw,qn,qc,qp,qs,qt) order_fail()
+block role(kr:readbuf,kw:mutbuf,kn:u64,kc:u64,kp:u64,ks:u64,kt:u64)
   kind_idx:usize = int.cast(kt) {"mode":"wrap"}
   kind_byte:u8 = buffer.load(kr,kind_idx)
   kind:u64 = int.cast(kind_byte) {"mode":"wrap"}
   role_count:u64 = const() {"value":11}
   known:bool = compare.lt(kind,role_count)
-  branch known feed(kr,ko,kw,kn,kc,kp,ks,kt,kind) wire()
-block feed(ir:readbuf,io:mutbuf,iw:mutbuf,in:u64,ic:u64,ip:u64,is:u64,it:u64,ik:u64)
+  branch known feed(kr,kw,kn,kc,kp,ks,kt,kind) wire()
+block feed(ir:readbuf,iw:mutbuf,in:u64,ic:u64,ip:u64,is:u64,it:u64,ik:u64)
   path_frame:u64 = int.sub.wrap(it,ip)
   path_hash:u64 = call(ir,ip,path_frame,iw) {"function":"tr_sha_update"}
   slot:u64 = const() {"value":24}
@@ -101,26 +127,22 @@ block feed(ir:readbuf,io:mutbuf,iw:mutbuf,in:u64,ic:u64,ip:u64,is:u64,it:u64,ik:
   hashed:bool = compare.eq(all_hash,zero_hash)
   row_end:u64 = int.add.wrap(size_at,tail_extent)
   left_rows:u64 = int.sub.wrap(ic,inc)
-  branch hashed advance(ir,io,iw,in,left_rows,row_end,is,it) hash_fail()
-block advance(jr:readbuf,jo:mutbuf,jw:mutbuf,jn:u64,jc:u64,jp:u64,js:u64,jt:u64)
+  branch hashed advance(ir,iw,in,left_rows,row_end,is,it) hash_fail()
+block advance(jr:readbuf,jw:mutbuf,jn:u64,jc:u64,jp:u64,js:u64,jt:u64)
   none:u64 = const() {"value":0}
   last:bool = compare.eq(jc,none)
-  branch last finish(jo,jw,jn,jp) next_row(jr,jo,jw,jn,jc,jp,js,jt)
-block finish(fo2:mutbuf,fw2:mutbuf,fn2:u64,fp2:u64)
+  branch last finish(jw,jn,jp) next_row(jr,jw,jn,jc,jp,js,jt)
+block finish(fw2:mutbuf,fn2:u64,fp2:u64)
   exact:bool = compare.eq(fn2,fp2)
-  branch exact finalize(fo2,fw2) wire()
-block finalize(zo:mutbuf,zw:mutbuf)
+  branch exact finalize(fw2) wire()
+block finalize(zw:mutbuf)
   final_status:u64 = call(zw) {"function":"tr_sha_final"}
   z:u64 = const() {"value":0}
   succeeded:bool = compare.eq(final_status,z)
-  branch succeeded publish(zo,zw) hash_fail()
-block publish(uo:mutbuf,uw:mutbuf)
-  digest_at:u64 = const() {"value":1168}
-  out_at:u64 = const() {"value":0}
-  extent_out:u64 = const() {"value":32}
-  copied:u64 = call(uw,digest_at,uo,out_at,extent_out) {"function":"cs_wcopy"}
-  success:u32 = const() {"value":0}
-  ret(success)
+  branch succeeded good_scan() hash_fail()
+block good_scan()
+  good_result:u32 = const() {"value":0}
+  ret(good_result)
 block count_fail()
   bad_count:u32 = const() {"value":1}
   ret(bad_count)

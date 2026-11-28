@@ -2164,6 +2164,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-runtime-files-plan",
+      "node_integration_complete": false,
+      "scope": "Private immutable runtime file plan geometry, context, coverage and budgets on bounded typed declarations only; no clock, filesystem, peers, materialization, custody or authority.",
+      "source": "hia/src/data_availability/cell_runtime_files_plan.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_runtime_files_plan.py",
+        "hia/tests/rust_cell_runtime_files_plan_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-runtime-files-root",
       "node_integration_complete": false,
       "scope": "Private exact runtime-files metadata transcript and SHA-256 over 1–256 caller-supplied immutable rows; no path I/O, segments, materialization or authority.",
