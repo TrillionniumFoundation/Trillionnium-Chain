@@ -108,6 +108,8 @@ def sources():
         "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
         "formal/pon-nakamoto-v1/contract_wire.py",
+        "formal/pon-nakamoto-v1/evaluation.py",
+        "hia/src/model/PAIRED_EVALUATION_SCORE.md",
         "formal/pon-nakamoto-v1/vectors/header.bin",
         "formal/pon-nakamoto-v1/vectors/header-short.bin",
         "formal/pon-nakamoto-v1/vectors/header-version.bin",
