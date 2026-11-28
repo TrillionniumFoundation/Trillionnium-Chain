@@ -1,0 +1,21 @@
+test_asymmetry_dimensions_boolean_and_count_refuse (test_pft_normal_equation_readback.NormalEquationTests.test_asymmetry_dimensions_boolean_and_count_refuse) ... ok
+test_byte_and_packet_bounds_refuse_before_matrix_work (test_pft_normal_equation_readback.NormalEquationTests.test_byte_and_packet_bounds_refuse_before_matrix_work) ... ok
+test_cli_retains_numeric_failure_and_refusal_without_overwrite (test_pft_normal_equation_readback.NormalEquationTests.test_cli_retains_numeric_failure_and_refusal_without_overwrite) ... ok
+test_conditional_equations_do_not_claim_psd_or_global_optimality (test_pft_normal_equation_readback.NormalEquationTests.test_conditional_equations_do_not_claim_psd_or_global_optimality) ... ok
+test_correct_supplied_statistics_and_one_regularizer (test_pft_normal_equation_readback.NormalEquationTests.test_correct_supplied_statistics_and_one_regularizer) ... ok
+test_duplicate_and_conflicting_batch_ids_both_refuse (test_pft_normal_equation_readback.NormalEquationTests.test_duplicate_and_conflicting_batch_ids_both_refuse) ... ok
+test_exact_zero_denominator_has_exact_zero_residual (test_pft_normal_equation_readback.NormalEquationTests.test_exact_zero_denominator_has_exact_zero_residual) ... ok
+test_fixed_threshold_preserves_small_error_and_rejects_larger_error (test_pft_normal_equation_readback.NormalEquationTests.test_fixed_threshold_preserves_small_error_and_rejects_larger_error) ... ok
+test_frozen_profile_digest_constants_and_limits_match (test_pft_normal_equation_readback.NormalEquationTests.test_frozen_profile_digest_constants_and_limits_match) ... ok
+test_fsum_retains_cancellation_term (test_pft_normal_equation_readback.NormalEquationTests.test_fsum_retains_cancellation_term) ... ok
+test_mixed_contract_and_incomplete_head_refuse (test_pft_normal_equation_readback.NormalEquationTests.test_mixed_contract_and_incomplete_head_refuse) ... ok
+test_nan_subnormal_underflow_and_overflow_refuse (test_pft_normal_equation_readback.NormalEquationTests.test_nan_subnormal_underflow_and_overflow_refuse) ... ok
+test_regularization_per_packet_is_not_the_aggregate_objective (test_pft_normal_equation_readback.NormalEquationTests.test_regularization_per_packet_is_not_the_aggregate_objective) ... ok
+test_rehashed_wrong_weight_is_numerically_refused (test_pft_normal_equation_readback.NormalEquationTests.test_rehashed_wrong_weight_is_numerically_refused) ... ok
+test_sample_reuse_within_and_across_batches_refuses (test_pft_normal_equation_readback.NormalEquationTests.test_sample_reuse_within_and_across_batches_refuses) ... ok
+test_wrong_bundle_payload_and_protocol_pins_refuse (test_pft_normal_equation_readback.NormalEquationTests.test_wrong_bundle_payload_and_protocol_pins_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.522s
+
+OK

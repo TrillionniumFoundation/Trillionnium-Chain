@@ -1,0 +1,55 @@
+{
+  "authority": "all provenance, PSD, optimality, useful gain, adoption, use, payment and execution claims remain false",
+  "command": "python3 -B -m unittest discover -s scripts -p test_pft_normal_equation_readback.py -v",
+  "dependency_scope": "Python stdlib and the unchanged #1016 independent identity reader",
+  "file_sha256": {
+    ".github/workflows/chain-paired-acceptance.yml": "2ad9d6629e9af2a6b5f1f475ea1a62984fbfbda46aceb20c7543f43b047c2311",
+    "evidence/pft-normal-equation-readback-20261128/CONTROLS_FIRST_OBSERVATIONS.json": "139a513a545d737b5e7a8f524507d5b4108725aad3203a2a8285b9de89fa5ee6",
+    "evidence/pft-normal-equation-readback-20261128/CONTROLS_FIRST_RUN.log": "52e2e4031042c2ccf3734e2d3dc6e311b729161c3070901a67d94edad31fd5a4",
+    "evidence/pft-normal-equation-readback-20261128/EXPECTED.json": "43d5891c7ebedd69e8af027fe6430134fc86801e20619b14a8c3eb396d40bca1",
+    "evidence/pft-normal-equation-readback-20261128/FROZEN_SOURCE.json": "bc67b3215c5f8289434a7f05cc2e6fa04fec39569b4f34c98ff091dcfe8d1b54",
+    "evidence/pft-normal-equation-readback-20261128/NINE_PARENT_NORMAL_EQUATIONS.json": "8926f1eeb890df6f5efeaee397d490b64c13a90e970ccddec16a5c3327ca549a",
+    "evidence/pft-normal-equation-readback-20261128/PROTOCOL.json": "f45cd7d98f2a3367575ade2608e53ade1b02614ede0f001e3cf39ae7eef51353",
+    "evidence/pft-normal-equation-readback-20261128/README.md": "ca8fec8e1381ce84bcd04687f780aec413669efde104f40b002cbbd8ff559dd3",
+    "evidence/pft-normal-equation-readback-20261128/SYNTHETIC_CANDIDATE.json": "1be853c7b7484602ec11fedefd1b22a5ac6f5d1d5f995db3124cd29614c7a4b4",
+    "evidence/pft-normal-equation-readback-20261128/SYNTHETIC_CONTRIBUTIONS.json": "6e3e0f5e1fbcef23db89423d80f69783e55675842c549bd0f442b92dce79ee01",
+    "scripts/pft_normal_equation_historical_readback.py": "e735e0d0d8f95c5f7f6a28dab59ce34919ba7d8c3884d67f3e08c38e3bc1d801",
+    "scripts/pft_normal_equation_readback.py": "c62d5e9b7d84f78c7af6835cf9e46b57d6ebd2527416a1dbe691c610763ed76a",
+    "scripts/test_pft_normal_equation_readback.py": "00142db7687b4cff086a50121e811bb3bcb540e26bbfa64908fb1e634c8fcfe7"
+  },
+  "first_control_run": {
+    "expected_exception_records": 21,
+    "expected_inconsistent_receipts": 4,
+    "failed": 0,
+    "passed": 16,
+    "recorded_observations": 31,
+    "tests": 16
+  },
+  "full_worktree_materialized": false,
+  "historical_first_run": {
+    "complete_packets_per_parent": 4,
+    "consistent": 9,
+    "declared_samples_per_parent": 192,
+    "exceptions": 0,
+    "max_scaled_backward_error": 4.2177906270975174e-17,
+    "parents": 9,
+    "training_or_final_test_access": false
+  },
+  "local_python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "native_cargo_graph_tests_clippy_rustfmt_run": false,
+  "native_gate_limitation": "cargo and rustc unavailable locally; unchanged full native gates remain required",
+  "numerical_threshold_changed_after_results": false,
+  "predecessor_commit": "1aca36cd5b6f2592af89180a479fe0701076c17e",
+  "preflight": "PASS; original project-preflight, 26 package manifests, original ownership boundaries",
+  "profile_frozen_before_implementation_controls_and_historical_results": true,
+  "protocol_commit": "b981237d3538e02bd537150942d9d1b62a8e72c3",
+  "public_historical_numerical_material": "hashes, shapes and scaled residuals only; no historical weights, G, H, yTy or sample IDs",
+  "schema": "trnm-pft-normal-equation-validation-v1",
+  "structural_checks": {
+    "added_workflow_steps": 2,
+    "first_run_source_hashes_unchanged": true,
+    "local_markdown_links": true,
+    "python_source_compile": true,
+    "workflow_old_steps_permissions_pins_timeout_preserved": true
+  }
+}
