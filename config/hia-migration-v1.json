@@ -2331,6 +2331,21 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-selected",
+      "node_integration_complete": false,
+      "scope": "4-MiB immutable selected Safetensors file validation and bounded exact bytes of one canonically declared named tensor after native full-container digest parity. No caller coordinates, resident handle, file owner, live I/O, loading, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_selected.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_selected.py",
+        "hia/tests/tensor_readback_selected_derivation.py",
+        "hia/tests/tensor_readback_selected_entry.txt",
+        "hia/tests/tensor_readback_selected_tail.txt",
+        "hia/tests/tensor_layout_original.py",
+        "hia/tests/rust_da_cell_tensor_reader_selected_fixture.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-spans",
       "node_integration_complete": false,
       "scope": "Complete immutable Safetensors value readback from 1-MiB JSON with original 16384 tensor and 1024 metadata limits, checked same-header compact spans, bounded interval sorting and actual native container SHA, \u22642-MiB logical frame. No live reader, storage, or authority.",

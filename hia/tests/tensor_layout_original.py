@@ -18,7 +18,10 @@ MAX_CAPTURE = 4 << 20
 MAX_PACKET = 192 << 20
 
 
-def real_layout(directory, stream):
+def real_layout(directory, stream, *, selected=False):
+    # Only these two tracked test-only witnesses can extend the isolated owner.
+    fixture_path = FIXTURE.with_name("rust_da_cell_tensor_reader_selected_fixture.rs") if selected else FIXTURE
+    marker = b"TRNM_DA_TENSOR_SELECTED_EXACT_V1" if selected else MARKER
     if type(stream) is not bytes or not 0 < len(stream) <= MAX_PACKET:
         raise ValueError("Unexpected original synthetic input extent")
     if hashlib.sha256(TENSOR.read_bytes()).hexdigest()!=TENSOR_SHA:
@@ -42,7 +45,7 @@ def real_layout(directory, stream):
     raw=owner.read_bytes()
     if hashlib.sha256(raw).hexdigest()!=TENSOR_SHA or git_blob(raw)!=blobs[rel]:
         raise ValueError("Exact tensor owner was not copied")
-    fixture=unlinked_path(FIXTURE).read_bytes()
+    fixture=unlinked_path(fixture_path).read_bytes()
     witness=owner.with_name(LOCAL)
     capture=directory/"tensor-layout-capture.bin"
     common=["--manifest-path",str(directory/"trillionnium/Cargo.toml"),"--locked","--offline",
@@ -58,7 +61,7 @@ def real_layout(directory, stream):
         if owner.read_bytes()!=raw+APPEND:
             raise ValueError("Not the exact frozen original plus test-only leaf")
         test=observed_artifact(_run([cargo,"test",*common,"--no-run"],env=env),directory,True)
-        if MARKER not in test.read_bytes() or clean.read_bytes()!=pure:
+        if marker not in test.read_bytes() or clean.read_bytes()!=pure:
             raise ValueError("No test-only original artifact, or non-test artifact changed")
         observed=_run([str(test),TEST,"--exact","--test-threads=1"],stream,timeout=55,
                       env={**env,"TRNM_DA_TENSOR_LAYOUT_CAPTURE":str(capture)})
@@ -71,7 +74,7 @@ def real_layout(directory, stream):
         witness.unlink()
     clean.unlink()
     after=observed_artifact(_run([cargo,"build",*common],env=env),directory,False)
-    if after.read_bytes()!=pure or MARKER in pure or witness.exists() or FIXTURE.read_bytes()!=fixture:
+    if after.read_bytes()!=pure or marker in pure or witness.exists() or fixture_path.read_bytes()!=fixture:
         raise ValueError("Restored production artifact differs or contains test witness")
     for rel,sha in blobs.items():
         physical=unlinked_path(ROOT/rel).read_bytes()
@@ -81,6 +84,6 @@ def real_layout(directory, stream):
     if capture.stat().st_size>MAX_CAPTURE:
         raise ValueError("Original capture exceeded its fixed cap")
     data=capture.read_bytes()
-    if not data.startswith(MARKER):
+    if not data.startswith(marker):
         raise ValueError("Missing authentic test-only original marker")
-    return data[len(MARKER):],hashlib.sha256(pure).hexdigest()
+    return data[len(marker):],hashlib.sha256(pure).hexdigest()
