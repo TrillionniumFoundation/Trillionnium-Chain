@@ -17629,6 +17629,111 @@
         ]
       }
     ],
+    "src/data_availability/bep52_magnet_value.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_equal",
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_decode",
+          "cm_family_chars",
+          "cm_hash",
+          "cm_row_sizes"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_dependency_closure.hepta",
+        "functions": [
+          "td_copy"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_snapshot_metadata.hepta",
+        "functions": [
+          "cs_copy"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_decimal",
+          "cs_div",
+          "cs_put_integer"
+        ]
+      },
+      {
+        "source": "src/data_availability/bep52_binding.hepta",
+        "functions": [
+          "bcp_check",
+          "bcp_fill",
+          "bcp_hash_work",
+          "bcp_info",
+          "bcp_move",
+          "bcp_reduce",
+          "bcp_tree"
+        ]
+      },
+      {
+        "source": "src/data_availability/bep52_chunk_proof.hepta",
+        "functions": [
+          "cbp_geometry"
+        ]
+      },
+      {
+        "source": "src/data_availability/bep52_piece_compare.hepta",
+        "functions": [
+          "cbv_info"
+        ]
+      },
+      {
+        "source": "src/verification/integer_linear_context.hepta",
+        "functions": [
+          "il_unhex",
+          "il_hex",
+          "il_ascii_hex_range"
+        ]
+      }
+    ],
     "src/data_availability/bep52_metainfo.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
