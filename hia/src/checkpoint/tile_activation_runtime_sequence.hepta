@@ -2,6 +2,7 @@ hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_runtime_sequence
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
   positional_runtime:bool = const() {"value":true}
-  status:u32 = call(r,o,w,positional_runtime) {"function":"tac_run"}
+  named_root:bool = const() {"value":false}
+  status:u32 = call(r,o,w,positional_runtime,named_root) {"function":"tac_run"}
   ret(status)
 end

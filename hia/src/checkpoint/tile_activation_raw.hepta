@@ -4,12 +4,12 @@ block entry(r:readbuf,o:mutbuf,w:mutbuf)
   no_capture:bool = const() {"value":false}
   input_extent:usize = buffer.len(r)
   input_end:u64 = int.cast(input_extent) {"mode":"wrap"}
-  status:u32 = call(r,w,input_end,no_capture) {"function":"tar_preflight"}
+  status:u32 = call(r,w,input_end,no_capture,no_capture) {"function":"tar_preflight"}
   ret(status)
 end
 
-fn tar_preflight(r:readbuf,w:mutbuf,n:u64,capture:bool) -> (u32) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,n:u64,capture:bool)
+fn tar_preflight(r:readbuf,w:mutbuf,n:u64,capture:bool,rootseq:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,capture:bool,rootseq:bool)
   len:usize = buffer.len(r)
   available:u64 = int.cast(len) {"mode":"wrap"}
   loan:bool = compare.le(n,available)
@@ -19,21 +19,23 @@ block entry(r:readbuf,w:mutbuf,n:u64,capture:bool)
   high:bool = compare.le(n,upper)
   valid_extent:bool = bool.and(low,high)
   fits:bool = bool.and(valid_extent,loan)
-  branch fits identify(r,w,n,capture) frame()
-block identify(ir:readbuf,iw:mutbuf,in:u64,ic:bool)
+  branch fits identify(r,w,n,capture,rootseq) frame()
+block identify(ir:readbuf,iw:mutbuf,in:u64,ic:bool,ics:bool)
   z:u64 = const() {"value":0}
   actual:u64 = call(ir,z) {"function":"tr_read"}
   expected:u64 = const() {"value":827474260}
   matches:bool = compare.eq(actual,expected)
-  branch matches capacity(ir,iw,in,ic) frame()
-block capacity(cr:readbuf,cw:mutbuf,cn:u64,cc:bool)
+  branch matches capacity(ir,iw,in,ic,ics) frame()
+block capacity(cr:readbuf,cw:mutbuf,cn:u64,cc:bool,ccs:bool)
   cap:usize = buffer.len(cw)
   normal:usize = const() {"value":9920}
   project:usize = const() {"value":10448}
-  needed:usize = select(cc,project,normal)
+  regular:usize = select(cc,project,normal)
+  positional:usize = const() {"value":12000}
+  needed:usize = select(ccs,positional,regular)
   room:bool = compare.le(needed,cap)
-  branch room pin(cr,cw,cn,cc) short()
-block pin(pr:readbuf,pw:mutbuf,pn:u64,pc:bool)
+  branch room pin(cr,cw,cn,cc,ccs) short()
+block pin(pr:readbuf,pw:mutbuf,pn:u64,pc:bool,pcs:bool)
   start:u64 = const() {"value":40}
   size:u64 = int.sub.wrap(pn,start)
   a:u64 = call(pw) {"function":"tr_sha_init"}
@@ -43,11 +45,11 @@ block pin(pr:readbuf,pw:mutbuf,pn:u64,pc:bool)
   errors:u64 = bit.or(first,c)
   zero:u64 = const() {"value":0}
   hashed:bool = compare.eq(errors,zero)
-  branch hashed compare(pr,pw,pn,pc) internal()
-block compare(qr:readbuf,qw:mutbuf,qn:u64,qc:bool)
+  branch hashed compare(pr,pw,pn,pc,pcs) internal()
+block compare(qr:readbuf,qw:mutbuf,qn:u64,qc:bool,qcs:bool)
   yes:bool = call(qr,qw) {"function":"tar_pin"}
-  branch yes parse(qr,qw,qn,qc) pin_failed()
-block parse(fr:readbuf,fw:mutbuf,fn_:u64,fc:bool)
+  branch yes parse(qr,qw,qn,qc,qcs) pin_failed()
+block parse(fr:readbuf,fw:mutbuf,fn_:u64,fc:bool,fcs:bool)
   start_json:u64 = const() {"value":40}
   mark_at:u64 = const() {"value":1208}
   mode_one:u64 = const() {"value":1}
@@ -55,8 +57,19 @@ block parse(fr:readbuf,fw:mutbuf,fn_:u64,fc:bool)
   mode:u64 = select(fc,mode_one,mode_zero)
   saved:u64 = call(fw,mark_at,mode) {"function":"tr_put"}
   cleared:u64 = call(fw,mode_one,mode_zero) {"function":"tar_count"}
-  code:u32 = call(fr,fw,fn_,start_json) {"function":"tar_object"}
-  ret(code)
+  first_json:u64 = call(fr,start_json,fn_) {"function":"oj_ws"}
+  token:u64 = call(fr,first_json,fn_) {"function":"oj_peek"}
+  bracket:u64 = const() {"value":91}
+  array:bool = compare.eq(token,bracket)
+  enabled:bool = bool.and(array,fcs)
+  branch enabled positional(fr,fw,fn_,first_json) named(fr,fw,fn_,start_json)
+block positional(xr:readbuf,xw:mutbuf,xn:u64,xp:u64)
+  status_x:u32 = call(xr,xw,xn,xp) {"function":"tar_root_array"}
+  ret(status_x)
+block named(yr:readbuf,yw:mutbuf,yn:u64,yp:u64)
+  embedded:bool = const() {"value":false}
+  status_y:u32,unused:u64 = call(yr,yw,yn,yp,embedded) {"function":"tar_object"}
+  ret(status_y)
 block frame()
   bad_frame:u32 = const() {"value":100}
   ret(bad_frame)
@@ -101,20 +114,25 @@ block entry(r:readbuf,w:mutbuf)
   ret(exact)
 end
 
-fn tar_object(r:readbuf,w:mutbuf,n:u64,p:u64) -> (u32) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,n:u64,p:u64)
+fn tar_object(r:readbuf,w:mutbuf,n:u64,p:u64,embed:bool) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,p:u64,embed:bool)
   opening:u64 = call(r,p,n) {"function":"oj_ws"}
   token:u64 = call(r,opening,n) {"function":"oj_peek"}
   brace:u64 = const() {"value":123}
   is_object:bool = compare.eq(token,brace)
   missing:bool = compare.eq(opening,n)
-  branch missing invalid() root(r,w,n,opening,is_object)
-block root(rr:readbuf,rw:mutbuf,rn:u64,rp:u64,rv:bool)
+  branch missing invalid() root(r,w,n,opening,is_object,embed)
+block root(rr:readbuf,rw:mutbuf,rn:u64,rp:u64,rv:bool,re:bool)
   one_r:u64 = const() {"value":1}
   next:u64 = int.add.wrap(rp,one_r)
-  base:u64 = const() {"value":1216}
+  root_base_r:u64 = const() {"value":1216}
+  inner_base_r:u64 = const() {"value":5568}
+  base:u64 = select(re,inner_base_r,root_base_r)
+  root_depth_r:u64 = const() {"value":0}
+  embedded_depth_r:u64 = const() {"value":2}
+  depth_r:u64 = select(re,embedded_depth_r,root_depth_r)
   zero_r:u64 = const() {"value":0}
-  branch rv opening_obj(rr,rw,rn,next,zero_r,base,zero_r) outside()
+  branch rv opening_obj(rr,rw,rn,next,depth_r,base,zero_r) outside()
 block opening_obj(or_:readbuf,ow:mutbuf,on:u64,op:u64,od:u64,ob:u64,os:u64)
   at:u64 = call(or_,op,on) {"function":"oj_ws"}
   t:u64 = call(or_,at,on) {"function":"oj_peek"}
@@ -158,7 +176,10 @@ block mark(mar:readbuf,maw:mutbuf,man:u64,map:u64,mad:u64,mab:u64,mas:u64,mac:u6
   mark_one:u64 = const() {"value":1}
   mark_id:u64 = int.sub.wrap(mac,mark_one)
   mark_at:u64 = call(mar,map,man) {"function":"oj_ws"}
-  note:u64 = call(maw,mad,mark_id,mark_at) {"function":"tar_mark"}
+  mark_zero:u64 = const() {"value":0}
+  mark_root:bool = compare.eq(mad,mark_zero)
+  mark_group:u64 = select(mark_root,mark_zero,mark_one)
+  note:u64 = call(maw,mark_group,mark_id,mark_at) {"function":"tar_mark"}
   jump value(mar,maw,man,mark_at,mad,mab,mas,mac)
 block value(vr:readbuf,vw:mutbuf,vn:u64,vp:u64,vd:u64,vb:u64,vs:u64,vc:u64)
   val_at:u64 = call(vr,vp,vn) {"function":"oj_ws"}
@@ -200,21 +221,28 @@ block close(er:readbuf,ew:mutbuf,en:u64,ep:u64,ed:u64,es:u64,ec:u64)
   one_e:u64 = const() {"value":1}
   after_close:u64 = int.add.wrap(ep,one_e)
   root_base:u64 = const() {"value":1216}
-  store_count:u64 = call(ew,ed,ec) {"function":"tar_count"}
-  branch top complete(er,en,after_close) delimiter(er,ew,en,after_close,zero_e,root_base,zero_e,es)
+  group_e:u64 = select(top,zero_e,one_e)
+  store_count:u64 = call(ew,group_e,ec) {"function":"tar_count"}
+  embedded_e:u64 = const() {"value":2}
+  end_child:bool = compare.eq(ed,embedded_e)
+  branch end_child okay(after_close) continuation(er,ew,en,after_close,zero_e,root_base,es,top)
+block continuation(gr:readbuf,gw:mutbuf,gn:u64,gp:u64,gz:u64,gb:u64,gs:u64,gt:bool)
+  branch gt complete(gr,gn,gp) delimiter(gr,gw,gn,gp,gz,gb,gz,gs)
 block complete(fr:readbuf,fn_:u64,fp:u64)
   tail:u64 = call(fr,fp,fn_) {"function":"oj_ws"}
   exact:bool = compare.eq(tail,fn_)
-  branch exact okay() invalid()
-block okay()
+  branch exact okay(fp) invalid()
+block okay(accepted_end:u64)
   pass_code:u32 = const() {"value":0}
-  ret(pass_code)
+  ret(pass_code,accepted_end)
 block invalid()
   strict_code:u32 = const() {"value":2}
-  ret(strict_code)
+  strict_zero:u64 = const() {"value":0}
+  ret(strict_code,strict_zero)
 block outside()
   outside_code:u32 = const() {"value":103}
-  ret(outside_code)
+  outside_zero:u64 = const() {"value":0}
+  ret(outside_code,outside_zero)
 end
 
 fn tar_string(r:readbuf,w:mutbuf,p:u64,n:u64,dst:u64,max:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
@@ -498,4 +526,85 @@ block record(rw:mutbuf,rd:u64,rc:u64)
 block done()
   no_write:u64 = const() {"value":0}
   ret(no_write)
+end
+
+fn tar_root_array(r:readbuf,w:mutbuf,n:u64,p:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,p:u64)
+  one:u64 = const() {"value":1}
+  first:u64 = int.add.wrap(p,one)
+  start:u64 = call(r,first,n) {"function":"oj_ws"}
+  token:u64 = call(r,start,n) {"function":"oj_peek"}
+  close:u64 = const() {"value":93}
+  empty:bool = compare.eq(token,close)
+  zero:u64 = const() {"value":0}
+  branch empty complete(r,w,n,start,zero) element(r,w,n,start,zero)
+block element(er:readbuf,ew:mutbuf,en:u64,ep:u64,ek:u64)
+  max:u64 = const() {"value":64}
+  room:bool = compare.lt(ek,max)
+  branch room item(er,ew,en,ep,ek) outside()
+block item(ir:readbuf,iw:mutbuf,in:u64,ip:u64,ik:u64)
+  token_i:u64 = call(ir,ip,in) {"function":"oj_peek"}
+  brace:u64 = const() {"value":123}
+  object:bool = compare.eq(token_i,brace)
+  branch object named(ir,iw,in,ip,ik) regular(ir,iw,in,ip,ik)
+block named(br:readbuf,bw:mutbuf,bn:u64,bp:u64,bk:u64)
+  embedded:bool = const() {"value":true}
+  status:u32,past:u64 = call(br,bw,bn,bp,embedded) {"function":"tar_object"}
+  okay_b:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,okay_b)
+  branch valid save(br,bw,bn,bp,bk,past) refusal(status)
+block regular(rr:readbuf,rw:mutbuf,rn:u64,rp:u64,rk:u64)
+  q:u64 = call(rr,rw,rp,rn) {"function":"tar_value"}
+  bad_r:u64 = const() {"value":18446744073709551615}
+  wide_r:u64 = const() {"value":18446744073709551614}
+  ill:bool = compare.eq(q,bad_r)
+  wide:bool = compare.eq(q,wide_r)
+  branch ill invalid() cap(rr,rw,rn,rp,rk,q,wide)
+block cap(ar:readbuf,aw:mutbuf,an:u64,ap:u64,ak:u64,aq:u64,af:bool)
+  branch af outside() save(ar,aw,an,ap,ak,aq)
+block save(sr:readbuf,sw:mutbuf,sn:u64,sp:u64,sk:u64,sq:u64)
+  needed:u64 = const() {"value":13}
+  store:bool = compare.lt(sk,needed)
+  branch store store_index(sr,sw,sn,sp,sk,sq) follow(sr,sw,sn,sk,sq)
+block store_index(xr:readbuf,xw:mutbuf,xn:u64,xp:u64,xk:u64,xq:u64)
+  base:u64 = const() {"value":11872}
+  stride:u64 = const() {"value":8}
+  off:u64 = int.mul.wrap(xk,stride)
+  pos:u64 = int.add.wrap(base,off)
+  captured:u64 = call(xw,pos,xp) {"function":"tr_put"}
+  jump follow(xr,xw,xn,xk,xq)
+block follow(fr:readbuf,fw:mutbuf,fn_:u64,fk:u64,fq:u64)
+  sep:u64 = call(fr,fq,fn_) {"function":"oj_ws"}
+  byte:u64 = call(fr,sep,fn_) {"function":"oj_peek"}
+  close_f:u64 = const() {"value":93}
+  comma:u64 = const() {"value":44}
+  done:bool = compare.eq(byte,close_f)
+  more:bool = compare.eq(byte,comma)
+  inc:u64 = const() {"value":1}
+  count_f:u64 = int.add.wrap(fk,inc)
+  branch done complete(fr,fw,fn_,sep,count_f) continuation(fr,fw,fn_,sep,count_f,more)
+block continuation(cr:readbuf,cw:mutbuf,cn:u64,cp:u64,ck:u64,cc:bool)
+  one_c:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(cp,one_c)
+  next_field:u64 = call(cr,next,cn) {"function":"oj_ws"}
+  branch cc element(cr,cw,cn,next_field,ck) invalid()
+block complete(dr:readbuf,dw:mutbuf,dn:u64,dp:u64,dk:u64)
+  one_d:u64 = const() {"value":1}
+  end_d:u64 = int.add.wrap(dp,one_d)
+  exact_end:u64 = call(dr,end_d,dn) {"function":"oj_ws"}
+  exact:bool = compare.eq(exact_end,dn)
+  branch exact passed(dw,dk) invalid()
+block passed(pw:mutbuf,pk:u64)
+  root:u64 = const() {"value":0}
+  saved:u64 = call(pw,root,pk) {"function":"tar_count"}
+  good:u32 = const() {"value":0}
+  ret(good)
+block invalid()
+  syntax:u32 = const() {"value":2}
+  ret(syntax)
+block outside()
+  profile:u32 = const() {"value":103}
+  ret(profile)
+block refusal(rs:u32)
+  ret(rs)
 end

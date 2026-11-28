@@ -4,7 +4,7 @@ block entry(r:readbuf,o:mutbuf,w:mutbuf)
   size:usize = buffer.len(r)
   n:u64 = int.cast(size) {"mode":"wrap"}
   named_only:bool = const() {"value":false}
-  status:u32,end:u64 = call(r,w,n,named_only) {"function":"tat_parse_private"}
+  status:u32,end:u64 = call(r,w,n,named_only,named_only) {"function":"tat_parse_private"}
   zero:u32 = const() {"value":0}
   okay:bool = compare.eq(status,zero)
   branch okay capacity(o,w,end) failure(status)
@@ -27,25 +27,25 @@ block failure(code:u32)
   ret(code)
 end
 
-fn tat_parse_private(r:readbuf,w:mutbuf,n:u64,allow:bool) -> (u32,u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,n:u64,allow:bool)
+fn tat_parse_private(r:readbuf,w:mutbuf,n:u64,allow:bool,rootseq:bool) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,allow:bool,rootseq:bool)
   wn:usize = buffer.len(w)
   enough:usize = const() {"value":315000}
   room:bool = compare.le(enough,wn)
-  branch room preflight(r,w,n,allow) short()
-block preflight(pr:readbuf,pw:mutbuf,pn:u64,pa:bool)
+  branch room preflight(r,w,n,allow,rootseq) short()
+block preflight(pr:readbuf,pw:mutbuf,pn:u64,pa:bool,prs:bool)
   yes:bool = const() {"value":true}
-  status:u32 = call(pr,pw,pn,yes) {"function":"tar_preflight"}
+  status:u32 = call(pr,pw,pn,yes,prs) {"function":"tar_preflight"}
   zero:u32 = const() {"value":0}
   passed:bool = compare.eq(status,zero)
-  branch passed counts(pr,pw,pn,pa) failure(status)
-block counts(cr:readbuf,cw:mutbuf,cn:u64,ca:bool)
+  branch passed counts(pr,pw,pn,pa,prs) failure(status)
+block counts(cr:readbuf,cw:mutbuf,cn:u64,ca:bool,crs:bool)
   root_at:u64 = const() {"value":10432}
   root:u64 = call(cw,root_at) {"function":"tr_get"}
   rcount:u64 = const() {"value":13}
   root_ok:bool = compare.eq(root,rcount)
-  branch root_ok prepare(cr,cw,cn,ca) fields()
-block prepare(ar:readbuf,aw:mutbuf,an:u64,aa:bool)
+  branch root_ok prepare(cr,cw,cn,ca,crs) fields()
+block prepare(ar:readbuf,aw:mutbuf,an:u64,aa:bool,ars:bool)
   init:u64 = call(aw) {"function":"tat_keys"}
   z:u64 = const() {"value":0}
   yes_a:u64 = const() {"value":1}
@@ -54,6 +54,15 @@ block prepare(ar:readbuf,aw:mutbuf,an:u64,aa:bool)
   seq_at:u64 = const() {"value":11856}
   set_mode:u64 = call(aw,allow_at,allows) {"function":"tr_put"}
   clear_sequence:u64 = call(aw,seq_at,z) {"function":"tr_put"}
+  json_at:u64 = const() {"value":40}
+  opener:u64 = call(ar,json_at,an) {"function":"oj_ws"}
+  ch:u64 = call(ar,opener,an) {"function":"oj_peek"}
+  bracket:u64 = const() {"value":91}
+  input_array:bool = compare.eq(ch,bracket)
+  root_array:bool = bool.and(ars,input_array)
+  root_mode:u64 = select(root_array,yes_a,z)
+  root_shape_at:u64 = const() {"value":11864}
+  saved_root:u64 = call(aw,root_shape_at,root_mode) {"function":"tr_put"}
   start:u64 = const() {"value":12000}
   end:u64 = call(ar,aw,an,z,start) {"function":"tat_encode"}
   cap_tag:u64 = const() {"value":18446744073709551614}
@@ -114,7 +123,20 @@ block setup(sr:readbuf,sw:mutbuf,sn:u64,si:u64,sd:u64)
   positional:bool = compare.ne(using,zero_mode)
   runtime:bool = bool.not(root)
   use_seq:bool = bool.and(runtime,positional)
-  branch use_seq indexed(sr,sw,sn,si,sd,ty) keyed(sr,sw,sn,si,sd,ty,base,spans,count,key_at,key_len)
+  root_flag_at:u64 = const() {"value":11864}
+  root_flag:u64 = call(sw,root_flag_at) {"function":"tr_get"}
+  pos_root:bool = compare.ne(root_flag,zero_mode)
+  root_pos:bool = bool.and(root,pos_root)
+  branch root_pos root_indexed(sr,sw,sn,si,sd,ty) lookup(sr,sw,sn,si,sd,ty,base,spans,count,key_at,key_len,use_seq)
+block root_indexed(xr:readbuf,xw:mutbuf,xn:u64,xi:u64,xd:u64,xt:u64)
+  root_slots:u64 = const() {"value":11872}
+  scale:u64 = const() {"value":8}
+  rel_root:u64 = int.mul.wrap(xi,scale)
+  where_root:u64 = int.add.wrap(root_slots,rel_root)
+  at_root:u64 = call(xw,where_root) {"function":"tr_get"}
+  jump translate(xr,xw,xn,xi,xd,at_root,xt)
+block lookup(yr:readbuf,yw:mutbuf,yn:u64,yi:u64,yd:u64,yt:u64,yb:u64,ys:u64,yc:u64,ya:u64,yl:u64,yseq:bool)
+  branch yseq indexed(yr,yw,yn,yi,yd,yt) keyed(yr,yw,yn,yi,yd,yt,yb,ys,yc,ya,yl)
 block indexed(ir:readbuf,iw:mutbuf,in:u64,ii:u64,id:u64,it:u64)
   root_fields:u64 = const() {"value":13}
   seq_base:u64 = const() {"value":10176}
