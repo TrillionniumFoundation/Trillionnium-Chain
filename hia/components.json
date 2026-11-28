@@ -7648,6 +7648,16 @@
         ]
       }
     ],
+    "src/state/cell_held_rows.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_read",
+          "cp_put",
+          "cp_copy"
+        ]
+      }
+    ],
     "src/state/integer_training_fused.hepta": [
       {
         "source": "src/state/integer_training_backward.hepta",

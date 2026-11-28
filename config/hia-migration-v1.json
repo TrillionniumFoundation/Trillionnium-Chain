@@ -1148,6 +1148,18 @@
       ]
     },
     {
+      "id": "state/cell-held-rows",
+      "node_integration_complete": false,
+      "scope": "Pure bounded held Cell expert selection, logits, recurrent memory and remaining-step active trainer projection, compared to genuine frozen execute; no inference provenance, actions, training, owner or deployment.",
+      "source": "hia/src/state/cell_held_rows.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_held_rows.py",
+        "hia/tests/cell_held_rows_original.py",
+        "hia/tests/rust_cell_held_rows_reference.rs"
+      ]
+    },
+    {
       "id": "state/integer-training-fused",
       "node_integration_complete": false,
       "scope": "One immutable bounded Cell active row and old coordinate frame computing full original offline loss, backward and exact masked batch update without caller gradient/loss; stock dual/no production or proof, admission or owner.",
@@ -4478,6 +4490,7 @@
         "state/integer-training-batch-update",
         "model/cell-model-canonical",
         "state/integer-training-fused",
+        "state/cell-held-rows",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",

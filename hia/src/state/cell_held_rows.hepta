@@ -1,0 +1,292 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_held_rows_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  n:usize = buffer.len(i)
+  frame_n:u64 = int.cast(n) {"mode":"wrap"}
+  first:u64 = const() {"value":48}
+  enough:bool = compare.le(first,frame_n)
+  branch enough header(i,o,frame_n,first) bad()
+block header(hi:readbuf,ho:mutbuf,hn:u64,hf:u64)
+  z:u64 = const() {"value":0}
+  count_at:u64 = const() {"value":8}
+  tag:u64 = const() {"value":3544385890922157123}
+  m:u64 = call(hi,z) {"function":"cp_read"}
+  c:u64 = call(hi,count_at) {"function":"cp_read"}
+  cmax:u64 = const() {"value":64}
+  valid_magic:bool = compare.eq(m,tag)
+  nonempty:bool = compare.lt(z,c)
+  bounded:bool = compare.le(c,cmax)
+  length_ok:bool = bool.and(nonempty,bounded)
+  valid:bool = bool.and(length_ok,valid_magic)
+  branch valid shape(hi,ho,hn,hf,c) bad()
+block shape(si:readbuf,so:mutbuf,sn:u64,sf:u64,sc:u64)
+  row:u64 = const() {"value":2192}
+  bytes_:u64 = int.mul.wrap(sc,row)
+  needed:u64 = int.add.wrap(sf,bytes_)
+  exact:bool = compare.eq(needed,sn)
+  branch exact memory(si,so,sn,sf,sc) bad()
+block memory(mi:readbuf,mo:mutbuf,mn:u64,mf:u64,mc:u64)
+  a0:u64 = const() {"value":24}
+  a1:u64 = const() {"value":32}
+  a2:u64 = const() {"value":40}
+  mem0:u64 = call(mi,a0) {"function":"cp_read"}
+  mem1:u64 = call(mi,a1) {"function":"cp_read"}
+  mem2:u64 = call(mi,a2) {"function":"cp_read"}
+  memlim:i64 = const() {"value":8192}
+  ok0:bool = call(mem0,memlim) {"function":"cr_between"}
+  ok1:bool = call(mem1,memlim) {"function":"cr_between"}
+  ok2:bool = call(mem2,memlim) {"function":"cr_between"}
+  ok01:bool = bool.and(ok0,ok1)
+  mem_ok:bool = bool.and(ok01,ok2)
+  branch mem_ok domain(mi,mo,mn,mf,mc,mem0,mem1,mem2) bad()
+block domain(di:readbuf,do_:mutbuf,dn:u64,df:u64,dc:u64,dm0:u64,dm1:u64,dm2:u64)
+  rows:bool = call(di,df,dn) {"function":"cr_validate"}
+  branch rows capacity(di,do_,dc,df,dm0,dm1,dm2) bad()
+block capacity(ci:readbuf,co:mutbuf,cc:u64,cf:u64,cm0:u64,cm1:u64,cm2:u64)
+  rem_at:u64 = const() {"value":16}
+  rem0:u64 = call(ci,rem_at) {"function":"cp_read"}
+  enough_rows:bool = compare.le(cc,rem0)
+  active:u64 = select(enough_rows,cc,rem0)
+  rem1:u64 = int.sub.wrap(rem0,active)
+  head:u64 = const() {"value":40}
+  trw:u64 = const() {"value":2096}
+  trmw:u64 = const() {"value":24}
+  rowbytes:u64 = int.mul.wrap(active,trw)
+  tracebytes:u64 = int.mul.wrap(active,trmw)
+  m_at:u64 = int.add.wrap(head,rowbytes)
+  full:u64 = int.add.wrap(m_at,tracebytes)
+  dst:usize = buffer.len(co)
+  dst0:u64 = int.cast(dst) {"mode":"wrap"}
+  fit:bool = compare.le(full,dst0)
+  branch fit write(ci,co,active,cf,head,m_at,cm0,cm1,cm2,rem1) short()
+block write(oi:readbuf,oo:mutbuf,oc:u64,of:u64,oh:u64,ot:u64,om0:u64,om1:u64,om2:u64,or_:u64)
+  f0_:u64,f1_:u64,f2_:u64 = call(oi,oo,oc,of,oh,ot,om0,om1,om2) {"function":"cr_records"}
+  oc_at:u64 = const() {"value":0}
+  or_at:u64 = const() {"value":8}
+  om_at:u64 = const() {"value":16}
+  _oc:u64 = call(oo,oc_at,oc) {"function":"cp_put"}
+  _or:u64 = call(oo,or_at,or_) {"function":"cp_put"}
+  _om:u64 = call(oo,om_at,f0_,f1_,f2_) {"function":"cr_store3"}
+  good:u32 = const() {"value":0}
+  ret(good)
+block bad()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  cap:u32 = const() {"value":102}
+  ret(cap)
+end
+
+fn cr_between(raw:u64,top:i64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:u64,top:i64)
+  zero:i64 = const() {"value":0}
+  x:i64 = int.cast(raw) {"mode":"wrap"}
+  lower:i64 = int.sub.wrap(zero,top)
+  g:bool = compare.ge(x,lower)
+  l:bool = compare.le(x,top)
+  fit:bool = bool.and(g,l)
+  ret(fit)
+end
+
+fn cr_validate(i:readbuf,start:u64,end_:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,start:u64,end_:u64)
+  jump row(i,start,end_)
+block row(ri:readbuf,ra:u64,re:u64)
+  done:bool = compare.eq(ra,re)
+  branch done yes() check(ri,ra,re)
+block check(ci:readbuf,ca:u64,ce:u64)
+  z:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  sev:u64 = const() {"value":7}
+  two:u64 = const() {"value":2}
+  label_at:u64 = int.add.wrap(ca,eight)
+  mask:u64 = call(ci,ca) {"function":"cp_read"}
+  label:u64 = call(ci,label_at) {"function":"cp_read"}
+  has:bool = compare.lt(z,mask)
+  limited:bool = compare.le(mask,sev)
+  labs:bool = compare.le(label,two)
+  proper:bool = bool.and(has,limited)
+  fit:bool = bool.and(proper,labs)
+  branch fit setup(ci,ca,ce) no()
+block setup(si:readbuf,sa:u64,se:u64)
+  lane0:u64 = const() {"value":16}
+  feature0:u64 = const() {"value":136}
+  stride:u64 = const() {"value":2192}
+  lp:u64 = int.add.wrap(sa,lane0)
+  f:u64 = int.add.wrap(sa,feature0)
+  next:u64 = int.add.wrap(sa,stride)
+  jump lanes(si,lp,f,next,se)
+block lanes(li:readbuf,la:u64,lf:u64,ln:u64,le:u64)
+  raw:u64 = call(li,la) {"function":"cp_read"}
+  limit:i64 = const() {"value":67368952}
+  okay:bool = call(raw,limit) {"function":"cr_between"}
+  step:u64 = const() {"value":8}
+  nextp:u64 = int.add.wrap(la,step)
+  endp:bool = compare.eq(nextp,lf)
+  branch okay after_lanes(li,nextp,lf,ln,le,endp) no()
+block after_lanes(ai:readbuf,ap:u64,af:u64,an:u64,ae:u64,ad:bool)
+  branch ad features0(ai,af,an,ae) lanes(ai,ap,af,an,ae)
+block features0(fi:readbuf,ff:u64,fn_:u64,fe:u64)
+  eight_:u64 = const() {"value":8}
+  bias_at:u64 = int.sub.wrap(fn_,eight_)
+  bias:u64 = call(fi,bias_at) {"function":"cp_read"}
+  valid_bias:bool = compare.eq(bias,eight_)
+  abs0:u64 = const() {"value":0}
+  branch valid_bias features(fi,ff,bias_at,fn_,fe,abs0) no()
+block features(vi:readbuf,va:u64,vb:u64,vn:u64,ve:u64,vs:u64)
+  word:u64 = call(vi,va) {"function":"cp_read"}
+  top:i64 = const() {"value":8}
+  typed:bool = call(word,top) {"function":"cr_between"}
+  branch typed mass(vi,va,vb,vn,ve,vs,word) no()
+block mass(ti:readbuf,ta:u64,tb:u64,tn:u64,te:u64,ts:u64,tw:u64)
+  zi:i64 = const() {"value":0}
+  zu:u64 = const() {"value":0}
+  x:i64 = int.cast(tw) {"mode":"wrap"}
+  neg:bool = compare.lt(x,zi)
+  opp:u64 = int.sub.wrap(zu,tw)
+  add:u64 = select(neg,opp,tw)
+  acc:u64 = int.add.wrap(ts,add)
+  bound:u64 = const() {"value":1024}
+  fit2:bool = compare.le(acc,bound)
+  branch fit2 feature_next(ti,ta,tb,tn,te,acc) no()
+block feature_next(xi:readbuf,xa:u64,xb:u64,xn:u64,xe:u64,xs:u64)
+  w:u64 = const() {"value":8}
+  next_f:u64 = int.add.wrap(xa,w)
+  last:bool = compare.eq(next_f,xb)
+  branch last row(xi,xn,xe) features(xi,next_f,xb,xn,xe,xs)
+block yes()
+  one:bool = const() {"value":true}
+  ret(one)
+block no()
+  none:bool = const() {"value":false}
+  ret(none)
+end
+
+fn cr_route(i:readbuf,p:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,p:u64)
+  r0:u64 = const() {"value":40}
+  r1:u64 = const() {"value":48}
+  r2:u64 = const() {"value":56}
+  off0:u64 = int.add.wrap(p,r0)
+  off1:u64 = int.add.wrap(p,r1)
+  off2:u64 = int.add.wrap(p,r2)
+  mask:u64 = call(i,p) {"function":"cp_read"}
+  a:u64 = call(i,off0) {"function":"cp_read"}
+  b:u64 = call(i,off1) {"function":"cp_read"}
+  c:u64 = call(i,off2) {"function":"cp_read"}
+  x0:i64 = int.cast(a) {"mode":"wrap"}
+  x1:i64 = int.cast(b) {"mode":"wrap"}
+  x2:i64 = int.cast(c) {"mode":"wrap"}
+  z:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  m0:u64 = bit.and(mask,one)
+  m1:u64 = bit.and(mask,two)
+  m2:u64 = bit.and(mask,four)
+  y0:bool = compare.ne(m0,z)
+  y1:bool = compare.ne(m1,z)
+  y2:bool = compare.ne(m2,z)
+  floor:i64 = const() {"value":-67368953}
+  s0:i64 = select(y0,x0,floor)
+  s1:i64 = select(y1,x1,floor)
+  s2:i64 = select(y2,x2,floor)
+  bigger1:bool = compare.gt(s1,s0)
+  best:i64 = select(bigger1,s1,s0)
+  idx:u64 = select(bigger1,one,z)
+  bigger2:bool = compare.gt(s2,best)
+  route:u64 = select(bigger2,two,idx)
+  ret(route)
+end
+
+fn cr_class(i:readbuf,p:u64,route:u64,class:u64,old:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,p:u64,route:u64,class:u64,old:u64)
+  eight:u64 = const() {"value":8}
+  b0:u64 = const() {"value":16}
+  d0:u64 = const() {"value":64}
+  rsize:u64 = const() {"value":24}
+  delta_class:u64 = int.mul.wrap(class,eight)
+  base:u64 = int.add.wrap(p,b0)
+  base_at:u64 = int.add.wrap(base,delta_class)
+  route_delta:u64 = int.mul.wrap(route,rsize)
+  delta_base:u64 = int.add.wrap(p,d0)
+  selected:u64 = int.add.wrap(delta_base,route_delta)
+  delta_at:u64 = int.add.wrap(selected,delta_class)
+  base_word:u64 = call(i,base_at) {"function":"cp_read"}
+  delta_word:u64 = call(i,delta_at) {"function":"cp_read"}
+  merged:u64 = int.add.wrap(base_word,delta_word)
+  logit:u64 = int.add.wrap(merged,old)
+  signed:i64 = int.cast(logit) {"mode":"wrap"}
+  z:i64 = const() {"value":0}
+  below:bool = compare.lt(signed,z)
+  above:bool = compare.gt(signed,z)
+  negative:u64 = const() {"value":18446744073709543424}
+  positive:u64 = const() {"value":8192}
+  nil:u64 = const() {"value":0}
+  up:u64 = select(above,positive,nil)
+  direction:u64 = select(below,negative,up)
+  three:u64 = const() {"value":3}
+  bias:u64 = const() {"value":32768}
+  floor_divisor:u64 = const() {"value":4}
+  old3:u64 = int.mul.wrap(old,three)
+  mix:u64 = int.add.wrap(old3,direction)
+  nonnegative:u64 = int.add.wrap(mix,bias)
+  quart:u64 = int.div.checked(nonnegative,floor_divisor)
+  memory:u64 = int.sub.wrap(quart,positive)
+  ret(logit,memory)
+end
+
+fn cr_store3(o:mutbuf,at:u64,m0:u64,m1:u64,m2:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,at:u64,m0:u64,m1:u64,m2:u64)
+  p8:u64 = const() {"value":8}
+  p16:u64 = const() {"value":16}
+  off1:u64 = int.add.wrap(at,p8)
+  off2:u64 = int.add.wrap(at,p16)
+  _m0:u64 = call(o,at,m0) {"function":"cp_put"}
+  _m1:u64 = call(o,off1,m1) {"function":"cp_put"}
+  out:u64 = call(o,off2,m2) {"function":"cp_put"}
+  ret(out)
+end
+
+fn cr_records(i:readbuf,o:mutbuf,count:u64,p:u64,d:u64,t:u64,m0:u64,m1:u64,m2:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,count:u64,p:u64,d:u64,t:u64,m0:u64,m1:u64,m2:u64)
+  jump loop(i,o,count,p,d,t,m0,m1,m2)
+block loop(li:readbuf,lo:mutbuf,lc:u64,lp:u64,ld:u64,lt:u64,lm0:u64,lm1:u64,lm2:u64)
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(lc,z)
+  branch done final(lm0,lm1,lm2) row(li,lo,lc,lp,ld,lt,lm0,lm1,lm2)
+block row(ri:readbuf,ro:mutbuf,rc:u64,rp:u64,rd:u64,rt:u64,rm0:u64,rm1:u64,rm2:u64)
+  c0:u64 = const() {"value":0}
+  c1:u64 = const() {"value":1}
+  c2:u64 = const() {"value":2}
+  eight:u64 = const() {"value":8}
+  sixteen:u64 = const() {"value":16}
+  route:u64 = call(ri,rp) {"function":"cr_route"}
+  lab_at:u64 = int.add.wrap(rp,eight)
+  lab:u64 = call(ri,lab_at) {"function":"cp_read"}
+  l0:u64,mm0:u64 = call(ri,rp,route,c0,rm0) {"function":"cr_class"}
+  l1:u64,mm1:u64 = call(ri,rp,route,c1,rm1) {"function":"cr_class"}
+  l2:u64,mm2:u64 = call(ri,rp,route,c2,rm2) {"function":"cr_class"}
+  label_out:u64 = int.add.wrap(rd,eight)
+  logits_out:u64 = int.add.wrap(rd,sixteen)
+  feat_out0:u64 = const() {"value":40}
+  feat_in0:u64 = const() {"value":136}
+  feat_count:u64 = const() {"value":2056}
+  fo:u64 = int.add.wrap(rd,feat_out0)
+  fi:u64 = int.add.wrap(rp,feat_in0)
+  put_route:u64 = call(ro,rd,route) {"function":"cp_put"}
+  put_label:u64 = call(ro,label_out,lab) {"function":"cp_put"}
+  put_logits:u64 = call(ro,logits_out,l0,l1,l2) {"function":"cr_store3"}
+  put_memory:u64 = call(ro,rt,mm0,mm1,mm2) {"function":"cr_store3"}
+  copy_feat:u64 = call(ri,fi,ro,fo,feat_count) {"function":"cp_copy"}
+  in_size:u64 = const() {"value":2192}
+  out_size:u64 = const() {"value":2096}
+  trace_size:u64 = const() {"value":24}
+  ip:u64 = int.add.wrap(rp,in_size)
+  op:u64 = int.add.wrap(rd,out_size)
+  tp:u64 = int.add.wrap(rt,trace_size)
+  n:u64 = int.sub.wrap(rc,c1)
+  jump loop(ri,ro,n,ip,op,tp,mm0,mm1,mm2)
+block final(f0_:u64,f1_:u64,f2_:u64)
+  ret(f0_,f1_,f2_)
+end
