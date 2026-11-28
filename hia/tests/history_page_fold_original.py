@@ -61,7 +61,7 @@ def extract():
                    work=work,errors=errors,lib=lib,method=method,query=query).items()})
 
 
-def original(where):
+def original(where, *, link=None):
     git=["git","-C",ROOT]
     def check():
         if run([*git,"rev-parse","HEAD:trillionnium"]).decode().strip()!=ORIGINAL:
@@ -102,7 +102,12 @@ rusqlite = {{ version = "=0.41.1", features = ["bundled", "fallible_uint", "hook
     [host]=[s.removeprefix("host: ") for s in run([rustc,"-vV"]).decode().splitlines() if s.startswith("host: ")]
     metadata=json.loads(run([cargo,"metadata","--locked","--offline","--format-version","1",
                              "--filter-platform",host],cwd=where,env=env))
-    tree=run([cargo,"build","--offline","--locked","--message-format=json"],cwd=where,env=env,timeout=120)
+    command=[cargo,"build","--offline","--locked","--message-format=json"]
+    if link is not None:
+        archive,verify=link
+        command[1]="rustc"
+        command.extend(["--","-L",f"native={archive.parent}","-l","static=trnm_history_page_fold_fixture"])
+    tree=run(command,cwd=where,env=env,timeout=120)
     events=[json.loads(x) for x in tree.splitlines()]
     if events[-1]!={"reason":"build-finished","success":True}:
         raise ValueError("No successful pinned SQLite build")
@@ -123,7 +128,11 @@ rusqlite = {{ version = "=0.41.1", features = ["bundled", "fallible_uint", "hook
     assert binary.is_relative_to(target)
     inert=where/"inert"
     inert.mkdir()
+    if link is not None:
+        verify(binary)
     out=run([str(binary)],env={},cwd=inert,timeout=15)
+    if link is not None:
+        verify(binary)
     if any(inert.iterdir()) or check()!=(exact,pins) or (where/"Cargo.lock").read_bytes()!=lock or any(
         (src/name).read_bytes()!=value for name,value in exact.items()
     ):

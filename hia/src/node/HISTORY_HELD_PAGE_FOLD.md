@@ -62,3 +62,25 @@ packet/body, cursor publication, network, reorg, durability, or
 active-State results.
 
     python3 -B -m unittest -v hia.tests.test_node_history_page_fold
+
+## Static link while the original read transaction is held
+
+A separate private test links the stock Selfhost object into the exact
+frozen Rust comparator. The fixture begins a transaction on its
+query-only synthetic in-memory SQLite database and keeps that same
+Rust transaction alive across capture, original fold, and direct
+native call. SQLite itself reports a live read transaction before and
+after the call; the fixture rolls it back and checks that no rows
+changed. Only the immutable projected byte span and two disjoint
+operation-local writable spans cross the native ABI. No SQLite
+handle or path crosses. The test matches the complete ordinary Rust
+observation stream, the full 64 links and 16 retained IDs, initial
+versus later refusals, private scratch prefixes and public output
+canaries. It verifies the entire linked native text, no native imports
+or relocations before linkage, and one exact archive member.
+
+This adds a same-transaction test of Selfhost linkage, not a Node
+integration or replacement of Rust selection/transaction ownership.
+The original dual-backend test is unchanged.
+
+    python3 -B -m unittest -v hia.tests.test_node_history_page_fold_held_link
