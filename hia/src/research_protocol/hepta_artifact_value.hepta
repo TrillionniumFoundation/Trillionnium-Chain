@@ -4,7 +4,16 @@ block entry(b1_r:readbuf,b1_o:mutbuf,b1_w:mutbuf)
   b1_n:usize = buffer.len(b1_r)
   b1_extent:usize = const() {"value":456}
   b1_ok:bool = compare.eq(b1_n,b1_extent)
-  branch b1_ok header(b1_r,b1_o,b1_w) format()
+  branch b1_ok encode(b1_r,b1_o,b1_w) format()
+block encode(r:readbuf,o:mutbuf,w:mutbuf)
+  status:u32 = call(r,o,w) {"function":"hav_encode_prefix"}
+  ret(status)
+block format()
+  code:u32 = const() {"value":100}
+  ret(code)
+end
+
+fn hav_encode_prefix(b2_r:readbuf,b2_o:mutbuf,b2_w:mutbuf) -> (u32) effects(read,write,trap) entry(header)
 block header(b2_r:readbuf,b2_o:mutbuf,b2_w:mutbuf)
   b2_z:u64 = const() {"value":0}
   b2_stamp:u64 = call(b2_r,b2_z) {"function":"tr_read"}

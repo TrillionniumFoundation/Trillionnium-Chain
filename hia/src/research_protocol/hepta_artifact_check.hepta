@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_research_hepta_artifact_check_v1
-fn f0(b1_r:readbuf,b1_o:mutbuf,b1_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
-block entry(b1_r:readbuf,b1_o:mutbuf,b1_w:mutbuf)
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  status:u32 = call(r) {"function":"hav_check"}
+  ret(status)
+end
+
+fn hav_check(b1_r:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b1_r:readbuf)
   b1_n:usize = buffer.len(b1_r)
   b1_small:usize = const() {"value":456}
   b1_large:usize = const() {"value":464}

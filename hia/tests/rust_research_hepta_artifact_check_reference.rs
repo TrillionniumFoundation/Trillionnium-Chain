@@ -14,7 +14,8 @@ fn n(b:&[u8],a:usize)->u64 {u64::from_le_bytes(b[a..a+8].try_into().unwrap())}
 fn d(b:&[u8],a:usize)->[u8;32] {b[a..a+32].try_into().unwrap()}
 fn put(b:&mut [u8],a:usize,v:u64) {b[a..a+8].copy_from_slice(&v.to_le_bytes());}
 
-fn row(out:&mut impl Write, packet:&[u8], now:Option<u64>) {
+fn row(out:&mut impl Write, packet:&[u8], now:Option<u64>, encode:bool) {
+    let now=if encode {Some(now.unwrap_or(255))} else {now};
     let v=V {
         operation_id:ExternalKey::from_bytes(d(packet,40)),artifact_digest:d(packet,72),
         owner_admission_digest:d(packet,104),family_digest:d(packet,136),
@@ -37,38 +38,46 @@ fn row(out:&mut impl Write, packet:&[u8], now:Option<u64>) {
     out.write_all(&(456u32+if now.is_some(){8}else{0}).to_le_bytes()).unwrap();
     out.write_all(packet).unwrap();
     if let Some(time)=now {out.write_all(&time.to_le_bytes()).unwrap();}
+    if encode && status==0 {
+        let cbor=v.canonical_bytes();
+        out.write_all(&v.admission_digest()).unwrap();
+        out.write_all(&(cbor.len() as u64).to_le_bytes()).unwrap();
+        out.write_all(&cbor).unwrap();
+    }
 }
 
-fn main(){
+pub fn run(encode:bool){
     let out=&mut io::stdout().lock();
     let mut normal=[0x4a;456];
     normal[..8].copy_from_slice(b"HAV1\0\0\0\0");
     put(&mut normal,8,1); put(&mut normal,16,1);
     put(&mut normal,24,255); put(&mut normal,32,256);
-    row(out,&normal,None);
-    for time in [254,255,256,257] {row(out,&normal,Some(time));}
+    row(out,&normal,None,encode);
+    for time in [254,255,256,257] {row(out,&normal,Some(time),encode);}
     for (i,at) in DIGESTS.iter().enumerate() {
         let mut bad=normal; bad[*at..*at+32].fill(0);
-        row(out,&bad,None);
+        row(out,&bad,None,encode);
         let mut competing=bad;
         if let Some(later)=DIGESTS.get(i+1) {
             competing[*later..*later+32].fill(0);
         } else {
             put(&mut competing,8,0);
         }
-        row(out,&competing,Some(257));
+        row(out,&competing,Some(257),encode);
     }
     let mut hi=normal; put(&mut hi,8,0); hi[4]=1;
-    row(out,&hi,None);
-    put(&mut hi,8,1); put(&mut hi,16,0); row(out,&hi,None);
-    put(&mut hi,8,2); hi[4]=0; row(out,&hi,None);
-    hi[4]=1; hi[200..232].fill(0); row(out,&hi,None);
-    hi[200]=1; put(&mut hi,24,0); row(out,&hi,Some(999));
-    put(&mut hi,16,67108865); row(out,&hi,None);
-    put(&mut hi,16,67108864); row(out,&hi,None);
-    put(&mut hi,24,257); row(out,&hi,Some(1));
-    put(&mut hi,24,256); put(&mut hi,32,256); row(out,&hi,Some(256));
+    row(out,&hi,None,encode);
+    put(&mut hi,8,1); put(&mut hi,16,0); row(out,&hi,None,encode);
+    put(&mut hi,8,2); hi[4]=0; row(out,&hi,None,encode);
+    hi[4]=1; hi[200..232].fill(0); row(out,&hi,None,encode);
+    hi[200]=1; put(&mut hi,24,0); row(out,&hi,Some(999),encode);
+    put(&mut hi,16,67108865); row(out,&hi,None,encode);
+    put(&mut hi,16,67108864); row(out,&hi,None,encode);
+    put(&mut hi,24,257); row(out,&hi,Some(1),encode);
+    put(&mut hi,24,256); put(&mut hi,32,256); row(out,&hi,Some(256),encode);
     put(&mut hi,24,u64::MAX); put(&mut hi,32,u64::MAX);
-    row(out,&hi,Some(u64::MAX-1)); row(out,&hi,Some(u64::MAX));
-    put(&mut hi,32,0); row(out,&hi,None);
+    row(out,&hi,Some(u64::MAX-1),encode); row(out,&hi,Some(u64::MAX),encode);
+    put(&mut hi,32,0); row(out,&hi,None,encode);
 }
+
+fn main(){run(false);}

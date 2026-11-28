@@ -1,0 +1,21 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_research_hepta_artifact_checked_value_v1
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  n:usize = buffer.len(r)
+  extent:usize = const() {"value":464}
+  sized:bool = compare.eq(n,extent)
+  branch sized check(r,o,w) malformed()
+block check(cr:readbuf,co:mutbuf,cw:mutbuf)
+  status:u32 = call(cr) {"function":"hav_check"}
+  zero:u32 = const() {"value":0}
+  proceed:bool = compare.eq(status,zero)
+  branch proceed emit_checked(cr,co,cw) refused(status)
+block emit_checked(er:readbuf,eo:mutbuf,ew:mutbuf)
+  encoded:u32 = call(er,eo,ew) {"function":"hav_encode_prefix"}
+  ret(encoded)
+block refused(v:u32)
+  ret(v)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+end
