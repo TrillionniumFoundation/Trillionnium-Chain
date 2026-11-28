@@ -18,10 +18,20 @@ MAX_CAPTURE = 4 << 20
 MAX_PACKET = 192 << 20
 
 
-def real_layout(directory, stream, *, selected=False):
-    # Only these two tracked test-only witnesses can extend the isolated owner.
+def real_layout(directory, stream, *, selected=False, window=False):
+    # Only these tracked test-only witnesses can extend the isolated owner.
+    if selected and window:
+        raise ValueError("Select only one original witness")
     fixture_path = FIXTURE.with_name("rust_da_cell_tensor_reader_selected_fixture.rs") if selected else FIXTURE
     marker = b"TRNM_DA_TENSOR_SELECTED_EXACT_V1" if selected else MARKER
+    owner_path, owner_test = TENSOR, TEST
+    owner_sha = TENSOR_SHA
+    if window:
+        fixture_path = FIXTURE.with_name("rust_da_cell_tensor_reader_window_fixture.rs")
+        marker = b"TRNM_DA_TENSOR_WINDOW_EXACT_V1"
+        owner_path = TENSOR.parent / "residency/tensor.rs"
+        owner_sha = "183097dee2b18671da09bc9dce4079139e14aa240fb9c80cab9f36c0d781ec60"
+        owner_test = "cell::residency::tensor::hia_da_tensor_layout_fixture::original_private_layout_observe"
     if type(stream) is not bytes or not 0 < len(stream) <= MAX_PACKET:
         raise ValueError("Unexpected original synthetic input extent")
     if hashlib.sha256(TENSOR.read_bytes()).hexdigest()!=TENSOR_SHA:
@@ -40,10 +50,10 @@ def real_layout(directory, stream, *, selected=False):
         dest.parent.mkdir(parents=True,exist_ok=True)
         with dest.open("xb") as f:
             f.write(original)
-    rel=TENSOR.relative_to(ROOT)
+    rel=owner_path.relative_to(ROOT)
     owner=directory/rel
     raw=owner.read_bytes()
-    if hashlib.sha256(raw).hexdigest()!=TENSOR_SHA or git_blob(raw)!=blobs[rel]:
+    if hashlib.sha256(raw).hexdigest()!=owner_sha or git_blob(raw)!=blobs[rel]:
         raise ValueError("Exact tensor owner was not copied")
     fixture=unlinked_path(fixture_path).read_bytes()
     witness=owner.with_name(LOCAL)
@@ -63,9 +73,9 @@ def real_layout(directory, stream, *, selected=False):
         test=observed_artifact(_run([cargo,"test",*common,"--no-run"],env=env),directory,True)
         if marker not in test.read_bytes() or clean.read_bytes()!=pure:
             raise ValueError("No test-only original artifact, or non-test artifact changed")
-        observed=_run([str(test),TEST,"--exact","--test-threads=1"],stream,timeout=55,
+        observed=_run([str(test),owner_test,"--exact","--test-threads=1"],stream,timeout=55,
                       env={**env,"TRNM_DA_TENSOR_LAYOUT_CAPTURE":str(capture)})
-        if observed.stderr or TEST.encode() not in observed.stdout or b"1 passed" not in observed.stdout:
+        if observed.stderr or owner_test.encode() not in observed.stdout or b"1 passed" not in observed.stdout:
             raise ValueError("Missing genuine private original execution")
         if owner.read_bytes()!=raw+APPEND or witness.read_bytes()!=fixture:
             raise ValueError("Private original test source changed during execution")

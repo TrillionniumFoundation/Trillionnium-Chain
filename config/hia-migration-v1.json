@@ -2392,6 +2392,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-window",
+      "node_integration_complete": false,
+      "scope": "4-MiB immutable selected Safetensors validation and bounded tensor-relative byte window of one declared name after full same-loan native digest. No caller file coordinates, returned resident handles, storage, loading or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_window.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_window.py",
+        "hia/tests/tensor_readback_window_derivation.py",
+        "hia/tests/tensor_layout_original.py",
+        "hia/tests/rust_da_cell_tensor_reader_window_fixture.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-wide",
       "node_integration_complete": false,
       "scope": "Wide 2-MiB immutable Safetensors readback with unchanged ordered layout and real final digest; stock Direct two loans / stock Selfhost private contiguous; no storage or authority.",
