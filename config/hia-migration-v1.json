@@ -1703,6 +1703,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-retention-outer-terms",
+      "node_integration_complete": false,
+      "scope": "Original immutable TCA3 configuration and scalar outer identity/replica/lease/snapshot predicates only; no complete contract verification, commitment, funding, owner or store action",
+      "source": "hia/src/data_availability/cell_version_retention_outer_terms.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_retention_outer_terms.py",
+        "hia/tests/rust_da_cell_version_retention_outer_terms_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-loader-pin-value",
       "node_integration_complete": false,
       "scope": "Original immutable typed loader-context-to-pin role normalization and exact direction-dependent field projection, not policy validation, loader or authority",
@@ -3314,6 +3325,7 @@
         "data-availability/cell-manifest-binding",
         "data-availability/cell-periodic-snapshot-policy",
         "data-availability/cell-chunk-delta-value",
+        "data-availability/cell-version-retention-outer-terms",
         "data-availability/cell-version-loader-pin-value",
         "data-availability/cell-version-catalog-anchor-value",
         "data-availability/cell-declared-recovery-placement",

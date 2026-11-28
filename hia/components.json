@@ -8253,6 +8253,26 @@
         ]
       }
     ],
+    "src/data_availability/cell_version_retention_outer_terms.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_equal_read"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      }
+    ],
     "src/data_availability/cell_version_loader_pin_value.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
