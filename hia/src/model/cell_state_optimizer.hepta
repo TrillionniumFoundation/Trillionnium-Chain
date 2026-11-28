@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_state_optimizer
+fn f0(entry_raw:readbuf,entry_out:mutbuf,entry_work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_raw:readbuf,entry_out:mutbuf,entry_work:mutbuf)
+  off:bool = const() {"value":true}
+  result:u32 = call(entry_raw,entry_out,entry_work,off) {"function":"csv_dispatch"}
+  ret(result)
+end

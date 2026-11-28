@@ -2461,6 +2461,17 @@
       ]
     },
     {
+      "id": "model/cell-state-optimizer-value",
+      "node_integration_complete": false,
+      "scope": "Private original canonical CellState with fixed 3x257 momentum optimizer matrices and signed integers; no state validation, installation or training.",
+      "source": "hia/src/model/cell_state_optimizer.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_state_optimizer.py",
+        "hia/tests/rust_cell_state_optimizer_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-state-value",
       "node_integration_complete": false,
       "scope": "Private original immutable CellState canonical JSON typed value for null optimizer and bounded ASCII/vector; no validation, installation, training or execution.",
