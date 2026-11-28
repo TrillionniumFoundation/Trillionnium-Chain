@@ -2141,6 +2141,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-runtime-files-root",
+      "node_integration_complete": false,
+      "scope": "Private exact runtime-files metadata transcript and SHA-256 over 1–256 caller-supplied immutable rows; no path I/O, segments, materialization or authority.",
+      "source": "hia/src/data_availability/cell_runtime_files_root.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_runtime_files_root.py",
+        "hia/tests/rust_cell_runtime_files_root_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-view-bytes",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable dense bytes: exact CellResidentTensorV1 segment projection, checked copy and F32 little-endian bits. Receives raw backing plus bounded view coordinates only; no admission, loader, store, keys, network, execution or production.",
