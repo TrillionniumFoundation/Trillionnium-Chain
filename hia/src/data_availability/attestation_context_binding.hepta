@@ -9,17 +9,34 @@ block entry(r:readbuf,o:mutbuf,w:mutbuf)
   b:bool = compare.le(n,max)
   good:bool = bool.and(a,b)
   branch good split(r,w,n) malformed()
-block split(s1_b1_sr:readbuf,s1_b1_sw:mutbuf,s1_b1_sn:u64)
-  s1_trailer:u64 = const() {"value":4}
-  s1_end:u64 = int.sub.wrap(s1_b1_sn,s1_trailer)
-  s1_c:u64 = call(s1_b1_sr,s1_end) {"function":"daav_u32"}
-  s1_minc:u64 = const() {"value":133}
-  s1_minb:u64 = const() {"value":305}
-  s1_top:u64 = int.sub.wrap(s1_end,s1_minb)
-  s1_b1_lo:bool = compare.ge(s1_c,s1_minc)
-  s1_b1_hi:bool = compare.le(s1_c,s1_top)
-  s1_b1_good_s:bool = bool.and(s1_b1_lo,s1_b1_hi)
-  branch s1_b1_good_s shape(s1_b1_sr,s1_b1_sw,s1_c,s1_top) malformed()
+block split(raw:readbuf,work:mutbuf,nbytes:u64)
+  four:u64 = const() {"value":4}
+  end_at:u64 = int.sub.wrap(nbytes,four)
+  cut_at:u64 = call(raw,end_at) {"function":"daav_u32"}
+  result:u32 = call(raw,work,cut_at,end_at) {"function":"dabc_bind_at"}
+  ret(result)
+block malformed()
+  command_error:u32 = const() {"value":100}
+  ret(command_error)
+end
+
+fn dabc_bind_at(raw:readbuf,work:mutbuf,cut_at:u64,body_end:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf,cut_at:u64,body_end:u64)
+  rawlen:usize = buffer.len(raw)
+  available:u64 = int.cast(rawlen) {"mode":"wrap"}
+  minc:u64 = const() {"value":133}
+  minb:u64 = const() {"value":305}
+  least:u64 = const() {"value":438}
+  low:bool = compare.ge(body_end,least)
+  high:bool = compare.le(body_end,available)
+  cstart:bool = compare.ge(cut_at,minc)
+  both:bool = bool.and(low,high)
+  ok:bool = bool.and(both,cstart)
+  branch ok bound_shape(raw,work,cut_at,body_end,minb) malformed()
+block bound_shape(x_raw:readbuf,x_work:mutbuf,x_cut:u64,x_end:u64,x_min:u64)
+  x_top:u64 = int.sub.wrap(x_end,x_min)
+  x_ok:bool = compare.le(x_cut,x_top)
+  branch x_ok shape(x_raw,x_work,x_cut,x_top) malformed()
 block shape(s2_b2_hr:readbuf,s2_b2_hw:mutbuf,s2_b2_hc:u64,s2_b2_ht:u64)
   s2_ca:u64 = const() {"value":36}
   s2_at:u64 = int.add.wrap(s2_b2_hc,s2_ca)

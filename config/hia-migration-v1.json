@@ -60,6 +60,18 @@
   ],
   "components": [
     {
+      "id": "data-availability/attestation-verify",
+      "node_integration_complete": false,
+      "scope": "Bounded original strict typed DA attestation verification binding the signed body to its genuine committee and member on one immutable loan; private status only, no vote or production authority.",
+      "source": "hia/src/data_availability/attestation_verify.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_attestation_verify.py",
+        "hia/tests/rust_da_attestation_verify_reference.rs",
+        "hia/tests/test_da_attestation_context_binding.py"
+      ]
+    },
+    {
       "id": "data-availability/attestation-context-binding",
       "node_integration_complete": false,
       "scope": "Bounded original typed DA body context/committee prefix, before any member lookup, signature or vote. No production role.",

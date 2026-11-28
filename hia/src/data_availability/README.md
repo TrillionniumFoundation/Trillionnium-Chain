@@ -616,3 +616,20 @@ The original source comparison enters the public attestation constructor
 with a known nonmember and observes only the body-validation prefix. No
 signature path is reached; success of this private stage does not admit
 an attestation, grant membership, or authorize a vote.
+
+
+### Strict qualification-only DA attestation verifier
+
+`attestation_verify.hepta` takes the original canonical committee and signed
+attestation Borsh on one immutable loan, with the trailing LE32 committee
+extent. It runs the shared original body binding, recomputes the exact
+attestation ID and checks the signature scheme, looks up the actual member
+definition and key, derives the original signing root, and applies the
+existing strict Ed25519 verifier. The native profile returns a status
+without modifying the output loan. It accepts at most 1 MiB, with the
+already fixed 32-member committee and 262,784 scratch-byte limits.
+
+The pinned original Rust qualification creates deterministic isolated toy
+signatures, checks actual valid and invalid typed cases, and compares both
+stock HIA producers. It does not sign in HIA or admit a production vote,
+certificate, live identity, or attestation into the network.

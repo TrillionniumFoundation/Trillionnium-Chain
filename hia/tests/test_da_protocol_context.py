@@ -27,7 +27,7 @@ def _run(argv, data=None, timeout=180, env=None):
                           timeout=timeout, env=env)
 
 
-def locked_reference(directory, stream, caller=CALLER):
+def locked_reference(directory, stream, caller=CALLER, *, extra_externs=()):
     bound = (MANIFEST, WORKSPACE / "Cargo.lock", CRATE / "Cargo.toml",
              CRATE / "src/types.rs", CRATE / "src/lib.rs", CRATE / "src/error.rs",
              ROOT / "rust-toolchain.toml", caller)
@@ -50,9 +50,10 @@ def locked_reference(directory, stream, caller=CALLER):
     if not events or events[-1] != {"reason": "build-finished", "success": True}:
         raise ValueError("No successful original Cargo build observation")
 
-    def expected_artifact(name):
+    def expected_artifact(name, locked_package=None):
         [event] = [row for row in events if row.get("reason") == "compiler-artifact"
-                   and row["target"]["name"] == name and not row["profile"]["test"]]
+                   and row["target"]["name"] == name and not row["profile"]["test"]
+                   and (locked_package is None or row["package_id"].endswith("#" + locked_package))]
         [file] = [unlinked_path(path) for path in event["filenames"] if path.endswith(".rlib")]
         if not file.is_relative_to(target) or file.parent.name != "deps":
             # Cargo reports a top-level duplicate for the primary lib; take the
@@ -74,9 +75,16 @@ def locked_reference(directory, stream, caller=CALLER):
     native = unlinked_path(library_path[7:], directory=True)
     if not native.is_relative_to(target):
         raise ValueError("Original SQLite library is outside the private target")
+    extra = []
+    if len(set(extra_externs)) != len(extra_externs) or set(extra_externs) - {"ed25519_dalek", "sha2"}:
+        raise ValueError("Unexpected locked DA oracle dependency")
+    locked_fixture_packages = {"ed25519_dalek": "ed25519-dalek@3.0.0", "sha2": "sha2@0.10.9"}
+    for name in extra_externs:
+        _, artifact = expected_artifact(name, locked_fixture_packages[name])
+        extra.extend(("--extern", f"{name}={artifact}"))
     exe = directory / "original-da-context"
     _run([rustc, "--edition=2021", "--extern", f"trnm_data_availability={da}",
-          "--extern", f"borsh={borsh}", "-L", f"dependency={target / 'debug/deps'}",
+          "--extern", f"borsh={borsh}", *extra, "-L", f"dependency={target / 'debug/deps'}",
           "-L", f"native={native}", str(caller), "-o", str(exe)], timeout=60)
     result = _run([str(exe)], stream, timeout=30)
     if result.stderr or before != identities():
