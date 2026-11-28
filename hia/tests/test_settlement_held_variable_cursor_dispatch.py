@@ -1,0 +1,330 @@
+"""Actual held original Store replay with measured, bounded widths."""
+from contextlib import ExitStack
+import json
+import sqlite3
+import struct
+import subprocess
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+
+from hia.platform.task_kernel.build_provider import ProviderBuild
+from hia.platform.task_kernel.readback_provider import Reader, check_provider
+from hia.tests.native_support import NativeModule
+from hia.tests.test_settlement_kernel_state_shape import frames
+from hia.tests.test_settlement_schema_read import execute, original_adapter
+from hia.tests.test_settlement_state_root_read import raw_digest
+
+ROOT = Path(__file__).resolve().parents[2]
+OWNER = ROOT / "hia/platform/service_settlement"
+
+
+class SettlementHeldVariableCursorDispatchTests(unittest.TestCase):
+    def test_actual_original_short_rollup_mixed_and_linear_cursor_dispatch(self):
+        with ExitStack() as stack:
+            tmp = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="trnm-m12-var-dispatch-")))
+            original, source = original_adapter(tmp, marker=True, same_block=True)
+            provider = ProviderBuild(source, tmp / "provider").run()
+            proof = Reader()
+            check_provider(proof.read, provider.parent, ROOT)
+            images = {name: stack.enter_context(NativeModule(path, byte_exports=("f0",), backend="selfhost"))
+                      for name, path in {
+                          "uri": ROOT / "hia/src/service_settlement/read_only_store_uri.hepta",
+                          "cursor": OWNER / "held_cursor_variable_dispatch.hepta",
+                          "execution": OWNER / "execution_journal_read.hepta",
+                      }.items()}
+            images["cursor-direct"] = stack.enter_context(NativeModule(
+                OWNER / "held_cursor_variable_dispatch.hepta", byte_exports=("f0",), backend="direct"))
+            for backend in ("direct", "selfhost"):
+                images["mixed-" + backend] = stack.enter_context(NativeModule(
+                    OWNER / "held_mixed_plan_replay.hepta", byte_exports=("f0",), backend=backend))
+            preview_images = {
+                backend: stack.enter_context(NativeModule(
+                    OWNER / "preview_empty_decision.hepta", byte_exports=("f0",), backend=backend))
+                for backend in ("direct", "selfhost")
+            }
+            physical_images = {
+                backend: {
+                    name: stack.enter_context(NativeModule(OWNER / source, byte_exports=("f0",), backend=backend))
+                    for name, source in {
+                        "path_gate": "store_path_preflight.hepta", "header_reader": "store_header_read.hepta",
+                        "post_open_path": "store_post_open_path.hepta",
+                    }.items()
+                }
+                for backend in ("direct", "selfhost")
+            }
+            lifecycle_images = {
+                backend: stack.enter_context(NativeModule(
+                    OWNER / "store_open_lifecycle.hepta", byte_exports=("f0",), backend=backend))
+                for backend in ("direct", "selfhost")
+            }
+            out = tmp / "engine"
+            engine = json.loads(execute([sys.executable, "-B", "-m", "hia.platform.service_settlement.build",
+                                        "--output", out], timeout=200).stdout)
+            self.assertEqual((engine["status"], engine["finalized"]),
+                             ("EIGHT_UNITS_AND_PUBLIC_NATIVE_LINKED_NOT_QUALIFIED", True))
+            owned = tmp / "owned"
+            owned.mkdir(mode=0o700)
+
+            def invoke(path, binding, lane, *, failed=None, ordinal=4, physical=None, lifecycle=None, preview=None):
+                def image(name):
+                    module = images[name]
+                    return [str(module.library), module.artifact_sha256]
+
+                request = {"reader": image(lane), "uri": image("uri"),
+                           "provider": [str(provider), proof.checked[str(provider)]["sha256"]],
+                           "directory": str(owned), "database": str(path),
+                           "journal_binding": binding.hex()}
+                if physical is not None:
+                    request.update({name: [str(module.library), module.artifact_sha256]
+                                    for name, module in physical_images[physical].items()})
+                if lifecycle is not None:
+                    module = lifecycle_images[lifecycle]
+                    request["open_lifecycle"] = [str(module.library), module.artifact_sha256]
+                if preview is not None:
+                    backend, frames = preview
+                    module = preview_images[backend]
+                    request.update(preview_decision=[str(module.library), module.artifact_sha256],
+                                   preview_frames=[raw.hex() for raw in frames])
+                if lane != "execution":
+                    request["first_replay_engine"] = [str(out/"public"), engine["artifact"]["sha256"]]
+                    request["variable_stream_fixture"] = True
+                    if lane.startswith("mixed-"):
+                        request["mixed_plan_fixture"] = True
+                    else:
+                        request["cursor_stream_fixture"] = True
+                if lane != "execution" and (failed is None or lane.startswith("mixed-")):
+                    request["writer"] = str(original)
+                if failed is not None:
+                    request.update(first_replay_fixture_control=failed, first_replay_fixture_control_step=ordinal)
+                answer = execute([sys.executable, "-I", "-S", "-B", OWNER/"schema_fixture_host.py"],
+                                 input=json.dumps(request).encode(), timeout=60)
+                self.assertEqual(answer.stderr, b"")
+                return json.loads(answer.stdout)
+
+            specs = (
+                ("one", "short", (1,), True, None),
+                ("linear-two", "utf8-pair", (1, 4), True, None),
+                ("fixed-same-block", None, (1, 2), True, None),
+                ("measured-same-block", "short-same-block", (1, 2), True, None),
+                ("rollup", "short-rollup", (1, 4, 6), True, None),
+                ("settle", "utf8-settle", (1, 4, 6, "-", "-", 8), True, None),
+                ("linear-six", "utf8-linear-admits", (1, 2, 3, 4, 5, 6), True, None),
+                ("wrong-third-kind", "short-linear-admits", (1, 2, 3), False, 2),
+                ("wrong-four-markers", "utf8-linear-admits", (1, 2, 3, 4), False, 0),
+            )
+            for name, fixture, indices, accepted, denied_after in specs:
+                with self.subTest(fixture=name):
+                    fixture_cmd = [tmp/"same-block-fixture"] + ([fixture] if fixture else [])
+                    fields = list(frames(execute(fixture_cmd).stdout))
+                    trust = fields[0]
+                    paths = {}
+                    for index in (0, *(i for i in indices if i != "-")):
+                        paths[index] = tmp/f"{name}-{index}"
+                        paths[index].write_bytes(fields[index])
+                    db = owned/f"actual {name} checked dispatch #?.db"
+                    seed = "seed-same-block" if "same-block" in name else "seed-receipts"
+                    held = execute([original, seed, db, paths[0], "0",
+                                    *(paths[i] if i != "-" else "-" for i in indices)]).stdout
+                    pristine = db.read_bytes()
+                    original_out = execute([original, "verify-journal", db, paths[0]]).stdout
+                    settled, expected_root, terminal, *rows = frames(execute(
+                        [original, "observe-settled-state-id", db, paths[0]]).stdout)
+                    count = sum(i != "-" for i in indices)
+                    command = [fields[i] for i in indices if i != "-"]
+                    self.assertEqual(rows[1::3], command)
+                    self.assertEqual(len(rows), 3*count)
+                    self.assertEqual(expected_root, raw_digest(terminal))
+                    self.assertEqual(settled[0], int(name == "settle"))
+                    if "same-block" in name:
+                        first, second = rows[0], rows[3]
+                        self.assertEqual(first[-40:], second[-40:])
+                        self.assertEqual(second[-80:-40], first[-40:])
+                        dimensions = (len(held) - 104, len(first), len(terminal))
+                        if name == "fixed-same-block":
+                            self.assertEqual(dimensions, (914, 163, 2172))
+                        else:
+                            for actual_width, old_width in zip(dimensions, (914, 163, 2172), strict=True):
+                                self.assertNotEqual(actual_width, old_width)
+                    cursor = invoke(db, held, "cursor")
+                    independent = invoke(db, held, "execution")
+                    self.assertEqual(independent["status"], 0, independent)
+                    self.assertEqual(bytes.fromhex(independent["projection"]), original_out)
+                    self.assertTrue(cursor["held"])
+                    if name == "fixed-same-block":
+                        self.assertEqual(cursor["replay_profile"], 5)
+                    if name == "measured-same-block":
+                        self.assertEqual(cursor["replay_profile"], 11)
+                        alternate = invoke(db, held, "cursor-direct")
+                        self.assertEqual(alternate, cursor)
+                        bad_parent = invoke(db, held, "cursor", failed="root", ordinal=1)
+                        self.assertEqual((bad_parent["status"], bad_parent["projection"], bad_parent["replay_calls"],
+                                          bad_parent["replay_profile"]), (100, None, 1, 11))
+                        self.assertGreater(bad_parent["released"], 0)
+                    if accepted:
+                        self.assertEqual((cursor["status"], cursor["replay_calls"], cursor["replay_locks"],
+                                          cursor["released"]), (0, count, count, 0), cursor)
+                        self.assertEqual(bytes.fromhex(cursor["projection"]), original_out)
+                        self.assertEqual(cursor["transcript"], independent["transcript"])
+                        self.assertEqual(cursor["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                        if name == "settle":
+                            for lane in ("mixed-selfhost", "mixed-direct"):
+                                with self.subTest(planned=lane):
+                                    planned = invoke(db, held, lane)
+                                    self.assertEqual(planned, {**cursor, "replay_profile": 13})
+                            drift = invoke(db, held, "mixed-selfhost", failed="root", ordinal=3)
+                            self.assertEqual((drift["status"], drift["projection"], drift["replay_calls"]),
+                                             (100, None, 3))
+                            self.assertEqual(drift["released"], 0)
+                            self.assertEqual(drift["transcript"][-2:], [[57, 9, 24], [58, 3, 24]])
+                            later = owned / "mixed after original trailing checkpoint.db"
+                            trailing_binding = execute([original, "seed-receipts", later, paths[0], "0",
+                                                        *(paths[i] if i != "-" else "-" for i in indices), "-"]).stdout
+                            trailing_ref = execute([original, "verify-journal", later, paths[0]]).stdout
+                            self.assertNotEqual(trailing_ref, original_out)
+                            trailing_before = later.read_bytes()
+                            for lane in ("mixed-selfhost", "mixed-direct"):
+                                with self.subTest(trailing=lane):
+                                    trailing = invoke(later, trailing_binding, lane)
+                                    self.assertEqual((trailing["status"], trailing["replay_profile"], trailing["replay_calls"],
+                                                      trailing["replay_locks"], trailing["released"]), (0, 13, 4, 4, 0))
+                                    self.assertEqual(bytes.fromhex(trailing["projection"]), trailing_ref)
+                            self.assertEqual(later.read_bytes(), trailing_before)
+                            for backend in physical_images:
+                                with self.subTest(physical=backend):
+                                    fully_held = invoke(db, held, "cursor", physical=backend)
+                                    self.assertEqual(fully_held, {
+                                        **cursor, "path_checks": [[i, 15, 24] for i in range(1, 5)],
+                                        "header_checks": [[17, 24], [29, 44], [18, 24]], "post_open_checks": [[15, 24]],
+                                        "transcript": [cursor["transcript"][0], [1, 15, 24], *cursor["transcript"][1:]],
+                                    })
+                            for backend in lifecycle_images:
+                                with self.subTest(composed=backend):
+                                    composed = invoke(db, held, "cursor", lifecycle=backend)
+                                    trace = [[1, 15, 24]] * 4 + [[3, 17, 24], [3, 29, 44], [3, 18, 24],
+                                                               [5, 2, 24], [6, 15, 24]]
+                                    self.assertEqual(composed, {
+                                        **cursor, "open_lifecycle": trace,
+                                        "transcript": [cursor["transcript"][0], [1, 15, 24], *cursor["transcript"][1:]],
+                                    })
+                        refused = invoke(db, held, "cursor", failed="root", ordinal=count)
+                        self.assertEqual((refused["status"], refused["projection"], refused["replay_calls"]),
+                                         (100, None, count), refused)
+                        self.assertGreater(refused["released"], 0)
+                    else:
+                        if name == "wrong-four-markers":
+                            rejected_plan = invoke(db, held, "mixed-selfhost")
+                            self.assertEqual((rejected_plan["status"], rejected_plan["projection"]),
+                                             (100, None), rejected_plan)
+                        self.assertEqual((cursor["status"], cursor["projection"], cursor["replay_calls"],
+                                          cursor["replay_locks"]), (100, None, denied_after, denied_after), cursor)
+                        self.assertGreater(cursor["released"], 0)
+                        self.assertNotIn(56, [phase for phase, _, _ in cursor["transcript"]])
+                    self.assertEqual(db.read_bytes(), pristine)
+                    self.assertFalse(db.with_name(db.name+"-journal").exists())
+
+            fields = list(frames(execute([tmp/"same-block-fixture", "utf8-same-settle"]).stdout))
+            case_paths = {i: tmp / f"coalesced-{i}" for i in (0, 1, 4, 6, 8)}
+            for i, path in case_paths.items():
+                path.write_bytes(fields[i])
+            case = owned / "real mixed same-block range #?.db"
+            bound = execute([original, "seed-mixed-same-block", case, case_paths[0], "0",
+                             case_paths[1], case_paths[4], case_paths[6], "-", "-", case_paths[8]]).stdout
+            reference = execute([original, "verify-journal", case, case_paths[0]]).stdout
+            before = case.read_bytes()
+            original_release = execute([original, "observe-snapshot-release", case])
+            self.assertEqual((original_release.stdout, original_release.stderr), (b"BUSY\nROLLED_BACK\n", b""))
+            self.assertEqual(execute([original, "verify-journal", case, case_paths[0]]).stdout, reference)
+            _, _, markers = frames(execute([original, "observe-actual-journal-prefixes", case, case_paths[0]]).stdout)
+            self.assertEqual([item[:2] for item in struct.iter_unpack("<QQ32s32s", markers)],
+                             [(0, 0), (0, 1), (1, 3), (3, 3), (3, 3), (3, 4)])
+            _, _, _, *rows = frames(execute([original, "observe-settled-state-id", case, case_paths[0]]).stdout)
+            second, third = rows[3], rows[6]
+            self.assertEqual((second[-40:], third[-40:]), (third[-80:-40], third[-80:-40]))
+            self.assertEqual(struct.unpack("<Q", third[-40:-32])[0], 11)
+            prior_cursor = invoke(case, bound, "cursor")
+            self.assertEqual((prior_cursor["status"], prior_cursor["projection"]), (100, None))
+            self.assertLess(prior_cursor["replay_calls"], 4)
+            independent = invoke(case, bound, "execution")
+            self.assertEqual(bytes.fromhex(independent["projection"]), reference)
+            for lane in ("mixed-selfhost", "mixed-direct"):
+                with self.subTest(original_mixed_same_block=lane):
+                    native = invoke(case, bound, lane)
+                    self.assertEqual((native["status"], native["replay_profile"], native["replay_calls"],
+                                      native["replay_locks"], native["released"]), (0, 13, 4, 4, 0))
+                    self.assertEqual(bytes.fromhex(native["projection"]), reference)
+                    self.assertEqual(native["transcript"], independent["transcript"])
+                    self.assertEqual(native["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                    wrong = invoke(case, bound, lane, failed="parent", ordinal=3)
+                    self.assertEqual((wrong["status"], wrong["projection"], wrong["replay_calls"]), (100, None, 3))
+                    self.assertEqual((wrong["replay_locks"], wrong["released"]), (3, 0))
+                    self.assertEqual(wrong["transcript"][-2:], [[57, 9, 24], [58, 3, 24]])
+                    released = execute([original, "try-exclusive", case])
+                    self.assertEqual((released.stdout, released.stderr), (b"ROLLED_BACK\n", b""))
+                    cold = execute([original, "verify-journal", case, case_paths[0]])
+                    self.assertEqual((cold.stdout, cold.stderr), (reference, b""))
+            self.assertEqual(case.read_bytes(), before)
+            self.assertFalse(case.with_name(case.name + "-journal").exists())
+
+            bad_row = owned / "owned operation checksum drift.db"
+            bad_row.write_bytes(before)
+            checks = execute([original, "inspect-operation-checksums", bad_row, case_paths[0]]).stdout
+            with sqlite3.connect(bad_row) as owned_writer:
+                checksum, = owned_writer.execute("SELECT checksum FROM operations WHERE sequence=1").fetchone()
+                self.assertEqual(checksum, checks[8:40])
+                drift = bytes([checksum[0] ^ 1]) + checksum[1:]
+                altered = owned_writer.execute("UPDATE operations SET checksum=? WHERE sequence=1", (drift,))
+                self.assertEqual(altered.rowcount, 1)
+            owned_writer.close()
+            self.assertEqual(execute([original, "inspect-journal-root", bad_row, case_paths[0]]).stdout,
+                             reference[-32:])
+            drifted = bad_row.read_bytes()
+            inherited = invoke(bad_row, bound, "cursor")
+            self.assertEqual((inherited["status"], inherited["projection"], inherited["replay_calls"]),
+                             (100, None, 0))
+            self.assertGreater(inherited["released"], 0)
+            self.assertEqual(inherited["transcript"][-1][:2], [54, 8])
+            for lane in ("mixed-selfhost", "mixed-direct"):
+                with self.subTest(actual_durable_row_checksum=lane):
+                    native_bad = invoke(bad_row, bound, lane)
+                    self.assertEqual((native_bad["status"], native_bad["projection"], native_bad["held"],
+                                      native_bad["replay_calls"], native_bad["released"]), (100, None, True, 0, 0))
+                    self.assertEqual(native_bad["transcript"][-3:], [[54, 8, 173], [57, 9, 24], [58, 3, 24]])
+                    self.assertEqual(execute([original, "try-exclusive", bad_row]).stdout, b"ROLLED_BACK\n")
+                    cold = subprocess.run([original, "verify-journal", bad_row, case_paths[0]],
+                                          capture_output=True, timeout=45, check=False)
+                    self.assertNotEqual(cold.returncode, 0)
+                    self.assertEqual(cold.stdout, b"")
+                    self.assertIn(b"journal row checksum differs", cold.stderr)
+            self.assertEqual(bad_row.read_bytes(), drifted)
+            self.assertFalse(bad_row.with_name(bad_row.name + "-journal").exists())
+            self.assertEqual(execute([original, "verify-journal", case, case_paths[0]]).stdout, reference)
+
+            later_preview = owned / "original preview source after the next empty commit.db"
+            later_binding = execute([original, "seed-mixed-same-block", later_preview, case_paths[0], "1",
+                                    case_paths[1], case_paths[4], case_paths[6], "-", "-", case_paths[8]]).stdout
+            later_original = execute([original, "verify-journal", later_preview, case_paths[0]]).stdout
+            preview_pristine = later_preview.read_bytes()
+            requests, decisions = [], []
+            for expected, what in ((later_preview, "fresh"), (later_preview, "zero"), (later_preview, "head"),
+                                   (later_preview, "historical"), (later_preview, "wrong-height"), (case, "fresh")):
+                frame, expected_result = frames(execute([original, "observe-preview-empty", later_preview,
+                                                         case_paths[0], expected, what]).stdout)
+                requests.append(frame)
+                code, = struct.unpack_from("<I", expected_result)
+                decisions.append([code, expected_result[4:].hex() if code == 0 else None])
+            self.assertEqual([result[0] for result in decisions], [0, 100, 100, 100, 100, 100])
+            for backend in preview_images:
+                with self.subTest(empty_preview_from_actual_closed_snapshot=backend):
+                    got = invoke(later_preview, later_binding, "mixed-" + backend, preview=(backend, requests))
+                    self.assertEqual(got["preview_decisions"], decisions)
+                    self.assertEqual(bytes.fromhex(got["projection"]), later_original)
+                    self.assertEqual((got["status"], got["released"], got["replay_calls"], got["replay_locks"]),
+                                     (0, 0, 4, 4))
+                    self.assertEqual(got["transcript"][-2:], [[55, 9, 24], [56, 3, 24]])
+                    # A fresh native cold reopen independently rechecks the audited parent.
+                    cold = invoke(later_preview, later_binding, "mixed-" + backend)
+                    self.assertEqual(cold, {k: v for k, v in got.items() if k != "preview_decisions"})
+            self.assertEqual(later_preview.read_bytes(), preview_pristine)
+            self.assertFalse(later_preview.with_name(later_preview.name + "-journal").exists())

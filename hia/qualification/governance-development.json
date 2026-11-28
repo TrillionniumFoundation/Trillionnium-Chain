@@ -1,0 +1,227 @@
+{
+  "archive": {
+    "all_declared_members_read_completely": true,
+    "bytes": 10476388,
+    "logical_bytes": 133923823,
+    "logical_name": "governance-development.tar.xz",
+    "manifest": "governance-development.parts/manifest.json",
+    "member_index": "MANIFEST.json",
+    "member_index_identity": {
+      "bytes": 460562,
+      "sha256": "efd6d8ee20baf3587c32fbbe7fa250c5f5351a626c311aa7d3d7011a4683d062"
+    },
+    "parts": 2,
+    "physical_volume_readback": "PASS",
+    "regular_members": 2341,
+    "sha256": "463424d8dbbf64745e409f797d15b8bec8562717758fc0c912ad01e4e5944e8e",
+    "single_xz_stream": true,
+    "tar_tail_all_zero": true
+  },
+  "base_commit": "88dd3c4afa80fd87284f4a114e3868ee6c5d4ed4",
+  "failure_reporting_controls": {
+    "actual_old_one_method_assertion": "FAIL",
+    "actual_process_controls": [
+      [
+        "failure-control-timeout",
+        "timeout",
+        null
+      ],
+      [
+        "failure-control-missing",
+        "spawn",
+        null
+      ],
+      [
+        "failure-control-class-setup",
+        "exit",
+        1
+      ],
+      [
+        "native-delegate-failure-0000",
+        "timeout",
+        null
+      ]
+    ],
+    "final_roster_methods": 10,
+    "full_current_source_snapshot": true,
+    "one_of_nine_old_roster": "INCOMPLETE despite unittest exit 0"
+  },
+  "final_execution": {
+    "actual_allocation_refusals": 11,
+    "actual_original_comparisons": 94,
+    "allocator_runs": 12,
+    "complete_report_member": "final/report.json",
+    "complete_report_sha256": "5a6138e675b317637a727ac06511dc35f2b9b27baabcf7d1594135df49cbe3c4",
+    "finalized": true,
+    "fixed_fixture_operations": 193,
+    "native_calls": 144,
+    "native_processes": 100,
+    "original_retained_tests": {
+      "audit": 3,
+      "governance": 45
+    },
+    "public_operations": 6185,
+    "source_inputs": {
+      "config/hia-migration-v1.json": {
+        "bytes": 52198,
+        "sha256": "18c6602f3461bd31ed924590e09d6d8e2222d36a62a13a57c76a2be329dffea2"
+      },
+      "hia/components.json": {
+        "bytes": 45948,
+        "sha256": "2a8195251a1c58d8345300d0b2d463a0086140f433f22c3c4462cfa97a53cd52"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/src/escrow/vault.hepta": {
+        "bytes": 102628,
+        "sha256": "71abae6d2a374763d225a93d85111babce026f3693cf8968934777b024e36b5a"
+      },
+      "hia/src/governance/README.md": {
+        "bytes": 5895,
+        "sha256": "27f0e7aa6fc894f95ac08deba78982a81040410879c0b66429038dd292532838"
+      },
+      "hia/src/governance/boundary_fixture.hepta": {
+        "bytes": 63575,
+        "sha256": "c777a83189de0b94e88bf99edb380da19466a4012d6c483420bde7d7c2bca7a6"
+      },
+      "hia/src/governance/guard.hepta": {
+        "bytes": 156629,
+        "sha256": "ba1de1302c47a7d21427f012ddcab2a9583e50f544f77edebfb590be7f4b3155"
+      },
+      "hia/tests/escrow_native.py": {
+        "bytes": 10073,
+        "sha256": "33b90416fe1d9e5bb7f41e3dad05d1ee36dacd4cf8ee33de0bc6e251db1cd523"
+      },
+      "hia/tests/governance_native.py": {
+        "bytes": 871,
+        "sha256": "3eb84eda9e7e636646481cae8c8f477f86504a67a2d0753eb7b01f744cb6328c"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/tests/rust_governance_boundary.rs": {
+        "bytes": 21716,
+        "sha256": "6d2709203441ab8c43989a3e53f5dd140718e31830a8f730ae31fe95746621be"
+      },
+      "hia/tests/rust_governance_reference.rs": {
+        "bytes": 3883,
+        "sha256": "c6596d459e8bc75b548484cbae4db5af72458e735fb75a9c8e58941610bd2a98"
+      },
+      "hia/tests/rust_governance_wire.rs": {
+        "bytes": 5908,
+        "sha256": "eabee91c4858b5313f64414d1d69bfb2b484a6a3867eab0bfb4605bc13b9dc54"
+      },
+      "hia/tests/test_governance.py": {
+        "bytes": 42986,
+        "sha256": "18a3e58163f15f9aaa1bf57f57d68f35aaaef005e3c15d3145e83dbf6d858f55"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      },
+      "trillionnium/crates/trnm-audit-events/Cargo.toml": {
+        "bytes": 273,
+        "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+      },
+      "trillionnium/crates/trnm-audit-events/src/lib.rs": {
+        "bytes": 3026,
+        "sha256": "ef8f10252e5e585a278b384aa5cb2ecb20965e0216eea698d58a90df3afcf556"
+      },
+      "trillionnium/crates/trnm-governance-guard/Cargo.toml": {
+        "bytes": 351,
+        "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf"
+      },
+      "trillionnium/crates/trnm-governance-guard/src/lib.rs": {
+        "bytes": 79772,
+        "sha256": "ce43b729794d4f83f4179efe823029c7d5910647dcca5b9e8f20200b6c327ad9"
+      }
+    },
+    "source_unchanged": true,
+    "status": "PASS",
+    "test_methods": 10,
+    "wall_seconds": 36.4657457530011
+  },
+  "final_formatting_correction": {
+    "after": {
+      "bytes": 42986,
+      "sha256": "18a3e58163f15f9aaa1bf57f57d68f35aaaef005e3c15d3145e83dbf6d858f55"
+    },
+    "before": {
+      "bytes": 42987,
+      "sha256": "5a1bf7397cbd41119d03f99985867c1c1c95f6715943c3d02e4840ebacceb7e3"
+    },
+    "change": "Remove one extra final LF, leaving one terminal newline",
+    "final_report_sha256": "5a6138e675b317637a727ac06511dc35f2b9b27baabcf7d1594135df49cbe3c4",
+    "governance_complete_runtime_requalification": "PASS: all 10 methods, 94 comparisons, 48 original retained tests",
+    "outside_work_135_source_inputs": true,
+    "path": "hia/tests/test_governance.py",
+    "python_ast_identical": true
+  },
+  "hosted_execution": "NOT_RUN for this source increment at preparation",
+  "independent_readback": {
+    "files_read": 1207,
+    "logical_bytes_read": 40294603,
+    "record_member": "independent-readback.json",
+    "runtime_reexecuted": false,
+    "status": "PASS",
+    "verifier_member": "independent-reader.py"
+  },
+  "native_and_original_artifacts": {
+    "allocator-interposer.so": {
+      "bytes": 16008,
+      "sha256": "e7672038c8c7800b68b5562f41c9da2196c318b2ad280f20f4a6da4a779a1864"
+    },
+    "audit-original-tests": {
+      "bytes": 6884264,
+      "sha256": "8d09dfb74da055e590caf17c3dced7c77a3f263e308fe06e671039cc3d2095ae"
+    },
+    "boundary-native.so": {
+      "bytes": 251216,
+      "sha256": "ff7887a991c4bd04e163a604ce3c1f31c667bf5196fc58fbe90c96f37fbcd353"
+    },
+    "guard-native.so": {
+      "bytes": 206160,
+      "sha256": "ce875b3401ab008f7bf2a94f1fbbb46fe4dc7ea196992e26e362a506c4fb443b"
+    },
+    "guard-original-boundaries": {
+      "bytes": 4521632,
+      "sha256": "d207273c3e93c958cb2d7649543ecbce0e5c9e1be69c82f05492288da4c6c34e"
+    },
+    "guard-original-reference": {
+      "bytes": 4480176,
+      "sha256": "b6c5fe6be64cbdcb93490542799496e884f50089d29fab558d98d73fe2f7a8a1"
+    },
+    "guard-original-tests": {
+      "bytes": 7096448,
+      "sha256": "aad47c2e6f5ca3ee637349c1e7ed8a410695281e7252a631fa166e7dc22a6407"
+    }
+  },
+  "old_stack_can_be_removed": false,
+  "preserved_history": {
+    "initial_compile": "Actual SSA compiler refusal retained",
+    "initial_merged_run": "Actual ENOSPC failure retained, never promoted to PASS",
+    "initial_qualification": "Actual row-index assertion failure retained",
+    "prior_success_iterations": "Excluded redundant prior successful runs; only final complete qualification is canonical."
+  },
+  "production_activation": false,
+  "remaining": [
+    "Live durable Node governance custody and authenticated execution",
+    "Whole-package and whole-chain retirement gates"
+  ],
+  "retirement_accepted": false,
+  "schema": "trnm.hia.governance-development.v1",
+  "scope": "Complete original GovernanceGuard public lifecycle and private Clone/audit behavior within finite owned sessions; fixed no-input boundary fixture remains separate.",
+  "source_profile": "Pinned HIA self-host compiler; Linux x86_64 shared-library target, external linker and calloc/free; private owned state and staged output.",
+  "whole_chain_native": false
+}

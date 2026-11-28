@@ -1,0 +1,121 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_reservation_replay
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  n:usize = buffer.len(input)
+  a:usize = const() {"value":56}
+  exact:bool = compare.eq(n,a)
+  branch exact capacity(input,output) malformed()
+block capacity(cr:readbuf,co:mutbuf)
+  need:usize = const() {"value":56}
+  cap:usize = buffer.len(co)
+  fits:bool = compare.ge(cap,need)
+  branch fits fields(cr,co) short()
+block fields(raw:readbuf,out:mutbuf)
+  policy_at:u64 = const() {"value":0}
+  water_at:u64 = const() {"value":8}
+  events_at:u64 = const() {"value":16}
+  ops_at:u64 = const() {"value":24}
+  den_at:u64 = const() {"value":32}
+  why_at:u64 = const() {"value":40}
+  end_at:u64 = const() {"value":48}
+  policy:u64 = call(raw,policy_at) {"function":"tr_read"}
+  water:u64 = call(raw,water_at) {"function":"tr_read"}
+  events:u64 = call(raw,events_at) {"function":"tr_read"}
+  ops:u64 = call(raw,ops_at) {"function":"tr_read"}
+  denied:u64 = call(raw,den_at) {"function":"tr_read"}
+  why:u64 = call(raw,why_at) {"function":"tr_read"}
+  endpoint:u64 = call(raw,end_at) {"function":"tr_read"}
+  high:u64 = const() {"value":16777216}
+  policy_max:u64 = const() {"value":1}
+  events_max:u64 = const() {"value":1024}
+  reason_max:u64 = const() {"value":2}
+  low_mask:u64 = const() {"value":65535}
+  residue:u64 = bit.and(water,low_mask)
+  self_zero:u64 = const() {"value":0}
+  exact_v1:bool = compare.eq(policy,self_zero)
+  aligned:bool = compare.eq(residue,self_zero)
+  policy_ok:bool = compare.le(policy,policy_max)
+  reason_ok:bool = compare.le(why,reason_max)
+  water_ok:bool = compare.le(water,high)
+  events_ok:bool = compare.le(events,events_max)
+  reservation_ok:bool = bool.or(exact_v1,aligned)
+  a0:bool = bool.and(policy_ok,reason_ok)
+  a1:bool = bool.and(water_ok,events_ok)
+  a2:bool = bool.and(a0,a1)
+  valid:bool = bool.and(a2,reservation_ok)
+  branch valid admission(out,policy,water,events,ops,denied,why,endpoint) malformed()
+block admission(ao:mutbuf,ap:u64,aw:u64,ae:u64,aa:u64,ad:u64,ay:u64,ax:u64)
+  incremented:u64 = call(aa) {"function":"reservation_inc_sat"}
+  zero_a:u64 = const() {"value":0}
+  already_failed:bool = compare.ne(ay,zero_a)
+  old_ioerr:u32 = const() {"value":10}
+  branch already_failed emit(ao,aw,ae,incremented,ad,ay,zero_a,zero_a,old_ioerr) margin(ao,ap,aw,ae,incremented,ad,ax)
+block margin(mo:mutbuf,mp:u64,mw:u64,me:u64,ma:u64,md:u64,mx:u64)
+  ceiling:u64 = const() {"value":1016}
+  margin_bad:bool = compare.gt(me,ceiling)
+  margin_reason:u64 = const() {"value":1}
+  branch margin_bad failed(mo,mw,me,ma,md,margin_reason) extent(mo,mp,mw,me,ma,md,mx)
+block extent(eo:mutbuf,ep:u64,ew:u64,ee:u64,ea:u64,ed:u64,ex:u64)
+  inode_max:u64 = const() {"value":16777216}
+  legal:bool = compare.le(ex,inode_max)
+  extent_reason:u64 = const() {"value":2}
+  branch legal growth(eo,ep,ew,ee,ea,ed,ex) failed(eo,ew,ee,ea,ed,extent_reason)
+block failed(fo:mutbuf,fw:u64,fe:u64,fa:u64,fd:u64,fy:u64)
+  fn_denied:u64 = call(fd) {"function":"reservation_inc_sat"}
+  no_event:u64 = const() {"value":0}
+  full:u32 = const() {"value":13}
+  jump emit(fo,fw,fe,fa,fn_denied,fy,no_event,no_event,full)
+block growth(go:mutbuf,gp:u64,gw:u64,ge:u64,ga:u64,gd:u64,gx:u64)
+  mask:u64 = const() {"value":18446744073709486080}
+  before_q:u64 = const() {"value":65535}
+  q_sum:u64 = int.add.wrap(gx,before_q)
+  q_round:u64 = bit.and(q_sum,mask)
+  zero_g:u64 = const() {"value":0}
+  v2:bool = compare.ne(gp,zero_g)
+  reserve:u64 = select(v2,q_round,gx)
+  more:bool = compare.gt(reserve,gw)
+  high_g:u64 = select(more,reserve,gw)
+  event:bool = compare.gt(gx,gw)
+  event_v1:u64 = const() {"value":1}
+  event_v2:u64 = const() {"value":3}
+  tagged:u64 = select(v2,event_v2,event_v1)
+  flags:u64 = select(event,tagged,zero_g)
+  request_needed:bool = bool.and(event,v2)
+  event_request:u64 = select(request_needed,gx,zero_g)
+  plus:u64 = select(event,event_v1,zero_g)
+  count:u64 = int.add.wrap(ge,plus)
+  success:u32 = const() {"value":0}
+  jump emit(go,high_g,count,ga,gd,zero_g,flags,event_request,success)
+block emit(eout:mutbuf,w:u64,e_events:u64,operation:u64,d:u64,reason:u64,event_bits:u64,event_value:u64,status:u32)
+  at0:u64 = const() {"value":0}
+  at1:u64 = const() {"value":8}
+  at2:u64 = const() {"value":16}
+  at3:u64 = const() {"value":24}
+  at4:u64 = const() {"value":32}
+  at5:u64 = const() {"value":40}
+  at6:u64 = const() {"value":48}
+  _w:u64 = call(eout,at0,w) {"function":"tr_put"}
+  _n:u64 = call(eout,at1,e_events) {"function":"tr_put"}
+  _ops:u64 = call(eout,at2,operation) {"function":"tr_put"}
+  _den:u64 = call(eout,at3,d) {"function":"tr_put"}
+  _why:u64 = call(eout,at4,reason) {"function":"tr_put"}
+  _flags:u64 = call(eout,at5,event_bits) {"function":"tr_put"}
+  _endpoint:u64 = call(eout,at6,event_value) {"function":"tr_put"}
+  ret(status)
+block malformed()
+  form_code:u32 = const() {"value":100}
+  ret(form_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+end
+
+fn reservation_inc_sat(old:u64) -> (u64) effects() entry(entry)
+block entry(old:u64)
+  one:u64 = const() {"value":1}
+  max:u64 = const() {"value":18446744073709551615}
+  saturated:bool = compare.eq(old,max)
+  next:u64 = int.add.wrap(old,one)
+  result:u64 = select(saturated,max,next)
+  ret(result)
+end

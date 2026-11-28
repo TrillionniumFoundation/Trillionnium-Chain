@@ -1,0 +1,1393 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": 14263181303,
+      "full_member_index": {
+        "bytes": 7883,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14263181303/index.json",
+        "sha256": "c392e05b00c0e153f3fa2be1e3a3fc8ceef8d08a364c938def12d6e5adadfa7c"
+      },
+      "member_count": 14,
+      "original_zip": {
+        "bytes": 6930,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14263181303/original-artifact.zip",
+        "sha256": "39c934712421d1d5e3aab7897968cd2d952b51eda7921c30c83d47ea1d1b9545"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14261608548,
+      "full_member_index": {
+        "bytes": 8529,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14261608548/index.json",
+        "sha256": "de5d7ad3ace680f4d2806a55edbfe1b3260aa5abf4b236a6710471df74330151"
+      },
+      "member_count": 14,
+      "original_zip": {
+        "bytes": 7127,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14261608548/original-artifact.zip",
+        "sha256": "ae9c47b70ee88107c66a110abbc3ec5b4f9f54dd7a825737eeec36dee1240a46"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14262736320,
+      "full_member_index": {
+        "bytes": 8346,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14262736320/index.json",
+        "sha256": "ed2d5c4bbd1450d2c1bd3e743bc8f7c5d61f5bc0164304a5790475e2d43e9a32"
+      },
+      "member_count": 14,
+      "original_zip": {
+        "bytes": 7071,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14262736320/original-artifact.zip",
+        "sha256": "0e96fb477c6e642a1f9b05585b43e4b0dae1bbb28038a6badc700b38e0ad9d37"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14264321060,
+      "full_member_index": {
+        "bytes": 55224,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264321060/index.json",
+        "sha256": "76cb5a680b92318572cf1ed7b4347ecbf8389264db5514427e3a688348b60cc0"
+      },
+      "member_count": 289,
+      "original_zip": {
+        "bytes": 9679554,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264321060/original-artifact.zip",
+        "sha256": "cf179754ed5b815695cb03221b2be03a6616819977e13ecd23cdfefdd2152f78"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14263946719,
+      "full_member_index": {
+        "bytes": 55224,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14263946719/index.json",
+        "sha256": "ccf0a90bc002cbf204c09ba663783dfaaa6086f133b578dc6bcb7acef6266179"
+      },
+      "member_count": 289,
+      "original_zip": {
+        "bytes": 9393523,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14263946719/original-artifact.zip",
+        "sha256": "70ab939d9347b9f613fec7fb25e3a50de68d32dea0a07b77a819dad6d436877b"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14264481628,
+      "full_member_index": {
+        "bytes": 55224,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264481628/index.json",
+        "sha256": "81ffccfefcfbe167dafa7de7da264c3e16c2e5fd5a632aecaa2d19ad44137a13"
+      },
+      "member_count": 289,
+      "original_zip": {
+        "bytes": 9403881,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264481628/original-artifact.zip",
+        "sha256": "6618c9eebf26edc69853fbbf8bbff5456814dc0b947ed472baf3b54711894571"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14265440201,
+      "full_member_index": {
+        "bytes": 55224,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14265440201/index.json",
+        "sha256": "b49f0e631dc74e96389ffb730039fc1b0388f03cfaf0413dfb49612d56721215"
+      },
+      "member_count": 289,
+      "original_zip": {
+        "bytes": 9480073,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14265440201/original-artifact.zip",
+        "sha256": "703dfd12c3a1cbdfc5cfa68bff95415f786ecfbff233ec31a70da78433563a1a"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14264569925,
+      "full_member_index": {
+        "bytes": 746191,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264569925/index.json",
+        "sha256": "a041a462a2a9e7d7c8e3b4d0c658f66d77a2f696e12158120b69d47f8f6e325e"
+      },
+      "member_count": 4140,
+      "original_zip": {
+        "bytes": 60260311,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264569925/original-artifact.zip",
+        "sha256": "11aebb72e316ea05be3c92fdc86cb98fbd1cf52a0389667c7dc56aaae78aaebd"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    },
+    {
+      "artifact_id": 14267645397,
+      "full_member_index": {
+        "bytes": 746191,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14267645397/index.json",
+        "sha256": "736a9471e348ee8d9cd9921e8791b127ca0d0d14ed6c891a981b3b0aa50d6c5b"
+      },
+      "member_count": 4140,
+      "original_zip": {
+        "bytes": 56407335,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14267645397/original-artifact.zip",
+        "sha256": "456a2d198f7b0a1a293b3f2bb0cfb1112743c9e9d8ef22a2efc7317652dda35f"
+      },
+      "retained_zip_hash_matches_previous_full_member_verification": true
+    }
+  ],
+  "budget_controls": [
+    {
+      "artifact_id": 14263181303,
+      "executed_controls": 0,
+      "first_common_input_mismatch": "trillionnium/Cargo.lock",
+      "group": "pool-scan-before",
+      "job_id": 133551949881,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229508/job/133551949881",
+      "raw_report": {
+        "cases": [],
+        "commands": [
+          {
+            "cleanup_errors": [],
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+            "elapsed_wall_ns": 40843641,
+            "exit_code": 0,
+            "failure": null,
+            "pid": 2554,
+            "started": true,
+            "stderr": {
+              "bytes": 0,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43939229508-1/native/driver-preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "bytes": 133,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43939229508-1/native/driver-preflight.stdout",
+              "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+            }
+          },
+          {
+            "cleanup_errors": [],
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+            "elapsed_wall_ns": 63691275,
+            "exit_code": 0,
+            "failure": null,
+            "pid": 2612,
+            "started": true,
+            "stderr": {
+              "bytes": 0,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43939229508-1/native/subject-preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "bytes": 133,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-scan-before-43939229508-1/native/subject-preflight.stdout",
+              "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+            }
+          }
+        ],
+        "errors": [
+          "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+        ],
+        "executables": {},
+        "expected_driver": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "expected_failures": 2,
+        "expected_integration_passes": 0,
+        "expected_passes": 0,
+        "expected_source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+        "groups": [
+          "pool-scan"
+        ],
+        "matched_failure_controls": 0,
+        "matched_pass_controls": 0,
+        "mode": "pool-scan-before",
+        "native_campaign_executed": false,
+        "native_control_processes_started": 0,
+        "native_pool_integration_process_started": false,
+        "old_source_current_corpus_qualification": false,
+        "pool_integration": null,
+        "production_activation": false,
+        "required_lib_tests": [
+          "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+          "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows"
+        ],
+        "result": "FAIL",
+        "schema": "pon-original-budget-component-controls-v2",
+        "scope": "assigned-native-component-controls-only",
+        "source_after": {
+          "driver": {
+            "base": null,
+            "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2459779284,
+            "tracked_entries": 40640,
+            "tracked_worktree_verified": true
+          },
+          "subject": {
+            "base": null,
+            "candidate": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "tested_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2555020399,
+            "tracked_entries": 27987,
+            "tracked_worktree_verified": true
+          }
+        },
+        "source_before": {
+          "driver": {
+            "base": null,
+            "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2459779284,
+            "tracked_entries": 40640,
+            "tracked_worktree_verified": true
+          },
+          "subject": {
+            "base": null,
+            "candidate": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+            "tested_tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2555020399,
+            "tracked_entries": 27987,
+            "tracked_worktree_verified": true
+          }
+        },
+        "throughput_measured": false,
+        "whole_business_liveness_qualified": false
+      },
+      "subject": "ae657e262278ae4a058220f66a6a0495721eb9ad"
+    },
+    {
+      "artifact_id": 14261608548,
+      "executed_controls": 0,
+      "first_common_input_mismatch": "trillionnium/Cargo.lock",
+      "group": "budget-before-v2",
+      "job_id": 133551950094,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229508/job/133551950094",
+      "raw_report": {
+        "cases": [],
+        "commands": [
+          {
+            "cleanup_errors": [],
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+            "elapsed_wall_ns": 41109070,
+            "exit_code": 0,
+            "failure": null,
+            "pid": 2502,
+            "started": true,
+            "stderr": {
+              "bytes": 0,
+              "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43939229508-1/native/driver-preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "bytes": 133,
+              "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43939229508-1/native/driver-preflight.stdout",
+              "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+            }
+          },
+          {
+            "cleanup_errors": [],
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+            "elapsed_wall_ns": 41944054,
+            "exit_code": 0,
+            "failure": null,
+            "pid": 2561,
+            "started": true,
+            "stderr": {
+              "bytes": 0,
+              "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43939229508-1/native/subject-preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "bytes": 133,
+              "path": "/home/runner/work/_temp/pon-budget-controls-budget-before-v2-43939229508-1/native/subject-preflight.stdout",
+              "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+            }
+          }
+        ],
+        "errors": [
+          "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+        ],
+        "executables": {},
+        "expected_driver": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "expected_failures": 6,
+        "expected_integration_passes": 0,
+        "expected_passes": 1,
+        "expected_source": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+        "groups": [
+          "budget"
+        ],
+        "matched_failure_controls": 0,
+        "matched_pass_controls": 0,
+        "mode": "budget-before-v2",
+        "native_campaign_executed": false,
+        "native_control_processes_started": 0,
+        "native_pool_integration_process_started": false,
+        "old_source_current_corpus_qualification": false,
+        "pool_integration": null,
+        "production_activation": false,
+        "required_lib_tests": [
+          "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit",
+          "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation",
+          "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline",
+          "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io",
+          "mining::prepare_control_tests::registered_prepare_cancels_inside_active_row_scan_before_execution",
+          "mining::prepare_control_tests::registered_prepare_cancels_during_inactive_ancestry_read_and_retries",
+          "mining::prepare_control_tests::registered_prepare_control_preserves_packets_errors_and_cold_commit"
+        ],
+        "result": "FAIL",
+        "schema": "pon-original-budget-component-controls-v2",
+        "scope": "assigned-native-component-controls-only",
+        "source_after": {
+          "driver": {
+            "base": null,
+            "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2459779284,
+            "tracked_entries": 40640,
+            "tracked_worktree_verified": true
+          },
+          "subject": {
+            "base": null,
+            "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554978813,
+            "tracked_entries": 27985,
+            "tracked_worktree_verified": true
+          }
+        },
+        "source_before": {
+          "driver": {
+            "base": null,
+            "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2459779284,
+            "tracked_entries": 40640,
+            "tracked_worktree_verified": true
+          },
+          "subject": {
+            "base": null,
+            "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+            "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554978813,
+            "tracked_entries": 27985,
+            "tracked_worktree_verified": true
+          }
+        },
+        "throughput_measured": false,
+        "whole_business_liveness_qualified": false
+      },
+      "subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+    },
+    {
+      "artifact_id": 14262736320,
+      "executed_controls": 0,
+      "first_common_input_mismatch": "trillionnium/Cargo.lock",
+      "group": "pool-before-v2",
+      "job_id": 133551950173,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229508/job/133551950173",
+      "raw_report": {
+        "cases": [],
+        "commands": [
+          {
+            "cleanup_errors": [],
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/driver",
+            "elapsed_wall_ns": 56033455,
+            "exit_code": 0,
+            "failure": null,
+            "pid": 2744,
+            "started": true,
+            "stderr": {
+              "bytes": 0,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-43939229508-1/native/driver-preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "bytes": 133,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-43939229508-1/native/driver-preflight.stdout",
+              "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+            }
+          },
+          {
+            "cleanup_errors": [],
+            "command": [
+              "bash",
+              "scripts/project-preflight.sh",
+              "--audit"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject",
+            "elapsed_wall_ns": 55730720,
+            "exit_code": 0,
+            "failure": null,
+            "pid": 2802,
+            "started": true,
+            "stderr": {
+              "bytes": 0,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-43939229508-1/native/subject-preflight.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "bytes": 133,
+              "path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-43939229508-1/native/subject-preflight.stdout",
+              "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+            }
+          }
+        ],
+        "errors": [
+          "ValueError: IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED"
+        ],
+        "executables": {},
+        "expected_driver": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "expected_failures": 5,
+        "expected_integration_passes": 0,
+        "expected_passes": 2,
+        "expected_source": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+        "groups": [
+          "pool"
+        ],
+        "matched_failure_controls": 0,
+        "matched_pass_controls": 0,
+        "mode": "pool-before-v2",
+        "native_campaign_executed": false,
+        "native_control_processes_started": 0,
+        "native_pool_integration_process_started": false,
+        "old_source_current_corpus_qualification": false,
+        "pool_integration": null,
+        "production_activation": false,
+        "required_lib_tests": [
+          "mining::pool_run_control_tests::pool_run_stop_interrupts_batch_parent_scan",
+          "mining::pool_run_control_tests::pool_run_stop_interrupts_registered_and_legacy_prepare",
+          "mining::pool_run_control_tests::pool_run_stop_interrupts_post_search_revalidation",
+          "mining::pool_run_control_tests::pool_run_original_deadline_interrupts_parent_scan",
+          "mining::pool_run_control_tests::pool_run_cancelled_preview_keeps_queue_without_completed_m06",
+          "mining::pool_run_control_tests::pool_run_native_and_sql_failures_survive_concurrent_stop",
+          "mining::pool_run_control_tests::pool_run_completed_packet_and_reconcile_failure_remain_durable"
+        ],
+        "result": "FAIL",
+        "schema": "pon-original-budget-component-controls-v2",
+        "scope": "assigned-native-component-controls-only",
+        "source_after": {
+          "driver": {
+            "base": null,
+            "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2459779284,
+            "tracked_entries": 40640,
+            "tracked_worktree_verified": true
+          },
+          "subject": {
+            "base": null,
+            "candidate": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "tested_tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554976778,
+            "tracked_entries": 27985,
+            "tracked_worktree_verified": true
+          }
+        },
+        "source_before": {
+          "driver": {
+            "base": null,
+            "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+            "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2459779284,
+            "tracked_entries": 40640,
+            "tracked_worktree_verified": true
+          },
+          "subject": {
+            "base": null,
+            "candidate": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+            "tested_tree": "4e85966ae98b0081fcc2f9d0e8af313bc4f7d005",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 2554976778,
+            "tracked_entries": 27985,
+            "tracked_worktree_verified": true
+          }
+        },
+        "throughput_measured": false,
+        "whole_business_liveness_qualified": false
+      },
+      "subject": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+    }
+  ],
+  "cleanup": {
+    "linux_success": 6,
+    "macos_cancellation_cause": "UNKNOWN",
+    "macos_cancelled": [
+      {
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/133551949570",
+        "completed_at": "2026-11-16T19:40:49Z",
+        "conclusion": "cancelled",
+        "created_at": "2026-11-16T19:25:46Z",
+        "head_branch": "feature/chain-hia-native",
+        "head_sha": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229402/job/133551949570",
+        "id": 133551949570,
+        "labels": [
+          "macos-15"
+        ],
+        "name": "cleanup (macos-15, head)",
+        "node_id": "CR_kwDOTty1_c8AAAAfGFEHAg",
+        "run_attempt": 1,
+        "run_id": 43939229402,
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229402",
+        "runner_group_id": 0,
+        "runner_group_name": "",
+        "runner_id": 0,
+        "runner_name": "",
+        "started_at": "2026-11-16T19:25:46Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/133551949570",
+        "workflow_name": "PoN owned process cleanup"
+      },
+      {
+        "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/133551950100",
+        "completed_at": "2026-11-16T19:40:49Z",
+        "conclusion": "cancelled",
+        "created_at": "2026-11-16T19:25:46Z",
+        "head_branch": "feature/chain-hia-native",
+        "head_sha": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229402/job/133551950100",
+        "id": 133551950100,
+        "labels": [
+          "macos-15"
+        ],
+        "name": "cleanup (macos-15, prospective-merge)",
+        "node_id": "CR_kwDOTty1_c8AAAAfGFEJFA",
+        "run_attempt": 1,
+        "run_id": 43939229402,
+        "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229402",
+        "runner_group_id": 0,
+        "runner_group_name": "",
+        "runner_id": 0,
+        "runner_name": "",
+        "started_at": "2026-11-16T19:25:46Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/133551950100",
+        "workflow_name": "PoN owned process cleanup"
+      }
+    ],
+    "native_execution_observed_for_mac": false
+  },
+  "decoded_joblog_bytes": 8607013,
+  "decoded_joblog_count": 10,
+  "head_sha": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+  "historical_fixed_current_job": {
+    "control_count_not_independently_extracted": true,
+    "job_id": 133551950133,
+    "status": "SUCCESS"
+  },
+  "historical_source_differences": {
+    "qualification_gate_unchanged": true,
+    "rows": [
+      {
+        "current": {
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "path": "trillionnium/Cargo.toml",
+        "sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      },
+      {
+        "changed_lines": 707,
+        "current": {
+          "bytes": 42127,
+          "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/89fb2269b0dd306fbd32c36f464842c3d7daee2b/trillionnium/Cargo.lock.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 40597,
+          "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+        },
+        "path": "trillionnium/Cargo.lock",
+        "sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      },
+      {
+        "current": {
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "path": "trillionnium/Cargo.toml",
+        "sha": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+      },
+      {
+        "changed_lines": 707,
+        "current": {
+          "bytes": 42127,
+          "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/84e68b4f7a9b2f48f9c47ed05c9a44229d186e30/trillionnium/Cargo.lock.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 40597,
+          "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+        },
+        "path": "trillionnium/Cargo.lock",
+        "sha": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+      },
+      {
+        "current": {
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "path": "trillionnium/Cargo.toml",
+        "sha": "ae657e262278ae4a058220f66a6a0495721eb9ad"
+      },
+      {
+        "changed_lines": 707,
+        "current": {
+          "bytes": 42127,
+          "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/ae657e262278ae4a058220f66a6a0495721eb9ad/trillionnium/Cargo.lock.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 40597,
+          "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+        },
+        "path": "trillionnium/Cargo.lock",
+        "sha": "ae657e262278ae4a058220f66a6a0495721eb9ad"
+      },
+      {
+        "changed_lines": 31,
+        "current": {
+          "bytes": 2357,
+          "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/89fb2269b0dd306fbd32c36f464842c3d7daee2b/trillionnium/crates/trnm-pon-node/Cargo.toml.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 2183,
+          "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      },
+      {
+        "current": {
+          "bytes": 86,
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 86,
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+        },
+        "path": "rust-toolchain.toml",
+        "sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      },
+      {
+        "changed_lines": 272,
+        "current": {
+          "bytes": 16321,
+          "sha256": "9753eb12cc1e6b5f7864bf2a8082ee0d964343a19382e102524f3d6fe879c208"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/89fb2269b0dd306fbd32c36f464842c3d7daee2b/trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 12090,
+          "sha256": "8481cd8ace6188f0d8874de62bebc7f887739a650e802dc695b04b330a2176fa"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs",
+        "sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      },
+      {
+        "current": {
+          "bytes": 12211,
+          "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 12211,
+          "sha256": "007b286214ac7554e67fa0fb40c99f6eefa58a1e505f4a441a5bf73b045c1ecc"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/src/mining_prepare_control_tests.rs",
+        "sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b"
+      },
+      {
+        "changed_lines": 31,
+        "current": {
+          "bytes": 2357,
+          "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/84e68b4f7a9b2f48f9c47ed05c9a44229d186e30/trillionnium/crates/trnm-pon-node/Cargo.toml.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 2183,
+          "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "sha": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+      },
+      {
+        "current": {
+          "bytes": 86,
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 86,
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+        },
+        "path": "rust-toolchain.toml",
+        "sha": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+      },
+      {
+        "current": {
+          "bytes": 19292,
+          "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 19292,
+          "sha256": "ca6009352e67fe8fe20719102a95b3714b8d9946e30d3cc53266b621df9c1d2e"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+        "sha": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30"
+      },
+      {
+        "changed_lines": 31,
+        "current": {
+          "bytes": 2357,
+          "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+        },
+        "diff": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/input-diffs/ae657e262278ae4a058220f66a6a0495721eb9ad/trillionnium/crates/trnm-pon-node/Cargo.toml.diff",
+        "equal": false,
+        "historical": {
+          "bytes": 2183,
+          "sha256": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "sha": "ae657e262278ae4a058220f66a6a0495721eb9ad"
+      },
+      {
+        "current": {
+          "bytes": 86,
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 86,
+          "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+        },
+        "path": "rust-toolchain.toml",
+        "sha": "ae657e262278ae4a058220f66a6a0495721eb9ad"
+      },
+      {
+        "current": {
+          "bytes": 8536,
+          "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+        },
+        "equal": true,
+        "historical": {
+          "bytes": 8536,
+          "sha256": "b732a3c613f6da0d73f84c7e345d390bfaa357fa337af001d2c4ed68afd6a197"
+        },
+        "path": "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs",
+        "sha": "ae657e262278ae4a058220f66a6a0495721eb9ad"
+      }
+    ],
+    "status": "OBSERVED_MISMATCH"
+  },
+  "history": [
+    {
+      "artifact_id": 14264569925,
+      "binary_after": {
+        "ctime_ns": 1794857384867244790,
+        "device": 66305,
+        "inode": 9964648,
+        "mtime_ns": 1794857384866244773,
+        "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-595b2fd91d88572e",
+        "sha256": "ab01db1e2289c45c44db88c4c359a52886cadf15b34ecf812e372baeefe7525d",
+        "size_bytes": 11097560
+      },
+      "binary_before": {
+        "ctime_ns": 1794857384867244790,
+        "device": 66305,
+        "inode": 9964648,
+        "mtime_ns": 1794857384866244773,
+        "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-595b2fd91d88572e",
+        "sha256": "ab01db1e2289c45c44db88c4c359a52886cadf15b34ecf812e372baeefe7525d",
+        "size_bytes": 11097560
+      },
+      "elapsed_ns": 2739003186376,
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": null,
+        "completed_import_calls": 3973,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6473725,
+        "last_history_rpc_elapsed_ns": 88604,
+        "last_import_call_expression_elapsed_ns": null,
+        "last_requested_after": "299665d997d9924055454aec5c3f91fd4c63ccb52553c0ef4d30ee2c41b6fe69",
+        "last_successful_after": "299665d997d9924055454aec5c3f91fd4c63ccb52553c0ef4d30ee2c41b6fe69",
+        "pinned_tip": "5dd1450e5c8d5a99a2f46ce5f65c21b6e6e82afb872053b0c980367761264f80",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "history-rpc"
+      },
+      "failure_location_line": 28,
+      "full_original_measurement_preserved": true,
+      "job_id": 133551949505,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551949505",
+      "lane": "x64 prospective merge",
+      "log": {
+        "bytes": 20659,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14264569925/keyreports/history-native/history.log",
+        "sha256": "bb8352d1c3db71f3297a11f1128add5d34ae751b997d7a3069c31eb7533f0f40"
+      },
+      "process": {
+        "cleanup_errors": [],
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+          "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-595b2fd91d88572e",
+          "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+          "--exact",
+          "--ignored",
+          "--show-output"
+        ],
+        "exit_code": 101,
+        "failure": null,
+        "pid": 5080,
+        "started": true
+      },
+      "server_exit": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1800000865168,
+          "lifetime_reached_before_shutdown": true,
+          "reason": "lifetime_expired",
+          "stop_requested_before_shutdown": false
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1800001531394,
+        "stop_requested_when_exited": true
+      },
+      "server_exit_line": 27,
+      "source_after": {
+        "commit": "cdca35eea6332319b6bdf8f0eb100eacf532ea7e",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "tracked_source_identity": {
+          "base": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+          "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+          "kind": "prospective-merge",
+          "prospective_merge": "cdca35eea6332319b6bdf8f0eb100eacf532ea7e",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "cdca35eea6332319b6bdf8f0eb100eacf532ea7e",
+          "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2459779284,
+          "tracked_entries": 40640,
+          "tracked_worktree_verified": true
+        },
+        "tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a"
+      },
+      "source_before": {
+        "commit": "cdca35eea6332319b6bdf8f0eb100eacf532ea7e",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "tracked_source_identity": {
+          "base": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+          "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+          "kind": "prospective-merge",
+          "prospective_merge": "cdca35eea6332319b6bdf8f0eb100eacf532ea7e",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "cdca35eea6332319b6bdf8f0eb100eacf532ea7e",
+          "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2459779284,
+          "tracked_entries": 40640,
+          "tracked_worktree_verified": true
+        },
+        "tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a"
+      },
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "summary_line": 29
+    },
+    {
+      "artifact_id": 14267645397,
+      "binary_after": {
+        "ctime_ns": 1794857415192531440,
+        "device": 66305,
+        "inode": 9967434,
+        "mtime_ns": 1794857415191531412,
+        "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-595b2fd91d88572e",
+        "sha256": "ab01db1e2289c45c44db88c4c359a52886cadf15b34ecf812e372baeefe7525d",
+        "size_bytes": 11097560
+      },
+      "binary_before": {
+        "ctime_ns": 1794857415192531440,
+        "device": 66305,
+        "inode": 9967434,
+        "mtime_ns": 1794857415191531412,
+        "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-595b2fd91d88572e",
+        "sha256": "ab01db1e2289c45c44db88c4c359a52886cadf15b34ecf812e372baeefe7525d",
+        "size_bytes": 11097560
+      },
+      "elapsed_ns": 3143993253435,
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": null,
+        "completed_import_calls": 3297,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 5940154,
+        "last_history_rpc_elapsed_ns": 126281,
+        "last_import_call_expression_elapsed_ns": null,
+        "last_requested_after": "25777b0b3428000a6b9fa3889b8f663a86dfb1e9f35e6f6fba36e611daeaad81",
+        "last_successful_after": "25777b0b3428000a6b9fa3889b8f663a86dfb1e9f35e6f6fba36e611daeaad81",
+        "pinned_tip": "82f9a315b1a19de87119a9dc3c9430a5d4f4d6f5b9fcefdf4007070209b4ccb2",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "history-rpc"
+      },
+      "failure_location_line": 27,
+      "full_original_measurement_preserved": true,
+      "job_id": 133551950322,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551950322",
+      "lane": "x64 head",
+      "log": {
+        "bytes": 20574,
+        "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/14267645397/keyreports/history-native/history.log",
+        "sha256": "8a3d8c67d739654e4a31b63994cf4547e8d5f34864340184d34abac079953461"
+      },
+      "process": {
+        "cleanup_errors": [],
+        "command": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+          "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-595b2fd91d88572e",
+          "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+          "--exact",
+          "--ignored",
+          "--show-output"
+        ],
+        "exit_code": 101,
+        "failure": null,
+        "pid": 5074,
+        "started": true
+      },
+      "server_exit": {
+        "configured_lifetime_seconds": 1800,
+        "loop_exit_before_internal_shutdown": {
+          "configured_lifetime_ns": 1800000000000,
+          "elapsed_ns": 1800000225611,
+          "lifetime_reached_before_shutdown": true,
+          "reason": "lifetime_expired",
+          "stop_requested_before_shutdown": false
+        },
+        "production_activation": false,
+        "schema": "native-ancestry-public-server-exit-evidence-v1",
+        "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+        "server_exit_error": null,
+        "server_exit_ok": true,
+        "service_elapsed_ns": 1800001143371,
+        "stop_requested_when_exited": true
+      },
+      "server_exit_line": 26,
+      "source_after": {
+        "commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+          "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2459779284,
+          "tracked_entries": 40640,
+          "tracked_worktree_verified": true
+        },
+        "tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a"
+      },
+      "source_before": {
+        "commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+          "tested_tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2459779284,
+          "tracked_entries": 40640,
+          "tracked_worktree_verified": true
+        },
+        "tree": "f2fb6ef7c4f5da9f3462c52230be490a02479f6a"
+      },
+      "summary": {
+        "error": "IO: Connection refused (os error 111)",
+        "hardness_accepted": false,
+        "independent_accepted": false,
+        "passed": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "schema": "native-ancestry-long-sync-observation-v1"
+      },
+      "summary_line": 28
+    }
+  ],
+  "indexed_member_count": 9478,
+  "inferences_and_limits": [
+    "The two actual x64 history servers expired their configured 1800-second lifetimes before later history-rpc connection refusal; this does not isolate all compute/queue/I/O costs.",
+    "All four four-second, 16-worker pressure phases confirmed zero; their separate attack-free baselines each confirmed one.",
+    "Three historical budget subjects were refused before any Cargo/native control because current driver and historical input graphs differ; zero cases is not a successful historical rejection control.",
+    "Current test semantic changes, not only Cargo.lock churn, prevent repairing this by editing a checksum or weakening identity.",
+    "No HIA foundation PASS or earlier 5c3d evidence is substituted for these whole-service failures.",
+    "macOS cancellation metadata does not establish an application/runtime failure.",
+    "No budget, source, old artifact, process or remote workflow was changed by this diagnosis."
+  ],
+  "missing_retained_artifact": {
+    "archive_is_absence_evidence_only": true,
+    "artifact_id": 11531476198,
+    "current_execution_of_pressure_control": false,
+    "current_job_id": 133551949095,
+    "current_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551949095",
+    "exhaustive_repository_archive_search": false,
+    "old_run": 37730166589,
+    "repository_archive_member_review": {
+      "bytes": 8767,
+      "path": "/tmp/trnm-threadcpu-native-20261116-qvgbgeb_/ci326-failures-v1/retained-exact-repository-archive-review-v1/member-verification.json",
+      "sha256": "dc3ddc39287059de3fce5472f169e42d7752ecc0cad90f1ce5eadbd2ae3eb1ea"
+    },
+    "status": "OPEN_MISSING_EXACT_BYTES"
+  },
+  "runs": [
+    {
+      "conclusion": "failure",
+      "event": "pull_request",
+      "head_sha": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406",
+      "id": 43939229406,
+      "name": "PoN priority acceptance",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "event": "pull_request",
+      "head_sha": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229508",
+      "id": 43939229508,
+      "name": "PoN original budget component controls",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "event": "pull_request",
+      "head_sha": "326837e4c5a8a6b3b99390063c08a47dc4f9d6a0",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229402",
+      "id": 43939229402,
+      "name": "PoN owned process cleanup",
+      "status": "completed"
+    }
+  ],
+  "schema": "trnm.hia.exact326-ci-failure-diagnosis.v1",
+  "scope": "Exact 326 run and retained original bytes only; no reruns or relaxed gates.",
+  "service": [
+    {
+      "all_named_tests_passed": true,
+      "artifact_id": 14264321060,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "job_id": 133551950504,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551950504",
+      "lane": "x64 head",
+      "native": true,
+      "phase_counts": [
+        {
+          "business_before_end": true,
+          "business_delay_ns": 124683,
+          "client_errors": {},
+          "confirmed": 1,
+          "confirmed_latency_ns": 2793951231,
+          "mode": "attack-free-baseline",
+          "required": 1,
+          "typed_terminal_errors": {},
+          "unconfirmed": 0,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business_before_end": true,
+          "business_delay_ns": 7157329,
+          "client_errors": {},
+          "confirmed": 0,
+          "confirmed_latency_ns": null,
+          "mode": "from-zero-pressure",
+          "required": 1,
+          "typed_terminal_errors": {
+            "PUBLIC_EOF": 3,
+            "PUBLIC_REQUEST_CANCELLED": 2
+          },
+          "unconfirmed": 1,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ]
+    },
+    {
+      "all_named_tests_passed": true,
+      "artifact_id": 14263946719,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "job_id": 133551950562,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551950562",
+      "lane": "arm64 head",
+      "native": true,
+      "phase_counts": [
+        {
+          "business_before_end": true,
+          "business_delay_ns": 157423,
+          "client_errors": {},
+          "confirmed": 1,
+          "confirmed_latency_ns": 1879010917,
+          "mode": "attack-free-baseline",
+          "required": 1,
+          "typed_terminal_errors": {},
+          "unconfirmed": 0,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business_before_end": true,
+          "business_delay_ns": 96743497,
+          "client_errors": {},
+          "confirmed": 0,
+          "confirmed_latency_ns": null,
+          "mode": "from-zero-pressure",
+          "required": 1,
+          "typed_terminal_errors": {
+            "PUBLIC_EOF": 1
+          },
+          "unconfirmed": 1,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ]
+    },
+    {
+      "all_named_tests_passed": true,
+      "artifact_id": 14264481628,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "job_id": 133551950307,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551950307",
+      "lane": "arm64 prospective merge",
+      "native": true,
+      "phase_counts": [
+        {
+          "business_before_end": true,
+          "business_delay_ns": 147103,
+          "client_errors": {},
+          "confirmed": 1,
+          "confirmed_latency_ns": 1806120511,
+          "mode": "attack-free-baseline",
+          "required": 1,
+          "typed_terminal_errors": {},
+          "unconfirmed": 0,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business_before_end": true,
+          "business_delay_ns": 6753000,
+          "client_errors": {},
+          "confirmed": 0,
+          "confirmed_latency_ns": null,
+          "mode": "from-zero-pressure",
+          "required": 1,
+          "typed_terminal_errors": {
+            "PUBLIC_EOF": 12,
+            "PUBLIC_REQUEST_CANCELLED": 2
+          },
+          "unconfirmed": 1,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ]
+    },
+    {
+      "all_named_tests_passed": true,
+      "artifact_id": 14265440201,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "job_id": 133551950326,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43939229406/job/133551950326",
+      "lane": "x64 prospective merge",
+      "native": true,
+      "phase_counts": [
+        {
+          "business_before_end": true,
+          "business_delay_ns": 179655,
+          "client_errors": {},
+          "confirmed": 1,
+          "confirmed_latency_ns": 3214757923,
+          "mode": "attack-free-baseline",
+          "required": 1,
+          "typed_terminal_errors": {},
+          "unconfirmed": 0,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 0
+        },
+        {
+          "business_before_end": true,
+          "business_delay_ns": 92415423,
+          "client_errors": {},
+          "confirmed": 0,
+          "confirmed_latency_ns": null,
+          "mode": "from-zero-pressure",
+          "required": 1,
+          "typed_terminal_errors": {
+            "PUBLIC_EOF": 1,
+            "PUBLIC_REQUEST_CANCELLED": 1
+          },
+          "unconfirmed": 1,
+          "unknown": 0,
+          "window_ns": 4000000000,
+          "workers": 16
+        }
+      ]
+    }
+  ],
+  "status": "OBSERVED_FAILURES_NOT_CLOSED",
+  "verified_original_zip_count": 9
+}

@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_pq_bundle_callback_quorum_v1
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  callback_only:bool = const() {"value":false}
+  answer:u32 = call(input,work,callback_only) {"function":"rq_run"}
+  ret(answer)
+end

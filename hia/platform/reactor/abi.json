@@ -1,0 +1,89 @@
+{
+  "schema": "trnm.hia.stream-reactor-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "runtime": "native HIA policy plus Linux ISA bytes emitted by native HIA",
+  "entry": "f0(event:readbuf, command:mutbuf, state:mutbuf)->u32",
+  "trusted_caller_boundary": {
+    "event": "written only by the reviewed native syscall/clock adapter",
+    "command_and_state": "exclusive private owner memory; never imported as peer-provided authority",
+    "concurrency": "one outstanding command, one operation, one owner; no concurrent FD close/reuse or OFD flag/linger changes",
+    "descriptor_scope": "explicit imported FD, actual fstat device/inode/type, access flags, connected stream options; no authenticated peer identity",
+    "adoption": "borrow proposals while checking; accepted data/cancel slots become owned before F_SETFL; state byte 432 is a cumulative adopted bit mask",
+    "failed_admission": "unadopted descriptors remain caller owned; no nonblock mutation occurs before full class/access/socket validation",
+    "diagnostic": "borrowed optional diagnostic stream; caller authorizes O_NONBLOCK mutation; never closed by reactor",
+    "aliases": "input/output may be distinct FDs for one duplex stream; data/cancel and data/diagnostic object aliases rejected; external OFD aliases outside exclusive contract"
+  },
+  "buffers": {
+    "event_min_bytes": 64,
+    "command_min_bytes": 69632,
+    "state_min_bytes": 1024,
+    "adapter_event_bytes": 512,
+    "adapter_command_bytes": 131072,
+    "adapter_state_bytes": 65536,
+    "state_private_caller_suffix_start": 1024,
+    "data_window": [4096, 69632],
+    "byte_order": "little endian"
+  },
+  "api": {
+    "reactor_start": "(event,command,state,mode:u64,amount:u64,absolute_deadline_ns:u64,cancel_fd:u64,input_fd:u64,output_fd:u64,diagnostic_fd:u64)->u32; fresh zero state only",
+    "reactor_tick": "(event,command,state)->u32; acknowledge the one actual preceding syscall phase",
+    "reactor_submit": "(event,command,state,mode:u64,amount:u64,absolute_deadline_ns:u64)->u32; quiescent ready context only; retains accepted FDs and epoll",
+    "reactor_close": "(command,state)->u32; quiescent operation only; single-attempt close per owned FD; drive cleanup with tick",
+    "return_classes": {
+      "0": "execute exactly the emitted command and return its actual result/phase/time",
+      "256_plus_status": "operation terminal, accepted context retained, repeat tick has no effects",
+      "128_plus_status": "cleanup finished; repeat tick/close has no effects; status retains primary operation outcome, and caller must also inspect close_errors",
+      "512_plus_status": "synchronous call refusal; command/state/ownership unchanged; never means the context has been closed"
+    },
+    "modes": {
+      "0": "copy exactly amount bytes input to output in bounded windows; at most 2097152 bytes per operation",
+      "1": "read/drain amount into reused window; at most 2097152; caller can retain a complete read only when amount <= 65536",
+      "2": "write caller-prepared data window; amount <= 65536; larger output is a sequence of submissions"
+    },
+    "deadline": "caller-specified absolute CLOCK_MONOTONIC ns, no implicit reset on retry/resubmit; at most 60 seconds in the future",
+    "cancellation": "0 disables; otherwise accepted private cancel-read FD >=3; one byte or EOF cancels current operation, checked between every progress attempt",
+    "cursor": "positive actual syscall results advance cursor before deadline evaluation; terminal counts preserve partial effects",
+    "clock_sampling_failure": "apply the acknowledged syscall's positive byte progress/new epoll ownership/registration effects before terminal error; context cannot submit again; cleanup remains required",
+    "cleanup_error_fields": {"close_errors": 144, "last_close_errno_bits": 440, "last_close_fd": 448},
+    "statuses": {
+      "0": "complete", "64": "invalid argument", "65": "EOF before requested amount",
+      "70": "OS error", "71": "unsupported class/access/object scope", "72": "deadline",
+      "73": "cancelled", "74": "event/state/capability contract refusal", "75": "qualification caller invariant failure",
+      "78": "adapter command refusal", "79": "adapter arena mapping failure"
+    }
+  },
+  "capability_slots": {
+    "base": 512, "stride": 80, "count": 4,
+    "roles": ["input read+wait", "output write+wait", "cancel read+wait+cancel", "borrowed diagnostic write"],
+    "fields": ["raw_fd", "generation", "rights", "kind", "active", "epoll_registered", "epoll_token", "inode", "device", "reserved"],
+    "handle": "generation * 2^32 + slot + 1",
+    "operation_epoll_token": "monotonic operation sequence * 2^32 + slot + 1",
+    "close_rule": "invalidate active/generation before one close command; never retry close EINTR"
+  },
+  "event_words": ["actual_result_bits", "preceding_phase", "clock_sec", "clock_nsec", "clock_error_bits", "reserved", "reserved", "reserved"],
+  "command_words": ["syscall", "arg0", "arg1", "arg2", "arg3", "arg4", "arg5", "pointer_mask", "phase"],
+  "adapter_syscalls": [0, 1, 3, 5, 52, 55, 72, 232, 233, 291],
+  "adapter_profiles": {
+    "memory": "all pointer arguments must be explicit offsets >=128 and ranges contained in 131072-byte command buffer",
+    "fcntl": "F_GETFL with third arg zero, or F_SETFL including O_NONBLOCK",
+    "socket": "SOL_SOCKET SO_TYPE (4 bytes), SO_LINGER (8 bytes), getpeername up to 128 bytes",
+    "epoll_create1": "EPOLL_CLOEXEC exactly",
+    "epoll_wait": "maxevents exactly 2; timeout 1..100 ms; 24-byte result range",
+    "epoll_ctl": "ADD with 12-byte event or DEL with null event",
+    "implicit_effects": ["anonymous private RW mmap", "SIGPIPE ignored", "SIGUSR1 non-restarting handler and rt_sigreturn", "CLOCK_MONOTONIC before each callback", "process exit"],
+    "isa_data_is_not_core_verified_syscall_semantics": true
+  },
+  "observation": {
+    "bytes": 192,
+    "words": ["HIAIO001", "status", "requested", "read_bytes", "written_bytes", "start_ns", "deadline_ns", "terminal_ns", "eagain", "eintr", "partial_read", "partial_write", "epoll_timeout", "epoll_ready", "cancel", "cause_bits", "close_errors", "closed_count", "chunks", "operation_sequence", "last_handle", "calls", "last_result_bits", "last_phase"],
+    "cause_bits": "actual errno bits, class/contract value, or cancellation result; not always an errno",
+    "closed_count": "number of acknowledged close attempts, including failed close; inspect close_errors; this count alone does not prove release after an error",
+    "terminal_ns_on_clock_failure": "last successfully sampled monotonic time, not a fabricated failure timestamp",
+    "diagnostic_delivery": "best effort nonblocking, at most 8 immediate partial/EINTR attempts; EAGAIN/closed channel cannot block termination"
+  },
+  "cli": "program mode amount budget_ms cancel_fd; four bounded decimal arguments; FD0 input, FD1 output, FD2 borrowed diagnostics; CLI mode2 fills deterministic test bytes",
+  "policy_contract_fixture": "api_fixture.hepta is a native selfhost_exec test entry: 120-byte synthetic event/selector/arguments +69632-byte command +1024-byte state; returns u64 API code + unchanged-size command/state; no modeled errno/FD is claimed to be a real kernel fault",
+  "deadline_scope": "admitted FIFO/pipe or already connected AF_UNIX/AF_INET/AF_INET6 SOCK_STREAM with SO_LINGER off, nonblocking I/O and kernel epoll timeout",
+  "open_boundaries": ["regular file, block/character device, open/fsync deadlines", "socket create/connect/accept and EINPROGRESS/SO_ERROR establishment", "multi-connection reactor scheduling", "authenticated peer authority", "durable store transaction integration", "same-process hostile memory writes", "hard real-time scheduling guarantee", "general ET_REL static linking"],
+  "full_node_io_gate": "OPEN"
+}

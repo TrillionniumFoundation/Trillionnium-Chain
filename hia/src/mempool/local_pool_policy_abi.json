@@ -1,0 +1,18 @@
+{
+  "schema": "trnm.hia.m05-local-pool-policy.borrowed.v1",
+  "target": "x86_64-linux-gnu",
+  "export": "f0(readbuf,mutbuf,mutbuf)->u32",
+  "magic": "LPV1",
+  "input_bytes": 172,
+  "input_identities": ["network", "parameters", "genesis", "preview_miner"],
+  "input_identity_bytes": 32,
+  "input_u64le": ["max_records", "max_bytes", "max_group_members", "critical_reserve", "max_removals"],
+  "minimum_output_bytes": 282,
+  "minimum_scratch_bytes": 1664,
+  "maximum_scratch_write_end": 1609,
+  "output": ["context_sha256_32", "compact_rust_struct_json"],
+  "hash_domain": "native-local-queued-pnx1-v2",
+  "refusals": {"frame": 1, "capacity": 2, "policy": 3, "hash_internal": 4},
+  "node_integration_complete": false,
+  "persistent_authority": false
+}

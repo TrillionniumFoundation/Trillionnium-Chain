@@ -1,0 +1,99 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_text_v1
+fn f0(v0:readbuf,v1:mutbuf,v125:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(v0:readbuf,v1:mutbuf,v125:mutbuf)
+  v2:usize = buffer.len(v0)
+  v3:usize = const() {"value":0}
+  v4:bool = compare.eq(v2,v3)
+  branch v4 invalid() tag(v0,v1,v2,v3)
+block tag(v5:readbuf,v6:mutbuf,v7:usize,v8:usize)
+  v9:u8 = buffer.load(v5,v8)
+  v10:u8 = const() {"value":0}
+  v11:bool = compare.eq(v9,v10)
+  v12:usize = const() {"value":1}
+  branch v11 missing(v6,v7,v8,v12) present(v5,v6,v7,v8,v9,v12)
+block missing(v13:mutbuf,v14:usize,v15:usize,v16:usize)
+  v17:bool = compare.eq(v14,v16)
+  branch v17 missing_cap(v13,v15,v16) invalid()
+block missing_cap(v18:mutbuf,v19:usize,v20:usize)
+  v21:usize = buffer.len(v18)
+  v22:bool = compare.ge(v21,v20)
+  branch v22 dash(v18,v19) capacity()
+block dash(v23:mutbuf,v24:usize)
+  v25:u8 = const() {"value":45}
+  _ = buffer.store(v23,v24,v25)
+  v26:u32 = const() {"value":1}
+  ret(v26)
+block present(v27:readbuf,v28:mutbuf,v29:usize,v30:usize,v31:u8,v32:usize)
+  v33:u8 = const() {"value":1}
+  v34:bool = compare.eq(v31,v33)
+  branch v34 present_cap(v27,v28,v29,v30,v32) invalid()
+block present_cap(v35:readbuf,v36:mutbuf,v37:usize,v38:usize,v39:usize)
+  v40:usize = buffer.len(v36)
+  v41:usize = const() {"value":4294967293}
+  v42:usize = int.sub.wrap(v37,v39)
+  v43:bool = compare.le(v42,v40)
+  v44:bool = compare.le(v42,v41)
+  v45:bool = bool.and(v43,v44)
+  branch v45 measure(v35,v36,v37,v39,v38,v40,v41) capacity()
+block measure(v46:readbuf,v47:mutbuf,v48:usize,v49:usize,v50:usize,v51:usize,v52:usize)
+  v53:bool = compare.lt(v49,v48)
+  branch v53 count_byte(v46,v47,v48,v49,v50,v51,v52) start(v46,v47,v48,v50)
+block count_byte(v54:readbuf,v55:mutbuf,v56:usize,v57:usize,v58:usize,v59:usize,v60:usize)
+  v61:u8 = buffer.load(v54,v57)
+  v62:u8 = const() {"value":124}
+  v63:bool = compare.eq(v61,v62)
+  v64:usize = const() {"value":1}
+  v65:usize = const() {"value":2}
+  v66:usize = select(v63,v65,v64)
+  v67:usize = int.add.wrap(v58,v66)
+  v68:usize = int.add.wrap(v57,v64)
+  v69:bool = compare.le(v67,v59)
+  v70:bool = compare.le(v67,v60)
+  v71:bool = bool.and(v69,v70)
+  branch v71 measure(v54,v55,v56,v68,v67,v59,v60) capacity()
+block start(v72:readbuf,v73:mutbuf,v74:usize,v75:usize)
+  v76:usize = const() {"value":1}
+  v77:usize = const() {"value":0}
+  jump emit(v72,v73,v74,v76,v77,v75)
+block emit(v78:readbuf,v79:mutbuf,v80:usize,v81:usize,v82:usize,v83:usize)
+  v84:bool = compare.lt(v81,v80)
+  branch v84 emit_byte(v78,v79,v80,v81,v82,v83) done(v83)
+block emit_byte(v85:readbuf,v86:mutbuf,v87:usize,v88:usize,v89:usize,v90:usize)
+  v91:u8 = buffer.load(v85,v88)
+  v98:u8 = call(v91) {"function":"wa_visible_byte"}
+  v99:u8 = const() {"value":124}
+  v100:bool = compare.eq(v98,v99)
+  branch v100 slash(v85,v86,v87,v88,v89,v90,v98) write(v85,v86,v87,v88,v89,v90,v98)
+block slash(v101:readbuf,v102:mutbuf,v103:usize,v104:usize,v105:usize,v106:usize,v107:u8)
+  v108:u8 = const() {"value":92}
+  _ = buffer.store(v102,v105,v108)
+  v109:usize = const() {"value":1}
+  v110:usize = int.add.wrap(v105,v109)
+  jump write(v101,v102,v103,v104,v110,v106,v107)
+block write(v111:readbuf,v112:mutbuf,v113:usize,v114:usize,v115:usize,v116:usize,v117:u8)
+  _ = buffer.store(v112,v115,v117)
+  v118:usize = const() {"value":1}
+  v119:usize = int.add.wrap(v114,v118)
+  v120:usize = int.add.wrap(v115,v118)
+  jump emit(v111,v112,v113,v119,v120,v116)
+block done(v121:usize)
+  v122:u32 = int.cast(v121) {"mode":"wrap"}
+  ret(v122)
+block invalid()
+  v123:u32 = const() {"value":4294967295}
+  ret(v123)
+block capacity()
+  v124:u32 = const() {"value":4294967294}
+  ret(v124)
+end
+fn wa_visible_byte(v0:u8) -> (u8) effects(read,write,trap) entry(entry)
+block entry(v0:u8)
+  v1:u8 = const() {"value":13}
+  v2:u8 = const() {"value":10}
+  v3:u8 = const() {"value":32}
+  v4:bool = compare.eq(v0,v1)
+  v5:bool = compare.eq(v0,v2)
+  v6:bool = bool.or(v4,v5)
+  v7:u8 = select(v6,v3,v0)
+  ret(v7)
+end

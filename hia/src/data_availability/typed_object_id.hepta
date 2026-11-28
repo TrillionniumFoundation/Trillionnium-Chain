@@ -1,0 +1,59 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_da_typed_object_id_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  n:usize = buffer.len(input)
+  fixed:usize = const() {"value":35}
+  exact:bool = compare.eq(n,fixed)
+  branch exact namespace(input,output,fixed) malformed()
+block namespace(i:readbuf,o:mutbuf,n1:usize)
+  zero:usize = const() {"value":0}
+  tag:u8 = buffer.load(i,zero)
+  transaction:u8 = const() {"value":0}
+  supported:bool = compare.eq(tag,transaction)
+  branch supported kind(i,o,n1) unsupported(tag)
+block unsupported(tag_u:u8)
+  evidence:u8 = const() {"value":1}
+  known:bool = compare.eq(tag_u,evidence)
+  excluded:u32 = const() {"value":2}
+  unknown:u32 = const() {"value":3}
+  error:u32 = select(known,excluded,unknown)
+  ret(error)
+block kind(ik:readbuf,ok:mutbuf,nk:usize)
+  first:usize = const() {"value":1}
+  second:usize = const() {"value":2}
+  low:u8 = buffer.load(ik,first)
+  high:u8 = buffer.load(ik,second)
+  zero_k:u8 = const() {"value":0}
+  one_k:u8 = const() {"value":1}
+  max_k:u8 = const() {"value":6}
+  high_zero:bool = compare.eq(high,zero_k)
+  minimum:bool = compare.ge(low,one_k)
+  maximum:bool = compare.le(low,max_k)
+  range:bool = bool.and(minimum,maximum)
+  checked:bool = bool.and(high_zero,range)
+  branch checked capacity(ik,ok,nk) invalid_kind()
+block capacity(ic:readbuf,oc:mutbuf,nc:usize)
+  room:usize = buffer.len(oc)
+  available:bool = compare.ge(room,nc)
+  zero_c:usize = const() {"value":0}
+  branch available write(ic,oc,nc,zero_c) short()
+block write(iw:readbuf,ow:mutbuf,nw:usize,pos:usize)
+  value:u8 = buffer.load(iw,pos)
+  _ = buffer.store(ow,pos,value)
+  one_w:usize = const() {"value":1}
+  next:usize = int.add.wrap(pos,one_w)
+  more:bool = compare.lt(next,nw)
+  branch more write(iw,ow,nw,next) done()
+block done()
+  result:u32 = const() {"value":0}
+  ret(result)
+block malformed()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block invalid_kind()
+  bad_kind:u32 = const() {"value":4}
+  ret(bad_kind)
+block short()
+  no_space:u32 = const() {"value":102}
+  ret(no_space)
+end

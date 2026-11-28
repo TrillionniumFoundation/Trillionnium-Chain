@@ -1,0 +1,239 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_routed_int257_factor_preparation
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  extent:usize = buffer.len(r)
+  fixed:usize = const() {"value":40460}
+  exact:bool = compare.eq(extent,fixed)
+  branch exact model(r,o) malformed()
+block model(r1:readbuf,o1:mutbuf)
+  valid1:bool = call(r1) {"function":"rim_validate"}
+  branch valid1 prepare(r1,o1) model_error()
+block prepare(r2:readbuf,o2:mutbuf)
+  result2:u32 = call(r2) {"function":"rif_prepare"}
+  z2:u32 = const() {"value":0}
+  ok2:bool = compare.eq(result2,z2)
+  branch ok2 capacity(r2,o2) done(result2)
+block capacity(r3:readbuf,o3:mutbuf)
+  extent3:usize = buffer.len(o3)
+  fixed3:usize = const() {"value":11}
+  enough3:bool = compare.ge(extent3,fixed3)
+  branch enough3 emit(r3,o3) short()
+block emit(r4:readbuf,o4:mutbuf)
+  a_at4:u64 = const() {"value":15452}
+  b_at4:u64 = const() {"value":23788}
+  c_at4:u64 = const() {"value":32124}
+  a4:u64 = call(r4,a_at4) {"function":"daav_u32"}
+  b4:u64 = call(r4,b_at4) {"function":"daav_u32"}
+  c4:u64 = call(r4,c_at4) {"function":"daav_u32"}
+  ab4:u64 = int.add.wrap(a4,b4)
+  ranks4:u64 = int.add.wrap(ab4,c4)
+  positions4:u64 = const() {"value":771}
+  count4:u64 = int.mul.wrap(ranks4,positions4)
+  z4:u64 = const() {"value":0}
+  _count4:u64 = call(o4,z4,count4) {"function":"tr_put"}
+  aa4:u8 = int.cast(a4) {"mode":"wrap"}
+  bb4:u8 = int.cast(b4) {"mode":"wrap"}
+  cc4:u8 = int.cast(c4) {"mode":"wrap"}
+  ap4:usize = const() {"value":8}
+  bp4:usize = const() {"value":9}
+  cp4:usize = const() {"value":10}
+  _ = buffer.store(o4,ap4,aa4)
+  _ = buffer.store(o4,bp4,bb4)
+  _ = buffer.store(o4,cp4,cc4)
+  ok4:u32 = const() {"value":0}
+  ret(ok4)
+block done(code:u32)
+  ret(code)
+block malformed()
+  malformed_code:u32 = const() {"value":100}
+  ret(malformed_code)
+block model_error()
+  invalid_code:u32 = const() {"value":3}
+  ret(invalid_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+end
+
+fn rif_prepare(r:readbuf) -> (u32) effects(read,trap) entry(entry)
+block entry(r:readbuf)
+  begin:u64 = const() {"value":15452}
+  delta:u64 = const() {"value":6200}
+  jump expert(r,begin,delta)
+block expert(r1:readbuf,at1:u64,delta1:u64)
+  rank1:u64 = call(r1,at1) {"function":"daav_u32"}
+  one1:u64 = const() {"value":1}
+  max1:u64 = const() {"value":8}
+  lo1:bool = compare.ge(rank1,one1)
+  hi1:bool = compare.le(rank1,max1)
+  ok1:bool = bool.and(lo1,hi1)
+  branch ok1 shape(r1,at1,delta1,rank1) bad_rank()
+block shape(r2:readbuf,at2:u64,delta2:u64,rank2:u64)
+  ca2:u64 = const() {"value":4}
+  cb2:u64 = const() {"value":8}
+  cc2:u64 = const() {"value":12}
+  a_at2:u64 = int.add.wrap(at2,ca2)
+  b_at2:u64 = int.add.wrap(at2,cb2)
+  c_at2:u64 = int.add.wrap(at2,cc2)
+  a2:u64 = call(r2,a_at2) {"function":"daav_u32"}
+  b2:u64 = call(r2,b_at2) {"function":"daav_u32"}
+  c2:u64 = call(r2,c_at2) {"function":"daav_u32"}
+  pa2:bool = compare.eq(a2,rank2)
+  pb2:bool = compare.eq(b2,rank2)
+  pc2:bool = compare.eq(c2,rank2)
+  pab2:bool = bool.and(pa2,pb2)
+  valid2:bool = bool.and(pab2,pc2)
+  branch valid2 coeffs(r2,at2,delta2,rank2) bad_shape()
+block coeffs(r3:readbuf,at3:u64,delta3:u64,rank3:u64)
+  hop3:u64 = const() {"value":16}
+  downoff3:u64 = const() {"value":112}
+  up3:u64 = int.add.wrap(at3,hop3)
+  down3:u64 = int.add.wrap(at3,downoff3)
+  okay3:bool = call(r3,up3,down3,rank3) {"function":"rif_coeffs"}
+  branch okay3 compare_all(r3,at3,delta3,rank3,up3,down3) bad_coeff()
+block compare_all(r4:readbuf,at4:u64,delta4:u64,rank4:u64,up4:u64,down4:u64)
+  okay4:bool = call(r4,delta4,rank4,up4,down4) {"function":"rif_compare"}
+  branch okay4 advance(r4,at4,delta4) different()
+block advance(r5:readbuf,at5:u64,delta5:u64)
+  expert_stride5:u64 = const() {"value":8336}
+  delta_stride5:u64 = const() {"value":3084}
+  input_end5:u64 = const() {"value":40460}
+  nxt5:u64 = int.add.wrap(at5,expert_stride5)
+  other5:u64 = int.add.wrap(delta5,delta_stride5)
+  done5:bool = compare.eq(nxt5,input_end5)
+  branch done5 good() expert(r5,nxt5,other5)
+block good()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block bad_rank()
+  a:u32 = const() {"value":9}
+  ret(a)
+block bad_shape()
+  b:u32 = const() {"value":10}
+  ret(b)
+block bad_coeff()
+  c:u32 = const() {"value":8}
+  ret(c)
+block different()
+  d:u32 = const() {"value":11}
+  ret(d)
+end
+
+fn rif_coeffs(r:readbuf,up:u64,down:u64,rank:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,up:u64,down:u64,rank:u64)
+  stride:u64 = const() {"value":4}
+  width:u64 = int.mul.wrap(rank,stride)
+  jump up_row(r,up,down,width)
+block up_row(r1:readbuf,up1:u64,down1:u64,width1:u64)
+  stop1:u64 = int.add.wrap(up1,width1)
+  good1:bool = call(r1,up1,stop1) {"function":"rif_range"}
+  branch good1 next(r1,up1,down1,width1) bad()
+block next(r2:readbuf,up2:u64,down2:u64,width2:u64)
+  row2:u64 = const() {"value":32}
+  nx2:u64 = int.add.wrap(up2,row2)
+  end2:bool = compare.eq(nx2,down2)
+  branch end2 down_panel(r2,down2,width2) up_row(r2,nx2,down2,width2)
+block down_panel(r3:readbuf,down3:u64,width3:u64)
+  columns3:u64 = const() {"value":257}
+  bytes3:u64 = int.mul.wrap(width3,columns3)
+  stop3:u64 = int.add.wrap(down3,bytes3)
+  good3:bool = call(r3,down3,stop3) {"function":"rif_range"}
+  ret(good3)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rif_range(r:readbuf,first:u64,stop:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,first:u64,stop:u64)
+  jump coeff(r,first,stop)
+block coeff(r1:readbuf,at1:u64,stop1:u64)
+  x1:i64 = call(r1,at1) {"function":"rio_i32"}
+  min1:i64 = const() {"value":-32767}
+  max1:i64 = const() {"value":32767}
+  lo1:bool = compare.ge(x1,min1)
+  hi1:bool = compare.le(x1,max1)
+  okay1:bool = bool.and(lo1,hi1)
+  branch okay1 next(r1,at1,stop1) bad()
+block next(r2:readbuf,at2:u64,stop2:u64)
+  stride2:u64 = const() {"value":4}
+  nx2:u64 = int.add.wrap(at2,stride2)
+  done2:bool = compare.eq(nx2,stop2)
+  branch done2 good() coeff(r2,nx2,stop2)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rif_compare(r:readbuf,delta:u64,rank:u64,up:u64,down:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,delta:u64,rank:u64,up:u64,down:u64)
+  row:u64 = const() {"value":0}
+  jump columns(r,delta,rank,up,down,row)
+block columns(r1:readbuf,delta1:u64,rank1:u64,up1:u64,down1:u64,row1:u64)
+  okay1:bool = call(r1,delta1,rank1,up1,down1) {"function":"rif_compare_row"}
+  branch okay1 next(r1,delta1,rank1,up1,down1,row1) bad()
+block next(r2:readbuf,delta2:u64,rank2:u64,up2:u64,down2:u64,row2:u64)
+  one2:u64 = const() {"value":1}
+  last2:u64 = const() {"value":2}
+  up_step2:u64 = const() {"value":32}
+  delta_step2:u64 = const() {"value":1028}
+  nx_up2:u64 = int.add.wrap(up2,up_step2)
+  nx_delta2:u64 = int.add.wrap(delta2,delta_step2)
+  nx_row2:u64 = int.add.wrap(row2,one2)
+  stop2:bool = compare.eq(row2,last2)
+  branch stop2 good() columns(r2,nx_delta2,rank2,nx_up2,down2,nx_row2)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rif_compare_row(r:readbuf,delta:u64,rank:u64,up:u64,down:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,delta:u64,rank:u64,up:u64,down:u64)
+  stride:u64 = const() {"value":1028}
+  end:u64 = int.add.wrap(delta,stride)
+  jump column(r,delta,rank,up,down,end)
+block column(r1:readbuf,delta1:u64,rank1:u64,up1:u64,down1:u64,end1:u64)
+  x1:i64 = call(r1,delta1) {"function":"rio_i32"}
+  actual1:i64 = call(r1,rank1,up1,down1) {"function":"rif_contract"}
+  okay1:bool = compare.eq(x1,actual1)
+  branch okay1 next(r1,delta1,rank1,up1,down1,end1) bad()
+block next(r2:readbuf,delta2:u64,rank2:u64,up2:u64,down2:u64,end2:u64)
+  step2:u64 = const() {"value":4}
+  nx_delta2:u64 = int.add.wrap(delta2,step2)
+  nx_down2:u64 = int.add.wrap(down2,step2)
+  done2:bool = compare.eq(nx_delta2,end2)
+  branch done2 good() column(r2,nx_delta2,rank2,up2,nx_down2,end2)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rif_contract(r:readbuf,rank:u64,up:u64,down:u64) -> (i64) effects(read,trap) entry(entry)
+block entry(r:readbuf,rank:u64,up:u64,down:u64)
+  zero:i64 = const() {"value":0}
+  jump term(r,rank,up,down,zero)
+block term(r1:readbuf,left1:u64,up1:u64,down1:u64,sum1:i64)
+  b1:i64 = call(r1,up1) {"function":"rio_i32"}
+  a1:i64 = call(r1,down1) {"function":"rio_i32"}
+  prod1:i64 = int.mul.wrap(a1,b1)
+  total1:i64 = int.add.wrap(sum1,prod1)
+  one1:u64 = const() {"value":1}
+  up_step1:u64 = const() {"value":4}
+  down_step1:u64 = const() {"value":1028}
+  up_next1:u64 = int.add.wrap(up1,up_step1)
+  down_next1:u64 = int.add.wrap(down1,down_step1)
+  left_next1:u64 = int.sub.wrap(left1,one1)
+  done1:bool = compare.eq(left1,one1)
+  branch done1 finish(total1) term(r1,left_next1,up_next1,down_next1,total1)
+block finish(result:i64)
+  ret(result)
+end

@@ -1,0 +1,28 @@
+{
+  "schema": "trnm.hia.contiguous-archive.v1",
+  "logical_name": "oracle-development.tar.xz",
+  "archive": {
+    "bytes": 15485716,
+    "sha256": "07d7c83bd1bced796cdfe81622d859f751602503393321cd0f6b5b917fe69837"
+  },
+  "parts": [
+    {
+      "path": "part-000",
+      "offset": 0,
+      "bytes": 6291456,
+      "sha256": "f61f5f7b4bd614450e8a453068909d597a1efb2e934e16136a3a5661ccd89d56"
+    },
+    {
+      "path": "part-001",
+      "offset": 6291456,
+      "bytes": 6291456,
+      "sha256": "2a7b04aeb75dcbf73ecdafe20f10ab9e857a098aee1223fc8923834616e424df"
+    },
+    {
+      "path": "part-002",
+      "offset": 12582912,
+      "bytes": 2902804,
+      "sha256": "d98b171439f508043c6c12e6bf2326bfe6fd8025024a5be60ecbebe6c40b99a6"
+    }
+  ]
+}

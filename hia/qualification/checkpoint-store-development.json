@@ -1,0 +1,518 @@
+{
+  "archive_locations": {
+    "desktop": "/tmp/trnm-cs792-r2-xc4jjq_x/checkpoint-store-final792-r2.tar.xz",
+    "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/checkpoint-store-final792-r2.tar.xz"
+  },
+  "archive_readback": {
+    "desktop_members_verified": 1453,
+    "mac_job_id": "1a1f2b03343-ffbe-bc0",
+    "mac_members_verified": 1453,
+    "mac_readback": {
+      "bytes": 736,
+      "sha256": "fdf696f5eb6debfebd7015f3d59ff38cdbae32f9764be8ea6a2cc4378944616e"
+    }
+  },
+  "ci": {
+    "context_repair": {
+      "fixed": {
+        "exit_code": 0,
+        "source_sha256": "83649507e75295c597b8551c903a53174189c9ae80a0bd456c0054579ffc437f"
+      },
+      "independent_bootstraps": 46,
+      "jobs": 58,
+      "local_checks": {
+        "actual_initializer": {
+          "environment_file_sha256": "063ed6acf028065b1e9b55942141bfa58105d9fc772a5979f5a4da84ae87cbe1",
+          "exit_code": 0
+        },
+        "bash_n_blocks": 473,
+        "bootstrap_controls": 4,
+        "bootstrap_exit_code": 0,
+        "bootstrap_invocations": 184,
+        "current_plan_blob_verified": true,
+        "jobs": 58,
+        "root_readme_bytes": 0,
+        "runtime_qualification_inferred": false,
+        "status": "PASS",
+        "workflow_sha256": "83649507e75295c597b8551c903a53174189c9ae80a0bd456c0054579ffc437f"
+      },
+      "operation": "Initialize CS_OBSERVATIONS, CS_QUALIFICATION and CS_ARTIFACT from actual RUNNER_TEMP in the first runner step via GITHUB_ENV; explicit existing working-directory",
+      "original": {
+        "exit_code": 1,
+        "source_sha256": "9795a33368cc2280bb6f002b5270b9effc26c6f9e80996721b12317562e68996"
+      },
+      "original_context_errors": 3,
+      "runtime_qualification_inferred": false,
+      "shellcheck_or_pyflakes_claimed": false,
+      "static_linter": {
+        "asset": {
+          "bytes": 2164202,
+          "name": "actionlint_1.7.12_darwin_arm64.tar.gz",
+          "sha256": "aba9ced2dee8d27fecca3dc7feb1a7f9a52caefa1eb46f3271ea66b6e0e6953f"
+        },
+        "binary": {
+          "bytes": 5829842,
+          "sha256": "8db11704dc296f096216db4db65d86cd7f0ebfdf4c38453a1da276b137b88388"
+        },
+        "tool_release": "v1.7.12",
+        "version": "1.7.12\ninstalled by downloading from release page\nbuilt with go1.26.1 compiler for darwin/arm64\n"
+      },
+      "subprocess_job_id": "1a1f2e404ec-ffbe-c28"
+    },
+    "hosted_result_for_current_candidate": "NOT_YET_OBSERVED",
+    "job": "native-checkpoint-store",
+    "job_minutes": 20,
+    "required": [
+      "fresh exact 1.95.0 original Cargo graph",
+      "77 original tests with zero filtered or ignored",
+      "strict Clippy and both formatter gates",
+      "29 actual native compile/emit stages",
+      "792 runtime observations",
+      "31 actual refusal controls",
+      "independent readback",
+      "all regular source and runtime bytes plus lstat metadata on success or failure"
+    ],
+    "retained_failed_publication": {
+      "check_suite_id": 120416802471,
+      "conclusion": "failure",
+      "diagnosis": "runner context is unavailable in jobs.<job_id>.env; three checkpoint path expressions used it",
+      "failure_stage": "GitHub workflow validation",
+      "head": "cef50843e990bae58c1abf2fd74c8cf2859b7132",
+      "jobs_started": 0,
+      "raw_actionlint_directory": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ci-cef-actionlint",
+      "raw_api_directory": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/ci-cef-workflow-validation",
+      "run_id": 44485504325
+    },
+    "source_binding": "Each event head is checked before and after; all qualified source inputs must equal the committed Git blobs."
+  },
+  "complete_archive": {
+    "bytes": 16102424,
+    "files": 1453,
+    "sha256": "2d48b04f702e7ca5b264e89ff149df6cfb8e27726f351356464df47ac73fb047",
+    "source_set_sha256": "c1d65794ff591552a064bb98498240b60d69eb4ea8222a1927c06de606cc4530"
+  },
+  "current_build": {
+    "all_artifact_bytes_equal_to_qualified_development": true,
+    "archive_locations": {
+      "local": "/workspace/scratch/5cee04bf67f6/checkpoint-current-build-archive/complete-observations.tar.gz",
+      "mac": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/trnm-hia-publish-20261119-g5cw1fe0/checkpoint-current-build.tar.gz"
+    },
+    "artifacts": {
+      "checkpoint-store-api": {
+        "bytes": 4221936,
+        "profile": 2,
+        "sha256": "718104d5426f70569b64b1cbb079e9416aaf573e47fcdaf7d99573f287f433be",
+        "structure": {
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        }
+      },
+      "trnm-external-node-checkpoint-v2": {
+        "bytes": 4221936,
+        "profile": 1,
+        "sha256": "2308efc37fdd37cc3604c6363c31e429a242cb2363319f1c1a83c0cafe980534",
+        "structure": {
+          "dynamic_linker": false,
+          "entry": 4194480,
+          "format": "ELF64LE",
+          "instruction_semantics_verified_by_this_check": false,
+          "interpreter": null,
+          "load_flags": "RX",
+          "machine": "x86_64",
+          "stack_flags": "RW",
+          "type": "ET_EXEC"
+        }
+      }
+    },
+    "build_report": {
+      "bytes": 64787,
+      "sha256": "8d31c1f45bb5c6bc493afd346465f3f92fd4283702d63f11700d1e6cc19c9e8c"
+    },
+    "complete_archive": {
+      "archive": {
+        "bytes": 7295250,
+        "sha256": "a266a7ee00eadf891d20641cd651f1cc273b73d547056d74944009e2c86a4e46"
+      },
+      "archive_members_including_manifest": 203,
+      "manifest": {
+        "bytes": 98648,
+        "sha256": "e2d37c2bcc8b078aab078a7163c39f1c8836932d91e9b8930d5e737789809430"
+      },
+      "metadata_entries": 233,
+      "original_hardlinked_paths": 0,
+      "regular_content_members": 202,
+      "regular_logical_bytes": 30841790,
+      "runtime_qualification_inferred_from_packaging": false,
+      "special_objects_are_metadata_only": true,
+      "status": "ARCHIVE_AND_ALL_MEMBERS_READBACK_PASS"
+    },
+    "interpretation": "An actual current-source build and independent build readback; the prior 792 observations retain their original 180-plus-overlay source identity.",
+    "mac_readback_job_id": "1a1f2d3b9b6-ffbe-c0c",
+    "root": "/workspace/scratch/5cee04bf67f6/current-checkpoint-build-v1",
+    "runtime_rerun_claimed": false,
+    "source_inputs": 106,
+    "source_set_sha256": "940c84f682b55e4289910a75ea810f700b65157d2da9de7775c8f69bb4dec4ef"
+  },
+  "date_utc": "2026-11-19",
+  "integration_base_commit": "41948f98b7b9fcb24a6ba7d638d5391a88e26de6",
+  "integration_component_binding": {
+    "complete_component_runtime_claimed": false,
+    "discovery": {
+      "crypto-types": 95,
+      "general": 455,
+      "state-root": 7
+    },
+    "source_count": 1304,
+    "source_map_sha256": "ac7cceceeb53fcf656d3b3704fa8d37338ad233d1d6e274d35651d919558d125"
+  },
+  "local_integration_checks": {
+    "bootstrap_groups": 4,
+    "bootstrap_invocations": 184,
+    "changed_document_local_links_checked": 779,
+    "controls": 49,
+    "full_pq_source_checker": {
+      "cause_observed": "This sparse local checkout omits that tracked historical fixture; the complete-source check was not reported as passing.",
+      "changed_current_blob_pins_independently_verified": [
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "formal/pon-nakamoto-v1/bounded_process.py"
+      ],
+      "exit_code": 1,
+      "status": "HOLD_NO_GO",
+      "stderr": "missing source: evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs"
+    },
+    "original_rust_source_changes": false,
+    "root_readme_bytes": 0,
+    "workflow_shell_blocks_checked": 482
+  },
+  "native_source_files": 29,
+  "owned_files": {
+    "hia/platform/checkpoint_store/README.md": {
+      "bytes": 13247,
+      "sha256": "75b0a67ac7fd07a7be4977e0b383459a7460e2d2d799be582a30af6d923d9536"
+    },
+    "hia/platform/checkpoint_store/abi.json": {
+      "bytes": 2680,
+      "sha256": "71c5d51268b06be9bb849b17b68f985e06bd9a4bc982ed1109ae2771ca50a4be"
+    },
+    "hia/platform/checkpoint_store/api_driver.hepta": {
+      "bytes": 28886,
+      "sha256": "66ab179def837b5ba0ffd65232ad5217e6d33a1b79b34f3e848ccc339f19df1b"
+    },
+    "hia/platform/checkpoint_store/api_methods.hepta": {
+      "bytes": 66861,
+      "sha256": "ff162884785de1e42c63c10e7afd0554269eb07db1ae88ee52b8c59bb381047e"
+    },
+    "hia/platform/checkpoint_store/api_objects.hepta": {
+      "bytes": 116457,
+      "sha256": "bc2ff409712ae6057734577fb3c6ec85618ec0ab814bee2a76bcbc4e18fc641b"
+    },
+    "hia/platform/checkpoint_store/authority_fence.hepta": {
+      "bytes": 40924,
+      "sha256": "28b75abd0dceb57aba81f8d2ced36b2b9b2df0a8251b0644fb03241feb80750a"
+    },
+    "hia/platform/checkpoint_store/authority_head.hepta": {
+      "bytes": 71468,
+      "sha256": "590ddf92ca4e1557a2f56dfc8997b5cb55f447e9da9135b27fe5350ff5c96163"
+    },
+    "hia/platform/checkpoint_store/authority_open.hepta": {
+      "bytes": 80517,
+      "sha256": "d7641f398d44e407b00953e1e6a2bfe496e40d78aa12fcfa7d0c9b1324df6b6b"
+    },
+    "hia/platform/checkpoint_store/authority_operations.hepta": {
+      "bytes": 58029,
+      "sha256": "ecb795072d2d989223accad95c0a8c3032037a983c575c1b816458a81ce4e4ac"
+    },
+    "hia/platform/checkpoint_store/build.py": {
+      "bytes": 18379,
+      "sha256": "4dd17401d35180b4535901d618dc81a9753015a5a799adbe794abea2d1c237c0"
+    },
+    "hia/platform/checkpoint_store/cases_api.py": {
+      "bytes": 2037,
+      "sha256": "2ea6b49870ff5f2fdefa88e7563ece0df74977ee36d2e97cca783ae910775e03"
+    },
+    "hia/platform/checkpoint_store/cases_cli.py": {
+      "bytes": 1932,
+      "sha256": "fe319c0236653970172f39f75bcbe3650c67dff047a07eb1bc81a30c786d0356"
+    },
+    "hia/platform/checkpoint_store/cases_crash.py": {
+      "bytes": 7111,
+      "sha256": "bb2b51b353e07074d3d1444bd3678ae71c5e6e4059d4a270149907364e38085d"
+    },
+    "hia/platform/checkpoint_store/cases_files.py": {
+      "bytes": 6280,
+      "sha256": "c538b734817e8350849465f29f6e4243a87d29986e15eeefafc7a50713579c91"
+    },
+    "hia/platform/checkpoint_store/cases_recovery.py": {
+      "bytes": 9795,
+      "sha256": "e4e4fe44861c2447381081b639a4e6c2fba9ab93e3bf750d5e4c09491fb6c355"
+    },
+    "hia/platform/checkpoint_store/cases_unix.py": {
+      "bytes": 19829,
+      "sha256": "a233970feb54a88edcdbe98599db7de5b4861f99b0e1cc88cd0fba1ebf802742"
+    },
+    "hia/platform/checkpoint_store/checkpoint_files.hepta": {
+      "bytes": 68337,
+      "sha256": "7c6ec3b9fe750f413bbcaadc66a67e1bcd9c4ad2e7cb99db85b5abb32e50b15f"
+    },
+    "hia/platform/checkpoint_store/errno_text.hepta": {
+      "bytes": 221424,
+      "sha256": "70cb2fc6d2ae11e587ef702e652bff98e8497d5f575dc153240606194c198ebe"
+    },
+    "hia/platform/checkpoint_store/error_formatter.hepta": {
+      "bytes": 20653,
+      "sha256": "85fb7c7e3164f7ecbe8170126d1992f8df51fef8ddfee7b3725e767282fd8cbe"
+    },
+    "hia/platform/checkpoint_store/error_text_a.hepta": {
+      "bytes": 263447,
+      "sha256": "f966290cca274dbf3208b6182027abbcf975c601954449ac6a28fb23f20d5ec8"
+    },
+    "hia/platform/checkpoint_store/error_text_b.hepta": {
+      "bytes": 272795,
+      "sha256": "7e17cdfd2af564a14ac103cbf4b558a5f28aa089fa8687095d05ca6a32186b84"
+    },
+    "hia/platform/checkpoint_store/filesystem.hepta": {
+      "bytes": 108508,
+      "sha256": "9c807ec9aa8e32fef2e565880dce29aa281edc64472b158c161985af83d5bd83"
+    },
+    "hia/platform/checkpoint_store/fixtures.py": {
+      "bytes": 3119,
+      "sha256": "2aaa51773a0303dcf829bd19431219cd61ec8f2d06a5c8bcfbe686c46fd17d57"
+    },
+    "hia/platform/checkpoint_store/io.hepta": {
+      "bytes": 36427,
+      "sha256": "a614ec8fdac3da0f1c4a946a366c032a4e3cffbff9388d97145bebc84b77d05c"
+    },
+    "hia/platform/checkpoint_store/ledger_files.hepta": {
+      "bytes": 119415,
+      "sha256": "20547a3fdd3c950b191fc7c9ebddb87d89299b839686cbe37075ef60a2afb040"
+    },
+    "hia/platform/checkpoint_store/ledger_inventory.hepta": {
+      "bytes": 87433,
+      "sha256": "187cef14b89f3effb415f3b2eedcae98e151271825811ff23b42b9e9ba563235"
+    },
+    "hia/platform/checkpoint_store/ledger_open.hepta": {
+      "bytes": 97181,
+      "sha256": "ddc859212dc772e0e3a2b5aa3403ae7fdf33d9323fb33cecc207f4b2ecbb9590"
+    },
+    "hia/platform/checkpoint_store/ledger_operations.hepta": {
+      "bytes": 34396,
+      "sha256": "7ef74bab2a9bda09090531a11c7d3a4e4aa01508c40f5cb49f3ba02cab786b12"
+    },
+    "hia/platform/checkpoint_store/ledger_recovery.hepta": {
+      "bytes": 58666,
+      "sha256": "b1d9612dfdd9ef285eff9ac933e59a7c042a8fbf55f3f208e78f5a9f8a969239"
+    },
+    "hia/platform/checkpoint_store/linux_emitter.hepta": {
+      "bytes": 143640,
+      "sha256": "8130b691d94dd2bd30245b6f2ef15eaa4d139d23f20b2848a94fd8d17af5bbaf"
+    },
+    "hia/platform/checkpoint_store/main.hepta": {
+      "bytes": 101623,
+      "sha256": "326ee999c13b3d279611ca8c2f29c10cfa98362578d0e1e0c378e7a1df0c76c9"
+    },
+    "hia/platform/checkpoint_store/native_images.json": {
+      "bytes": 17712,
+      "sha256": "5dbb0f9c4cf2e5b3b07245c4b7a0986451056be7843d14f90ef49eb851963b98"
+    },
+    "hia/platform/checkpoint_store/original.py": {
+      "bytes": 17067,
+      "sha256": "5b284fba276f1d45de8bff96a149857c134a9ba74d1daa59feddf3a422755627"
+    },
+    "hia/platform/checkpoint_store/original_tests.json": {
+      "bytes": 6442,
+      "sha256": "3b917aeb967a9df83a65ce5bcb65854902c38ebfa1681af0ff3941d8acba8a3e"
+    },
+    "hia/platform/checkpoint_store/owned_process_trace.py": {
+      "bytes": 11915,
+      "sha256": "69591c35a283cda108a86f7c9561cb455d67e3b6e66665f4d4771181f5b41013"
+    },
+    "hia/platform/checkpoint_store/qualification_support.py": {
+      "bytes": 10388,
+      "sha256": "ae4d1a6ba18c143bfdbc365b48ba6d6b2b5aa9196a59f24b93b30ba0b96fd682"
+    },
+    "hia/platform/checkpoint_store/qualify.py": {
+      "bytes": 7721,
+      "sha256": "8b4dd769259e4a4a87cf5d16f4be75368d0222e34a0da0a3057fa000f444909e"
+    },
+    "hia/platform/checkpoint_store/readback.py": {
+      "bytes": 21261,
+      "sha256": "65302dad88f8711bcb820e08dc2a351e7015b69ac6a4ec7b1ed4dec6b80c6bf9"
+    },
+    "hia/platform/checkpoint_store/runtime.hepta": {
+      "bytes": 60137,
+      "sha256": "f05d44484a57491641f38549fcd111b8c5a572a98935eba1ee781b5c2a6297ab"
+    },
+    "hia/platform/checkpoint_store/socket_owner.hepta": {
+      "bytes": 110852,
+      "sha256": "1592eab31fda1032758d82d995797843afec6b42683895da67498aced7256252"
+    },
+    "hia/platform/checkpoint_store/socket_path.hepta": {
+      "bytes": 37146,
+      "sha256": "7dbb682a3afe8756b4840d6312a1e8886dc7118156270970b91cfa29c0b3dd5b"
+    },
+    "hia/platform/checkpoint_store/test_integrity.py": {
+      "bytes": 15277,
+      "sha256": "a50ff557103b48899b4a2600c422c0afb0d91b8de7f8750df619ff71ac1c41b1"
+    },
+    "hia/platform/checkpoint_store/transport_frame.hepta": {
+      "bytes": 34831,
+      "sha256": "fbc81105704c2d4670e5c3f2a5378dfe76fe1dd08025de94e80a9233a347c417"
+    },
+    "hia/platform/checkpoint_store/unix_client.hepta": {
+      "bytes": 48262,
+      "sha256": "afc56c3c326ea49284a758596036a1ec9a94fee61c788475a12afc1347329200"
+    },
+    "hia/platform/checkpoint_store/unix_daemon.hepta": {
+      "bytes": 50076,
+      "sha256": "df78ab7dc01c491ba95203bad03eaa6f438c985184bc431e49d096710882c6a0"
+    },
+    "hia/platform/checkpoint_store/value_bridge.hepta": {
+      "bytes": 52653,
+      "sha256": "2ad4f012c78510c8c142782189d67f87fb7bba5edc99b47a45ef2090732d7f80"
+    },
+    "hia/platform/checkpoint_store/values.hepta": {
+      "bytes": 113492,
+      "sha256": "9bc55d66d89e2e8ab39394ca4d456a575492b6275a2f7b336d2e49f31d84bc96"
+    },
+    "hia/tests/rust_checkpoint_api_reference.rs": {
+      "bytes": 19143,
+      "sha256": "97ceb008839bf7c02f7f78a604f49203d83bf37d09e344cd3d60ce72fb519d41"
+    }
+  },
+  "prior_observations": {
+    "preserved_failures": [
+      "Partial-clone alternates-depth refusal during preparation",
+      "Wrapper invocation and source-check errors before the final qualification",
+      "R1 EOF whitespace findings"
+    ],
+    "r1_archive": {
+      "bytes": 9537620,
+      "sha256": "1155d82a87453009a90382f9166f3dff9a0fd7a1c06a252a2dd8ecfc8540fc19",
+      "source_set_sha256": "e8502a9c189d68fa558d7d27cea2cb7ad09028fedeff6a6b1267fece32839abb"
+    },
+    "r1_to_r2_changes": "Two Python EOF newlines; the complete qualification was executed again after the correction."
+  },
+  "qualified_development": {
+    "actual_daemons": 10,
+    "adapter_rustfmt": true,
+    "api_comparisons": 675,
+    "base_commit": "180c642b4ad723118038b31639afc0d922f474b7",
+    "cargo_format": true,
+    "cli_comparisons": 31,
+    "durability_cut_children": 46,
+    "durability_cut_points": 23,
+    "durability_cuts": {
+      "eio": 8,
+      "sigkill": 15
+    },
+    "filtered": 0,
+    "host": "desktop",
+    "ignored": 0,
+    "integrity_negative_controls": 31,
+    "job_id": "1a1f2a76433-ffbe-ba0",
+    "original_test_executables": 6,
+    "original_tests": 77,
+    "outer_process": {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "hia.platform.checkpoint_store.qualify",
+        "--output",
+        "/tmp/trnm-cs792-r2-xc4jjq_x/qualification"
+      ],
+      "cwd": "/tmp/trnm-cs792-r2-xc4jjq_x/repo",
+      "elapsed_ns": 276524636984,
+      "exit_code": 0,
+      "source_checkpoint": {
+        "bytes": 7697,
+        "sha256": "78042ca0ce004f63ab9614c941e51764f000442fbd3e2ead275185f3610b856f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 72792,
+        "sha256": "40ce156b7fd2b77acfe959cc7addb3f5b2d51a41bb81fd5ce5e7e18c0291fc45"
+      }
+    },
+    "overlay_source_set_sha256": "c1d65794ff591552a064bb98498240b60d69eb4ea8222a1927c06de606cc4530",
+    "qualification": {
+      "cleanup_failures": [],
+      "elapsed_ns": 229065799927,
+      "failure": null,
+      "power_failure_claimed": false,
+      "production_activation": false,
+      "reports": {
+        "integrity": {
+          "bytes": 5111,
+          "sha256": "54f29425d0faf133de3e47e0ea4c676858093120c514ebc69a3e9fbb2c17237d"
+        },
+        "native": {
+          "bytes": 64573,
+          "sha256": "7f4f1724f4a06d04b4367a1597a74f0a75b64281343a03e5d2825231794b6b33"
+        },
+        "original": {
+          "bytes": 74093,
+          "sha256": "9b6f13c1887ef54b2e441d2a2faaa9394101f27e0262b7414bb2b453932a8a4a"
+        },
+        "runtime": {
+          "bytes": 143216,
+          "sha256": "c35b040bef8385949587f050ed36563882fa664feb5252e9c7bcaaf8097837ad"
+        }
+      },
+      "schema": "trnm.hia.checkpoint-store-qualification.v1",
+      "source_set_sha256": "c1d65794ff591552a064bb98498240b60d69eb4ea8222a1927c06de606cc4530",
+      "stages": [
+        "native-build",
+        "original-77-tests-clippy-format",
+        "runtime-api",
+        "runtime-recovery",
+        "runtime-files",
+        "runtime-cli",
+        "runtime-unix",
+        "runtime-crash",
+        "independent-readback",
+        "integrity-negatives"
+      ],
+      "status": "PASS",
+      "whole_node_replacement": false
+    },
+    "qualification_file": {
+      "bytes": 1143,
+      "sha256": "3723b03d8149ccbe27c03314e817387bb2b449bfb9ae75a2e6c4adecf0746894"
+    },
+    "raw_api_transactions": 1360,
+    "root": "/tmp/trnm-cs792-r2-xc4jjq_x",
+    "runtime_groups": {
+      "api": 208,
+      "cli": 23,
+      "crash": 131,
+      "files": 111,
+      "recovery": 151,
+      "unix": 168
+    },
+    "runtime_observations": 792,
+    "strict_clippy": true
+  },
+  "schema": "trnm.hia.checkpoint-store-development.v1",
+  "scope": {
+    "cross_target_qualified": false,
+    "node_db_replaced": false,
+    "node_integration_complete": false,
+    "old_stack_can_be_removed": false,
+    "power_failure_claimed": false,
+    "production_activation": false,
+    "whole_chain_native": false,
+    "whole_package_retired": false
+  },
+  "status": "FINITE_DEVELOPMENT_PASS_CURRENT_BUILD_PASS"
+}

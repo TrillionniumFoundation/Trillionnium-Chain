@@ -1,0 +1,225 @@
+{
+  "archive": {
+    "bytes": 20884,
+    "declared_members_read_completely": true,
+    "internal_development_record": {
+      "bytes": 8049,
+      "sha256": "b0e6031b75fad6025edb71861b2a0345e76a2db7bcba582125f18838f1c690fd"
+    },
+    "path": "node-stdin-deadline.tar.xz",
+    "readback": "PASS",
+    "regular_members": 21,
+    "sha256": "3ebba8de5042a7669306b4eb70d87eb5e2c3f83287108a71096e962d65250860"
+  },
+  "archive_members": {
+    "boundary/build-report.json": {
+      "bytes": 66354,
+      "sha256": "aa6bb99b6535de426b77e8bdf01750e18d9941304bc32310b3bf2ccef40be5d8"
+    },
+    "boundary/error-priority/failure-receipt.json": {
+      "bytes": 86,
+      "sha256": "aa1c89e2d69c4cddb5562d20721c4f383aacbdd49790c1a5030b0c11f8464e2f"
+    },
+    "boundary/error-priority/stderr.raw": {
+      "bytes": 283,
+      "sha256": "54c4fd1054c5c741ab0218ea148520f87ad3298ea3fac32a7fbfe043550ca21f"
+    },
+    "boundary/error-priority/stdin.raw": {
+      "bytes": 64,
+      "sha256": "047d3f15f966d6c2c60213e140b0cd0224927f077ec4aaefe523fee1187ac2f6"
+    },
+    "boundary/error-priority/stdout.raw": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "boundary/error-priority/syscalls.raw": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "boundary/native-report.json": {
+      "bytes": 2585,
+      "sha256": "ab252d611c20d4e48546f1023fa28602de162e140f9781072ef680e2c4803c39"
+    },
+    "boundary/outer.stderr.raw": {
+      "bytes": 797,
+      "sha256": "5f5b03a3e2a6ede6096415ab93fa96b378041d98c2f2207c542037002b714fcd"
+    },
+    "boundary/outer.stdout.raw": {
+      "bytes": 2375,
+      "sha256": "50f6dd116f5c9e19667879a1f9ec650c74f3e26d58796b0b04fddd412ef822ce"
+    },
+    "boundary/partition-report.json": {
+      "bytes": 34068,
+      "sha256": "941e7cf418bef0dec4d83fee3eedb2c851d2f3d9a28c21aacec1d0df202ed097"
+    },
+    "controls/final-controls.stderr.raw": {
+      "bytes": 5415,
+      "sha256": "e7ae42659022e72a9f48a85cbbe82ef4a8f60ffb66b4eaa106a2ff9d73d5348b"
+    },
+    "controls/final-controls.stdout.raw": {
+      "bytes": 833,
+      "sha256": "f491b18b6f772dbc44317ce25311515c814810f2fb458a3ffee9ad332cc74cf3"
+    },
+    "controls/first-repair.stderr.raw": {
+      "bytes": 5415,
+      "sha256": "1ce70f5080720d6fdd74f9af81d56e9d1fcd62d681befe197548bf7dee187a79"
+    },
+    "controls/first-repair.stdout.raw": {
+      "bytes": 830,
+      "sha256": "4419d7053b020d7d9c9fab9d84ccb3fe503a7bf0e7a2eab8a2c68e3576f3221d"
+    },
+    "controls/predecessor.stderr.raw": {
+      "bytes": 2472,
+      "sha256": "fe6e2d412772a25bc069c3df1da5c67f4ccf9782d71fea0e868b522e543a1e40"
+    },
+    "controls/predecessor.stdout.raw": {
+      "bytes": 263,
+      "sha256": "d0c9a8cef2e3a928695244a85e19c7a56316aa29a5237b4acf4f21cec1eab4f8"
+    },
+    "controls/source-controls.json": {
+      "bytes": 655,
+      "sha256": "0b82bf155e0dbf9a95cc391964ee81662312d32493021fe250b3a614ff586e46"
+    },
+    "controls/source-controls.stderr.raw": {
+      "bytes": 664,
+      "sha256": "bafbf76721f678e939e15118315478f28964fb44e697a69b34c3dfa72d777a58"
+    },
+    "controls/source-controls.stdout.raw": {
+      "bytes": 597,
+      "sha256": "9db198ef2fa6739e127dfad80026021f8ec9438768233a331c724b2edb9ad743"
+    },
+    "source/repair.patch": {
+      "bytes": 10679,
+      "sha256": "222ce979d0dc3ada5a2b25767e4d01ee43bb2f937c7356970830cf708e4c27b9"
+    }
+  },
+  "base_commit": "337fe8df54a5af59e10a1aea129022702b40b89d",
+  "capacity_attempt": {
+    "accepted_native_controls": 0,
+    "build_status": "PASS",
+    "completed_partition_report": false,
+    "completed_runtime_report": false,
+    "full_build_report": {
+      "bytes": 66302,
+      "path": "/workspace/scratch/bc089b09ffa5/hia-node-deadline-capacity/build/build.json",
+      "sha256": "cdaada6fe2ae4dca83f0824e4d2aef14ca653fe8234a14da76cfb5eae7a2cb9b",
+      "storage": "explicitly external"
+    },
+    "reason": "Parent directed no duplicate ptrace-denied run after prior run-both instruction had already started this attempt",
+    "terminal_status": "INTERRUPTED",
+    "tool_exit_code": 130
+  },
+  "changed_files": {
+    "hia/platform/mempool_node/suite_boundaries.py": {
+      "after": {
+        "bytes": 20109,
+        "sha256": "2031bef7d4565e44591845f2b1b115389bb4959800b030d8353eab7fd8f48865"
+      },
+      "before": {
+        "bytes": 20135,
+        "sha256": "7c5531b233607038230b0d4ee6461f48823b8f6dc3c6087a6c62bbb508047c0c"
+      }
+    },
+    "hia/platform/mempool_node/suite_capacity.py": {
+      "after": {
+        "bytes": 15589,
+        "sha256": "ca438d49f4f8e868b9ac96d631fc7d520b5d23b23ad93f009f67a94f10b41d8e"
+      },
+      "before": {
+        "bytes": 15615,
+        "sha256": "4ca76058e8fce652091b91c072ed3b4b927938f96d9b3c171858d1c852197e01"
+      }
+    },
+    "hia/platform/mempool_node/test_io_deadline.py": {
+      "after": {
+        "bytes": 12477,
+        "sha256": "a426e4490a1ea0319322528b213ce795c1357f8a26ec6b07f96fa7526ec82a0a"
+      },
+      "before": {
+        "bytes": 12134,
+        "sha256": "03377f25a7117e704ec2d657064603167633917ecbddb2f8de9e6308c2aa3236"
+      }
+    }
+  },
+  "fixed_budgets": {
+    "cleanup_seconds": 3,
+    "native_child_seconds": 240
+  },
+  "fresh_boundaries": {
+    "build_status": "PASS",
+    "cause": "strace PTRACE_TRACEME and PTRACE_SETOPTIONS denied with Operation not permitted before any native owner frame",
+    "complete_native_artifact": {
+      "bytes": 7795933,
+      "path": "/workspace/scratch/bc089b09ffa5/hia-node-deadline-boundaries/build/owner.elf",
+      "sha256": "abfdf558504c0080a7d6975b00b5d05aad8d7758145f52471c09ab719f926314",
+      "storage": "explicitly external to this compact archive"
+    },
+    "completed_controls": 0,
+    "full_build_directory": "/workspace/scratch/bc089b09ffa5/hia-node-deadline-boundaries/build",
+    "full_build_images_embedded": false,
+    "hosted_execution": "NOT_RUN",
+    "mandatory_trace_removed": false,
+    "native_driver_status": "FAIL",
+    "native_executable": {
+      "bytes": 7795933,
+      "sha256": "abfdf558504c0080a7d6975b00b5d05aad8d7758145f52471c09ab719f926314"
+    },
+    "native_owner_execution": "NOT_OBSERVED; first owner frame absent",
+    "original_rust_comparison": "NOT_RUN",
+    "partition_status": "FAIL",
+    "permissions_changed": false,
+    "process_attempts": 1,
+    "source_after": {
+      "errors": [],
+      "status": "MATCH"
+    },
+    "source_inputs": 203,
+    "source_set_sha256": "959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685"
+  },
+  "implementation": "boundaries and capacity Session.write reuse suite_smoke.Session.write; Node/cross already reuse smoke Session",
+  "predecessor_controls": {
+    "drivers": [
+      "boundaries",
+      "capacity"
+    ],
+    "error": "Session.write crossed the external watchdog",
+    "errors": 0,
+    "failures": 2,
+    "fixture_deadline_seconds": 0.2,
+    "retained_observation": "unittest stdout/stderr; existing test temporary-directory cleanup removed individual fixture files",
+    "skipped": 0,
+    "status": "FAIL",
+    "tests": 2,
+    "watchdog_seconds": 2
+  },
+  "remaining_execution": "Exact-commit hosted CI must run both complete native partitions and their evidence readers; local build success does not replace this.",
+  "repaired_controls": {
+    "command": "python3 -B -m unittest -v hia.platform.mempool_node.test_io_deadline",
+    "controls_per_driver": 10,
+    "drivers": [
+      "smoke",
+      "boundaries",
+      "capacity"
+    ],
+    "errors": 0,
+    "failures": 0,
+    "scope": "Actual Python qualification drivers with real pipes and owned child processes; no HIA Node runtime qualification inferred",
+    "skipped": 0,
+    "source_set_sha256": "959f4b5506f7d7b0796c840f37adc8e1ebebdd590b500fa2c66d3e440bd7f685",
+    "status": "PASS",
+    "tests": 30
+  },
+  "retirement_accepted": false,
+  "schema": "trnm.node-pipe-deadline-repair-development.v2",
+  "self_contained_native_qualification_archive": false,
+  "source_integrity": {
+    "actual_cli": 8,
+    "controls": 361,
+    "groups": 6,
+    "skipped": 0,
+    "source_set_sha256": "07504afbecc8b86074e7e91b02b89a82e5e8628d442605bdfa26871f0bf10e2e",
+    "source_transition": "Source-integrity execution predates RS46 component registration. The three repaired driver/test bytes are unchanged; subsequent full native build captured the new graph.",
+    "status": "PASS"
+  },
+  "whole_chain_native": false
+}

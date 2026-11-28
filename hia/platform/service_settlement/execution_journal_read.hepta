@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_execution_journal_read
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  mode:u64 = const() {"value":4}
+  result:u32 = call(raw,mem,work,mode) {"function":"sjr_reader"}
+  ret(result)
+end

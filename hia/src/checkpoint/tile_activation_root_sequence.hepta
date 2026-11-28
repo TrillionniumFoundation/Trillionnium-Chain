@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_root_sequence
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  all_original_forms:bool = const() {"value":true}
+  status:u32 = call(r,o,w,all_original_forms,all_original_forms) {"function":"tac_run"}
+  ret(status)
+end

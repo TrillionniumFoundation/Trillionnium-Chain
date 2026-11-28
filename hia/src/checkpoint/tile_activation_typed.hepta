@@ -1,0 +1,649 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_typed
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  size:usize = buffer.len(r)
+  n:u64 = int.cast(size) {"mode":"wrap"}
+  named_only:bool = const() {"value":false}
+  status:u32,end:u64 = call(r,w,n,named_only,named_only) {"function":"tat_parse_private"}
+  zero:u32 = const() {"value":0}
+  okay:bool = compare.eq(status,zero)
+  branch okay capacity(o,w,end) failure(status)
+block capacity(ko:mutbuf,kw:mutbuf,ke:u64)
+  begin:u64 = const() {"value":12000}
+  len:u64 = int.sub.wrap(ke,begin)
+  out:usize = buffer.len(ko)
+  nout:u64 = int.cast(out) {"mode":"wrap"}
+  fits:bool = compare.le(len,nout)
+  branch fits publish(ko,kw,begin,len) short()
+block publish(oo:mutbuf,ow:mutbuf,ob:u64,ol:u64)
+  zero_out:u64 = const() {"value":0}
+  copied:u64 = call(ow,ob,oo,zero_out,ol) {"function":"cs_wcopy"}
+  done:u32 = const() {"value":0}
+  ret(done)
+block short()
+  no_room:u32 = const() {"value":102}
+  ret(no_room)
+block failure(code:u32)
+  ret(code)
+end
+
+fn tat_parse_private(r:readbuf,w:mutbuf,n:u64,allow:bool,rootseq:bool) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,allow:bool,rootseq:bool)
+  wn:usize = buffer.len(w)
+  enough:usize = const() {"value":315000}
+  room:bool = compare.le(enough,wn)
+  branch room preflight(r,w,n,allow,rootseq) short()
+block preflight(pr:readbuf,pw:mutbuf,pn:u64,pa:bool,prs:bool)
+  yes:bool = const() {"value":true}
+  status:u32 = call(pr,pw,pn,yes,prs) {"function":"tar_preflight"}
+  zero:u32 = const() {"value":0}
+  passed:bool = compare.eq(status,zero)
+  branch passed counts(pr,pw,pn,pa,prs) failure(status)
+block counts(cr:readbuf,cw:mutbuf,cn:u64,ca:bool,crs:bool)
+  root_at:u64 = const() {"value":10432}
+  root:u64 = call(cw,root_at) {"function":"tr_get"}
+  rcount:u64 = const() {"value":13}
+  root_ok:bool = compare.eq(root,rcount)
+  branch root_ok prepare(cr,cw,cn,ca,crs) fields()
+block prepare(ar:readbuf,aw:mutbuf,an:u64,aa:bool,ars:bool)
+  init:u64 = call(aw) {"function":"tat_keys"}
+  z:u64 = const() {"value":0}
+  yes_a:u64 = const() {"value":1}
+  allows:u64 = select(aa,yes_a,z)
+  allow_at:u64 = const() {"value":11848}
+  seq_at:u64 = const() {"value":11856}
+  set_mode:u64 = call(aw,allow_at,allows) {"function":"tr_put"}
+  clear_sequence:u64 = call(aw,seq_at,z) {"function":"tr_put"}
+  json_at:u64 = const() {"value":40}
+  opener:u64 = call(ar,json_at,an) {"function":"oj_ws"}
+  ch:u64 = call(ar,opener,an) {"function":"oj_peek"}
+  bracket:u64 = const() {"value":91}
+  input_array:bool = compare.eq(ch,bracket)
+  root_array:bool = bool.and(ars,input_array)
+  root_mode:u64 = select(root_array,yes_a,z)
+  root_shape_at:u64 = const() {"value":11864}
+  saved_root:u64 = call(aw,root_shape_at,root_mode) {"function":"tr_put"}
+  start:u64 = const() {"value":12000}
+  end:u64 = call(ar,aw,an,z,start) {"function":"tat_encode"}
+  cap_tag:u64 = const() {"value":18446744073709551614}
+  field_tag:u64 = const() {"value":18446744073709551615}
+  cap:bool = compare.eq(end,cap_tag)
+  ill:bool = compare.eq(end,field_tag)
+  branch cap outside() check(end,ill)
+block check(be:u64,bad:bool)
+  branch bad fields() complete(be)
+block complete(e:u64)
+  success:u32 = const() {"value":0}
+  ret(success,e)
+block fields()
+  no_fields:u32 = const() {"value":3}
+  jump failure(no_fields)
+block outside()
+  out_scope:u32 = const() {"value":103}
+  jump failure(out_scope)
+block short()
+  no_room:u32 = const() {"value":102}
+  jump failure(no_room)
+block failure(code:u32)
+  empty:u64 = const() {"value":0}
+  ret(code,empty)
+end
+
+fn tat_encode(r:readbuf,w:mutbuf,n:u64,i:u64,d:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,i:u64,d:u64)
+  jump loop(r,w,n,i,d)
+block loop(lr:readbuf,lw:mutbuf,ln:u64,li:u64,ld:u64)
+  fields:u64 = const() {"value":29}
+  complete:bool = compare.eq(li,fields)
+  branch complete done(ld) setup(lr,lw,ln,li,ld)
+block setup(sr:readbuf,sw:mutbuf,sn:u64,si:u64,sd:u64)
+  table:u64 = const() {"value":10448}
+  stride:u64 = const() {"value":40}
+  off:u64 = int.mul.wrap(si,stride)
+  key:u64 = int.add.wrap(table,off)
+  count_and_kind:u64 = call(sw,key) {"function":"tr_get"}
+  mask:u64 = const() {"value":255}
+  eight:u64 = const() {"value":8}
+  key_len:u64 = bit.and(count_and_kind,mask)
+  ty:u64 = int.shr.checked(count_and_kind,eight)
+  key_at:u64 = int.add.wrap(key,eight)
+  rcount:u64 = const() {"value":13}
+  root:bool = compare.lt(si,rcount)
+  rbase:u64 = const() {"value":1216}
+  ibase:u64 = const() {"value":5568}
+  rspan:u64 = const() {"value":9920}
+  ispan:u64 = const() {"value":10176}
+  icount:u64 = const() {"value":16}
+  base:u64 = select(root,rbase,ibase)
+  spans:u64 = select(root,rspan,ispan)
+  count:u64 = select(root,rcount,icount)
+  seq_mode:u64 = const() {"value":11856}
+  using:u64 = call(sw,seq_mode) {"function":"tr_get"}
+  zero_mode:u64 = const() {"value":0}
+  positional:bool = compare.ne(using,zero_mode)
+  runtime:bool = bool.not(root)
+  use_seq:bool = bool.and(runtime,positional)
+  root_flag_at:u64 = const() {"value":11864}
+  root_flag:u64 = call(sw,root_flag_at) {"function":"tr_get"}
+  pos_root:bool = compare.ne(root_flag,zero_mode)
+  root_pos:bool = bool.and(root,pos_root)
+  branch root_pos root_indexed(sr,sw,sn,si,sd,ty) lookup(sr,sw,sn,si,sd,ty,base,spans,count,key_at,key_len,use_seq)
+block root_indexed(xr:readbuf,xw:mutbuf,xn:u64,xi:u64,xd:u64,xt:u64)
+  root_slots:u64 = const() {"value":11872}
+  scale:u64 = const() {"value":8}
+  rel_root:u64 = int.mul.wrap(xi,scale)
+  where_root:u64 = int.add.wrap(root_slots,rel_root)
+  at_root:u64 = call(xw,where_root) {"function":"tr_get"}
+  jump translate(xr,xw,xn,xi,xd,at_root,xt)
+block lookup(yr:readbuf,yw:mutbuf,yn:u64,yi:u64,yd:u64,yt:u64,yb:u64,ys:u64,yc:u64,ya:u64,yl:u64,yseq:bool)
+  branch yseq indexed(yr,yw,yn,yi,yd,yt) keyed(yr,yw,yn,yi,yd,yt,yb,ys,yc,ya,yl)
+block indexed(ir:readbuf,iw:mutbuf,in:u64,ii:u64,id:u64,it:u64)
+  root_fields:u64 = const() {"value":13}
+  seq_base:u64 = const() {"value":10176}
+  word:u64 = const() {"value":8}
+  j:u64 = int.sub.wrap(ii,root_fields)
+  off_i:u64 = int.mul.wrap(j,word)
+  slot:u64 = int.add.wrap(seq_base,off_i)
+  pos:u64 = call(iw,slot) {"function":"tr_get"}
+  jump translate(ir,iw,in,ii,id,pos,it)
+block keyed(kr:readbuf,kw:mutbuf,kn:u64,ki:u64,kd:u64,kt:u64,kb:u64,ks:u64,kc:u64,ka:u64,kl:u64)
+  at:u64 = call(kw,kb,ks,kc,ka,kl) {"function":"tat_find"}
+  absent:u64 = const() {"value":0}
+  found:bool = compare.ne(at,absent)
+  branch found translate(kr,kw,kn,ki,kd,at,kt) bad()
+block translate(tr:readbuf,tw:mutbuf,tn:u64,ti:u64,td:u64,tp:u64,tt:u64)
+  new:u64 = call(tr,tw,tp,tn,td,tt) {"function":"tat_field"}
+  threshold:u64 = const() {"value":18446744073709551614}
+  valid:bool = compare.lt(new,threshold)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(ti,one)
+  branch valid loop(tr,tw,tn,next,new) done(new)
+block done(end:u64)
+  ret(end)
+block bad()
+  bad_field:u64 = const() {"value":18446744073709551615}
+  ret(bad_field)
+end
+
+fn tat_find(w:mutbuf,key:u64,span:u64,count:u64,expected:u64,len:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,key:u64,span:u64,count:u64,expected:u64,len:u64)
+  jump loop(w,key,span,count,expected,len)
+block loop(lw:mutbuf,lk:u64,ls:u64,lc:u64,le:u64,ll:u64)
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(lc,z)
+  branch done absent() match_len(lw,lk,ls,lc,le,ll)
+block match_len(mw:mutbuf,mk:u64,ms:u64,mc:u64,me:u64,ml:u64)
+  prior:u64 = call(mw,mk) {"function":"tr_get"}
+  same:bool = compare.eq(prior,ml)
+  branch same match_bytes(mw,mk,ms,mc,me,ml) next(mw,mk,ms,mc,me,ml)
+block match_bytes(bw:mutbuf,bk:u64,bs:u64,bc:u64,be:u64,bl:u64)
+  h:u64 = const() {"value":8}
+  tail:u64 = int.add.wrap(bk,h)
+  exact:bool = call(bw,tail,be,bl) {"function":"tar_equal"}
+  branch exact yes(bw,bs) next(bw,bk,bs,bc,be,bl)
+block next(nw:mutbuf,nk:u64,ns:u64,nc:u64,ne:u64,nl:u64)
+  cl:u64 = const() {"value":136}
+  step:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  later_k:u64 = int.add.wrap(nk,cl)
+  later_s:u64 = int.add.wrap(ns,step)
+  left:u64 = int.sub.wrap(nc,one)
+  jump loop(nw,later_k,later_s,left,ne,nl)
+block yes(yw:mutbuf,ys:u64)
+  p:u64 = call(yw,ys) {"function":"tr_get"}
+  ret(p)
+block absent()
+  none:u64 = const() {"value":0}
+  ret(none)
+end
+
+fn tat_field(r:readbuf,w:mutbuf,p:u64,n:u64,d:u64,k:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,d:u64,k:u64)
+  one:u64 = const() {"value":1}
+  seven:u64 = const() {"value":7}
+  ordinary:bool = compare.eq(k,one)
+  hidden:bool = compare.eq(k,seven)
+  text:bool = bool.or(ordinary,hidden)
+  branch text string(r,w,p,n,d,hidden) not_text(r,w,p,n,d,k)
+block string(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,sd:u64,sh:bool)
+  inline_cap:u64 = const() {"value":256}
+  hidden_cap:u64 = const() {"value":294912}
+  cap:u64 = select(sh,hidden_cap,inline_cap)
+  word:u64 = const() {"value":8}
+  dst:u64 = int.add.wrap(sd,word)
+  past:u64,len:u64 = call(sr,sw,sp,sn,dst,cap) {"function":"tar_string"}
+  fail_tag:u64 = const() {"value":18446744073709551614}
+  present:bool = compare.lt(past,fail_tag)
+  branch present length(sw,sd,dst,len) done(past)
+block length(lw:mutbuf,lp:u64,ld:u64,ll:u64)
+  write_len:u64 = call(lw,lp,ll) {"function":"tr_put"}
+  end_len:u64 = int.add.wrap(ld,ll)
+  ret(end_len)
+block not_text(nr:readbuf,nw:mutbuf,np:u64,nn:u64,nd:u64,nk:u64)
+  two:u64 = const() {"value":2}
+  uint:bool = compare.eq(nk,two)
+  branch uint integer(nr,nw,np,nn,nd) others(nr,nw,np,nn,nd,nk)
+block integer(ir:readbuf,iw:mutbuf,ip:u64,in:u64,id:u64)
+  after:u64,value:u64 = call(ir,in,ip) {"function":"hj_uint"}
+  bad_int:u64 = const() {"value":18446744073709551615}
+  accepted:bool = compare.ne(after,bad_int)
+  branch accepted emit(iw,id,value) bad()
+block others(ar:readbuf,aw:mutbuf,ap:u64,an:u64,ad:u64,ak:u64)
+  three:u64 = const() {"value":3}
+  flag:bool = compare.eq(ak,three)
+  branch flag boolean(ar,aw,ap,an,ad) not_bool(ar,aw,ap,an,ad,ak)
+block boolean(br:readbuf,bw:mutbuf,bp:u64,bn:u64,bd:u64)
+  tok:u64 = call(br,bp,bn) {"function":"oj_peek"}
+  true_byte:u64 = const() {"value":116}
+  false_byte:u64 = const() {"value":102}
+  t:bool = compare.eq(tok,true_byte)
+  f:bool = compare.eq(tok,false_byte)
+  valid:bool = bool.or(t,f)
+  one_b:u64 = const() {"value":1}
+  zero_b:u64 = const() {"value":0}
+  decoded:u64 = select(t,one_b,zero_b)
+  branch valid emit(bw,bd,decoded) bad()
+block not_bool(qr:readbuf,qw:mutbuf,qp:u64,qn:u64,qd:u64,qk:u64)
+  six:u64 = const() {"value":6}
+  object:bool = compare.eq(qk,six)
+  branch object checked_object(qr,qw,qp,qn,qd) array(qr,qw,qp,qn,qd,qk)
+block checked_object(or_:readbuf,ow:mutbuf,op:u64,on:u64,od:u64)
+  mark:u64 = call(or_,op,on) {"function":"oj_peek"}
+  bracket:u64 = const() {"value":91}
+  positional:bool = compare.eq(mark,bracket)
+  branch positional sequence(or_,ow,op,on,od) map(ow,mark,od)
+block sequence(xr:readbuf,xw:mutbuf,xp:u64,xn:u64,xd:u64)
+  allow_slot:u64 = const() {"value":11848}
+  allowed:u64 = call(xw,allow_slot) {"function":"tr_get"}
+  zero_x:u64 = const() {"value":0}
+  profile:bool = compare.ne(allowed,zero_x)
+  branch profile collect(xr,xw,xp,xn,xd) unsupported()
+block collect(yr:readbuf,yw:mutbuf,yp:u64,yn:u64,yd:u64)
+  valid_seq:bool = call(yr,yw,yp,yn) {"function":"tat_sequence"}
+  branch valid_seq enabled(yw,yd) bad()
+block enabled(zw:mutbuf,zd:u64)
+  seq_slot:u64 = const() {"value":11856}
+  one_z:u64 = const() {"value":1}
+  saved:u64 = call(zw,seq_slot,one_z) {"function":"tr_put"}
+  ret(zd)
+block map(mw:mutbuf,mt:u64,md:u64)
+  brace:u64 = const() {"value":123}
+  object_begin:bool = compare.eq(mt,brace)
+  count_at:u64 = const() {"value":10440}
+  count:u64 = call(mw,count_at) {"function":"tr_get"}
+  sixteen:u64 = const() {"value":16}
+  complete:bool = compare.eq(count,sixteen)
+  valid_map:bool = bool.and(object_begin,complete)
+  branch valid_map done(md) bad()
+block unsupported()
+  scope:u64 = const() {"value":18446744073709551614}
+  ret(scope)
+block array(fr:readbuf,fw:mutbuf,fp:u64,fn_:u64,fd:u64,fk:u64)
+  five:u64 = const() {"value":5}
+  fixed:bool = compare.eq(fk,five)
+  q:u64 = call(fr,fw,fp,fn_,fd,fixed) {"function":"tat_array"}
+  ret(q)
+block emit(ew:mutbuf,ed:u64,ev:u64)
+  wrote:u64 = call(ew,ed,ev) {"function":"tr_put"}
+  step:u64 = const() {"value":8}
+  end_emit:u64 = int.add.wrap(ed,step)
+  ret(end_emit)
+block done(result:u64)
+  ret(result)
+block bad()
+  bad_field:u64 = const() {"value":18446744073709551615}
+  ret(bad_field)
+end
+
+fn tat_array(r:readbuf,w:mutbuf,p:u64,n:u64,d:u64,fixed:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,d:u64,fixed:bool)
+  mark:u64 = call(r,p,n) {"function":"oj_peek"}
+  open:u64 = const() {"value":91}
+  valid:bool = compare.eq(mark,open)
+  branch valid start(r,w,p,n,d,fixed) bad()
+block start(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,sd:u64,sf:bool)
+  one:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(sp,one)
+  begin:u64 = call(sr,after,sn) {"function":"oj_ws"}
+  token:u64 = call(sr,begin,sn) {"function":"oj_peek"}
+  close:u64 = const() {"value":93}
+  empty:bool = compare.eq(token,close)
+  width:u64 = const() {"value":8}
+  first:u64 = int.add.wrap(sd,width)
+  zero:u64 = const() {"value":0}
+  branch empty count(sw,sd,first,zero,sf) item(sr,sw,begin,sn,sd,first,zero,sf)
+block item(ir:readbuf,iw:mutbuf,ip:u64,in:u64,id:u64,io:u64,ik:u64,if_:bool)
+  top:u64 = const() {"value":64}
+  room:bool = compare.lt(ik,top)
+  branch room decode(ir,iw,ip,in,id,io,ik,if_) bad()
+block decode(dr:readbuf,dw:mutbuf,dp:u64,dn:u64,dd:u64,dout:u64,dk:u64,df:bool)
+  next:u64,original:u64 = call(dr,dn,dp) {"function":"hj_uint"}
+  bad_val:u64 = const() {"value":18446744073709551615}
+  okay:bool = compare.ne(next,bad_val)
+  branch okay save(dr,dw,next,dn,dd,dout,dk,df,original) bad()
+block save(ar:readbuf,aw:mutbuf,ap:u64,an:u64,ad:u64,ao:u64,ak:u64,af:bool,av:u64)
+  written:u64 = call(aw,ao,av) {"function":"tr_put"}
+  step:u64 = const() {"value":8}
+  end:u64 = int.add.wrap(ao,step)
+  inc:u64 = const() {"value":1}
+  k:u64 = int.add.wrap(ak,inc)
+  delim:u64 = call(ar,ap,an) {"function":"oj_ws"}
+  next_tok:u64 = call(ar,delim,an) {"function":"oj_peek"}
+  close_t:u64 = const() {"value":93}
+  finished:bool = compare.eq(next_tok,close_t)
+  later:u64 = int.add.wrap(delim,inc)
+  comma:u64 = const() {"value":44}
+  has_more:bool = compare.eq(next_tok,comma)
+  branch finished count(aw,ad,end,k,af) more(ar,aw,later,an,ad,end,k,af,has_more)
+block more(mr:readbuf,mw:mutbuf,mp:u64,mn:u64,md:u64,mo:u64,mk:u64,mf:bool,mm:bool)
+  branch mm item(mr,mw,mp,mn,md,mo,mk,mf) bad()
+block count(cw:mutbuf,cd:u64,ce:u64,ck:u64,cf:bool)
+  len3:u64 = const() {"value":3}
+  three:bool = compare.eq(ck,len3)
+  variable:bool = bool.not(cf)
+  acceptable:bool = bool.or(three,variable)
+  branch acceptable emit(cw,cd,ce,ck) bad()
+block emit(ew:mutbuf,ed:u64,ee:u64,ek:u64)
+  written_count:u64 = call(ew,ed,ek) {"function":"tr_put"}
+  ret(ee)
+block bad()
+  bad_array:u64 = const() {"value":18446744073709551615}
+  ret(bad_array)
+end
+
+fn tat_keys(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  p0:u64 = const() {"value":10448}
+  v0:u64 = const() {"value":262}
+  wrote0:u64 = call(w,p0,v0) {"function":"tr_put"}
+  p1:u64 = const() {"value":10456}
+  v1:u64 = const() {"value":107122480669555}
+  wrote1:u64 = call(w,p1,v1) {"function":"tr_put"}
+  p2:u64 = const() {"value":10488}
+  v2:u64 = const() {"value":273}
+  wrote2:u64 = call(w,p2,v2) {"function":"tr_put"}
+  p3:u64 = const() {"value":10496}
+  v3:u64 = const() {"value":7597414702928717923}
+  wrote3:u64 = call(w,p3,v3) {"function":"tr_put"}
+  p4:u64 = const() {"value":10504}
+  v4:u64 = const() {"value":3833233334085842030}
+  wrote4:u64 = call(w,p4,v4) {"function":"tr_put"}
+  p5:u64 = const() {"value":10512}
+  v5:u64 = const() {"value":54}
+  wrote5:u64 = call(w,p5,v5) {"function":"tr_put"}
+  p6:u64 = const() {"value":10528}
+  v6:u64 = const() {"value":261}
+  wrote6:u64 = call(w,p6,v6) {"function":"tr_put"}
+  p7:u64 = const() {"value":10536}
+  v7:u64 = const() {"value":435678704740}
+  wrote7:u64 = call(w,p7,v7) {"function":"tr_put"}
+  p8:u64 = const() {"value":10568}
+  v8:u64 = const() {"value":1285}
+  wrote8:u64 = call(w,p8,v8) {"function":"tr_put"}
+  p9:u64 = const() {"value":10576}
+  v9:u64 = const() {"value":435677128819}
+  wrote9:u64 = call(w,p9,v9) {"function":"tr_put"}
+  p10:u64 = const() {"value":10608}
+  v10:u64 = const() {"value":1033}
+  wrote10:u64 = call(w,p10,v10) {"function":"tr_put"}
+  p11:u64 = const() {"value":10616}
+  v11:u64 = const() {"value":7235419204099993460}
+  wrote11:u64 = call(w,p11,v11) {"function":"tr_put"}
+  p12:u64 = const() {"value":10624}
+  v12:u64 = const() {"value":115}
+  wrote12:u64 = call(w,p12,v12) {"function":"tr_put"}
+  p13:u64 = const() {"value":10648}
+  v13:u64 = const() {"value":1038}
+  wrote13:u64 = call(w,p13,v13) {"function":"tr_put"}
+  p14:u64 = const() {"value":10656}
+  v14:u64 = const() {"value":8028075828261975137}
+  wrote14:u64 = call(w,p14,v14) {"function":"tr_put"}
+  p15:u64 = const() {"value":10664}
+  v15:u64 = const() {"value":118143299968878}
+  wrote15:u64 = call(w,p15,v15) {"function":"tr_put"}
+  p16:u64 = const() {"value":10688}
+  v16:u64 = const() {"value":1033}
+  wrote16:u64 = call(w,p16,v16) {"function":"tr_put"}
+  p17:u64 = const() {"value":10696}
+  v17:u64 = const() {"value":7957695015293251440}
+  wrote17:u64 = call(w,p17,v17) {"function":"tr_put"}
+  p18:u64 = const() {"value":10704}
+  v18:u64 = const() {"value":115}
+  wrote18:u64 = call(w,p18,v18) {"function":"tr_put"}
+  p19:u64 = const() {"value":10728}
+  v19:u64 = const() {"value":1802}
+  wrote19:u64 = call(w,p19,v19) {"function":"tr_put"}
+  p20:u64 = const() {"value":10736}
+  v20:u64 = const() {"value":7520851284487072104}
+  wrote20:u64 = call(w,p20,v20) {"function":"tr_put"}
+  p21:u64 = const() {"value":10744}
+  v21:u64 = const() {"value":30821}
+  wrote21:u64 = call(w,p21,v21) {"function":"tr_put"}
+  p22:u64 = const() {"value":10768}
+  v22:u64 = const() {"value":278}
+  wrote22:u64 = call(w,p22,v22) {"function":"tr_put"}
+  p23:u64 = const() {"value":10776}
+  v23:u64 = const() {"value":8243104048818909808}
+  wrote23:u64 = call(w,p23,v23) {"function":"tr_put"}
+  p24:u64 = const() {"value":10784}
+  v24:u64 = const() {"value":6878246129094587231}
+  wrote24:u64 = call(w,p24,v24) {"function":"tr_put"}
+  p25:u64 = const() {"value":10792}
+  v25:u64 = const() {"value":59602106411123}
+  wrote25:u64 = call(w,p25,v25) {"function":"tr_put"}
+  p26:u64 = const() {"value":10808}
+  v26:u64 = const() {"value":274}
+  wrote26:u64 = call(w,p26,v26) {"function":"tr_put"}
+  p27:u64 = const() {"value":10816}
+  v27:u64 = const() {"value":8457606651446260336}
+  wrote27:u64 = call(w,p27,v27) {"function":"tr_put"}
+  p28:u64 = const() {"value":10824}
+  v28:u64 = const() {"value":3630297619365389940}
+  wrote28:u64 = call(w,p28,v28) {"function":"tr_put"}
+  p29:u64 = const() {"value":10832}
+  v29:u64 = const() {"value":13877}
+  wrote29:u64 = call(w,p29,v29) {"function":"tr_put"}
+  p30:u64 = const() {"value":10848}
+  v30:u64 = const() {"value":1543}
+  wrote30:u64 = call(w,p30,v30) {"function":"tr_put"}
+  p31:u64 = const() {"value":10856}
+  v31:u64 = const() {"value":28549272340166002}
+  wrote31:u64 = call(w,p31,v31) {"function":"tr_put"}
+  p32:u64 = const() {"value":10888}
+  v32:u64 = const() {"value":273}
+  wrote32:u64 = call(w,p32,v32) {"function":"tr_put"}
+  p33:u64 = const() {"value":10896}
+  v33:u64 = const() {"value":7598805632484139873}
+  wrote33:u64 = call(w,p33,v33) {"function":"tr_put"}
+  p34:u64 = const() {"value":10904}
+  v34:u64 = const() {"value":7595155236799344239}
+  wrote34:u64 = call(w,p34,v34) {"function":"tr_put"}
+  p35:u64 = const() {"value":10912}
+  v35:u64 = const() {"value":110}
+  wrote35:u64 = call(w,p35,v35) {"function":"tr_put"}
+  p36:u64 = const() {"value":10928}
+  v36:u64 = const() {"value":261}
+  wrote36:u64 = call(w,p36,v36) {"function":"tr_put"}
+  p37:u64 = const() {"value":10936}
+  v37:u64 = const() {"value":435678045043}
+  wrote37:u64 = call(w,p37,v37) {"function":"tr_put"}
+  p38:u64 = const() {"value":10968}
+  v38:u64 = const() {"value":262}
+  wrote38:u64 = call(w,p38,v38) {"function":"tr_put"}
+  p39:u64 = const() {"value":10976}
+  v39:u64 = const() {"value":111477645534564}
+  wrote39:u64 = call(w,p39,v39) {"function":"tr_put"}
+  p40:u64 = const() {"value":11008}
+  v40:u64 = const() {"value":262}
+  wrote40:u64 = call(w,p40,v40) {"function":"tr_put"}
+  p41:u64 = const() {"value":11016}
+  v41:u64 = const() {"value":121424772888944}
+  wrote41:u64 = call(w,p41,v41) {"function":"tr_put"}
+  p42:u64 = const() {"value":11048}
+  v42:u64 = const() {"value":261}
+  wrote42:u64 = call(w,p42,v42) {"function":"tr_put"}
+  p43:u64 = const() {"value":11056}
+  v43:u64 = const() {"value":448345042804}
+  wrote43:u64 = call(w,p43,v43) {"function":"tr_put"}
+  p44:u64 = const() {"value":11088}
+  v44:u64 = const() {"value":268}
+  wrote44:u64 = call(w,p44,v44) {"function":"tr_put"}
+  p45:u64 = const() {"value":11096}
+  v45:u64 = const() {"value":8245922088697819764}
+  wrote45:u64 = call(w,p45,v45) {"function":"tr_put"}
+  p46:u64 = const() {"value":11104}
+  v46:u64 = const() {"value":1936876909}
+  wrote46:u64 = call(w,p46,v46) {"function":"tr_put"}
+  p47:u64 = const() {"value":11128}
+  v47:u64 = const() {"value":267}
+  wrote47:u64 = call(w,p47,v47) {"function":"tr_put"}
+  p48:u64 = const() {"value":11136}
+  v48:u64 = const() {"value":8317697112391704947}
+  wrote48:u64 = call(w,p48,v48) {"function":"tr_put"}
+  p49:u64 = const() {"value":11144}
+  v49:u64 = const() {"value":7565935}
+  wrote49:u64 = call(w,p49,v49) {"function":"tr_put"}
+  p50:u64 = const() {"value":11168}
+  v50:u64 = const() {"value":261}
+  wrote50:u64 = call(w,p50,v50) {"function":"tr_put"}
+  p51:u64 = const() {"value":11176}
+  v51:u64 = const() {"value":521577264494}
+  wrote51:u64 = call(w,p51,v51) {"function":"tr_put"}
+  p52:u64 = const() {"value":11208}
+  v52:u64 = const() {"value":519}
+  wrote52:u64 = call(w,p52,v52) {"function":"tr_put"}
+  p53:u64 = const() {"value":11216}
+  v53:u64 = const() {"value":32479991798327412}
+  wrote53:u64 = call(w,p53,v53) {"function":"tr_put"}
+  p54:u64 = const() {"value":11248}
+  v54:u64 = const() {"value":777}
+  wrote54:u64 = call(w,p54,v54) {"function":"tr_put"}
+  p55:u64 = const() {"value":11256}
+  v55:u64 = const() {"value":7813304859049025890}
+  wrote55:u64 = call(w,p55,v55) {"function":"tr_put"}
+  p56:u64 = const() {"value":11264}
+  v56:u64 = const() {"value":121}
+  wrote56:u64 = call(w,p56,v56) {"function":"tr_put"}
+  p57:u64 = const() {"value":11288}
+  v57:u64 = const() {"value":776}
+  wrote57:u64 = call(w,p57,v57) {"function":"tr_put"}
+  p58:u64 = const() {"value":11296}
+  v58:u64 = const() {"value":7453010356280062580}
+  wrote58:u64 = call(w,p58,v58) {"function":"tr_put"}
+  p59:u64 = const() {"value":11328}
+  v59:u64 = const() {"value":784}
+  wrote59:u64 = call(w,p59,v59) {"function":"tr_put"}
+  p60:u64 = const() {"value":11336}
+  v60:u64 = const() {"value":7594862740701933420}
+  wrote60:u64 = call(w,p60,v60) {"function":"tr_put"}
+  p61:u64 = const() {"value":11344}
+  v61:u64 = const() {"value":8749489600695854444}
+  wrote61:u64 = call(w,p61,v61) {"function":"tr_put"}
+  p62:u64 = const() {"value":11368}
+  v62:u64 = const() {"value":785}
+  wrote62:u64 = call(w,p62,v62) {"function":"tr_put"}
+  p63:u64 = const() {"value":11376}
+  v63:u64 = const() {"value":7310010098933658228}
+  wrote63:u64 = call(w,p63,v63) {"function":"tr_put"}
+  p64:u64 = const() {"value":11384}
+  v64:u64 = const() {"value":7237112387582848877}
+  wrote64:u64 = call(w,p64,v64) {"function":"tr_put"}
+  p65:u64 = const() {"value":11392}
+  v65:u64 = const() {"value":101}
+  wrote65:u64 = call(w,p65,v65) {"function":"tr_put"}
+  p66:u64 = const() {"value":11408}
+  v66:u64 = const() {"value":525}
+  wrote66:u64 = call(w,p66,v66) {"function":"tr_put"}
+  p67:u64 = const() {"value":11416}
+  v67:u64 = const() {"value":6873744694215602022}
+  wrote67:u64 = call(w,p67,v67) {"function":"tr_put"}
+  p68:u64 = const() {"value":11424}
+  v68:u64 = const() {"value":495740281187}
+  wrote68:u64 = call(w,p68,v68) {"function":"tr_put"}
+  p69:u64 = const() {"value":11448}
+  v69:u64 = const() {"value":522}
+  wrote69:u64 = call(w,p69,v69) {"function":"tr_put"}
+  p70:u64 = const() {"value":11456}
+  v70:u64 = const() {"value":7809632490312658792}
+  wrote70:u64 = call(w,p70,v70) {"function":"tr_put"}
+  p71:u64 = const() {"value":11464}
+  v71:u64 = const() {"value":29548}
+  wrote71:u64 = call(w,p71,v71) {"function":"tr_put"}
+  p72:u64 = const() {"value":11488}
+  v72:u64 = const() {"value":527}
+  wrote72:u64 = call(w,p72,v72) {"function":"tr_put"}
+  p73:u64 = const() {"value":11496}
+  v73:u64 = const() {"value":7310579615589884272}
+  wrote73:u64 = call(w,p73,v73) {"function":"tr_put"}
+  p74:u64 = const() {"value":11504}
+  v74:u64 = const() {"value":32772547957448562}
+  wrote74:u64 = call(w,p74,v74) {"function":"tr_put"}
+  p75:u64 = const() {"value":11528}
+  v75:u64 = const() {"value":269}
+  wrote75:u64 = call(w,p75,v75) {"function":"tr_put"}
+  p76:u64 = const() {"value":11536}
+  v76:u64 = const() {"value":6874014074480325747}
+  wrote76:u64 = call(w,p76,v76) {"function":"tr_put"}
+  p77:u64 = const() {"value":11544}
+  v77:u64 = const() {"value":435678704740}
+  wrote77:u64 = call(w,p77,v77) {"function":"tr_put"}
+  p78:u64 = const() {"value":11568}
+  v78:u64 = const() {"value":280}
+  wrote78:u64 = call(w,p78,v78) {"function":"tr_put"}
+  p79:u64 = const() {"value":11576}
+  v79:u64 = const() {"value":7809639168886464877}
+  wrote79:u64 = call(w,p79,v79) {"function":"tr_put"}
+  p80:u64 = const() {"value":11584}
+  v80:u64 = const() {"value":8315164890018966879}
+  wrote80:u64 = call(w,p80,v80) {"function":"tr_put"}
+  p81:u64 = const() {"value":11592}
+  v81:u64 = const() {"value":3906083645759381364}
+  wrote81:u64 = call(w,p81,v81) {"function":"tr_put"}
+  good:u64 = const() {"value":0}
+  ret(good)
+end
+
+fn tat_sequence(r:readbuf,w:mutbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64)
+  one:u64 = const() {"value":1}
+  first:u64 = int.add.wrap(p,one)
+  begin:u64 = call(r,first,n) {"function":"oj_ws"}
+  slot:u64 = const() {"value":10176}
+  count:u64 = const() {"value":0}
+  jump scan(r,w,begin,n,slot,count)
+block scan(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,ss:u64,sk:u64)
+  tok:u64 = call(sr,sp,sn) {"function":"oj_peek"}
+  bracket:u64 = const() {"value":93}
+  empty:bool = compare.eq(tok,bracket)
+  branch empty no() value(sr,sw,sp,sn,ss,sk)
+block value(vr:readbuf,vw:mutbuf,vp:u64,vn:u64,vs:u64,vk:u64)
+  end:u64 = call(vr,vw,vp,vn) {"function":"tar_primitive"}
+  reserved:u64 = const() {"value":18446744073709551614}
+  valid:bool = compare.lt(end,reserved)
+  branch valid store(vr,vw,vp,vn,vs,vk,end) no()
+block store(tr:readbuf,tw:mutbuf,tp:u64,tn:u64,ts:u64,tk:u64,te:u64)
+  saved:u64 = call(tw,ts,tp) {"function":"tr_put"}
+  after:u64 = call(tr,te,tn) {"function":"oj_ws"}
+  sep:u64 = call(tr,after,tn) {"function":"oj_peek"}
+  right:u64 = const() {"value":93}
+  comma:u64 = const() {"value":44}
+  closing:bool = compare.eq(sep,right)
+  continued:bool = compare.eq(sep,comma)
+  one_t:u64 = const() {"value":1}
+  new_count:u64 = int.add.wrap(tk,one_t)
+  next:u64 = int.add.wrap(after,one_t)
+  following:u64 = call(tr,next,tn) {"function":"oj_ws"}
+  stride:u64 = const() {"value":8}
+  slot_next:u64 = int.add.wrap(ts,stride)
+  sixteen:u64 = const() {"value":16}
+  final:bool = compare.eq(new_count,sixteen)
+  more_fields:bool = bool.not(final)
+  loop_ok:bool = bool.and(continued,more_fields)
+  good:bool = bool.and(closing,final)
+  branch loop_ok scan(tr,tw,following,tn,slot_next,new_count) finish(good)
+block finish(okay:bool)
+  ret(okay)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end

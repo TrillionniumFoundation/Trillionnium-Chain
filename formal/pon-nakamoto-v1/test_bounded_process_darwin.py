@@ -60,6 +60,48 @@ class DarwinCleanupTests(unittest.TestCase):
         self.assertFalse(result)
         census.assert_not_called()
 
+    def test_exit_visibility_race_still_requires_the_complete_singleton(self):
+        child = self.child()
+        census = self.census(child, [child.pid])
+        with mock.patch.object(owner.sys, 'platform', 'darwin'), \
+                mock.patch.object(owner.os, 'waitid', side_effect=[None, None, self.status(child)]) as wait, \
+                mock.patch.object(owner.time, 'sleep') as sleep, \
+                mock.patch.object(ctypes, 'CDLL', return_value=types.SimpleNamespace(proc_listpids=census)):
+            self.assertTrue(owner._darwin_only_exited_leader(child))
+        self.assertEqual(wait.call_count, 3)
+        self.assertEqual(sleep.call_count, 2)
+        census.assert_called_once()
+
+    def test_live_permission_denial_has_a_bounded_observation_only(self):
+        child = self.child()
+        with mock.patch.object(owner.sys, 'platform', 'darwin'), \
+                mock.patch.object(owner.os, 'waitid', return_value=None) as wait, \
+                mock.patch.object(owner.time, 'monotonic', side_effect=[10.0, 10.0, 10.051]), \
+                mock.patch.object(owner.time, 'sleep') as sleep, \
+                mock.patch.object(ctypes, 'CDLL') as load, \
+                mock.patch.object(owner.os, 'killpg') as signal_group:
+            self.assertFalse(owner._darwin_only_exited_leader(child))
+        self.assertEqual(wait.call_count, 2)
+        sleep.assert_called_once_with(.001)
+        load.assert_not_called()
+        signal_group.assert_not_called()
+
+    def test_immediate_real_exit_keeps_the_original_output_cap_failure(self):
+        # Darwin may already exclude this exiting child from killpg while
+        # WNOWAIT still returns no observation. No simulated signal denial.
+        for attempt in range(8):
+            for fd, limit, code in ((1, 'stdout_limit', 'NATIVE_STDOUT_LIMIT'),
+                                    (2, 'stderr_limit', 'NATIVE_STDERR_LIMIT')):
+                with self.subTest(attempt=attempt, stream=fd):
+                    with self.assertRaisesRegex(owner.ProcessFailure, '^' + code + '$') as raised:
+                        owner.run_bounded([sys.executable, '-c',
+                                           f"import os;os.close(0);os.write({fd},b'x'*65536);os._exit(0)"],
+                                          b'x' * (2 * 1024 * 1024), **{limit: 4096})
+                    failure = raised.exception
+                    observed = failure.stdout if fd == 1 else failure.stderr
+                    self.assertEqual(observed, b'x' * 4096)
+                    self.assertTrue(failure.stdout_truncated if fd == 1 else failure.stderr_truncated)
+
     def test_reaped_leader_never_reuses_group_identity(self):
         child = self.child()
         child.returncode = 0

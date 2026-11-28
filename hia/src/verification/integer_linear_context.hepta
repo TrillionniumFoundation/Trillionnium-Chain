@@ -1,0 +1,521 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_integer_linear_context_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  measured:usize = buffer.len(input)
+  prefix:usize = const() {"value":8}
+  framed:bool = compare.ge(measured,prefix)
+  branch framed header(input,output,scratch,measured) bad_frame()
+block header(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:usize)
+  zero_h:u64 = const() {"value":0}
+  one_h:u64 = const() {"value":1}
+  four_h:u64 = const() {"value":4}
+  magic:u64 = call(hi,zero_h,four_h) {"function":"rac_read_le"}
+  magic_expected:u64 = const() {"value":826494025}
+  magic_ok:bool = compare.eq(magic,magic_expected)
+  mode:u64 = call(hi,four_h,four_h) {"function":"rac_read_le"}
+  mode_ok:bool = compare.le(mode,one_h)
+  packing:bool = compare.eq(mode,zero_h)
+  header_ok:bool = bool.and(magic_ok,mode_ok)
+  branch header_ok extent(hi,ho,hw,hn,packing) bad_frame()
+block extent(ei:readbuf,eo:mutbuf,ew:mutbuf,en:usize,pack:bool)
+  typed_len:usize = const() {"value":73}
+  json_len:usize = const() {"value":380}
+  need:usize = select(pack,typed_len,json_len)
+  exact:bool = compare.eq(en,need)
+  branch exact workspace(ei,eo,ew,pack) bad_extent(pack)
+block bad_extent(i_pack:bool)
+  branch i_pack bad_frame() length()
+block workspace(wi:readbuf,wo:mutbuf,ww:mutbuf,wpack:bool)
+  room:usize = buffer.len(ww)
+  need_work:usize = const() {"value":1632}
+  enough_ws:bool = compare.ge(room,need_work)
+  branch enough_ws initialize(wi,wo,ww,wpack) capacity()
+block initialize(ii:readbuf,io:mutbuf,iw:mutbuf,ipack:bool)
+  initialized:u64 = call(iw) {"function":"tr_sha_init"}
+  none:u64 = const() {"value":0}
+  ready:bool = compare.eq(initialized,none)
+  branch ready prepare(ii,io,iw,ipack) internal()
+block prepare(pi:readbuf,po:mutbuf,pw:mutbuf,ppack:bool)
+  _sealed:u64 = call(pw) {"function":"il_template"}
+  branch ppack check_fields(pi,po,pw,ppack) parse_json(pi,po,pw,ppack)
+block parse_json(ji:readbuf,jo:mutbuf,jw:mutbuf,jpack:bool)
+  valid_json:bool = call(ji,jw) {"function":"il_syntax"}
+  branch valid_json check_fields(ji,jo,jw,jpack) noncanonical()
+block check_fields(fi:readbuf,fo:mutbuf,fw:mutbuf,fpack:bool)
+  correct_family:bool = call(fi,fw,fpack) {"function":"il_family"}
+  branch correct_family check_slot(fi,fo,fw,fpack) wrong_family()
+block check_slot(si:readbuf,so:mutbuf,sw:mutbuf,spack:bool)
+  at_bytes:u64 = const() {"value":72}
+  at_json:u64 = const() {"value":378}
+  slot_pos:u64 = select(spack,at_bytes,at_json)
+  width_slot:u64 = const() {"value":1}
+  value:u64 = call(si,slot_pos,width_slot) {"function":"rac_read_le"}
+  zero_byte:u64 = const() {"value":0}
+  ascii_zero:u64 = const() {"value":48}
+  base_slot:u64 = select(spack,zero_byte,ascii_zero)
+  slot:u64 = int.sub.wrap(value,base_slot)
+  last_slot:u64 = const() {"value":2}
+  accepted:bool = compare.le(slot,last_slot)
+  branch accepted output_room(si,so,sw,spack,slot) wrong_slot()
+block output_room(ri:readbuf,ro:mutbuf,rw:mutbuf,rpack:bool,rslot:u64)
+  avail:usize = buffer.len(ro)
+  wanted:usize = const() {"value":469}
+  enough_out:bool = compare.ge(avail,wanted)
+  branch enough_out finish_json(ri,ro,rw,rpack,rslot) capacity()
+block finish_json(ki:readbuf,ko:mutbuf,kw:mutbuf,kpack:bool,kslot:u64)
+  _fill:u64 = call(ki,kw,kpack,kslot) {"function":"il_fill"}
+  base:u64 = const() {"value":1208}
+  width:u64 = const() {"value":424}
+  updated:u64 = call(kw,base,width) {"function":"tr_sha_update_work"}
+  zero_hash:u64 = const() {"value":0}
+  accepted_hash:bool = compare.eq(updated,zero_hash)
+  branch accepted_hash finish(ko,kw,kslot) internal()
+block finish(oo:mutbuf,ow:mutbuf,oslot:u64)
+  finalized:u64 = call(ow) {"function":"tr_sha_final"}
+  zero_final:u64 = const() {"value":0}
+  done:bool = compare.eq(finalized,zero_final)
+  branch done publish(oo,ow,oslot) internal()
+block publish(vo:mutbuf,vw:mutbuf,vslot:u64)
+  _result:u64 = call(vw,vo,vslot) {"function":"il_publish"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block length()
+  length_code:u32 = const() {"value":1}
+  ret(length_code)
+block noncanonical()
+  encoding_code:u32 = const() {"value":2}
+  ret(encoding_code)
+block wrong_family()
+  family_code:u32 = const() {"value":3}
+  ret(family_code)
+block wrong_slot()
+  slot_code:u32 = const() {"value":4}
+  ret(slot_code)
+block bad_frame()
+  framing_code:u32 = const() {"value":100}
+  ret(framing_code)
+block capacity()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+block internal()
+  internal_code:u32 = const() {"value":103}
+  ret(internal_code)
+end
+
+fn il_unhex(ch:u8) -> (u64) effects() entry(entry)
+block entry(ch:u8)
+  value:u64 = int.cast(ch) {"mode":"wrap"}
+  digit_first:u64 = const() {"value":48}
+  digit_last:u64 = const() {"value":57}
+  lo_d:bool = compare.ge(value,digit_first)
+  hi_d:bool = compare.le(value,digit_last)
+  digit:bool = bool.and(lo_d,hi_d)
+  letter_first:u64 = const() {"value":97}
+  letter_last:u64 = const() {"value":102}
+  lo_l:bool = compare.ge(value,letter_first)
+  hi_l:bool = compare.le(value,letter_last)
+  letter:bool = bool.and(lo_l,hi_l)
+  a:u64 = int.sub.wrap(value,digit_first)
+  letter_base:u64 = const() {"value":87}
+  b:u64 = int.sub.wrap(value,letter_base)
+  sentinel:u64 = const() {"value":16}
+  l:u64 = select(letter,b,sentinel)
+  decoded:u64 = select(digit,a,l)
+  ret(decoded)
+end
+
+fn il_hex(n:u64) -> (u8) effects() entry(entry)
+block entry(n:u64)
+  nine:u64 = const() {"value":9}
+  number:bool = compare.le(n,nine)
+  base_d:u64 = const() {"value":48}
+  base_l:u64 = const() {"value":87}
+  base:u64 = select(number,base_d,base_l)
+  sum:u64 = int.add.wrap(n,base)
+  byte:u8 = int.cast(sum) {"mode":"wrap"}
+  ret(byte)
+end
+
+fn il_ascii_hex_range(input:readbuf,start:u64,end_at:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:u64,end_at:u64)
+  jump loop(input,start,end_at)
+block loop(li:readbuf,lpos:u64,lstop:u64)
+  at:usize = int.cast(lpos) {"mode":"wrap"}
+  byte:u8 = buffer.load(li,at)
+  nibble:u64 = call(byte) {"function":"il_unhex"}
+  max:u64 = const() {"value":15}
+  is_lower:bool = compare.le(nibble,max)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(lpos,one)
+  ended:bool = compare.eq(next,lstop)
+  branch is_lower advance(li,next,lstop,ended) no()
+block advance(ai:readbuf,an:u64,ae:u64,done:bool)
+  branch done yes() loop(ai,an,ae)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn il_compare_template(input:readbuf,work:mutbuf,start:u64,end_at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,start:u64,end_at:u64)
+  jump loop(input,work,start,end_at)
+block loop(li:readbuf,lw:mutbuf,lp:u64,le:u64)
+  delta:u64 = const() {"value":1252}
+  expected_at:u64 = int.add.wrap(lp,delta)
+  x:usize = int.cast(lp) {"mode":"wrap"}
+  y:usize = int.cast(expected_at) {"mode":"wrap"}
+  raw:u8 = buffer.load(li,x)
+  expected:u8 = buffer.load(lw,y)
+  equal:bool = compare.eq(raw,expected)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(lp,one)
+  ended:bool = compare.eq(next,le)
+  branch equal advance(li,lw,next,le,ended) no()
+block advance(ai:readbuf,aw:mutbuf,an:u64,ae:u64,done:bool)
+  branch done yes() loop(ai,aw,an,ae)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn il_syntax(input:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf)
+  a:u64 = const() {"value":8}
+  family_start:u64 = const() {"value":74}
+  family_end:u64 = const() {"value":138}
+  parent_start:u64 = const() {"value":221}
+  parent_end:u64 = const() {"value":285}
+  slot_start:u64 = const() {"value":378}
+  slot_end:u64 = const() {"value":379}
+  end_at:u64 = const() {"value":380}
+  prefix:bool = call(input,work,a,family_start) {"function":"il_compare_template"}
+  family_hex:bool = call(input,family_start,family_end) {"function":"il_ascii_hex_range"}
+  center:bool = call(input,work,family_end,parent_start) {"function":"il_compare_template"}
+  parent_hex:bool = call(input,parent_start,parent_end) {"function":"il_ascii_hex_range"}
+  final_prefix:bool = call(input,work,parent_end,slot_start) {"function":"il_compare_template"}
+  end_eq:bool = call(input,work,slot_end,end_at) {"function":"il_compare_template"}
+  pos:usize = int.cast(slot_start) {"mode":"wrap"}
+  slot:u8 = buffer.load(input,pos)
+  low:u8 = const() {"value":48}
+  high:u8 = const() {"value":57}
+  low_slot:bool = compare.ge(slot,low)
+  high_slot:bool = compare.le(slot,high)
+  valid_slot:bool = bool.and(low_slot,high_slot)
+  ab:bool = bool.and(prefix,family_hex)
+  cd:bool = bool.and(center,parent_hex)
+  ef:bool = bool.and(final_prefix,end_eq)
+  abcd:bool = bool.and(ab,cd)
+  efg:bool = bool.and(ef,valid_slot)
+  ok:bool = bool.and(abcd,efg)
+  ret(ok)
+end
+
+fn il_family(input:readbuf,work:mutbuf,pack:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,pack:bool)
+  branch pack typed(input,work) canonical(input,work)
+block canonical(ci:readbuf,cw:mutbuf)
+  start:u64 = const() {"value":74}
+  end_at:u64 = const() {"value":138}
+  matched:bool = call(ci,cw,start,end_at) {"function":"il_compare_template"}
+  ret(matched)
+block typed(ti:readbuf,tw:mutbuf)
+  at:u64 = const() {"value":8}
+  expected_at:u64 = const() {"value":1326}
+  jump scan(ti,tw,at,expected_at)
+block scan(si:readbuf,sw:mutbuf,sp:u64,se:u64)
+  in_at:usize = int.cast(sp) {"mode":"wrap"}
+  seen:u8 = buffer.load(si,in_at)
+  wanted:u8 = call(sw,se) {"function":"il_pair"}
+  eq:bool = compare.eq(seen,wanted)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  next_in:u64 = int.add.wrap(sp,one)
+  next_ex:u64 = int.add.wrap(se,two)
+  limit:u64 = const() {"value":40}
+  last:bool = compare.eq(next_in,limit)
+  branch eq advance(si,sw,next_in,next_ex,last) no()
+block advance(ai:readbuf,aw:mutbuf,an:u64,ae:u64,done:bool)
+  branch done yes() scan(ai,aw,an,ae)
+block yes()
+  valid:bool = const() {"value":true}
+  ret(valid)
+block no()
+  invalid:bool = const() {"value":false}
+  ret(invalid)
+end
+
+fn il_pair(work:mutbuf,at:u64) -> (u8) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,at:u64)
+  one:u64 = const() {"value":1}
+  second:u64 = int.add.wrap(at,one)
+  a:usize = int.cast(at) {"mode":"wrap"}
+  b:usize = int.cast(second) {"mode":"wrap"}
+  high:u8 = buffer.load(work,a)
+  low:u8 = buffer.load(work,b)
+  x:u64 = call(high) {"function":"il_unhex"}
+  y:u64 = call(low) {"function":"il_unhex"}
+  sixteen:u64 = const() {"value":16}
+  left:u64 = int.mul.wrap(x,sixteen)
+  both:u64 = int.add.wrap(left,y)
+  byte:u8 = int.cast(both) {"mode":"wrap"}
+  ret(byte)
+end
+
+fn il_fill(input:readbuf,work:mutbuf,pack:bool,slot:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,pack:bool,slot:u64)
+  slot_at:u64 = const() {"value":1630}
+  one:u64 = const() {"value":1}
+  zero_ascii:u64 = const() {"value":48}
+  ascii:u64 = int.add.wrap(slot,zero_ascii)
+  _slot_end:u64 = call(work,slot_at,ascii,one) {"function":"rac_write_be"}
+  parent_at:u64 = const() {"value":1473}
+  branch pack from_typed(input,work,parent_at) from_json(input,work,parent_at)
+block from_json(ji:readbuf,jw:mutbuf,ja:u64)
+  start_json:u64 = const() {"value":221}
+  width_json:u64 = const() {"value":64}
+  after:u64 = call(ji,jw,start_json,ja,width_json) {"function":"rac_copy"}
+  ret(after)
+block from_typed(ti:readbuf,tw:mutbuf,ta:u64)
+  start_typed:u64 = const() {"value":40}
+  jump loop(ti,tw,ta,start_typed)
+block loop(li:readbuf,lw:mutbuf,ld:u64,ls:u64)
+  source:usize = int.cast(ls) {"mode":"wrap"}
+  raw:u8 = buffer.load(li,source)
+  value:u64 = int.cast(raw) {"mode":"wrap"}
+  four:u64 = const() {"value":4}
+  mask:u64 = const() {"value":15}
+  high:u64 = int.shr.checked(value,four)
+  low:u64 = bit.and(value,mask)
+  hex_hi:u8 = call(high) {"function":"il_hex"}
+  hex_lo:u8 = call(low) {"function":"il_hex"}
+  one_t:u64 = const() {"value":1}
+  mid:u64 = int.add.wrap(ld,one_t)
+  end_b:u64 = int.add.wrap(mid,one_t)
+  a:usize = int.cast(ld) {"mode":"wrap"}
+  b:usize = int.cast(mid) {"mode":"wrap"}
+  _ = buffer.store(lw,a,hex_hi)
+  _ = buffer.store(lw,b,hex_lo)
+  next_s:u64 = int.add.wrap(ls,one_t)
+  limit:u64 = const() {"value":72}
+  done:bool = compare.eq(next_s,limit)
+  branch done finished(end_b) loop(li,lw,end_b,next_s)
+block finished(extent:u64)
+  ret(extent)
+end
+
+fn il_publish(work:mutbuf,output:mutbuf,slot:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,output:mutbuf,slot:u64)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  family_ascii:u64 = const() {"value":1326}
+  parent_ascii:u64 = const() {"value":1473}
+  width:u64 = const() {"value":32}
+  _family:u64 = call(work,output,family_ascii,zero,width) {"function":"il_write_decoded"}
+  _parent:u64 = call(work,output,parent_ascii,width,width) {"function":"il_write_decoded"}
+  slot_at:u64 = const() {"value":64}
+  after_slot:u64 = call(output,slot_at,slot,one) {"function":"rac_write_be"}
+  after_digest:u64 = call(work,output,after_slot) {"function":"sb_copy_digest"}
+  begin_json:u64 = const() {"value":1260}
+  jump json_copy(work,output,begin_json,after_digest)
+block json_copy(jw:mutbuf,jo:mutbuf,js:u64,jd:u64)
+  a:usize = int.cast(js) {"mode":"wrap"}
+  b:usize = int.cast(jd) {"mode":"wrap"}
+  byte:u8 = buffer.load(jw,a)
+  _ = buffer.store(jo,b,byte)
+  one_j:u64 = const() {"value":1}
+  next_s:u64 = int.add.wrap(js,one_j)
+  next_d:u64 = int.add.wrap(jd,one_j)
+  limit:u64 = const() {"value":1632}
+  last:bool = compare.eq(next_s,limit)
+  branch last finish(next_d) json_copy(jw,jo,next_s,next_d)
+block finish(n:u64)
+  ret(n)
+end
+
+fn il_write_decoded(work:mutbuf,out:mutbuf,src:u64,dest:u64,width:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,out:mutbuf,src:u64,dest:u64,width:u64)
+  stop:u64 = int.add.wrap(dest,width)
+  jump loop(work,out,src,dest,stop)
+block loop(lw:mutbuf,lo:mutbuf,ls:u64,ld:u64,le:u64)
+  byte:u8 = call(lw,ls) {"function":"il_pair"}
+  at:usize = int.cast(ld) {"mode":"wrap"}
+  _ = buffer.store(lo,at,byte)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  sd:u64 = int.add.wrap(ls,two)
+  dd:u64 = int.add.wrap(ld,one)
+  done:bool = compare.eq(dd,le)
+  branch done last(dd) loop(lw,lo,sd,dd,le)
+block last(result:u64)
+  ret(result)
+end
+
+fn il_template(work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf)
+  at_0:u64 = const() {"value":1208}
+  word_0:u64 = const() {"value":5642817013619249748}
+  z_0:u64 = call(work,at_0,word_0) {"function":"tr_put"}
+  at_8:u64 = const() {"value":1216}
+  word_8:u64 = const() {"value":7310589492382138417}
+  z_8:u64 = call(work,at_8,word_8) {"function":"tr_put"}
+  at_16:u64 = const() {"value":1224}
+  word_16:u64 = const() {"value":7308895158608749927}
+  z_16:u64 = call(work,at_16,word_16) {"function":"tr_put"}
+  at_24:u64 = const() {"value":1232}
+  word_24:u64 = const() {"value":8243121611019743841}
+  z_24:u64 = call(work,at_24,word_24) {"function":"tr_put"}
+  at_32:u64 = const() {"value":1240}
+  word_32:u64 = const() {"value":7957688113364429172}
+  z_32:u64 = call(work,at_32,word_32) {"function":"tr_put"}
+  at_40:u64 = const() {"value":1248}
+  word_40:u64 = const() {"value":3564086133017113204}
+  z_40:u64 = call(work,at_40,word_40) {"function":"tr_put"}
+  at_48:u64 = const() {"value":1256}
+  word_48:u64 = const() {"value":8026296872580678004}
+  z_48:u64 = call(work,at_48,word_48) {"function":"tr_put"}
+  at_56:u64 = const() {"value":1264}
+  word_56:u64 = const() {"value":3619243129714865516}
+  z_56:u64 = call(work,at_56,word_56) {"function":"tr_put"}
+  at_64:u64 = const() {"value":1272}
+  word_64:u64 = const() {"value":8389191686628849461}
+  z_64:u64 = call(work,at_64,word_64) {"function":"tr_put"}
+  at_72:u64 = const() {"value":1280}
+  word_72:u64 = const() {"value":2478227145619562337}
+  z_72:u64 = call(work,at_72,word_72) {"function":"tr_put"}
+  at_80:u64 = const() {"value":1288}
+  word_80:u64 = const() {"value":2462403802258617146}
+  z_80:u64 = call(work,at_80,word_80) {"function":"tr_put"}
+  at_88:u64 = const() {"value":1296}
+  word_88:u64 = const() {"value":7088510161524056422}
+  z_88:u64 = call(work,at_88,word_88) {"function":"tr_put"}
+  at_96:u64 = const() {"value":1304}
+  word_96:u64 = const() {"value":3617298845096899951}
+  z_96:u64 = call(work,at_96,word_96) {"function":"tr_put"}
+  at_104:u64 = const() {"value":1312}
+  word_104:u64 = const() {"value":7881693119831815735}
+  z_104:u64 = call(work,at_104,word_104) {"function":"tr_put"}
+  at_112:u64 = const() {"value":1320}
+  word_112:u64 = const() {"value":4123083091939519593}
+  z_112:u64 = call(work,at_112,word_112) {"function":"tr_put"}
+  at_120:u64 = const() {"value":1328}
+  word_120:u64 = const() {"value":3689354303793871202}
+  z_120:u64 = call(work,at_120,word_120) {"function":"tr_put"}
+  at_128:u64 = const() {"value":1336}
+  word_128:u64 = const() {"value":7161625253568133168}
+  z_128:u64 = call(work,at_128,word_128) {"function":"tr_put"}
+  at_136:u64 = const() {"value":1344}
+  word_136:u64 = const() {"value":7004565497110095156}
+  z_136:u64 = call(work,at_136,word_136) {"function":"tr_put"}
+  at_144:u64 = const() {"value":1352}
+  word_144:u64 = const() {"value":3847257394223657315}
+  z_144:u64 = call(work,at_144,word_144) {"function":"tr_put"}
+  at_152:u64 = const() {"value":1360}
+  word_152:u64 = const() {"value":4049690665246221668}
+  z_152:u64 = call(work,at_152,word_152) {"function":"tr_put"}
+  at_160:u64 = const() {"value":1368}
+  word_160:u64 = const() {"value":3631416857140408885}
+  z_160:u64 = call(work,at_160,word_160) {"function":"tr_put"}
+  at_168:u64 = const() {"value":1376}
+  word_168:u64 = const() {"value":3688836640713880887}
+  z_168:u64 = call(work,at_168,word_168) {"function":"tr_put"}
+  at_176:u64 = const() {"value":1384}
+  word_176:u64 = const() {"value":3180216872519283809}
+  z_176:u64 = call(work,at_176,word_176) {"function":"tr_put"}
+  at_184:u64 = const() {"value":1392}
+  word_184:u64 = const() {"value":7163382462263160354}
+  z_184:u64 = call(work,at_184,word_184) {"function":"tr_put"}
+  at_192:u64 = const() {"value":1400}
+  word_192:u64 = const() {"value":8386654100814707234}
+  z_192:u64 = call(work,at_192,word_192) {"function":"tr_put"}
+  at_200:u64 = const() {"value":1408}
+  word_200:u64 = const() {"value":8227354613272101421}
+  z_200:u64 = call(work,at_200,word_200) {"function":"tr_put"}
+  at_208:u64 = const() {"value":1416}
+  word_208:u64 = const() {"value":3271705053243536751}
+  z_208:u64 = call(work,at_208,word_208) {"function":"tr_put"}
+  at_216:u64 = const() {"value":1424}
+  word_216:u64 = const() {"value":8030530994777385318}
+  z_216:u64 = call(work,at_216,word_216) {"function":"tr_put"}
+  at_224:u64 = const() {"value":1432}
+  word_224:u64 = const() {"value":7234013749284533365}
+  z_224:u64 = call(work,at_224,word_224) {"function":"tr_put"}
+  at_232:u64 = const() {"value":1440}
+  word_232:u64 = const() {"value":8389191686817805357}
+  z_232:u64 = call(work,at_232,word_232) {"function":"tr_put"}
+  at_240:u64 = const() {"value":1448}
+  word_240:u64 = const() {"value":8080069206826429793}
+  z_240:u64 = call(work,at_240,word_240) {"function":"tr_put"}
+  at_248:u64 = const() {"value":1456}
+  word_248:u64 = const() {"value":8241973746737705569}
+  z_248:u64 = call(work,at_248,word_248) {"function":"tr_put"}
+  at_256:u64 = const() {"value":1464}
+  word_256:u64 = const() {"value":4189038573592668532}
+  z_256:u64 = call(work,at_256,word_256) {"function":"tr_put"}
+  at_264:u64 = const() {"value":1472}
+  word_264:u64 = const() {"value":3472328296227680290}
+  z_264:u64 = call(work,at_264,word_264) {"function":"tr_put"}
+  at_272:u64 = const() {"value":1480}
+  word_272:u64 = const() {"value":3472328296227680304}
+  z_272:u64 = call(work,at_272,word_272) {"function":"tr_put"}
+  at_280:u64 = const() {"value":1488}
+  word_280:u64 = const() {"value":3472328296227680304}
+  z_280:u64 = call(work,at_280,word_280) {"function":"tr_put"}
+  at_288:u64 = const() {"value":1496}
+  word_288:u64 = const() {"value":3472328296227680304}
+  z_288:u64 = call(work,at_288,word_288) {"function":"tr_put"}
+  at_296:u64 = const() {"value":1504}
+  word_296:u64 = const() {"value":3472328296227680304}
+  z_296:u64 = call(work,at_296,word_296) {"function":"tr_put"}
+  at_304:u64 = const() {"value":1512}
+  word_304:u64 = const() {"value":3472328296227680304}
+  z_304:u64 = call(work,at_304,word_304) {"function":"tr_put"}
+  at_312:u64 = const() {"value":1520}
+  word_312:u64 = const() {"value":3472328296227680304}
+  z_312:u64 = call(work,at_312,word_312) {"function":"tr_put"}
+  at_320:u64 = const() {"value":1528}
+  word_320:u64 = const() {"value":3472328296227680304}
+  z_320:u64 = call(work,at_320,word_320) {"function":"tr_put"}
+  at_328:u64 = const() {"value":1536}
+  word_328:u64 = const() {"value":7741231952323945008}
+  z_328:u64 = call(work,at_328,word_328) {"function":"tr_put"}
+  at_336:u64 = const() {"value":1544}
+  word_336:u64 = const() {"value":3186360656087575903}
+  z_336:u64 = call(work,at_336,word_336) {"function":"tr_put"}
+  at_344:u64 = const() {"value":1552}
+  word_344:u64 = const() {"value":3691300723903918626}
+  z_344:u64 = call(work,at_344,word_344) {"function":"tr_put"}
+  at_352:u64 = const() {"value":1560}
+  word_352:u64 = const() {"value":2478506335473443372}
+  z_352:u64 = call(work,at_352,word_352) {"function":"tr_put"}
+  at_360:u64 = const() {"value":1568}
+  word_360:u64 = const() {"value":8296242066261815610}
+  z_360:u64 = call(work,at_360,word_360) {"function":"tr_put"}
+  at_368:u64 = const() {"value":1576}
+  word_368:u64 = const() {"value":2466321547781302371}
+  z_368:u64 = call(work,at_368,word_368) {"function":"tr_put"}
+  at_376:u64 = const() {"value":1584}
+  word_376:u64 = const() {"value":7161137258445041520}
+  z_376:u64 = call(work,at_376,word_376) {"function":"tr_put"}
+  at_384:u64 = const() {"value":1592}
+  word_384:u64 = const() {"value":7306920471174917492}
+  z_384:u64 = call(work,at_384,word_384) {"function":"tr_put"}
+  at_392:u64 = const() {"value":1600}
+  word_392:u64 = const() {"value":8241980317954223474}
+  z_392:u64 = call(work,at_392,word_392) {"function":"tr_put"}
+  at_400:u64 = const() {"value":1608}
+  word_400:u64 = const() {"value":7598824251334748461}
+  z_400:u64 = call(work,at_400,word_400) {"function":"tr_put"}
+  at_408:u64 = const() {"value":1616}
+  word_408:u64 = const() {"value":2462380692096249455}
+  z_408:u64 = call(work,at_408,word_408) {"function":"tr_put"}
+  at_416:u64 = const() {"value":1624}
+  word_416:u64 = const() {"value":9020773973279861875}
+  z_416:u64 = call(work,at_416,word_416) {"function":"tr_put"}
+  ret(z_416)
+end

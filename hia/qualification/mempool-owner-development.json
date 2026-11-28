@@ -1,0 +1,279 @@
+{
+  "direct_exact_source_hosted_comparison": "REQUIRED_PENDING",
+  "integrated_native": {
+    "builds": [
+      {
+        "artifact_bytes": 54608,
+        "artifact_sha256": "6be8d29c1aa89dc4ec256a8b86300dca24ed7e9537e1264aff3cd237fe6c4691",
+        "borrowed_entry_profile": "legacy-f0-private-buffers",
+        "chain_migration": {
+          "backend": "selfhost",
+          "composed_source_sha256": "59fabd9cc652a46997f80c253cd698b6a2cc68babdf98d484b6d34a24a9fa150",
+          "core_sha256": "fb09ce43ba9d84a672356b553a6f1f747785d64ddb1f81f58c6d284d0bef80da",
+          "hosted_build_driver": true,
+          "inputs": [
+            {
+              "path": "src/mempool/lane_owner.hepta",
+              "sha256": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da"
+            },
+            {
+              "path": "components.json",
+              "sha256": "0bb5cb04092f89bc3235943b9a9f2a9a3a40bc805f0a95c9476bf8961f55a2d0"
+            },
+            {
+              "path": "src/mempool/lane_quota.hepta",
+              "sha256": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9"
+            }
+          ],
+          "source_sha256": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da",
+          "toolchain_repository": "TrillionniumFoundation/Hepta",
+          "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+          "whole_chain_native": false
+        },
+        "claims": {
+          "direct_machine_code": true,
+          "external_linker_used": true,
+          "fallback_used": false,
+          "python_emitter_used": false,
+          "self_hosted": true,
+          "whole_native_delivery_qualified": false
+        },
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "compiler_wire_sha256": "8e07ddd2e41afe3d06d7008f0a06913f6f46d1f82c554acbcb1d2cd6af08689e",
+        "exports": [
+          "f0"
+        ],
+        "kind": "shared",
+        "object_sha256": "82e84276e87a241e76c5ca22bfaf6cb63be729738b9b438372c8411c7acae59b",
+        "ok": true,
+        "output": "/tmp/trnm-hia-native-pds131s2/module.so",
+        "output_profile_selection": "selfhost_elf",
+        "schema": "trnm.hia.selfhost-build.v1",
+        "status": "native_emitted_not_executed"
+      },
+      {
+        "artifact_bytes": 21352,
+        "artifact_sha256": "b009729ac26cc679623798486cf1e1bea9f558578ce2f423b7e0ecd858cbf3eb",
+        "borrowed_entry_profile": "legacy-f0-private-buffers",
+        "chain_migration": {
+          "backend": "selfhost",
+          "composed_source_sha256": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9",
+          "core_sha256": "201b46c71b7dbe30da16558103c613df767a3420ca5a6da354586abac354fce0",
+          "hosted_build_driver": true,
+          "inputs": [
+            {
+              "path": "src/mempool/lane_quota.hepta",
+              "sha256": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9"
+            },
+            {
+              "path": "components.json",
+              "sha256": "0bb5cb04092f89bc3235943b9a9f2a9a3a40bc805f0a95c9476bf8961f55a2d0"
+            }
+          ],
+          "source_sha256": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9",
+          "toolchain_repository": "TrillionniumFoundation/Hepta",
+          "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+          "whole_chain_native": false
+        },
+        "claims": {
+          "direct_machine_code": true,
+          "external_linker_used": true,
+          "fallback_used": false,
+          "python_emitter_used": false,
+          "self_hosted": true,
+          "whole_native_delivery_qualified": false
+        },
+        "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+        "compiler_wire_sha256": "90a63a00457841e1e54c9942d57fd15bbbcdc1136d2201077f0c3633f4b3566c",
+        "exports": [
+          "f0"
+        ],
+        "kind": "shared",
+        "object_sha256": "f185be82a9c44b873a1e1c115b96bc37383fce46845d70d8eaf2c80d0ebdb2a7",
+        "ok": true,
+        "output": "/tmp/trnm-hia-native-qw721vj0/module.so",
+        "output_profile_selection": "selfhost_elf",
+        "schema": "trnm.hia.selfhost-build.v1",
+        "status": "native_emitted_not_executed"
+      }
+    ],
+    "elapsed_seconds": 5.6011559659964405,
+    "errors": [],
+    "failures": [],
+    "native_owner_invocations": 41365,
+    "original_rust": "separate desktop original run; direct hosted Rust test remains mandatory",
+    "schema": "trnm.hia.mempool-owner-integrated-native.v1",
+    "skipped": [],
+    "source_inputs": {
+      "hia/components.json": "0bb5cb04092f89bc3235943b9a9f2a9a3a40bc805f0a95c9476bf8961f55a2d0",
+      "hia/src/mempool/OWNER.md": "21519a40925ac69bc9009c971b3b3035fb9c88ed457735928f45be349e37a1b5",
+      "hia/src/mempool/lane_owner.hepta": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da",
+      "hia/src/mempool/lane_quota.hepta": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9",
+      "hia/tests/rust_mempool_owner_reference.rs": "af78ba6c4392c218871a8b6cadb7956f74992d67bcd15c134bec0936ecdb0e23",
+      "hia/tests/test_mempool_owner.py": "c82d276adfc3482a436e2377422d0b2f658d82b6d2b1b7632122260cb83e3786"
+    },
+    "source_unchanged": true,
+    "status": "PASS",
+    "tests": 8
+  },
+  "native": {
+    "actual_original_rust": "NOT_RUN in this local runtime; mandatory test present and not skipped; desktop independent original run and final-head hosted CI remain separate",
+    "authoring_rejections": [
+      {
+        "error": "E_HIA_CFG unknown trap code",
+        "phase": "Core source admission before native emission",
+        "repair": "use admitted user/bounds trap codes; no native call executed against rejected source"
+      }
+    ],
+    "canonical_policy_regression_invocations": 2042,
+    "corpus": {
+      "adapter_sha256": "af78ba6c4392c218871a8b6cadb7956f74992d67bcd15c134bec0936ecdb0e23",
+      "canonical_policy_body_preserved": true,
+      "expected_reply_bytes_sha256": "2dbd6200b062ab68662a51ddda9322fcd6ee254e0343858c07f8ecd57a154858",
+      "expected_stdout_sha256": "ebf54b75a1afee8bbffe7ffecc0b383cb36642a659a470616a2b276e0f16d61e",
+      "input_sha256": "748dd51f1a3559dc1cf1e41f52a07cfa390e92a9164e06fe6d1f6adea27f988d",
+      "operation_count": 41248,
+      "original_crate_sha256": "03777e4de5936d86ce0ff93df38273d32cce6cd2685bce611ed8f763012c3526",
+      "public_operation_count": 30748,
+      "public_scenarios": 112,
+      "scenarios": 1862,
+      "short_operation_count": 10500,
+      "short_scenarios": 1750
+    },
+    "elapsed_seconds": 6.14175020300172,
+    "errors": [],
+    "failures": [],
+    "native_build_receipt": {
+      "artifact_bytes": 54608,
+      "artifact_sha256": "6be8d29c1aa89dc4ec256a8b86300dca24ed7e9537e1264aff3cd237fe6c4691",
+      "borrowed_entry_profile": "legacy-f0-private-buffers",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "59fabd9cc652a46997f80c253cd698b6a2cc68babdf98d484b6d34a24a9fa150",
+        "core_sha256": "fb09ce43ba9d84a672356b553a6f1f747785d64ddb1f81f58c6d284d0bef80da",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/mempool/lane_owner.hepta",
+            "sha256": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da"
+          },
+          {
+            "path": "components.json",
+            "sha256": "a61855efc23db81110de887081d2f57e373b0ebbfa813229b8ac68906cdfd938"
+          },
+          {
+            "path": "src/mempool/lane_quota.hepta",
+            "sha256": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9"
+          }
+        ],
+        "source_sha256": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "compiler_wire_sha256": "8e07ddd2e41afe3d06d7008f0a06913f6f46d1f82c554acbcb1d2cd6af08689e",
+      "exports": [
+        "f0"
+      ],
+      "kind": "shared",
+      "object_sha256": "82e84276e87a241e76c5ca22bfaf6cb63be729738b9b438372c8411c7acae59b",
+      "ok": true,
+      "output": "/tmp/trnm-hia-native-gc7qpta1/module.so",
+      "output_profile_selection": "selfhost_elf",
+      "schema": "trnm.hia.selfhost-build.v1",
+      "status": "native_emitted_not_executed"
+    },
+    "native_owner_invocations": 41365,
+    "schema": "trnm.hia.mempool-owner-development.v1",
+    "scope": "in-process public LaneAdmissionGate owner; typed/signed/nonce/local-pool/Node/performance/restart gates unqualified",
+    "source_sha256": {
+      "hia/src/mempool/OWNER.md": "2ce18c44f2e1a1bbce03bc2d06fc3241950b80b1755688c7bb403d8afb8c2f4a",
+      "hia/src/mempool/lane_owner.hepta": "bf11150e895a8370262795b8ea12997bbd9c35733881f0f3d0e01ef0006b06da",
+      "hia/src/mempool/lane_quota.hepta": "241bbf5378515540e6e33f3a481bfa132ad37f802094b15625fc9e1182dbacb9",
+      "hia/tests/rust_mempool_owner_reference.rs": "af78ba6c4392c218871a8b6cadb7956f74992d67bcd15c134bec0936ecdb0e23",
+      "hia/tests/test_mempool_owner.py": "c82d276adfc3482a436e2377422d0b2f658d82b6d2b1b7632122260cb83e3786"
+    },
+    "source_unchanged": true,
+    "source_view_component_manifest_sha256": "a61855efc23db81110de887081d2f57e373b0ebbfa813229b8ac68906cdfd938",
+    "source_view_note": "isolated explicit component include only; root public manifest remains frozen for concurrent recovery qualification",
+    "status": "PASS",
+    "tests_run": 8
+  },
+  "old_stack_can_be_removed": false,
+  "published_manifest_emits_identical_owner_artifact": true,
+  "schema": "trnm.hia.mempool-owner-development.v1",
+  "scope": "Real private LaneAdmissionGate public operations; no Node, nonce, signed admission, persistence or performance acceptance",
+  "status": "NATIVE_AND_ORIGINAL_PASS_SEPARATE_RUNS",
+  "unchanged_original": {
+    "artifact_bytes": 4392504,
+    "artifact_sha256": "91c71ca782ef407713757c2f780dfc4e2b0febb59f2ead026c900a0c89aecc2b",
+    "builds": [
+      {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    ],
+    "checks": {
+      "all_replies_96_bytes": true,
+      "exit_zero": true,
+      "operation_count_matches": true,
+      "reply_hash_matches": true,
+      "source_unchanged": true,
+      "stdout_hash_matches": true
+    },
+    "compiler": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "elapsed_seconds": 2.282685855985619,
+    "expected": {
+      "adapter_sha256": "af78ba6c4392c218871a8b6cadb7956f74992d67bcd15c134bec0936ecdb0e23",
+      "canonical_policy_body_preserved": true,
+      "expected_reply_bytes_sha256": "2dbd6200b062ab68662a51ddda9322fcd6ee254e0343858c07f8ecd57a154858",
+      "expected_stdout_sha256": "ebf54b75a1afee8bbffe7ffecc0b383cb36642a659a470616a2b276e0f16d61e",
+      "input_sha256": "748dd51f1a3559dc1cf1e41f52a07cfa390e92a9164e06fe6d1f6adea27f988d",
+      "operation_count": 41248,
+      "original_crate_sha256": "03777e4de5936d86ce0ff93df38273d32cce6cd2685bce611ed8f763012c3526",
+      "public_operation_count": 30748,
+      "public_scenarios": 112,
+      "scenarios": 1862,
+      "short_operation_count": 10500,
+      "short_scenarios": 1750
+    },
+    "native_execution_scope": "separate existing pinned-compiler local observation; this job executes unchanged original Rust only",
+    "observed_operation_count": 41248,
+    "observed_reply_bytes_sha256": "2dbd6200b062ab68662a51ddda9322fcd6ee254e0343858c07f8ecd57a154858",
+    "observed_stdout_sha256": "ebf54b75a1afee8bbffe7ffecc0b383cb36642a659a470616a2b276e0f16d61e",
+    "original_exit_code": 0,
+    "original_stderr": "",
+    "process_observation": {
+      "exit_code": 0,
+      "host": "configured desktop",
+      "job_id": "1a1e32b06a4-392-331f",
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded"
+    },
+    "schema": "trnm.hia.mempool-owner-original-development.v1",
+    "source_sha256": {
+      "cases.txt": "748dd51f1a3559dc1cf1e41f52a07cfa390e92a9164e06fe6d1f6adea27f988d",
+      "hia/tests/rust_mempool_owner_reference.rs": "af78ba6c4392c218871a8b6cadb7956f74992d67bcd15c134bec0936ecdb0e23",
+      "trillionnium/crates/trnm-mempool/src/lib.rs": "03777e4de5936d86ce0ff93df38273d32cce6cd2685bce611ed8f763012c3526",
+      "trillionnium/crates/trnm-mempool/src/typed_admission.rs": "ac777c8fa3a9953343fd079a09aca43bd672d8c4c0998cb50a8f934d675e2fe4"
+    },
+    "status": "PASS"
+  },
+  "whole_chain_native": false
+}

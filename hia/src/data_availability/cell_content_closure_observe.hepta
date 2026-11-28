@@ -1,0 +1,223 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_content_closure_observe
+fn f0(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf)
+  entry_n_:usize = buffer.len(entry_r)
+  entry_n:u64 = int.cast(entry_n_) {"mode":"wrap"}
+  entry_offset:u64 = const() {"value":157}
+  entry_ok:bool = compare.ge(entry_n,entry_offset)
+  entry_size:u64 = int.sub.wrap(entry_n,entry_offset)
+  branch entry_ok parse(entry_r,entry_o,entry_w,entry_offset,entry_size) frame()
+block parse(parse_r:readbuf,parse_o:mutbuf,parse_w:mutbuf,parse_base:u64,parse_n:u64)
+  parse_status:u32,parse_payload:u64 = call(parse_r,parse_base,parse_n) {"function":"tcc_decode"}
+  parse_zero:u32 = const() {"value":0}
+  parse_ok:bool = compare.eq(parse_status,parse_zero)
+  branch parse_ok observe(parse_r,parse_o,parse_w,parse_base,parse_n,parse_payload) refuse(parse_status)
+block observe(r_obs:readbuf,o_obs:mutbuf,w_obs:mutbuf,b_obs:u64,n_obs:u64,p_obs:u64)
+  observed_s:u32 = call(r_obs,o_obs,w_obs,b_obs,n_obs,p_obs) {"function":"tco_observe"}
+  ret(observed_s)
+block frame()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block refuse(refused:u32)
+  ret(refused)
+end
+
+fn tco_observe(r:readbuf,o:mutbuf,w:mutbuf,base:u64,n:u64,payload:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,base:u64,n:u64,payload:u64)
+  status:u32,bytes:u64 = call(r,n,payload) {"function":"tco_validate"}
+  zero:u32 = const() {"value":0}
+  ok:bool = compare.eq(status,zero)
+  branch ok capacity(r,o,w,base,n,bytes) return_status(status)
+block capacity(capacity_r:readbuf,capacity_o:mutbuf,capacity_w:mutbuf,capacity_base:u64,capacity_n:u64,capacity_bytes:u64)
+  capacity_wl:usize = buffer.len(capacity_w)
+  capacity_ol:usize = buffer.len(capacity_o)
+  capacity_work:usize = const() {"value":131232}
+  capacity_out:usize = const() {"value":229}
+  capacity_wf:bool = compare.ge(capacity_wl,capacity_work)
+  capacity_of:bool = compare.ge(capacity_ol,capacity_out)
+  capacity_enough:bool = bool.and(capacity_wf,capacity_of)
+  branch capacity_enough hash(capacity_r,capacity_o,capacity_w,capacity_base,capacity_n,capacity_bytes) short()
+block hash(hash_r:readbuf,hash_o:mutbuf,hash_w:mutbuf,hash_base:u64,hash_n:u64,hash_bytes:u64)
+  hash_s:u32 = call(hash_r,hash_w,hash_base,hash_n) {"function":"tco_hash"}
+  hash_zero:u32 = const() {"value":0}
+  hash_ok:bool = compare.eq(hash_s,hash_zero)
+  branch hash_ok publish(hash_r,hash_o,hash_w,hash_n,hash_bytes) return_status(hash_s)
+block return_status(saved:u32)
+  ret(saved)
+block publish(publish_r:readbuf,publish_o:mutbuf,publish_w:mutbuf,publish_n:u64,publish_bytes:u64)
+  publish_zero:usize = const() {"value":0}
+  publish_prefix:usize = const() {"value":141}
+  publish__copy:u64 = call(publish_r,publish_o,publish_zero,publish_zero,publish_prefix) {"function":"daav_copy"}
+  publish_at_len:u64 = const() {"value":141}
+  publish_at_reads:u64 = const() {"value":213}
+  publish_at_bytes:u64 = const() {"value":221}
+  publish_one:u64 = const() {"value":1}
+  _ = call(publish_o,publish_at_len,publish_n) {"function":"tco_store_be64"}
+  _ = call(publish_o,publish_at_reads,publish_one) {"function":"tco_store_be64"}
+  _ = call(publish_o,publish_at_bytes,publish_bytes) {"function":"tco_store_be64"}
+  jump digest(publish_o,publish_w,publish_zero)
+block digest(digest_o:mutbuf,digest_w:mutbuf,digest_i:usize)
+  digest_src:usize = const() {"value":131168}
+  digest_dst:usize = const() {"value":149}
+  digest_a:usize = int.add.wrap(digest_i,digest_src)
+  digest_b:usize = int.add.wrap(digest_i,digest_dst)
+  digest_v:u8 = buffer.load(digest_w,digest_a)
+  _ = buffer.store(digest_o,digest_b,digest_v)
+  digest_one:usize = const() {"value":1}
+  digest_next:usize = int.add.wrap(digest_i,digest_one)
+  digest_size:usize = const() {"value":64}
+  digest_more:bool = compare.lt(digest_next,digest_size)
+  branch digest_more digest(digest_o,digest_w,digest_next) success()
+block success()
+  s_ok:u32 = const() {"value":0}
+  ret(s_ok)
+block short()
+  s_short:u32 = const() {"value":102}
+  ret(s_short)
+end
+
+fn tco_validate(context_r:readbuf,context_n:u64,context_payload:u64) -> (u32,u64) effects(read,write,trap) entry(context)
+block context(context_r:readbuf,context_n:u64,context_payload:u64)
+  context_z:u64 = const() {"value":0}
+  context_status:u32,context_kind:u8 = call(context_r,context_z) {"function":"ccm_claim"}
+  context_ok_code:u32 = const() {"value":0}
+  context_ok:bool = compare.eq(context_status,context_ok_code)
+  branch context_ok limits(context_r,context_n,context_payload,context_kind) context_error(context_status)
+block limits(limits_r:readbuf,limits_n:u64,limits_payload:u64,limits_kind:u8)
+  limits_r_at:u64 = const() {"value":141}
+  limits_b_at:u64 = const() {"value":149}
+  limits_min:u64 = const() {"value":1}
+  limits_mr:u64 = call(limits_r,limits_r_at) {"function":"root_be64"}
+  limits_mb:u64 = call(limits_r,limits_b_at) {"function":"root_be64"}
+  limits_ok_r:bool = compare.ge(limits_mr,limits_min)
+  limits_ok_b:bool = compare.ge(limits_mb,limits_min)
+  limits_ok:bool = bool.and(limits_ok_r,limits_ok_b)
+  branch limits_ok purpose(limits_r,limits_n,limits_payload,limits_kind,limits_mb) bad_limits()
+block purpose(purpose_r:readbuf,purpose_n:u64,purpose_payload:u64,purpose_kind:u8,purpose_mb:u64)
+  purpose_manifest:u8 = const() {"value":3}
+  purpose_same:bool = compare.eq(purpose_kind,purpose_manifest)
+  branch purpose_same bind(purpose_r,purpose_n,purpose_payload,purpose_mb) bad_purpose()
+block bind(bind_r:readbuf,bind_n:u64,bind_payload:u64,bind_mb:u64)
+  bind_p_at:u64 = const() {"value":4}
+  bind_i_at:u64 = const() {"value":69}
+  bind_g_at:u64 = const() {"value":133}
+  bind_p_other:u64 = int.add.wrap(bind_payload,bind_p_at)
+  bind_i_other:u64 = int.add.wrap(bind_payload,bind_i_at)
+  bind_g_other:u64 = int.add.wrap(bind_payload,bind_g_at)
+  bind_p_same:bool = call(bind_r,bind_p_at,bind_p_other) {"function":"tcc_profile"}
+  bind_i_same:bool = call(bind_r,bind_i_at,bind_i_other) {"function":"tcc_profile"}
+  bind_g_self:u64 = call(bind_r,bind_g_at) {"function":"root_be64"}
+  bind_g_payload:u64 = call(bind_r,bind_g_other) {"function":"root_be64"}
+  bind_g_same:bool = compare.eq(bind_g_self,bind_g_payload)
+  bind_pi:bool = bool.and(bind_p_same,bind_i_same)
+  bind_ok:bool = bool.and(bind_pi,bind_g_same)
+  branch bind_ok budget(bind_r,bind_n,bind_mb) bad_binding()
+block budget(budget_r:readbuf,budget_n:u64,budget_mb:u64)
+  budget_one:u64 = const() {"value":1}
+  budget_bytes:u64 = int.add.wrap(budget_n,budget_one)
+  budget_enough:bool = compare.ge(budget_mb,budget_bytes)
+  branch budget_enough admitted(budget_bytes) denied()
+block admitted(bytes:u64)
+  ok_s:u32 = const() {"value":0}
+  ret(ok_s,bytes)
+block context_error(context_error_kind:u32)
+  context_error_malformed:u32 = const() {"value":6}
+  context_error_e31:u32 = const() {"value":31}
+  context_error_e32:u32 = const() {"value":32}
+  context_error_bad:bool = compare.eq(context_error_kind,context_error_malformed)
+  context_error_code:u32 = select(context_error_bad,context_error_e31,context_error_e32)
+  jump validation_failed(context_error_code)
+block bad_limits()
+  bad_limits_s:u32 = const() {"value":30}
+  jump validation_failed(bad_limits_s)
+block bad_purpose()
+  bad_purpose_s:u32 = const() {"value":33}
+  jump validation_failed(bad_purpose_s)
+block bad_binding()
+  bad_binding_s:u32 = const() {"value":34}
+  jump validation_failed(bad_binding_s)
+block denied()
+  denied_s:u32 = const() {"value":35}
+  jump validation_failed(denied_s)
+block validation_failed(saved:u32)
+  empty:u64 = const() {"value":0}
+  ret(saved,empty)
+end
+
+fn tco_hash(initialize_r:readbuf,initialize_w:mutbuf,initialize_base:u64,initialize_n:u64) -> (u32) effects(read,write,trap) entry(initialize)
+block initialize(initialize_r:readbuf,initialize_w:mutbuf,initialize_base:u64,initialize_n:u64)
+  initialize_success:u64 = const() {"value":0}
+  initialize_started:u64 = call(initialize_w) {"function":"s512_init"}
+  initialize_ok:bool = compare.eq(initialize_success,initialize_started)
+  branch initialize_ok domain(initialize_r,initialize_w,initialize_base,initialize_n) internal()
+block domain(domain_r:readbuf,domain_w:mutbuf,domain_base:u64,domain_n:u64)
+  domain_zero:u64 = const() {"value":0}
+  domain_domain_off:u64 = const() {"value":1512}
+  domain_at8:u64 = const() {"value":1520}
+  domain_at16:u64 = const() {"value":1528}
+  domain_at24:u64 = const() {"value":1536}
+  domain_w0:u64 = const() {"value":5859256985648517716}
+  domain_w1:u64 = const() {"value":8017370974729416497}
+  domain_w2:u64 = const() {"value":5211561370912650350}
+  domain_w3:u64 = const() {"value":13922218936448321}
+  domain_x0:u64 = call(domain_w,domain_zero,domain_domain_off,domain_w0) {"function":"sha512_store64"}
+  domain_x1:u64 = call(domain_w,domain_zero,domain_at8,domain_w1) {"function":"sha512_store64"}
+  domain_x2:u64 = call(domain_w,domain_zero,domain_at16,domain_w2) {"function":"sha512_store64"}
+  domain_x3:u64 = call(domain_w,domain_zero,domain_at24,domain_w3) {"function":"sha512_store64"}
+  domain_size:u64 = const() {"value":32}
+  domain_fed:u64 = call(domain_w,domain_domain_off,domain_size) {"function":"s512_update_work"}
+  domain_ok:bool = compare.eq(domain_fed,domain_zero)
+  branch domain_ok header(domain_r,domain_w,domain_base,domain_n) internal()
+block header(header_r:readbuf,header_w:mutbuf,header_base:u64,header_n:u64)
+  header_z:u64 = const() {"value":0}
+  header_count:u64 = const() {"value":141}
+  header_status:u64 = call(header_r,header_z,header_count,header_w) {"function":"s512_update"}
+  header_ok:bool = compare.eq(header_status,header_z)
+  branch header_ok length(header_r,header_w,header_base,header_n) internal()
+block length(length_r:readbuf,length_w:mutbuf,length_base:u64,length_n:u64)
+  length_size:u64 = const() {"value":8}
+  length_work_at:u64 = const() {"value":1512}
+  length_z:u64 = const() {"value":0}
+  _ = call(length_w,length_work_at,length_n) {"function":"tco_store_be64"}
+  length_status:u64 = call(length_w,length_work_at,length_size) {"function":"s512_update_work"}
+  length_ok:bool = compare.eq(length_status,length_z)
+  branch length_ok closure_bytes(length_r,length_w,length_base,length_n) internal()
+block closure_bytes(closure_bytes_r:readbuf,closure_bytes_w:mutbuf,closure_bytes_base:u64,closure_bytes_n:u64)
+  closure_bytes_z:u64 = const() {"value":0}
+  closure_bytes_status:u64 = call(closure_bytes_r,closure_bytes_base,closure_bytes_n,closure_bytes_w) {"function":"s512_update"}
+  closure_bytes_ok:bool = compare.eq(closure_bytes_status,closure_bytes_z)
+  branch closure_bytes_ok finalize(closure_bytes_w) internal()
+block finalize(finalize_w:mutbuf)
+  finalize_status:u64 = call(finalize_w) {"function":"s512_final"}
+  finalize_z:u64 = const() {"value":0}
+  finalize_ok:bool = compare.eq(finalize_status,finalize_z)
+  branch finalize_ok success() internal()
+block success()
+  s_ok:u32 = const() {"value":0}
+  ret(s_ok)
+block internal()
+  s_internal:u32 = const() {"value":103}
+  ret(s_internal)
+end
+
+fn tco_store_be64(entry_w:mutbuf,entry_at:u64,entry_n:u64) -> () effects(write,trap) entry(entry)
+block entry(entry_w:mutbuf,entry_at:u64,entry_n:u64)
+  entry_z:u64 = const() {"value":0}
+  jump byte(entry_w,entry_at,entry_n,entry_z)
+block byte(byte_w:mutbuf,byte_at:u64,byte_n:u64,byte_i:u64)
+  byte_seven:u64 = const() {"value":7}
+  byte_eight:u64 = const() {"value":8}
+  byte_one:u64 = const() {"value":1}
+  byte_flipped:u64 = int.sub.wrap(byte_seven,byte_i)
+  byte_shift:u64 = int.mul.wrap(byte_flipped,byte_eight)
+  byte_wide:u64 = int.shr.checked(byte_n,byte_shift)
+  byte_octet:u8 = int.cast(byte_wide) {"mode":"wrap"}
+  byte_a:u64 = int.add.wrap(byte_at,byte_i)
+  byte_p:usize = int.cast(byte_a) {"mode":"wrap"}
+  _ = buffer.store(byte_w,byte_p,byte_octet)
+  byte_next:u64 = int.add.wrap(byte_i,byte_one)
+  byte_more:bool = compare.lt(byte_next,byte_eight)
+  branch byte_more byte(byte_w,byte_at,byte_n,byte_next) done()
+block done()
+  ret()
+end

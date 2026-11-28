@@ -1,0 +1,109 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_version_loader_pin_value_v3
+fn f0(raw:readbuf,out:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,unused:mutbuf)
+  es:usize = buffer.len(raw)
+  en:u64 = int.cast(es) {"mode":"wrap"}
+  fixed:u64 = const() {"value":261}
+  fits:bool = compare.ge(en,fixed)
+  branch fits tag(raw,out,en,fixed) bad_frame()
+block tag(ti:readbuf,to:mutbuf,tn:u64,tf:u64)
+  tz:u64 = const() {"value":0}
+  expected:u64 = const() {"value":3544385890804323918}
+  observed:u64 = call(ti,tz) {"function":"tr_read"}
+  tok:bool = compare.eq(expected,observed)
+  branch tok lengths(ti,to,tn,tf) bad_frame()
+block lengths(li:readbuf,lo:mutbuf,ln:u64,lf:u64)
+  lmode:usize = const() {"value":8}
+  lats:u64 = const() {"value":9}
+  latr:u64 = const() {"value":11}
+  lwidth:u64 = const() {"value":2}
+  lmaxf:u64 = const() {"value":4096}
+  lmaxr:u64 = const() {"value":1024}
+  lmaxm:u8 = const() {"value":1}
+  lm:u8 = buffer.load(li,lmode)
+  ls:u64 = call(li,lats,lwidth) {"function":"ca_read_be"}
+  lr:u64 = call(li,latr,lwidth) {"function":"ca_read_be"}
+  lstart:u64 = int.add.wrap(lf,ls)
+  lend:u64 = int.add.wrap(lstart,lr)
+  lfm:bool = compare.le(ls,lmaxf)
+  lrm:bool = compare.le(lr,lmaxr)
+  lmm:bool = compare.le(lm,lmaxm)
+  lex:bool = compare.eq(ln,lend)
+  lpair:bool = bool.and(lfm,lrm)
+  lmode_and_extent:bool = bool.and(lmm,lex)
+  lgood:bool = bool.and(lpair,lmode_and_extent)
+  branch lgood family(li,lo,ln,lf,ls,lstart,lm) bad_frame()
+block family(fi:readbuf,fo:mutbuf,fn_:u64,ff:u64,fl:u64,fr:u64,fm:u8)
+  ftruth:u64 = const() {"value":1}
+  fstate:u64 = call(fi,ff,fl) {"function":"value_utf8"}
+  fgood:bool = compare.eq(fstate,ftruth)
+  branch fgood roles(fi,fo,fn_,fr,fm,fr) bad_encoding()
+block roles(ri:readbuf,ro:mutbuf,rn:u64,rb:u64,rm:u8,rp:u64)
+  rmore:bool = compare.lt(rp,rn)
+  branch rmore role_check(ri,ro,rn,rb,rm,rp) capacity(ri,ro,rn,rb,rm)
+block role_check(hi:readbuf,ho:mutbuf,hn:u64,hb:u64,hm:u8,hp:u64)
+  ha:usize = int.cast(hp) {"mode":"wrap"}
+  hrole:u8 = buffer.load(hi,ha)
+  hmin:u8 = const() {"value":1}
+  hmax:u8 = const() {"value":6}
+  h1:u64 = const() {"value":1}
+  hlo:bool = compare.ge(hrole,hmin)
+  hhi:bool = compare.le(hrole,hmax)
+  hok:bool = bool.and(hlo,hhi)
+  hnext:u64 = int.add.wrap(hp,h1)
+  branch hok roles(hi,ho,hn,hb,hm,hnext) bad_encoding()
+block capacity(ci:readbuf,co:mutbuf,cn:u64,cb:u64,cm:u8)
+  cs:usize = buffer.len(co)
+  cfit:u64 = int.cast(cs) {"mode":"wrap"}
+  cgood:bool = compare.ge(cfit,cn)
+  branch cgood direction(ci,co,cn,cb,cm) bad_capacity()
+block direction(di:readbuf,do_:mutbuf,dn:u64,db:u64,dm:u8)
+  dz:u8 = const() {"value":0}
+  sort:bool = compare.eq(dm,dz)
+  branch sort prefix(di,do_,dn,db) copy(di,do_,dn)
+block copy(ui:readbuf,uo:mutbuf,un:u64)
+  uz:u64 = const() {"value":0}
+  _all:u64 = call(ui,uz,uo,uz,un) {"function":"cp_copy"}
+  jump done()
+block prefix(pi:readbuf,po:mutbuf,pn:u64,pb:u64)
+  pz:u64 = const() {"value":0}
+  pfirst:u8 = const() {"value":1}
+  _head:u64 = call(pi,pz,po,pz,pb) {"function":"cp_copy"}
+  jump sweep(pi,po,pn,pb,pfirst,pb)
+block sweep(si:readbuf,so:mutbuf,sn:u64,sbase:u64,srole:u8,sp:u64)
+  shi:u8 = const() {"value":6}
+  svalid:bool = compare.le(srole,shi)
+  branch svalid visit(si,so,sn,sbase,srole,sbase,sp) done()
+block visit(vi:readbuf,vo:mutbuf,vn:u64,vbase:u64,vrole:u8,vsrc:u64,vdst:u64)
+  vmore:bool = compare.lt(vsrc,vn)
+  branch vmore match_role(vi,vo,vn,vbase,vrole,vsrc,vdst) next_role(vi,vo,vn,vbase,vrole,vdst)
+block match_role(mi:readbuf,mo:mutbuf,mn:u64,mb:u64,mr:u8,mp:u64,md:u64)
+  mi_pos:usize = int.cast(mp) {"mode":"wrap"}
+  mcur:u8 = buffer.load(mi,mi_pos)
+  mcheck:bool = compare.eq(mcur,mr)
+  mone:u64 = const() {"value":1}
+  mafter:u64 = int.add.wrap(mp,mone)
+  branch mcheck emit(mi,mo,mn,mb,mr,mafter,md) visit(mi,mo,mn,mb,mr,mafter,md)
+block emit(yi:readbuf,yo:mutbuf,yn:u64,yb:u64,yr:u8,yp:u64,yd:u64)
+  yslot:usize = int.cast(yd) {"mode":"wrap"}
+  _ = buffer.store(yo,yslot,yr)
+  yone:u64 = const() {"value":1}
+  ya:u64 = int.add.wrap(yd,yone)
+  jump visit(yi,yo,yn,yb,yr,yp,ya)
+block next_role(ni:readbuf,no:mutbuf,nn:u64,nb:u64,nr:u8,np:u64)
+  none:u8 = const() {"value":1}
+  na:u8 = int.add.wrap(nr,none)
+  jump sweep(ni,no,nn,nb,na,np)
+block done()
+  success:u32 = const() {"value":0}
+  ret(success)
+block bad_frame()
+  fail_frame:u32 = const() {"value":100}
+  ret(fail_frame)
+block bad_encoding()
+  fail_encoding:u32 = const() {"value":101}
+  ret(fail_encoding)
+block bad_capacity()
+  fail_capacity:u32 = const() {"value":102}
+  ret(fail_capacity)
+end

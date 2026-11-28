@@ -1,0 +1,58 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_market_reputation
+exports(reputation_score_bps,reputation_tier)
+fn reputation_score_bps(success:u16,timeout:u16,dispute:u16,penalty_events:u16) -> (u16) effects(trap) entry(entry)
+block entry(success:u16,timeout:u16,dispute:u16,penalty_events:u16)
+  success_rate:u64 = call(success) {"function":"cap_rate"}
+  timeout_rate:u64 = call(timeout) {"function":"cap_rate"}
+  dispute_rate:u64 = call(dispute) {"function":"cap_rate"}
+  events:u64 = int.cast(penalty_events) {"mode":"wrap"}
+  twice:u64 = const() {"value":2}
+  each_event:u64 = const() {"value":200}
+  disputes:u64 = int.mul.checked(dispute_rate,twice)
+  penalties:u64 = int.mul.checked(events,each_event)
+  rate_cost:u64 = int.add.checked(timeout_rate,disputes)
+  total_cost:u64 = int.add.checked(rate_cost,penalties)
+  positive:bool = compare.gt(success_rate,total_cost)
+  branch positive subtract(success_rate,total_cost) floor()
+block subtract(earned:u64,cost:u64)
+  net:u64 = int.sub.checked(earned,cost)
+  bps:u16 = int.cast(net) {"mode":"wrap"}
+  ret(bps)
+block floor()
+  zero:u16 = const() {"value":0}
+  ret(zero)
+end
+
+fn cap_rate(rate:u16) -> (u64) effects() entry(entry)
+block entry(rate:u16)
+  cap:u16 = const() {"value":10000}
+  over:bool = compare.gt(rate,cap)
+  branch over widen(cap) widen(rate)
+block widen(value:u16)
+  wide:u64 = int.cast(value) {"mode":"wrap"}
+  ret(wide)
+end
+
+fn reputation_tier(score:u16) -> (u8) effects() entry(entry)
+block entry(score:u16)
+  ceiling:u16 = const() {"value":10000}
+  in_range:bool = compare.le(score,ceiling)
+  branch in_range trusted_check(score) restricted()
+block trusted_check(valid:u16)
+  threshold:u16 = const() {"value":8000}
+  meets:bool = compare.ge(valid,threshold)
+  branch meets trusted() watch_check(valid)
+block watch_check(valid_watch:u16)
+  watch_minimum:u16 = const() {"value":5000}
+  meets_watch:bool = compare.ge(valid_watch,watch_minimum)
+  branch meets_watch watch() restricted()
+block trusted()
+  trusted_code:u8 = const() {"value":0}
+  ret(trusted_code)
+block watch()
+  watch_code:u8 = const() {"value":1}
+  ret(watch_code)
+block restricted()
+  restricted_code:u8 = const() {"value":2}
+  ret(restricted_code)
+end

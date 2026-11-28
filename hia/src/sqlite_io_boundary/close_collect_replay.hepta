@@ -1,0 +1,238 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_close_collect_replay
+fn f0(raw:readbuf,out:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,unused:mutbuf)
+  n:usize = buffer.len(raw)
+  req:usize = const() {"value":240}
+  fits:bool = compare.eq(n,req)
+  branch fits capacity(raw,out) malformed()
+block capacity(cr:readbuf,co:mutbuf)
+  os:usize = buffer.len(co)
+  need:usize = const() {"value":104}
+  full:bool = compare.ge(os,need)
+  branch full header(cr,co) short()
+block header(hr:readbuf,ho:mutbuf)
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  sixteen:u64 = const() {"value":16}
+  three:u64 = const() {"value":3}
+  size:u64 = const() {"value":256}
+  chosen:u64 = call(hr,zero) {"function":"tr_read"}
+  main:u64 = call(hr,eight) {"function":"tr_read"}
+  prior:u64 = call(hr,sixteen) {"function":"tr_read"}
+  selected:bool = compare.lt(chosen,three)
+  space:bool = compare.lt(prior,size)
+  header_ok:bool = bool.and(selected,space)
+  branch header_ok validate(hr,ho,chosen,main,prior,zero,zero) malformed()
+block validate(vr:readbuf,vo:mutbuf,vc:u64,vm:u64,vp:u64,vi:u64,vs:u64)
+  base:u64 = call(vi) {"function":"mcc_offset"}
+  in_profile:bool = call(vr,base) {"function":"mcc_valid"}
+  branch in_profile next(vr,vo,vc,vm,vp,vi,vs,base) malformed()
+block next(nr:readbuf,no:mutbuf,nc:u64,nm:u64,np:u64,ni:u64,ns:u64,nb:u64)
+  claim:u64 = call(nr,nb) {"function":"mcc_claim"}
+  sum:u64 = int.add.wrap(ns,claim)
+  one:u64 = const() {"value":1}
+  index:u64 = int.add.wrap(ni,one)
+  three_more:u64 = const() {"value":3}
+  more:bool = compare.lt(index,three_more)
+  branch more validate(nr,no,nc,nm,np,index,sum) coherent(nr,no,nc,nm,np,sum)
+block coherent(ar:readbuf,ao:mutbuf,ac:u64,am:u64,ap:u64,asum:u64)
+  same:bool = compare.eq(am,asum)
+  branch same close(ar,ao,ac,am,ap) malformed()
+block close(xr:readbuf,xo:mutbuf,xc:u64,xm:u64,xp:u64)
+  off:u64 = call(xc) {"function":"mcc_offset"}
+  at8:u64 = const() {"value":8}
+  hn:u64 = int.add.wrap(off,at8)
+  fh:u64 = call(xr,hn) {"function":"tr_read"}
+  z:u64 = const() {"value":0}
+  has:bool = compare.gt(fh,z)
+  branch has account(xr,xo,xc,xm,xp,off,fh) malformed()
+block account(br:readbuf,bo:mutbuf,bc:u64,bm:u64,bp:u64,bb:u64,bh:u64)
+  f:u64 = call(br,bb) {"function":"tr_read"}
+  two:u64 = const() {"value":2}
+  flag:u64 = bit.and(f,two)
+  is_main:bool = compare.eq(flag,two)
+  charge:u64 = call(is_main) {"function":"mcc_bit"}
+  active:u64 = int.sub.wrap(bm,charge)
+  one_less:u64 = const() {"value":1}
+  local:u64 = int.sub.wrap(bh,one_less)
+  cleanup:u64 = int.add.wrap(bp,one_less)
+  start:u64 = const() {"value":0}
+  jump sweep(br,bo,bc,bb,local,active,cleanup,start,start,start)
+block sweep(sr:readbuf,so:mutbuf,sc:u64,sb:u64,sh:u64,sa:u64,sp:u64,si:u64,sm:u64,st:u64)
+  row:u64 = call(si) {"function":"mcc_offset"}
+  hit:bool = compare.eq(si,sc)
+  keep:bool = call(sr,row,sa,hit,sh) {"function":"mcc_keep"}
+  bit:u64 = call(keep) {"function":"mcc_bit"}
+  shifted:u64 = int.shl.checked(bit,si)
+  mask:u64 = bit.or(sm,shifted)
+  d32:u64 = const() {"value":32}
+  hpos:u64 = int.add.wrap(row,d32)
+  high:u64 = call(sr,hpos) {"function":"tr_read"}
+  value:u64 = int.mul.wrap(high,bit)
+  total:u64 = int.add.wrap(st,value)
+  step:u64 = const() {"value":1}
+  ix:u64 = int.add.wrap(si,step)
+  d3:u64 = const() {"value":3}
+  pending:bool = compare.lt(ix,d3)
+  branch pending sweep(sr,so,sc,sb,sh,sa,sp,ix,mask,total) publish(sr,so,sb,sh,sa,sp,mask,total)
+block publish(er:readbuf,eo:mutbuf,eb:u64,eh:u64,ea:u64,ep:u64,em:u64,et:u64)
+  e0:u64 = const() {"value":0}
+  e8:u64 = const() {"value":8}
+  e16:u64 = const() {"value":16}
+  e24:u64 = const() {"value":24}
+  e32:u64 = const() {"value":32}
+  e40:u64 = const() {"value":40}
+  pose:u64 = call(eo,e0,ea) {"function":"cp_put"}
+  count:u64 = call(eo,e8,ep) {"function":"cp_put"}
+  kept:u64 = call(eo,e16,em) {"function":"cp_put"}
+  sum_bytes:u64 = call(eo,e24,et) {"function":"cp_put"}
+  span:u64 = const() {"value":72}
+  copied:u64 = call(er,eb,eo,e32,span) {"function":"cp_copy"}
+  handles:u64 = call(eo,e40,eh) {"function":"cp_put"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  tiny:u32 = const() {"value":102}
+  ret(tiny)
+end
+
+fn mcc_offset(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  stride:u64 = const() {"value":72}
+  head:u64 = const() {"value":24}
+  span:u64 = int.mul.wrap(index,stride)
+  row:u64 = int.add.wrap(head,span)
+  ret(row)
+end
+
+fn mcc_field(raw:readbuf,p:u64,k:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,p:u64,k:u64)
+  at:u64 = int.add.wrap(p,k)
+  v:u64 = call(raw,at) {"function":"tr_read"}
+  ret(v)
+end
+
+fn mcc_valid(raw:readbuf,p:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,p:u64)
+  flags:u64 = call(raw,p) {"function":"tr_read"}
+  zero:u64 = const() {"value":0}
+  absent:bool = compare.eq(flags,zero)
+  branch absent empty(raw,p) used(raw,p,flags)
+block empty(ar:readbuf,ap:u64)
+  index:u64 = const() {"value":8}
+  jump loop(ar,ap,index)
+block loop(lr:readbuf,lp:u64,li:u64)
+  x:u64 = call(lr,lp,li) {"function":"mcc_field"}
+  l0:u64 = const() {"value":0}
+  cleared:bool = compare.eq(x,l0)
+  branch cleared next(lr,lp,li) bad()
+block next(nr:readbuf,np:u64,ni:u64)
+  n8:u64 = const() {"value":8}
+  n72:u64 = const() {"value":72}
+  nx:u64 = int.add.wrap(ni,n8)
+  more:bool = compare.lt(nx,n72)
+  branch more loop(nr,np,nx) yes()
+block used(ur:readbuf,up:u64,uf:u64)
+  one:u64 = const() {"value":1}
+  cap:u64 = const() {"value":15}
+  u8:u64 = const() {"value":8}
+  u16:u64 = const() {"value":16}
+  u24:u64 = const() {"value":24}
+  u32:u64 = const() {"value":32}
+  u40:u64 = const() {"value":40}
+  u48:u64 = const() {"value":48}
+  known:u64 = bit.and(uf,one)
+  present:bool = compare.eq(known,one)
+  range:bool = compare.le(uf,cap)
+  h:u64 = call(ur,up,u8) {"function":"mcc_field"}
+  pending:u64 = call(ur,up,u16) {"function":"mcc_field"}
+  shm:u64 = call(ur,up,u24) {"function":"mcc_field"}
+  high:u64 = call(ur,up,u32) {"function":"mcc_field"}
+  actual:u64 = call(ur,up,u40) {"function":"mcc_field"}
+  gen:u64 = call(ur,up,u48) {"function":"mcc_field"}
+  hbound:bool = compare.le(h,u32)
+  pbound:bool = compare.le(pending,u32)
+  sbound:bool = compare.le(shm,u32)
+  hpsum:u64 = int.add.wrap(h,pending)
+  pcap:bool = compare.le(hpsum,u32)
+  limit:u64 = const() {"value":16777216}
+  hi:bool = compare.le(high,limit)
+  current:bool = compare.le(actual,high)
+  positive:bool = compare.ge(gen,one)
+  flagsok:bool = bool.and(present,range)
+  handleok:bool = bool.and(hbound,pbound)
+  simultan:bool = bool.and(pcap,sbound)
+  countok:bool = bool.and(handleok,simultan)
+  sizeok:bool = bool.and(hi,current)
+  sizesgen:bool = bool.and(sizeok,positive)
+  room:bool = bool.and(flagsok,countok)
+  ok:bool = bool.and(room,sizesgen)
+  ret(ok)
+block yes()
+  valid:bool = const() {"value":true}
+  ret(valid)
+block bad()
+  invalid:bool = const() {"value":false}
+  ret(invalid)
+end
+
+fn mcc_claim(r:readbuf,p:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64)
+  bits:u64 = call(r,p) {"function":"tr_read"}
+  c2:u64 = const() {"value":2}
+  is_main:u64 = bit.and(bits,c2)
+  has_main:bool = compare.eq(is_main,c2)
+  b:u64 = call(has_main) {"function":"mcc_bit"}
+  c8:u64 = const() {"value":8}
+  c16:u64 = const() {"value":16}
+  h:u64 = call(r,p,c8) {"function":"mcc_field"}
+  w:u64 = call(r,p,c16) {"function":"mcc_field"}
+  sum:u64 = int.add.wrap(h,w)
+  claim:u64 = int.mul.wrap(sum,b)
+  ret(claim)
+end
+
+fn mcc_keep(r:readbuf,p:u64,active:u64,chosen:bool,updated:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,active:u64,chosen:bool,updated:u64)
+  flags:u64 = call(r,p) {"function":"tr_read"}
+  k8:u64 = const() {"value":8}
+  raw_h:u64 = call(r,p,k8) {"function":"mcc_field"}
+  branch chosen hold(r,p,active,flags,updated) hold(r,p,active,flags,raw_h)
+block hold(hr:readbuf,hp:u64,ha:u64,hf:u64,hh:u64)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  twelve:u64 = const() {"value":12}
+  sixteen:u64 = const() {"value":16}
+  twentyfour:u64 = const() {"value":24}
+  some:u64 = bit.and(hf,one)
+  root:u64 = bit.and(hf,two)
+  bound:u64 = bit.and(hf,twelve)
+  pend:u64 = call(hr,hp,sixteen) {"function":"mcc_field"}
+  shm:u64 = call(hr,hp,twentyfour) {"function":"mcc_field"}
+  ref_left:u64 = bit.or(pend,shm)
+  local:u64 = bit.or(hh,ref_left)
+  fixed:u64 = bit.or(local,bound)
+  present:bool = compare.eq(some,one)
+  attached:bool = compare.ne(fixed,zero)
+  is_root:bool = compare.eq(root,two)
+  main_pending:bool = compare.ne(ha,zero)
+  other_main:bool = bool.and(is_root,main_pending)
+  retained:bool = bool.or(attached,other_main)
+  keep:bool = bool.and(present,retained)
+  ret(keep)
+end
+
+fn mcc_bit(b:bool) -> (u64) effects() entry(entry)
+block entry(b:bool)
+  branch b yes() no()
+block yes()
+  t:u64 = const() {"value":1}
+  ret(t)
+block no()
+  f:u64 = const() {"value":0}
+  ret(f)
+end

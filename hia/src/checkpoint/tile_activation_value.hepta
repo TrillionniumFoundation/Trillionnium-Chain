@@ -1,0 +1,207 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_typed_activation
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  v1:usize = buffer.len(r)
+  v2:u64 = int.cast(v1) {"mode":"wrap"}
+  v3:u64 = const() {"value":64}
+  v4:bool = compare.le(v3,v2)
+  v5:u64 = const() {"value":296512}
+  v6:bool = compare.le(v2,v5)
+  v7:bool = bool.and(v4,v6)
+  branch v7 header(r,o,v2) wire()
+block header(hr:readbuf,ho:mutbuf,hn:u64)
+  v8:u64 = const() {"value":0}
+  v9:u64 = call(hr,v8) {"function":"tr_read"}
+  v10:u64 = const() {"value":827736404}
+  v11:bool = compare.eq(v9,v10)
+  v12:u64 = const() {"value":32}
+  v13:u64 = call(hr,v12) {"function":"tr_read"}
+  v14:u64 = const() {"value":40}
+  v15:u64 = call(hr,v14) {"function":"tr_read"}
+  v16:u64 = const() {"value":48}
+  v17:u64 = call(hr,v16) {"function":"tr_read"}
+  v18:u64 = const() {"value":56}
+  v19:u64 = call(hr,v18) {"function":"tr_read"}
+  v20:u64 = const() {"value":64}
+  v21:u64 = int.add.wrap(v13,v15)
+  v22:u64 = int.add.wrap(v21,v17)
+  v23:u64 = const() {"value":8}
+  v24:u64 = int.mul.wrap(v22,v23)
+  v25:u64 = int.add.wrap(v24,v19)
+  v26:u64 = int.add.wrap(v20,v25)
+  v27:u64 = const() {"value":64}
+  v28:bool = compare.le(v13,v27)
+  v29:u64 = const() {"value":64}
+  v30:bool = compare.le(v15,v29)
+  v31:u64 = const() {"value":64}
+  v32:bool = compare.le(v17,v31)
+  v33:u64 = const() {"value":294912}
+  v34:bool = compare.le(v19,v33)
+  v35:bool = compare.eq(v26,hn)
+  v36:bool = bool.and(v11,v28)
+  v37:bool = bool.and(v36,v30)
+  v38:bool = bool.and(v37,v32)
+  v39:bool = bool.and(v38,v34)
+  v40:bool = bool.and(v39,v35)
+  branch v40 shape(hr,ho,hn,v13,v15,v17,v19) wire()
+block shape(sr:readbuf,so:mutbuf,sn:u64,si:u64,sm:u64,sp:u64,sh:u64)
+  v41:u64 = const() {"value":16}
+  v42:u64 = call(sr,v41) {"function":"tr_read"}
+  v43:u64 = const() {"value":8}
+  v44:u64 = call(sr,v43) {"function":"tr_read"}
+  v45:u64 = const() {"value":1}
+  v46:bool = compare.eq(v44,v45)
+  v47:u64 = const() {"value":24}
+  v48:u64 = call(sr,v47) {"function":"tr_read"}
+  v49:u64 = const() {"value":576}
+  v50:bool = compare.eq(v48,v49)
+  v51:u64 = const() {"value":1}
+  v52:bool = compare.le(v51,v42)
+  v53:u64 = const() {"value":64}
+  v54:bool = compare.le(v42,v53)
+  v55:bool = bool.and(v46,v50)
+  v56:bool = bool.and(v55,v52)
+  v57:bool = bool.and(v56,v54)
+  branch v57 tokens(sr,so,sn,si,sm,sp,sh,v42) shape_bad()
+block tokens(tr:readbuf,to:mutbuf,tn:u64,ti:u64,tm:u64,tp:u64,th:u64,tt:u64)
+  v58:bool = compare.eq(ti,tt)
+  v59:bool = compare.eq(tm,tt)
+  v60:bool = compare.eq(tp,tt)
+  v61:bool = bool.and(v58,v59)
+  v62:bool = bool.and(v61,v60)
+  branch v62 token_values(tr,to,tn,th,tt) token_bad()
+block token_values(vr:readbuf,vo:mutbuf,vn:u64,vh:u64,vt:u64)
+  v63:u64 = const() {"value":8}
+  v64:u64 = int.mul.wrap(vt,v63)
+  v65:u64 = const() {"value":64}
+  v66:u64 = int.add.wrap(v65,v64)
+  v67:u64 = int.add.wrap(v66,v64)
+  v68:u64 = int.add.wrap(v67,v64)
+  v69:u64 = const() {"value":0}
+  v70:bool = call(vr,vt,v66,v67,v69) {"function":"act_tokens"}
+  branch v70 bits(vr,vo,vn,vh,vt,v68) token_bad()
+block bits(br0:readbuf,bo:mutbuf,bn:u64,bh:u64,bt:u64,bs:u64)
+  v71:u64 = const() {"value":4608}
+  v72:u64 = int.mul.wrap(bt,v71)
+  v73:bool = compare.eq(bh,v72)
+  branch v73 charset(br0,bo,bn,bh,bt,bs) bits_bad()
+block charset(cr:readbuf,co:mutbuf,cn:u64,ch0:u64,ct:u64,cs:u64)
+  v74:bool = call(cr,cs,cn) {"function":"act_hex_valid"}
+  branch v74 capacity(cr,co,cn,ch0,ct,cs) bits_bad()
+block capacity(ar:readbuf,ao:mutbuf,an:u64,ah:u64,at:u64,as0:u64)
+  v75:u64 = const() {"value":8}
+  v76:u64 = const() {"value":1}
+  v77:u64 = int.shr.checked(ah,v76)
+  v78:u64 = int.add.wrap(v75,v77)
+  v79:usize = buffer.len(ao)
+  v80:u64 = int.cast(v79) {"mode":"wrap"}
+  v81:bool = compare.le(v78,v80)
+  branch v81 emit(ar,ao,an,at,as0) short()
+block emit(er:readbuf,eo:mutbuf,en:u64,et:u64,es:u64)
+  v82:u64 = const() {"value":8}
+  v83:u64 = call(er,eo,es,en,v82) {"function":"act_decode"}
+  v84:u64 = const() {"value":0}
+  v85:u64 = call(eo,v84,et) {"function":"tr_put"}
+  v86:u32 = const() {"value":0}
+  ret(v86)
+block wire()
+  v87:u32 = const() {"value":100}
+  ret(v87)
+block shape_bad()
+  v88:u32 = const() {"value":1}
+  ret(v88)
+block token_bad()
+  v89:u32 = const() {"value":2}
+  ret(v89)
+block bits_bad()
+  v90:u32 = const() {"value":3}
+  ret(v90)
+block short()
+  v91:u32 = const() {"value":102}
+  ret(v91)
+end
+fn act_tokens(r:readbuf,t:u64,m:u64,p:u64,i:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,t:u64,m:u64,p:u64,i:u64)
+  jump loop(r,t,m,p,i)
+block loop(lr:readbuf,lt0:u64,lm:u64,lp:u64,li:u64)
+  v92:bool = compare.eq(li,lt0)
+  branch v92 ok() values(lr,lt0,lm,lp,li)
+block values(vr:readbuf,vt:u64,vm:u64,vp:u64,vi:u64)
+  v93:u64 = const() {"value":8}
+  v94:u64 = int.mul.wrap(vi,v93)
+  v95:u64 = const() {"value":64}
+  v96:u64 = int.add.wrap(v95,v94)
+  v97:u64 = call(vr,v96) {"function":"tr_read"}
+  v98:u64 = int.add.wrap(vm,v94)
+  v99:u64 = call(vr,v98) {"function":"tr_read"}
+  v100:u64 = int.add.wrap(vp,v94)
+  v101:u64 = call(vr,v100) {"function":"tr_read"}
+  v102:u64 = const() {"value":49152}
+  v103:bool = compare.lt(v97,v102)
+  v104:u64 = const() {"value":1}
+  v105:bool = compare.eq(v99,v104)
+  v106:bool = compare.eq(v101,vi)
+  v107:bool = bool.and(v103,v105)
+  v108:bool = bool.and(v107,v106)
+  v109:u64 = const() {"value":1}
+  v110:u64 = int.add.wrap(vi,v109)
+  branch v108 loop(vr,vt,vm,vp,v110) bad()
+block ok()
+  v111:bool = const() {"value":true}
+  ret(v111)
+block bad()
+  v112:bool = const() {"value":false}
+  ret(v112)
+end
+fn act_hex_valid(r:readbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,n:u64)
+  jump loop(r,p,n)
+block loop(lr:readbuf,lp:u64,ln:u64)
+  v113:bool = compare.eq(lp,ln)
+  branch v113 ok() next(lr,lp,ln)
+block next(nr:readbuf,np:u64,nn:u64)
+  v114:usize = int.cast(np) {"mode":"wrap"}
+  v115:u8 = buffer.load(nr,v114)
+  v116:u64 = int.cast(v115) {"mode":"wrap"}
+  v117:u64 = call(v116) {"function":"ms_nibble"}
+  v118:u64 = const() {"value":16}
+  v119:bool = compare.lt(v117,v118)
+  v120:u64 = const() {"value":1}
+  v121:u64 = int.add.wrap(np,v120)
+  branch v119 loop(nr,v121,nn) bad()
+block ok()
+  v122:bool = const() {"value":true}
+  ret(v122)
+block bad()
+  v123:bool = const() {"value":false}
+  ret(v123)
+end
+fn act_decode(r:readbuf,o:mutbuf,p:u64,n:u64,q:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,p:u64,n:u64,q:u64)
+  jump loop(r,o,p,n,q)
+block loop(lr:readbuf,lo:mutbuf,lp:u64,ln:u64,lq:u64)
+  v124:bool = compare.eq(lp,ln)
+  branch v124 done(lq) next(lr,lo,lp,ln,lq)
+block next(nr:readbuf,no0:mutbuf,np:u64,nn:u64,nq:u64)
+  v125:u64 = const() {"value":1}
+  v126:u64 = int.add.wrap(np,v125)
+  v127:usize = int.cast(np) {"mode":"wrap"}
+  v128:u8 = buffer.load(nr,v127)
+  v129:u64 = int.cast(v128) {"mode":"wrap"}
+  v130:u64 = call(v129) {"function":"ms_nibble"}
+  v131:usize = int.cast(v126) {"mode":"wrap"}
+  v132:u8 = buffer.load(nr,v131)
+  v133:u64 = int.cast(v132) {"mode":"wrap"}
+  v134:u64 = call(v133) {"function":"ms_nibble"}
+  v135:u64 = const() {"value":4}
+  v136:u64 = int.shl.checked(v130,v135)
+  v137:u64 = bit.or(v136,v134)
+  v138:usize = int.cast(nq) {"mode":"wrap"}
+  v139:u8 = int.cast(v137) {"mode":"wrap"}
+  _ = buffer.store(no0,v138,v139)
+  v140:u64 = int.add.wrap(v126,v125)
+  v141:u64 = int.add.wrap(nq,v125)
+  jump loop(nr,no0,v140,nn,v141)
+block done(q0:u64)
+  ret(q0)
+end

@@ -1,0 +1,158 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_executor_env_toggle_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  decision:u32 = call(input) {"function":"et_toggle"}
+  ret(decision)
+end
+fn et_toggle(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf)
+  input_size:usize = buffer.len(input)
+  frame_size:u64 = int.cast(input_size) {"mode":"wrap"}
+  header_size:u64 = const() {"value":2}
+  max_size:u64 = const() {"value":1048576}
+  enough:bool = compare.ge(frame_size,header_size)
+  bounded:bool = compare.le(frame_size,max_size)
+  framed:bool = bool.and(enough,bounded)
+  branch framed header(input,frame_size,header_size) invalid()
+block header(header_input:readbuf,header_frame_size:u64,header_width:u64)
+  tag_offset:usize = const() {"value":0}
+  default_offset:usize = const() {"value":1}
+  present_tag:u8 = buffer.load(header_input,tag_offset)
+  default_tag:u8 = buffer.load(header_input,default_offset)
+  max_tag:u8 = const() {"value":1}
+  valid_presence:bool = compare.le(present_tag,max_tag)
+  valid_default:bool = compare.le(default_tag,max_tag)
+  valid_header:bool = bool.and(valid_presence,valid_default)
+  branch valid_header presence(header_input,header_frame_size,header_width,present_tag,default_tag) invalid()
+block presence(presence_input:readbuf,presence_frame_size:u64,presence_width:u64,presence_tag:u8,presence_default:u8)
+  absent_tag:u8 = const() {"value":0}
+  missing:bool = compare.eq(presence_tag,absent_tag)
+  body_size:u64 = int.sub.wrap(presence_frame_size,presence_width)
+  branch missing absent(body_size,presence_default) utf8(presence_input,presence_width,body_size,presence_default)
+block absent(absent_size:u64,absent_default:u8)
+  zero:u64 = const() {"value":0}
+  absent_empty:bool = compare.eq(absent_size,zero)
+  branch absent_empty fallback(absent_default) invalid()
+block utf8(utf8_input:readbuf,utf8_begin:u64,utf8_size:u64,utf8_default:u8)
+  valid_extent:u64 = call(utf8_input,utf8_begin,utf8_size) {"function":"value_utf8"}
+  one:u64 = const() {"value":1}
+  valid:bool = compare.eq(valid_extent,one)
+  branch valid trim_outer(utf8_input,utf8_begin,utf8_size,utf8_default) fallback(utf8_default)
+block trim_outer(outer_input:readbuf,outer_begin:u64,outer_size:u64,outer_default:u8)
+  outer_start:u64 = call(outer_input,outer_begin,outer_size) {"function":"or_trim_start"}
+  outer_limit:u64 = int.add.wrap(outer_begin,outer_size)
+  remaining_outer:u64 = int.sub.wrap(outer_limit,outer_start)
+  outer_end:u64 = call(outer_input,outer_start,remaining_outer) {"function":"or_trim_end"}
+  trimmed_size:u64 = int.sub.wrap(outer_end,outer_start)
+  two:u64 = const() {"value":2}
+  can_unquote:bool = compare.ge(trimmed_size,two)
+  branch can_unquote quote_pair(outer_input,outer_start,outer_end,outer_default) scan(outer_input,outer_start,outer_start,outer_end,outer_default)
+block quote_pair(pair_input:readbuf,pair_start:u64,pair_end:u64,pair_default:u8)
+  pair_one:u64 = const() {"value":1}
+  last_index:u64 = int.sub.wrap(pair_end,pair_one)
+  start_index:usize = int.cast(pair_start) {"mode":"wrap"}
+  end_index:usize = int.cast(last_index) {"mode":"wrap"}
+  first:u8 = buffer.load(pair_input,start_index)
+  last:u8 = buffer.load(pair_input,end_index)
+  double_quote:u8 = const() {"value":34}
+  single_quote:u8 = const() {"value":39}
+  double_first:bool = compare.eq(first,double_quote)
+  single_first:bool = compare.eq(first,single_quote)
+  first_is_quote:bool = bool.or(double_first,single_first)
+  same_delimiter:bool = compare.eq(first,last)
+  matched_quotes:bool = bool.and(first_is_quote,same_delimiter)
+  first_inside:u64 = int.add.wrap(pair_start,pair_one)
+  branch matched_quotes trim_inner(pair_input,first_inside,last_index,pair_default) scan(pair_input,pair_start,pair_start,pair_end,pair_default)
+block trim_inner(inner_input:readbuf,inner_begin:u64,inner_limit:u64,inner_default:u8)
+  inner_extent:u64 = int.sub.wrap(inner_limit,inner_begin)
+  inner_start:u64 = call(inner_input,inner_begin,inner_extent) {"function":"or_trim_start"}
+  remaining_inner:u64 = int.sub.wrap(inner_limit,inner_start)
+  inner_end:u64 = call(inner_input,inner_start,remaining_inner) {"function":"or_trim_end"}
+  jump scan(inner_input,inner_start,inner_start,inner_end,inner_default)
+block scan(scan_input:readbuf,scan_start:u64,scan_cursor:u64,scan_end:u64,scan_default:u8)
+  scan_more:bool = compare.lt(scan_cursor,scan_end)
+  branch scan_more separator(scan_input,scan_start,scan_cursor,scan_end,scan_default) fallback(scan_default)
+block separator(sep_input:readbuf,sep_start:u64,sep_cursor:u64,sep_end:u64,sep_default:u8)
+  sep_index:usize = int.cast(sep_cursor) {"mode":"wrap"}
+  sep_byte:u8 = buffer.load(sep_input,sep_index)
+  underscore:u8 = const() {"value":95}
+  comma:u8 = const() {"value":44}
+  is_underscore:bool = compare.eq(sep_byte,underscore)
+  is_comma:bool = compare.eq(sep_byte,comma)
+  is_separator:bool = bool.or(is_underscore,is_comma)
+  sep_one:u64 = const() {"value":1}
+  sep_next:u64 = int.add.wrap(sep_cursor,sep_one)
+  branch is_separator scan(sep_input,sep_start,sep_next,sep_end,sep_default) classify(sep_input,sep_start,sep_end)
+block classify(class_input:readbuf,class_start:u64,class_end:u64)
+  token_size:u64 = int.sub.wrap(class_end,class_start)
+  max_false_len:u64 = const() {"value":5}
+  could_be_false:bool = compare.le(token_size,max_false_len)
+  branch could_be_false match(class_input,class_start,class_end,token_size) yes()
+block match(match_input:readbuf,match_start:u64,match_end:u64,match_size:u64)
+  folded:u64 = call(match_input,match_start,match_end) {"function":"et_fold_ascii"}
+  zero_word:u64 = const() {"value":48}
+  no_word:u64 = const() {"value":28526}
+  off_word:u64 = const() {"value":6710895}
+  false_word:u64 = const() {"value":435728179558}
+  one_byte:u64 = const() {"value":1}
+  two_bytes:u64 = const() {"value":2}
+  three_bytes:u64 = const() {"value":3}
+  five_bytes:u64 = const() {"value":5}
+  zero_lex:bool = compare.eq(folded,zero_word)
+  no_lex:bool = compare.eq(folded,no_word)
+  off_lex:bool = compare.eq(folded,off_word)
+  false_lex:bool = compare.eq(folded,false_word)
+  zero_width:bool = compare.eq(match_size,one_byte)
+  no_width:bool = compare.eq(match_size,two_bytes)
+  off_width:bool = compare.eq(match_size,three_bytes)
+  false_width:bool = compare.eq(match_size,five_bytes)
+  is_zero:bool = bool.and(zero_lex,zero_width)
+  is_no:bool = bool.and(no_lex,no_width)
+  is_off:bool = bool.and(off_lex,off_width)
+  is_false:bool = bool.and(false_lex,false_width)
+  pair_short:bool = bool.or(is_zero,is_no)
+  pair_long:bool = bool.or(is_off,is_false)
+  recognized_false:bool = bool.or(pair_short,pair_long)
+  branch recognized_false no() yes()
+block no()
+  false_value:u32 = const() {"value":0}
+  ret(false_value)
+block yes()
+  true_value:u32 = const() {"value":1}
+  ret(true_value)
+block fallback(fallback_default:u8)
+  default_value:u32 = int.cast(fallback_default) {"mode":"wrap"}
+  ret(default_value)
+block invalid()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+end
+fn et_fold_ascii(input:readbuf,start:u64,end_at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,start:u64,end_at:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(input,start,end_at,zero,zero)
+block loop(loop_input:readbuf,loop_offset:u64,loop_end:u64,loop_shift:u64,loop_value:u64)
+  loop_more:bool = compare.lt(loop_offset,loop_end)
+  branch loop_more octet(loop_input,loop_offset,loop_end,loop_shift,loop_value) done(loop_value)
+block octet(byte_input:readbuf,byte_offset:u64,byte_end:u64,byte_shift:u64,byte_value:u64)
+  byte_index:usize = int.cast(byte_offset) {"mode":"wrap"}
+  raw_byte:u8 = buffer.load(byte_input,byte_index)
+  first_upper:u8 = const() {"value":65}
+  last_upper:u8 = const() {"value":90}
+  lower_bit:u8 = const() {"value":32}
+  above_first:bool = compare.ge(raw_byte,first_upper)
+  below_last:bool = compare.le(raw_byte,last_upper)
+  uppercase:bool = bool.and(above_first,below_last)
+  lower_byte:u8 = bit.or(raw_byte,lower_bit)
+  folded_byte:u8 = select(uppercase,lower_byte,raw_byte)
+  widened:u64 = int.cast(folded_byte) {"mode":"wrap"}
+  packed_byte:u64 = int.shl.checked(widened,byte_shift)
+  next_value:u64 = bit.or(byte_value,packed_byte)
+  increment:u64 = const() {"value":1}
+  eight_bits:u64 = const() {"value":8}
+  next_offset:u64 = int.add.wrap(byte_offset,increment)
+  next_shift:u64 = int.add.wrap(byte_shift,eight_bits)
+  jump loop(byte_input,next_offset,byte_end,next_shift,next_value)
+block done(done_value:u64)
+  ret(done_value)
+end

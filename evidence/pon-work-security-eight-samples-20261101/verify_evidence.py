@@ -518,4 +518,9 @@ def main():
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    # The current archive entrypoint is always read-only, including when its
+    # index is missing. Historical views execute the separate original blob.
+    package = Path(__file__).resolve().parent
+    sys.path.insert(0, str(package.parents[1] / "scripts/ci"))
+    from check_hosted_cost_archive import current_cli
+    raise SystemExit(current_cli(package))

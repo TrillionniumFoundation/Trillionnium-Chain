@@ -1,0 +1,178 @@
+{
+  "schema": "trnm.hia.bench-plain-diagnostic-text.v4",
+  "entries": {
+    "3": [
+      "TRNM load bench with configurable conflict rate\n\nUsage: trnm-bench [OPTIONS]\n\nOptions:\n      --txs <TXS>\n          Number of transactions [default: 20000]\n      --persist-profile\n          Persist profile output under run/bench (enabled by default when --profile is set)\n      --keys <KEYS>\n          Number of hot keys (smaller = higher conflict) [default: 2000]\n      --workload <WORKLOAD>\n          Workload model [default: classic] [possible values: classic, mixed, hot-streak]\n      --strategy <STRATEGY>\n          Grouping strategy [default: original] [possible values: original, footprint-desc, write-first, write-last, hot-bucket-interleave, auto-adaptive, aggressive-greedy]\n      --read-fanout <READ_FANOUT>\n          Read-set fanout for mixed workload [default: 3]\n      --write-every <WRITE_EVERY>\n          Write every N txs for mixed workload (1 = write every tx) [default: 1]\n      --profile\n          Print executor profiling stats\n      --determinism-repeats <DETERMINISM_REPEATS>\n          Repeat the exact deterministic grouping input in-process and fail if any replay produces a different ordered group assignment. This checks scheduler determinism only; it is not a throughput or consensus claim [default: 0]\n  -h, --help\n          Print help\n",
+      ""
+    ],
+    "16": [
+      "error: a value is required for '--txs <TXS>' but none was supplied\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "17": [
+      "error: a value is required for '--keys <KEYS>' but none was supplied\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "18": [
+      "error: a value is required for '--determinism-repeats <DETERMINISM_REPEATS>' but none was supplied\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "20": [
+      "error: a value is required for '--read-fanout <READ_FANOUT>' but none was supplied\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "21": [
+      "error: a value is required for '--write-every <WRITE_EVERY>' but none was supplied\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "22": [
+      "error: a value is required for '--workload <WORKLOAD>' but none was supplied\n  [possible values: classic, mixed, hot-streak]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "24": [
+      "error: a value is required for '--strategy <STRATEGY>' but none was supplied\n  [possible values: original, footprint-desc, write-first, write-last, hot-bucket-interleave, auto-adaptive, aggressive-greedy]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "32": [
+      "error: the argument '--txs <TXS>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "33": [
+      "error: the argument '--keys <KEYS>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "34": [
+      "error: the argument '--determinism-repeats <DETERMINISM_REPEATS>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "35": [
+      "error: the argument '--profile' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "36": [
+      "error: the argument '--read-fanout <READ_FANOUT>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "37": [
+      "error: the argument '--write-every <WRITE_EVERY>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "38": [
+      "error: the argument '--workload <WORKLOAD>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "39": [
+      "error: the argument '--persist-profile' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "40": [
+      "error: the argument '--strategy <STRATEGY>' cannot be used multiple times\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n",
+      ""
+    ],
+    "64": [
+      "error: invalid value '",
+      "' for '--txs <TXS>': cannot parse integer from empty string\n\nFor more information, try '--help'.\n"
+    ],
+    "65": [
+      "error: invalid value '",
+      "' for '--keys <KEYS>': cannot parse integer from empty string\n\nFor more information, try '--help'.\n"
+    ],
+    "66": [
+      "error: invalid value '",
+      "' for '--determinism-repeats <DETERMINISM_REPEATS>': cannot parse integer from empty string\n\nFor more information, try '--help'.\n"
+    ],
+    "68": [
+      "error: invalid value '",
+      "' for '--read-fanout <READ_FANOUT>': cannot parse integer from empty string\n\nFor more information, try '--help'.\n"
+    ],
+    "69": [
+      "error: invalid value '",
+      "' for '--write-every <WRITE_EVERY>': cannot parse integer from empty string\n\nFor more information, try '--help'.\n"
+    ],
+    "80": [
+      "error: invalid value '",
+      "' for '--txs <TXS>': invalid digit found in string\n\nFor more information, try '--help'.\n"
+    ],
+    "81": [
+      "error: invalid value '",
+      "' for '--keys <KEYS>': invalid digit found in string\n\nFor more information, try '--help'.\n"
+    ],
+    "82": [
+      "error: invalid value '",
+      "' for '--determinism-repeats <DETERMINISM_REPEATS>': invalid digit found in string\n\nFor more information, try '--help'.\n"
+    ],
+    "84": [
+      "error: invalid value '",
+      "' for '--read-fanout <READ_FANOUT>': invalid digit found in string\n\nFor more information, try '--help'.\n"
+    ],
+    "85": [
+      "error: invalid value '",
+      "' for '--write-every <WRITE_EVERY>': invalid digit found in string\n\nFor more information, try '--help'.\n"
+    ],
+    "86": [
+      "error: unexpected value '",
+      "' for '--' found; no more were expected\n\nUsage: trnm-bench <--txs <TXS>|--persist-profile|--keys <KEYS>|--workload <WORKLOAD>|--strategy <STRATEGY>|--read-fanout <READ_FANOUT>|--write-every <WRITE_EVERY>|--profile|--determinism-repeats <DETERMINISM_REPEATS>>"
+    ],
+    "90": [
+      "error: unexpected argument '",
+      "' found\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n"
+    ],
+    "91": [
+      "error: unexpected argument '--",
+      "' found\n\nUsage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n"
+    ],
+    "96": [
+      "error: invalid value '",
+      "' for '--txs <TXS>': number too large to fit in target type\n\nFor more information, try '--help'.\n"
+    ],
+    "97": [
+      "error: invalid value '",
+      "' for '--keys <KEYS>': number too large to fit in target type\n\nFor more information, try '--help'.\n"
+    ],
+    "98": [
+      "error: invalid value '",
+      "' for '--determinism-repeats <DETERMINISM_REPEATS>': number too large to fit in target type\n\nFor more information, try '--help'.\n"
+    ],
+    "100": [
+      "error: invalid value '",
+      "' for '--read-fanout <READ_FANOUT>': number too large to fit in target type\n\nFor more information, try '--help'.\n"
+    ],
+    "101": [
+      "error: invalid value '",
+      "' for '--write-every <WRITE_EVERY>': number too large to fit in target type\n\nFor more information, try '--help'.\n"
+    ],
+    "102": [
+      "error: invalid value '",
+      "' for '--workload <WORKLOAD>'\n  [possible values: classic, mixed, hot-streak]\n\nFor more information, try '--help'.\n"
+    ],
+    "103": [
+      "error: invalid value '",
+      "' for '--strategy <STRATEGY>'\n  [possible values: original, footprint-desc, write-first, write-last, hot-bucket-interleave, auto-adaptive, aggressive-greedy]\n\nFor more information, try '--help'.\n"
+    ]
+  },
+  "long_options": [
+    ["txs", "TXS"],
+    ["persist-profile", ""],
+    ["keys", "KEYS"],
+    ["workload", "WORKLOAD"],
+    ["strategy", "STRATEGY"],
+    ["read-fanout", "READ_FANOUT"],
+    ["write-every", "WRITE_EVERY"],
+    ["profile", ""],
+    ["determinism-repeats", "DETERMINISM_REPEATS"],
+    ["help", ""]
+  ],
+  "suggestions": [
+    "classic",
+    "mixed",
+    "hot-streak",
+    "original",
+    "footprint-desc",
+    "write-first",
+    "write-last",
+    "hot-bucket-interleave",
+    "auto-adaptive",
+    "aggressive-greedy",
+    "\n\n  tip: a similar value exists: '"
+  ]
+}

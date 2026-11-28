@@ -1,0 +1,79 @@
+name: HIA ARM64 cache capacity diagnostic
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - .github/workflows/hia-arm64-cache-capacity.yml
+      - scripts/ci/hia_arm64_cache_capacity.py
+      - scripts/ci/test_hia_arm64_cache_capacity.py
+      - hia/src/data_availability/cache_capacity.hepta
+      - hia/tests/test_cache_capacity.py
+      - hia/toolchain.lock.json
+      - trillionnium/crates/trnm-data-availability/src/cell.rs
+      - trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs
+permissions:
+  contents: read
+jobs:
+  cache-capacity-arm64-diagnostic:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.event.pull_request.number == 949 && github.event.pull_request.draft == true && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/chain-hia-native'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      HIA_DIAGNOSTIC_HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /hia/__init__.py
+            /hia/tests/__init__.py
+            /hia/tests/native_support.py
+            /hia/tests/test_cache_capacity.py
+            /hia/src/data_availability/cache_capacity.hepta
+            /hia/toolchain.lock.json
+            /trillionnium/crates/trnm-data-availability/src/cell.rs
+            /trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs
+            /scripts/ci/hia_arm64_cache_capacity.py
+            /scripts/ci/test_hia_arm64_cache_capacity.py
+          persist-credentials: false
+      - name: Fetch exact public Hepta and install signed native toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -sm)" = "Linux aarch64"
+          test "$RUNNER_OS/$RUNNER_ARCH" = "Linux/ARM64"
+          export GIT_TERMINAL_PROMPT=0
+          dst="$RUNNER_TEMP/hia-cache-capacity-hepta"
+          pin=f33d8da316de8fdf27b504371f1a5310997ff548
+          git init -q "$dst"
+          git -C "$dst" config credential.helper ""
+          git -C "$dst" config http.extraHeader ""
+          git -C "$dst" remote add origin https://github.com/TrillionniumFoundation/Hepta.git
+          git -C "$dst" -c protocol.version=2 fetch --depth=1 --filter=blob:none origin "$pin"
+          git -C "$dst" sparse-checkout set --cone hepta
+          git -C "$dst" checkout --detach "$pin"
+          test "$(git -C "$dst" rev-parse HEAD)" = "$pin"
+          sudo apt-get -o Acquire::Retries=1 update
+          sudo apt-get -o Acquire::Retries=1 install --no-install-recommends -y 'clang-20=1:20.1.2-0ubuntu1~24.04.3'
+          rustup toolchain install 1.95.0 --profile minimal
+      - name: Compare actual independently executed native ARM64 outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$(dirname "$(rustup which --toolchain 1.95.0 rustc)"):$PATH"
+          out="$RUNNER_TEMP/hia-cache-capacity"
+          mkdir "$out"
+          python3 -B scripts/ci/test_hia_arm64_cache_capacity.py
+          python3 -B scripts/ci/hia_arm64_cache_capacity.py "$GITHUB_WORKSPACE" "$RUNNER_TEMP/hia-cache-capacity-hepta" "$out" "$HIA_DIAGNOSTIC_HEAD"
+          tar -C "$out" -cf "$RUNNER_TEMP/hia-arm64-cache-capacity.tar" report.json input.txt original.stdout hia.stdout native.o native-driver.rs reference.rs
+          test "$(stat -c %s "$RUNNER_TEMP/hia-arm64-cache-capacity.tar")" -le 262144
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-arm64-cache-capacity-${{ env.HIA_DIAGNOSTIC_HEAD }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-arm64-cache-capacity.tar
+          if-no-files-found: error
+          retention-days: 7

@@ -295,7 +295,8 @@ export artifact is retained in full.
 - Original native campaign run `42463825169` built and executed three actual
   campaigns. All three failed finite confirmation/client-state criteria with
   retained `PUBLIC_REQUEST_DEADLINE` records. These are not startup failures.
-  The original 71,722,426-byte artifact ZIP `13610289272` is included with SHA-256
+  The original 71,722,426-byte artifact ZIP `13610289272` is retained in the
+  [exact historical capture](NATIVE_TRIAGE_ARCHIVE.json) with SHA-256
   `b6415ddf54d336c1c0647eca920cfe7ed0dfe24b75a7d65cf9a8c5b118d6c354`.
 - Four protocol/cross-architecture observations report `CONFIRMATION_TARGET`:
   each five named native controls passed, but the confirmation reader rejected
@@ -327,6 +328,52 @@ files). No oversized file is silently omitted. The unused PASS-only collector
 draft is identified in [its supersession record](unexecuted-collector-draft.json)
 and was not executed. Previous 31-command PASS, earlier genuine Node FAIL,
 research captures and all previous evidence retain their original bytes.
+
+### Current storage of native campaign artifact 13610289272
+
+[NATIVE_TRIAGE_ARCHIVE.json](NATIVE_TRIAGE_ARCHIVE.json) binds the complete
+33-file capture to commit `893210a45b44742edfe2510fea1d92e9974b5f95`, tree
+`a2d04b29621bb78504244471aacac3be3bc78d1d`, with exact original paths, Git
+blobs, byte counts and SHA-256 digests. The original ZIP and three large
+`selected/run-*-raw/report.json` streams, totaling 189,121,668 bytes, are
+stored in Git history. Every one of the other 29 records remains as an exact
+copy under `hosted-ci-native-triage-01/retained-native-campaign-13610289272/`.
+The index binds each retained path to its original path and bytes.
+
+The [capture summary](hosted-ci-native-triage-01/retained-native-campaign-13610289272/report-summary.json),
+[observer receipt](hosted-ci-native-triage-01/retained-native-campaign-13610289272/receipt.json),
+[download receipt](hosted-ci-native-triage-01/retained-native-campaign-13610289272/download-receipt.json),
+[selected inventory](hosted-ci-native-triage-01/retained-native-campaign-13610289272/selected-inventory.json)
+and [complete ZIP index](hosted-ci-native-triage-01/retained-native-campaign-13610289272/zip-index.json)
+retain their original bytes. Failed observations, unknown outcomes, zero-byte
+logs and source receipts are preserved. The three corpus-pinned validation
+runners remain at their original paths, unchanged.
+
+The original `artifact-index.json` and `followup-archive-inventory.json` remain
+unchanged sealed logical inventories, including the original README before
+this storage explanation. Verify the current representation from repository root:
+
+```sh
+python3 scripts/ci/check_pq_triage_archive.py \
+  --manifest evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json
+```
+
+This checks all 1,050 original stored-file checksums, all 147 compressed and
+uncompressed byte bindings, and all 543 follow-up source-file bindings.
+The two older root-quorum gzip records bind uncompressed hashes without
+source pathnames; no pathname is invented for them. Missing retained files,
+changed records, missing Git objects, or a live PQ corpus consumer of an
+archived path fail the check. The reader does not execute captured collectors,
+rerun campaigns, change the original hosted-CI result or qualify whole-chain PQ.
+
+Retrieve an exact original file with its indexed path, for example:
+
+```sh
+python3 scripts/ci/check_historical_archive.py \
+  --manifest evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json \
+  --cat evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip \
+  > /tmp/original-artifact-13610289272.zip
+```
 
 The draft remains **HOLD** for current native validation, hosted acceptance,
 service performance, production activation, whole-chain PQ security, physical

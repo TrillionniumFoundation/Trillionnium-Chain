@@ -1,0 +1,133 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_closure_manifest_relation_tcx1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  bytes:usize = buffer.len(input)
+  extent:u64 = int.cast(bytes) {"mode":"wrap"}
+  eight:u64 = const() {"value":8}
+  fits:bool = compare.ge(extent,eight)
+  branch fits frame(input,output,scratch,extent,eight) bad_frame()
+block frame(fi:readbuf,fo:mutbuf,fw:mutbuf,fe:u64,ff:u64)
+  body:u64 = int.sub.wrap(fe,ff)
+  four:u64 = const() {"value":4}
+  magic_at:u64 = int.add.wrap(body,four)
+  magic:u64 = call(fi,magic_at,four) {"function":"rac_read_le"}
+  tcx:u64 = const() {"value":827867988}
+  tag_ok:bool = compare.eq(magic,tcx)
+  closure_n:u64 = call(fi,body,four) {"function":"rac_read_le"}
+  extent_ok:bool = compare.le(closure_n,body)
+  bound:bool = bool.and(tag_ok,extent_ok)
+  branch bound closure(fi,fo,fw,body,closure_n) bad_frame()
+block closure(ci:readbuf,co:mutbuf,cw:mutbuf,cb:u64,cn:u64)
+  no_output_needed:bool = const() {"value":true}
+  c_base:u64 = const() {"value":0}
+  status:u32,files:u64,release_n:u64 = call(ci,no_output_needed,cw,cn,c_base) {"function":"td_validate"}
+  c_zero:u32 = const() {"value":0}
+  c_ok:bool = compare.eq(status,c_zero)
+  branch c_ok decode(ci,co,cw,cb,cn,files) fail(status)
+block decode(di:readbuf,doo:mutbuf,dw:mutbuf,db:u64,dm:u64,df:u64)
+  manifest_n:u64 = int.sub.wrap(db,dm)
+  error:u32,rows:u64,chunks:u64 = call(di,dm,manifest_n) {"function":"cm_decode"}
+  d_zero:u32 = const() {"value":0}
+  d_ok:bool = compare.eq(error,d_zero)
+  branch d_ok compute(di,doo,dw,dm,manifest_n,df) manifest_failure(error)
+block compute(hi:readbuf,ho:mutbuf,hw:mutbuf,hm:u64,hn:u64,hf:u64)
+  hc:u64 = call(hi,hm,hn,hw) {"function":"cm_hash"}
+  h_zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(hc,h_zero)
+  branch hashed lookup(hi,ho,hw,hm,hf) internal()
+block lookup(li:readbuf,lo:mutbuf,lw:mutbuf,lm:u64,lf:u64)
+  zero_l:u64 = const() {"value":0}
+  know_role:u64 = call(li,lw,lf,zero_l) {"function":"tx_find_by_computed_id"}
+  found:bool = compare.gt(know_role,zero_l)
+  branch found context(li,lo,lw,lm,know_role) unexpected_member()
+block context(xi:readbuf,xo:mutbuf,xw:mutbuf,xm:u64,xr:u64)
+  release_at:u64 = const() {"value":52}
+  four_x:u64 = const() {"value":4}
+  manifest_at:u64 = int.add.wrap(xm,four_x)
+  one_x:u64 = const() {"value":1}
+  family_r:u64 = call(xi,release_at,one_x) {"function":"rac_read_le"}
+  family_m:u64 = call(xi,manifest_at,one_x) {"function":"rac_read_le"}
+  fixed:u64 = const() {"value":161}
+  size_r:u64 = int.add.wrap(fixed,family_r)
+  size_m:u64 = int.add.wrap(fixed,family_m)
+  cmp_x:u64 = call(xi,release_at,manifest_at,size_r,size_m) {"function":"sb_compare"}
+  context_equal:bool = compare.eq(cmp_x,one_x)
+  branch context_equal payload(xi,xo,xw,manifest_at,size_m,xr) different_payload()
+block payload(pi:readbuf,po:mutbuf,pw:mutbuf,pm:u64,pn:u64,pr:u64)
+  manifest_size_at:u64 = int.add.wrap(pm,pn)
+  thirty_three:u64 = const() {"value":33}
+  file_digest_at:u64 = int.add.wrap(pr,thirty_three)
+  eight_p:u64 = const() {"value":8}
+  manifest_digest_at:u64 = int.add.wrap(manifest_size_at,eight_p)
+  thirty_two:u64 = const() {"value":32}
+  cmp_digest:u64 = call(pi,manifest_digest_at,file_digest_at,thirty_two,thirty_two) {"function":"sb_compare"}
+  one_p:u64 = const() {"value":1}
+  digest_equal:bool = compare.eq(cmp_digest,one_p)
+  branch digest_equal declared_size(pi,po,pw,manifest_size_at,file_digest_at) different_payload()
+block declared_size(si:readbuf,so:mutbuf,sw:mutbuf,sm:u64,sd:u64)
+  digest_n:u64 = const() {"value":32}
+  file_size_at:u64 = int.add.wrap(sd,digest_n)
+  eight_s:u64 = const() {"value":8}
+  cmp_s:u64 = call(si,sm,file_size_at,eight_s,eight_s) {"function":"sb_compare"}
+  one_s:u64 = const() {"value":1}
+  equal_size:bool = compare.eq(cmp_s,one_s)
+  branch equal_size room(so,sw) different_payload()
+block room(ro:mutbuf,rw:mutbuf)
+  out_n:usize = buffer.len(ro)
+  output_n:usize = const() {"value":32}
+  enough:bool = compare.ge(out_n,output_n)
+  branch enough publish(ro,rw) capacity()
+block publish(ou:mutbuf,sc:mutbuf)
+  dst:u64 = const() {"value":0}
+  _next:u64 = call(sc,ou,dst) {"function":"sb_copy_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block manifest_failure(code:u32)
+  range:u32 = const() {"value":64}
+  observed:u32 = int.add.wrap(code,range)
+  ret(observed)
+block fail(failure_code:u32)
+  ret(failure_code)
+block unexpected_member()
+  unlisted:u32 = const() {"value":80}
+  ret(unlisted)
+block different_payload()
+  unequal:u32 = const() {"value":81}
+  ret(unequal)
+block bad_frame()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block capacity()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+block internal()
+  failed:u32 = const() {"value":103}
+  ret(failed)
+end
+
+fn tx_find_by_computed_id(input:readbuf,work:mutbuf,count:u64,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,count:u64,index:u64)
+  jump check(input,work,count,index)
+block check(ci:readbuf,cw:mutbuf,cc:u64,cx:u64)
+  complete:bool = compare.eq(cx,cc)
+  branch complete missing() current(ci,cw,cc,cx)
+block current(ii:readbuf,iw:mutbuf,ic:u64,ix:u64)
+  stride:u64 = const() {"value":40}
+  offset:u64 = int.mul.wrap(ix,stride)
+  role_slot:u64 = const() {"value":1288}
+  slot:u64 = int.add.wrap(offset,role_slot)
+  role:u64 = call(iw,slot) {"function":"tr_get"}
+  one:u64 = const() {"value":1}
+  member_id:u64 = int.add.wrap(role,one)
+  digest:u64 = const() {"value":1168}
+  width:u64 = const() {"value":32}
+  same:u64 = call(ii,member_id,iw,digest,width) {"function":"ca_equal"}
+  selected:bool = compare.eq(same,one)
+  next:u64 = int.add.wrap(ix,one)
+  branch selected existing(role) check(ii,iw,ic,next)
+block existing(position:u64)
+  ret(position)
+block missing()
+  no_match:u64 = const() {"value":0}
+  ret(no_match)
+end

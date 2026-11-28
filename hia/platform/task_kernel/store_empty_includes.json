@@ -1,0 +1,25 @@
+{
+  "functions": {
+    "cp_get": "hia/src/control_plane/core.hepta",
+    "cp_put": "hia/src/control_plane/core.hepta",
+    "cp_wcopy": "hia/src/control_plane/core.hepta",
+    "ex_cleanup": "hia/src/task_kernel/store_execution_common.hepta",
+    "ex_fail": "hia/src/task_kernel/store_execution_common.hepta",
+    "ex_layout": "hia/src/task_kernel/store_execution_common.hepta",
+    "ex_marker": "hia/src/task_kernel/store_execution_common.hepta",
+    "ex_metadata": "hia/src/task_kernel/store_execution_common.hepta",
+    "ex_sql": "hia/src/task_kernel/store_execution_common.hepta",
+    "ex_text": "hia/src/task_kernel/store_execution_common.hepta",
+    "so_call": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_continue": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_equal": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_frame": "hia/src/task_kernel/store_owner_common.hepta",
+    "so_return": "hia/src/task_kernel/store_owner_common.hepta",
+    "st_allocate": "hia/src/task_kernel/store_common.hepta",
+    "st_error": "hia/src/task_kernel/store_common.hepta",
+    "st_need": "hia/src/task_kernel/store_common.hepta",
+    "st_switch": "hia/src/task_kernel/store_common.hepta"
+  },
+  "schema": "trnm.hia.task-store-empty-includes.v1",
+  "source": "hia/src/task_kernel/store_empty.hepta"
+}

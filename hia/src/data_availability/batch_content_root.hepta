@@ -1,0 +1,430 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_da_batch_content_root
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  length:usize = buffer.len(r)
+  n:u64 = int.cast(length) {"mode":"wrap"}
+  lo:u64 = const() {"value":4}
+  hi:u64 = const() {"value":1048576}
+  min_ok:bool = compare.ge(n,lo)
+  max_ok:bool = compare.le(n,hi)
+  valid:bool = bool.and(min_ok,max_ok)
+  branch valid count(r,o,w,n) shape()
+block count(r1:readbuf,o1:mutbuf,w1:mutbuf,n1:u64)
+  zero:u64 = const() {"value":0}
+  limit:u64 = const() {"value":32}
+  count1:u64 = call(r1,zero) {"function":"daav_u32"}
+  bounded:bool = compare.le(count1,limit)
+  branch bounded frame(r1,o1,w1,n1,count1) shape()
+block frame(r2:readbuf,o2:mutbuf,w2:mutbuf,n2:u64,k2:u64)
+  good:bool = call(r2,n2,k2) {"function":"dct_shape"}
+  branch good nonempty(r2,o2,w2,n2,k2) shape()
+block nonempty(r3:readbuf,o3:mutbuf,w3:mutbuf,n3:u64,k3:u64)
+  no_rows:u64 = const() {"value":0}
+  any:bool = compare.ne(k3,no_rows)
+  branch any space(r3,o3,w3,n3,k3) count_error()
+block space(r4:readbuf,o4:mutbuf,w4:mutbuf,n4:u64,k4:u64)
+  actual_out:usize = buffer.len(o4)
+  actual_work:usize = buffer.len(w4)
+  min_out:usize = const() {"value":44}
+  min_work:usize = const() {"value":3072}
+  okay_out:bool = compare.ge(actual_out,min_out)
+  okay_work:bool = compare.ge(actual_work,min_work)
+  enough:bool = bool.and(okay_out,okay_work)
+  branch enough inspect(r4,o4,w4,n4,k4) short()
+block inspect(r5:readbuf,o5:mutbuf,w5:mutbuf,n5:u64,k5:u64)
+  clean:bool = call(r5,w5,k5) {"function":"dct_unique"}
+  branch clean leaves(r5,o5,w5,n5,k5) rows_error()
+block leaves(r6:readbuf,o6:mutbuf,w6:mutbuf,n6:u64,k6:u64)
+  good6:bool = call(r6,w6,k6) {"function":"dct_leaves"}
+  branch good6 reduce(o6,w6,n6,k6) internal()
+block reduce(o7:mutbuf,w7:mutbuf,n7:u64,k7:u64)
+  good7:bool = call(w7,k7) {"function":"dct_reduce"}
+  branch good7 root(o7,w7,n7,k7) internal()
+block root(o8:mutbuf,w8:mutbuf,n8:u64,k8:u64)
+  start8:u64 = const() {"value":2048}
+  body8:u64 = const() {"value":1317}
+  size8:u64 = const() {"value":85}
+  parent8:bool = const() {"value":false}
+  _body:u64 = call(w8,k8) {"function":"dct_inner"}
+  _leaf:u64 = call(w8,start8,body8) {"function":"dc_copy"}
+  okay:bool = call(w8,parent8,size8) {"function":"dap_digest"}
+  branch okay publish(o8,w8,n8,k8) internal()
+block publish(oo:mutbuf,ww:mutbuf,nn:u64,kk:u64)
+  zero2:u64 = const() {"value":0}
+  digest:u64 = const() {"value":1168}
+  cnt:u64 = const() {"value":32}
+  extent:u64 = const() {"value":36}
+  _root:u64 = call(ww,digest,oo,zero2) {"function":"dab_copy32"}
+  _count:u64 = call(oo,cnt,kk) {"function":"tr_put"}
+  _size:u64 = call(oo,extent,nn) {"function":"tr_put"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block shape()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+block internal()
+  failed:u32 = const() {"value":103}
+  ret(failed)
+block count_error()
+  count_bad:u32 = const() {"value":40}
+  ret(count_bad)
+block rows_error()
+  row_bad:u32 = const() {"value":41}
+  ret(row_bad)
+end
+
+fn dct_shape(r:readbuf,n:u64,k:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,n:u64,k:u64)
+  first:u64 = const() {"value":4}
+  zero:u64 = const() {"value":0}
+  jump walk(r,n,k,first,zero)
+block walk(rr:readbuf,nn:u64,kk:u64,at:u64,i:u64)
+  more:bool = compare.lt(i,kk)
+  branch more width(rr,nn,kk,at,i) exact(nn,at)
+block width(rw:readbuf,nw:u64,kw:u64,aw:u64,iw:u64)
+  rem:u64 = int.sub.wrap(nw,aw)
+  four:u64 = const() {"value":4}
+  room:bool = compare.ge(rem,four)
+  branch room row(rw,nw,kw,aw,iw,rem) fail()
+block row(ra:readbuf,na:u64,ka:u64,aa:u64,ia:u64,rem_a:u64)
+  four_a:u64 = const() {"value":4}
+  one_a:u64 = const() {"value":1}
+  extent:u64 = call(ra,aa) {"function":"daav_u32"}
+  remaining:u64 = int.sub.wrap(rem_a,four_a)
+  fit:bool = compare.le(extent,remaining)
+  start:u64 = int.add.wrap(aa,four_a)
+  next:u64 = int.add.wrap(start,extent)
+  j:u64 = int.add.wrap(ia,one_a)
+  branch fit walk(ra,na,ka,next,j) fail()
+block exact(nf:u64,af:u64)
+  precise:bool = compare.eq(nf,af)
+  ret(precise)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dct_unique(r:readbuf,w:mutbuf,k:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,k:u64)
+  first:u64 = const() {"value":4}
+  zero:u64 = const() {"value":0}
+  jump row(r,w,k,first,zero)
+block row(rr:readbuf,ww:mutbuf,kk:u64,at:u64,i:u64)
+  width:u64 = call(rr,at) {"function":"daav_u32"}
+  four:u64 = const() {"value":4}
+  zero_r:u64 = const() {"value":0}
+  start:u64 = int.add.wrap(at,four)
+  nonempty:bool = compare.ne(width,zero_r)
+  branch nonempty check(rr,ww,kk,start,width,i) fail()
+block check(rc:readbuf,wc:mutbuf,kc:u64,sc:u64,lc:u64,ic:u64)
+  unique:bool = call(rc,wc,sc,lc,ic) {"function":"dct_distinct"}
+  branch unique remember(rc,wc,kc,sc,lc,ic) fail()
+block remember(rd:readbuf,wd:mutbuf,kd:u64,sd:u64,ld:u64,id:u64)
+  base:u64 = const() {"value":1536}
+  stride:u64 = const() {"value":16}
+  eight:u64 = const() {"value":8}
+  one_d:u64 = const() {"value":1}
+  off:u64 = int.mul.wrap(id,stride)
+  dest:u64 = int.add.wrap(base,off)
+  length_at:u64 = int.add.wrap(dest,eight)
+  _start:u64 = call(wd,dest,sd) {"function":"tr_put"}
+  _length:u64 = call(wd,length_at,ld) {"function":"tr_put"}
+  next:u64 = int.add.wrap(sd,ld)
+  j:u64 = int.add.wrap(id,one_d)
+  more:bool = compare.lt(j,kd)
+  branch more row(rd,wd,kd,next,j) pass()
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+block pass()
+  yes:bool = const() {"value":true}
+  ret(yes)
+end
+
+fn dct_distinct(r:readbuf,w:mutbuf,p:u64,n:u64,seen:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,seen:u64)
+  first:u64 = const() {"value":1536}
+  z:u64 = const() {"value":0}
+  jump walk(r,w,p,n,seen,first,z)
+block walk(rr:readbuf,ww:mutbuf,pp:u64,nn:u64,ss:u64,at:u64,i:u64)
+  has:bool = compare.lt(i,ss)
+  branch has inspect(rr,ww,pp,nn,ss,at,i) pass()
+block inspect(ri:readbuf,wi:mutbuf,pi:u64,ni:u64,si:u64,ai:u64,ii:u64)
+  eight:u64 = const() {"value":8}
+  length_at:u64 = int.add.wrap(ai,eight)
+  q:u64 = call(wi,length_at) {"function":"tr_get"}
+  same:bool = compare.eq(ni,q)
+  branch same both(ri,wi,pi,ni,si,ai,ii) next(ri,wi,pi,ni,si,ai,ii)
+block both(rb:readbuf,wb:mutbuf,pb:u64,nb:u64,sb:u64,ab:u64,ib:u64)
+  old:u64 = call(wb,ab) {"function":"tr_get"}
+  identical:bool = call(rb,pb,old,nb) {"function":"dct_equal"}
+  branch identical fail() next(rb,wb,pb,nb,sb,ab,ib)
+block next(rn:readbuf,wn:mutbuf,pn:u64,nnn:u64,sn:u64,an:u64,in0:u64)
+  one:u64 = const() {"value":1}
+  stride:u64 = const() {"value":16}
+  j:u64 = int.add.wrap(in0,one)
+  at1:u64 = int.add.wrap(an,stride)
+  jump walk(rn,wn,pn,nnn,sn,at1,j)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+block pass()
+  yes:bool = const() {"value":true}
+  ret(yes)
+end
+
+fn dct_equal(r:readbuf,a:u64,b:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,a:u64,b:u64,n:u64)
+  z:u64 = const() {"value":0}
+  jump loop(r,a,b,n,z)
+block loop(rr:readbuf,aa:u64,bb:u64,nn:u64,ii:u64)
+  more:bool = compare.lt(ii,nn)
+  branch more span(rr,aa,bb,nn,ii) pass()
+block span(rs:readbuf,as:u64,bs:u64,ns:u64,is:u64)
+  eight:u64 = const() {"value":8}
+  left:u64 = int.sub.wrap(ns,is)
+  wide:bool = compare.ge(left,eight)
+  branch wide words(rs,as,bs,ns,is) byte(rs,as,bs,ns,is)
+block words(rw:readbuf,aw:u64,bw:u64,nw:u64,iw:u64)
+  a_at:u64 = int.add.wrap(aw,iw)
+  b_at:u64 = int.add.wrap(bw,iw)
+  a_v:u64 = call(rw,a_at) {"function":"tr_read"}
+  b_v:u64 = call(rw,b_at) {"function":"tr_read"}
+  match_w:bool = compare.eq(a_v,b_v)
+  step:u64 = const() {"value":8}
+  j:u64 = int.add.wrap(iw,step)
+  branch match_w loop(rw,aw,bw,nw,j) fail()
+block byte(rb:readbuf,ab:u64,bb0:u64,nb:u64,ib:u64)
+  a_at_b:u64 = int.add.wrap(ab,ib)
+  b_at_b:u64 = int.add.wrap(bb0,ib)
+  ai:usize = int.cast(a_at_b) {"mode":"wrap"}
+  bi:usize = int.cast(b_at_b) {"mode":"wrap"}
+  a_v_b:u8 = buffer.load(rb,ai)
+  b_v_b:u8 = buffer.load(rb,bi)
+  match_b:bool = compare.eq(a_v_b,b_v_b)
+  step_b:u64 = const() {"value":1}
+  j_b:u64 = int.add.wrap(ib,step_b)
+  branch match_b loop(rb,ab,bb0,nb,j_b) fail()
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+block pass()
+  yes:bool = const() {"value":true}
+  ret(yes)
+end
+
+fn dct_leaves(r:readbuf,w:mutbuf,k:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,k:u64)
+  z:u64 = const() {"value":0}
+  first:u64 = const() {"value":4}
+  leaf0:u64 = const() {"value":2048}
+  jump loop(r,w,k,first,leaf0,z)
+block loop(rr:readbuf,ww:mutbuf,kk:u64,at:u64,dst:u64,i:u64)
+  four:u64 = const() {"value":4}
+  extent:u64 = call(rr,at) {"function":"daav_u32"}
+  len:u64 = int.add.wrap(four,extent)
+  okay:bool = call(rr,ww,at,len,i) {"function":"dct_leaf"}
+  branch okay save(rr,ww,kk,at,len,dst,i) fail()
+block save(rs:readbuf,ws:mutbuf,ks:u64,as:u64,ls:u64,ds:u64,is:u64)
+  digest:u64 = const() {"value":1168}
+  step:u64 = const() {"value":32}
+  one:u64 = const() {"value":1}
+  _leaf:u64 = call(ws,digest,ds) {"function":"dc_copy"}
+  ptr:u64 = int.add.wrap(as,ls)
+  dest:u64 = int.add.wrap(ds,step)
+  j:u64 = int.add.wrap(is,one)
+  more:bool = compare.lt(j,ks)
+  branch more loop(rs,ws,ks,ptr,dest,j) pass()
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+block pass()
+  yes:bool = const() {"value":true}
+  ret(yes)
+end
+
+fn dct_leaf(r:readbuf,w:mutbuf,p:u64,n:u64,i:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,i:u64)
+  init:u64 = call(w) {"function":"tr_sha_init"}
+  domain:u64 = call(w) {"function":"dct_item_domain"}
+  bytes:u64 = call(r,p,n,w) {"function":"tr_sha_update"}
+  finalize:u64 = call(w) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,domain)
+  b:u64 = bit.or(bytes,finalize)
+  status:u64 = bit.or(a,b)
+  z:u64 = const() {"value":0}
+  okay:bool = compare.eq(status,z)
+  branch okay leaf(w,i) fail()
+block leaf(wl:mutbuf,il:u64)
+  body:u64 = const() {"value":1264}
+  size:u64 = const() {"value":68}
+  first:u64 = const() {"value":1268}
+  second:u64 = const() {"value":1300}
+  item:u64 = const() {"value":1168}
+  _index:u64 = call(wl,body,il) {"function":"tr_put"}
+  _id:u64 = call(wl,item,first) {"function":"dc_copy"}
+  _body:u64 = call(wl,item,second) {"function":"dc_copy"}
+  init_l:u64 = call(wl) {"function":"tr_sha_init"}
+  domain_l:u64 = call(wl) {"function":"dct_leaf_domain"}
+  bytes_l:u64 = call(wl,body,size) {"function":"tr_sha_update_work"}
+  finalize_l:u64 = call(wl) {"function":"tr_sha_final"}
+  a_l:u64 = bit.or(init_l,domain_l)
+  b_l:u64 = bit.or(bytes_l,finalize_l)
+  status_l:u64 = bit.or(a_l,b_l)
+  z_l:u64 = const() {"value":0}
+  result:bool = compare.eq(status_l,z_l)
+  ret(result)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dct_reduce(w:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  zero:u64 = const() {"value":0}
+  jump level(w,n,zero)
+block level(wl:mutbuf,k:u64,l:u64)
+  one:u64 = const() {"value":1}
+  done:bool = compare.eq(k,one)
+  branch done pass() start(wl,k,l)
+block start(ws:mutbuf,ks:u64,ls:u64)
+  zero_s:u64 = const() {"value":0}
+  jump pair(ws,ks,ls,zero_s,zero_s)
+block pair(wp:mutbuf,kp:u64,lp:u64,i:u64,out:u64)
+  one_p:u64 = const() {"value":1}
+  two_p:u64 = const() {"value":2}
+  next:u64 = int.add.wrap(i,one_p)
+  exists:bool = compare.lt(next,kp)
+  right:u64 = select(exists,next,i)
+  step:u64 = int.add.wrap(i,two_p)
+  okay:bool = call(wp,i,right,out,lp) {"function":"dct_parent"}
+  branch okay advance(wp,kp,lp,step,out) fail()
+block advance(wa:mutbuf,ka:u64,la:u64,ia:u64,oa:u64)
+  one_a:u64 = const() {"value":1}
+  next_out:u64 = int.add.wrap(oa,one_a)
+  next_level:u64 = int.add.wrap(la,one_a)
+  remains:bool = compare.lt(ia,ka)
+  branch remains pair(wa,ka,la,ia,next_out) level(wa,next_out,next_level)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+block pass()
+  yes:bool = const() {"value":true}
+  ret(yes)
+end
+
+fn dct_parent(w:mutbuf,left:u64,right:u64,dst:u64,level:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,left:u64,right:u64,dst:u64,level:u64)
+  width:u64 = const() {"value":32}
+  start:u64 = const() {"value":2048}
+  first:u64 = const() {"value":1317}
+  second:u64 = const() {"value":1349}
+  size:u64 = const() {"value":117}
+  parent:bool = const() {"value":true}
+  a:u64 = int.mul.wrap(left,width)
+  b:u64 = int.mul.wrap(right,width)
+  c:u64 = int.mul.wrap(dst,width)
+  at:u64 = int.add.wrap(a,start)
+  bt:u64 = int.add.wrap(b,start)
+  out:u64 = int.add.wrap(c,start)
+  _inner:u64 = call(w,level) {"function":"dct_inner"}
+  _left:u64 = call(w,at,first) {"function":"dc_copy"}
+  _right:u64 = call(w,bt,second) {"function":"dc_copy"}
+  good:bool = call(w,parent,size) {"function":"dap_digest"}
+  branch good save(w,out) fail()
+block save(ws:mutbuf,dst_s:u64)
+  digest:u64 = const() {"value":1168}
+  _hash:u64 = call(ws,digest,dst_s) {"function":"dc_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn dct_item_domain(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  p0:u64 = const() {"value":1208}
+  v0:u64 = const() {"value":7885365840114090033}
+  _stage0:u64 = call(w,p0,v0) {"function":"tr_put"}
+  p1:u64 = const() {"value":1216}
+  v1:u64 = const() {"value":7809911856577867822}
+  _stage1:u64 = call(w,p1,v1) {"function":"tr_put"}
+  p2:u64 = const() {"value":1224}
+  v2:u64 = const() {"value":3270004954025569893}
+  _stage2:u64 = call(w,p2,v2) {"function":"tr_put"}
+  p3:u64 = const() {"value":1232}
+  v3:u64 = const() {"value":8386654079495008884}
+  _stage3:u64 = call(w,p3,v3) {"function":"tr_put"}
+  p4:u64 = const() {"value":1240}
+  v4:u64 = const() {"value":7882834717864521577}
+  _stage4:u64 = call(w,p4,v4) {"function":"tr_put"}
+  p5:u64 = const() {"value":1248}
+  v5:u64 = const() {"value":7017849999419597614}
+  _stage5:u64 = call(w,p5,v5) {"function":"tr_put"}
+  p6:u64 = const() {"value":1256}
+  v6:u64 = const() {"value":212436149620}
+  _stage6:u64 = call(w,p6,v6) {"function":"tr_put"}
+  extent:u64 = const() {"value":53}
+  status:u64 = call(w,p0,extent) {"function":"tr_sha_update_work"}
+  ret(status)
+end
+
+fn dct_leaf_domain(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  p0:u64 = const() {"value":1208}
+  v0:u64 = const() {"value":7885365840114090029}
+  _stage0:u64 = call(w,p0,v0) {"function":"tr_put"}
+  p1:u64 = const() {"value":1216}
+  v1:u64 = const() {"value":7809911856577867822}
+  _stage1:u64 = call(w,p1,v1) {"function":"tr_put"}
+  p2:u64 = const() {"value":1224}
+  v2:u64 = const() {"value":3270004954025569893}
+  _stage2:u64 = call(w,p2,v2) {"function":"tr_put"}
+  p3:u64 = const() {"value":1232}
+  v3:u64 = const() {"value":3275364211029340003}
+  _stage3:u64 = call(w,p3,v3) {"function":"tr_put"}
+  p4:u64 = const() {"value":1240}
+  v4:u64 = const() {"value":7953747467850311020}
+  _stage4:u64 = call(w,p4,v4) {"function":"tr_put"}
+  p5:u64 = const() {"value":1248}
+  v5:u64 = const() {"value":8515855495928768868}
+  _stage5:u64 = call(w,p5,v5) {"function":"tr_put"}
+  p6:u64 = const() {"value":1256}
+  v6:u64 = const() {"value":49}
+  _stage6:u64 = call(w,p6,v6) {"function":"tr_put"}
+  extent:u64 = const() {"value":49}
+  status:u64 = call(w,p0,extent) {"function":"tr_sha_update_work"}
+  ret(status)
+end
+
+fn dct_inner(w:mutbuf,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  p0:u64 = const() {"value":1264}
+  v0:u64 = const() {"value":7885365840114090029}
+  _stage0:u64 = call(w,p0,v0) {"function":"tr_put"}
+  p1:u64 = const() {"value":1272}
+  v1:u64 = const() {"value":7809911856577867822}
+  _stage1:u64 = call(w,p1,v1) {"function":"tr_put"}
+  p2:u64 = const() {"value":1280}
+  v2:u64 = const() {"value":3270004954025569893}
+  _stage2:u64 = call(w,p2,v2) {"function":"tr_put"}
+  p3:u64 = const() {"value":1288}
+  v3:u64 = const() {"value":3275364211029340003}
+  _stage3:u64 = call(w,p3,v3) {"function":"tr_put"}
+  p4:u64 = const() {"value":1296}
+  v4:u64 = const() {"value":7953747467850311020}
+  _stage4:u64 = call(w,p4,v4) {"function":"tr_put"}
+  p5:u64 = const() {"value":1304}
+  v5:u64 = const() {"value":8515855495928768868}
+  _stage5:u64 = call(w,p5,v5) {"function":"tr_put"}
+  p6:u64 = const() {"value":1312}
+  v6:u64 = const() {"value":49}
+  _stage6:u64 = call(w,p6,v6) {"function":"tr_put"}
+  number:u64 = const() {"value":1313}
+  status:u64 = call(w,number,n) {"function":"tr_put"}
+  ret(status)
+end

@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_archive_retained_plan_v1
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  retained_mode:u64 = const() {"value":1}
+  status:u32 = call(r,o,w,retained_mode) {"function":"ats_entry"}
+  ret(status)
+end

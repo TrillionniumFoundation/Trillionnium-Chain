@@ -1,0 +1,132 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_checked_marker_interval_codec
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  code:u32 = call(raw,w) {"function":"scc_verify"}
+  ret(code)
+end
+
+fn scc_verify(raw:readbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf)
+  total:usize = buffer.len(raw)
+  available:usize = buffer.len(w)
+  minimum:usize = const() {"value":560}
+  maximum:usize = const() {"value":14888}
+  needed:usize = const() {"value":32768}
+  enough:bool = compare.ge(total,minimum)
+  within:bool = compare.le(total,maximum)
+  room:bool = compare.ge(available,needed)
+  range:bool = bool.and(enough,within)
+  fit:bool = bool.and(range,room)
+  branch fit parse(raw,w,total) malformed()
+block parse(pr:readbuf,pw:mutbuf,pn:usize)
+  prefix:u64 = const() {"value":8}
+  zero:u64 = const() {"value":0}
+  copied:u64 = call(pr,zero,pw,zero,prefix) {"function":"cp_copy"}
+  extent:u64 = call(pw,zero) {"function":"cp_get"}
+  config_min:u64 = const() {"value":32}
+  config_max:u64 = const() {"value":8192}
+  cfg_min:bool = compare.ge(extent,config_min)
+  cfg_max:bool = compare.le(extent,config_max)
+  start:u64 = int.add.wrap(prefix,extent)
+  total_u:u64 = int.cast(pn) {"mode":"wrap"}
+  contained:bool = compare.le(start,total_u)
+  left:u64 = int.sub.wrap(total_u,start)
+  lo:u64 = const() {"value":520}
+  hi:u64 = const() {"value":6688}
+  got_min:bool = compare.ge(left,lo)
+  got_max:bool = compare.le(left,hi)
+  cfg:bool = bool.and(cfg_min,cfg_max)
+  packet:bool = bool.and(got_min,got_max)
+  dims:bool = bool.and(cfg,packet)
+  exact:bool = bool.and(dims,contained)
+  branch exact copy_frame(pr,pw,extent,start,left) malformed()
+block copy_frame(fr:readbuf,fw:mutbuf,fc:u64,fx:u64,fl:u64)
+  config_src:u64 = const() {"value":8}
+  config_dst:u64 = const() {"value":8192}
+  staged:u64 = call(fr,config_src,fw,config_dst,fc) {"function":"cp_copy"}
+  packet_dst:u64 = const() {"value":20000}
+  packet_n:u64 = call(fr,fx,fw,packet_dst,fl) {"function":"cp_copy"}
+  mark_at:u64 = const() {"value":20008}
+  ops:u64 = call(fw,packet_dst) {"function":"cp_get"}
+  marks:u64 = call(fw,mark_at) {"function":"cp_get"}
+  max_ops:u64 = const() {"value":8}
+  max_marks:u64 = const() {"value":16}
+  one_size:u64 = const() {"value":1}
+  ops_ok:bool = compare.le(ops,max_ops)
+  has_marker:bool = compare.ge(marks,one_size)
+  marks_ok:bool = compare.le(marks,max_marks)
+  bounded:bool = bool.and(ops_ok,marks_ok)
+  accepted:bool = bool.and(bounded,has_marker)
+  branch accepted geometry(fr,fw,fc,fx,fl,ops,marks) malformed()
+block geometry(gr:readbuf,gw:mutbuf,gc:u64,gx:u64,gl:u64,gn:u64,gm:u64)
+  header:u64 = const() {"value":20160}
+  packet_base:u64 = const() {"value":20000}
+  roots_width:u64 = const() {"value":64}
+  row_width:u64 = const() {"value":296}
+  op_width:u64 = const() {"value":152}
+  gen:u64 = const() {"value":1}
+  roots:u64 = int.add.wrap(gn,gen)
+  r_len:u64 = int.mul.wrap(roots,roots_width)
+  m_start:u64 = int.add.wrap(header,r_len)
+  m_len:u64 = int.mul.wrap(gm,row_width)
+  m_end:u64 = int.add.wrap(m_start,m_len)
+  o_len:u64 = int.mul.wrap(gn,op_width)
+  end:u64 = int.add.wrap(m_end,o_len)
+  stored:u64 = int.add.wrap(packet_base,gl)
+  same:bool = compare.eq(end,stored)
+  branch same marker(gr,gw,gc,gx,m_start,m_end) malformed()
+block marker(mr:readbuf,mw:mutbuf,mc:u64,mx:u64,mp:u64,me:u64)
+  begun:bool = call(mw,mc) {"function":"smk_begin_hash"}
+  num:u64 = const() {"value":0}
+  branch begun field(mr,mw,mc,mx,mp,me,mp,num) checksum_error()
+block field(ar:readbuf,aw:mutbuf,ac:u64,ax:u64,ap:u64,ae:u64,af:u64,ai:u64)
+  i0:u64 = const() {"value":0}
+  i1:u64 = const() {"value":1}
+  i3:u64 = const() {"value":3}
+  i5:u64 = const() {"value":5}
+  i6:u64 = const() {"value":6}
+  v0:bool = compare.eq(ai,i0)
+  v1:bool = compare.eq(ai,i1)
+  v3:bool = compare.eq(ai,i3)
+  v5:bool = compare.eq(ai,i5)
+  v6:bool = compare.eq(ai,i6)
+  a:bool = bool.or(v0,v1)
+  b:bool = bool.or(v3,v5)
+  c:bool = bool.or(a,b)
+  scalar:bool = bool.or(c,v6)
+  small:u64 = const() {"value":8}
+  wide:u64 = const() {"value":32}
+  width:u64 = select(scalar,small,wide)
+  fed:bool = call(aw,af,width) {"function":"smk_segment"}
+  next:u64 = int.add.wrap(af,width)
+  index:u64 = int.add.wrap(ai,i1)
+  branch fed advance_field(ar,aw,ac,ax,ap,ae,next,index) checksum_error()
+block advance_field(br:readbuf,bw:mutbuf,bc:u64,bx:u64,bp:u64,be:u64,bf:u64,bi:u64)
+  last:u64 = const() {"value":12}
+  done:bool = compare.eq(bi,last)
+  branch done digest(br,bw,bc,bx,bp,be,bf) field(br,bw,bc,bx,bp,be,bf,bi)
+block digest(dr:readbuf,dw:mutbuf,dc:u64,dx:u64,dp:u64,de:u64,ds:u64)
+  finalized:u64 = call(dw) {"function":"tr_sha_final_full"}
+  zero_status:u64 = const() {"value":0}
+  correct:bool = compare.eq(finalized,zero_status)
+  have:usize = const() {"value":1168}
+  expected:usize = int.cast(ds) {"mode":"wrap"}
+  length:u64 = const() {"value":32}
+  matched:bool = call(dw,have,expected,length) {"function":"smk_eq"}
+  both:bool = bool.and(correct,matched)
+  branch both advance_marker(dr,dw,dc,dx,dp,de) checksum_error()
+block advance_marker(nr:readbuf,nw:mutbuf,nc:u64,nx:u64,np:u64,ne:u64)
+  stride:u64 = const() {"value":296}
+  next_marker:u64 = int.add.wrap(np,stride)
+  finished:bool = compare.eq(next_marker,ne)
+  branch finished interval(nr,nw,nx) marker(nr,nw,nc,nx,next_marker,ne)
+block interval(ir:readbuf,iw:mutbuf,ix:u64)
+  code:u32 = call(ir,iw,ix) {"function":"sic_verify"}
+  ret(code)
+block malformed()
+  status:u32 = const() {"value":100}
+  ret(status)
+block checksum_error()
+  error:u32 = const() {"value":101}
+  ret(error)
+end

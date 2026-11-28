@@ -1,0 +1,131 @@
+hia-asm.v1 hepta.hia.program.v8 selfhost_exec
+fn f0(source:readbuf,output:mutbuf,workspace:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(source:readbuf,output:mutbuf,workspace:mutbuf)
+  n:usize = buffer.len(source)
+  zero:usize = const() {"value":0}
+  limit:usize = const() {"value":524288}
+  empty:bool = compare.eq(n,zero)
+  large:bool = compare.gt(n,limit)
+  bad:bool = bool.or(empty,large)
+  branch bad b1() b2(source,output,n)
+block b1()
+  invalid:u32 = const() {"value":4294967294}
+  ret(invalid)
+block b2(s:readbuf,o:mutbuf,length:usize)
+  prefix:usize = const() {"value":288}
+  total:usize = int.add.checked(length,prefix)
+  cap:usize = buffer.len(o)
+  short:bool = compare.lt(cap,total)
+  branch short b1() b3(s,o,length,total)
+block b3(input:readbuf,out:mutbuf,count:usize,total2:usize)
+  p0:usize = const() {"value":0}
+  width:usize = const() {"value":8}
+  word0:u64 = const() {"value":6215342699822797653}
+  p1:usize = call(out,p0,word0,width) {"function":"private_emit_le"}
+  word1:u64 = const() {"value":9892210373892265793}
+  p2:usize = call(out,p1,word1,width) {"function":"private_emit_le"}
+  word2:u64 = const() {"value":5190438653482509372}
+  p3:usize = call(out,p2,word2,width) {"function":"private_emit_le"}
+  word3:u64 = const() {"value":2615616426196882569}
+  p4:usize = call(out,p3,word3,width) {"function":"private_emit_le"}
+  word4:u64 = const() {"value":9893317821566897176}
+  p5:usize = call(out,p4,word4,width) {"function":"private_emit_le"}
+  word5:u64 = const() {"value":700562119856759884}
+  p6:usize = call(out,p5,word5,width) {"function":"private_emit_le"}
+  word6:u64 = const() {"value":2306053012461715456}
+  p7:usize = call(out,p6,word6,width) {"function":"private_emit_le"}
+  word7:u64 = const() {"value":9774941070229520}
+  p8:usize = call(out,p7,word7,width) {"function":"private_emit_le"}
+  word8:u64 = const() {"value":18446743802175094784}
+  p9:usize = call(out,p8,word8,width) {"function":"private_emit_le"}
+  word9:u64 = const() {"value":4415784999994869247}
+  p10:usize = call(out,p9,word9,width) {"function":"private_emit_le"}
+  word10:u64 = const() {"value":40113551435624449}
+  p11:usize = call(out,p10,word10,width) {"function":"private_emit_le"}
+  word11:u64 = const() {"value":3017904023470080}
+  p12:usize = call(out,p11,word11,width) {"function":"private_emit_le"}
+  word12:u64 = const() {"value":1152961896849670144}
+  p13:usize = call(out,p12,word12,width) {"function":"private_emit_le"}
+  word13:u64 = const() {"value":13402730083253092352}
+  p14:usize = call(out,p13,word13,width) {"function":"private_emit_le"}
+  word14:u64 = const() {"value":9603931767350231043}
+  p15:usize = call(out,p14,word14,width) {"function":"private_emit_le"}
+  word15:u64 = const() {"value":5260342401951692224}
+  p16:usize = call(out,p15,word15,width) {"function":"private_emit_le"}
+  word16:u64 = const() {"value":5264802021110216075}
+  p17:usize = call(out,p16,word16,width) {"function":"private_emit_le"}
+  word17:u64 = const() {"value":5557518404771401099}
+  p18:usize = call(out,p17,word17,width) {"function":"private_emit_le"}
+  word18:u64 = const() {"value":10314025886305675}
+  p19:usize = call(out,p18,word18,width) {"function":"private_emit_le"}
+  word19:u64 = const() {"value":140638637002768}
+  p20:usize = call(out,p19,word19,width) {"function":"private_emit_le"}
+  word20:u64 = const() {"value":5326783422113859840}
+  p21:usize = call(out,p20,word20,width) {"function":"private_emit_le"}
+  word21:u64 = const() {"value":3530822176580353165}
+  p22:usize = call(out,p21,word21,width) {"function":"private_emit_le"}
+  word22:u64 = const() {"value":17580927053937555904}
+  p23:usize = call(out,p22,word22,width) {"function":"private_emit_le"}
+  word23:u64 = const() {"value":3897730248977224}
+  p24:usize = call(out,p23,word23,width) {"function":"private_emit_le"}
+  word24:u64 = const() {"value":844643223077912608}
+  p25:usize = call(out,p24,word24,width) {"function":"private_emit_le"}
+  word25:u64 = const() {"value":53734822446628864}
+  p26:usize = call(out,p25,word25,width) {"function":"private_emit_le"}
+  word26:u64 = const() {"value":13872573413748379680}
+  p27:usize = call(out,p26,word26,width) {"function":"private_emit_le"}
+  word27:u64 = const() {"value":17802988745323709813}
+  p28:usize = call(out,p27,word27,width) {"function":"private_emit_le"}
+  word28:u64 = const() {"value":570690516086164952}
+  p29:usize = call(out,p28,word28,width) {"function":"private_emit_le"}
+  word29:u64 = const() {"value":5512406012621871351}
+  p30:usize = call(out,p29,word29,width) {"function":"private_emit_le"}
+  word30:u64 = const() {"value":6863820927663664265}
+  p31:usize = call(out,p30,word30,width) {"function":"private_emit_le"}
+  word31:u64 = const() {"value":6727071904215162433}
+  p32:usize = call(out,p31,word31,width) {"function":"private_emit_le"}
+  word32:u64 = const() {"value":18388749447370754353}
+  p33:usize = call(out,p32,word32,width) {"function":"private_emit_le"}
+  word33:u64 = const() {"value":3550465094712308037}
+  p34:usize = call(out,p33,word33,width) {"function":"private_emit_le"}
+  word34:u64 = const() {"value":3343575264145786322}
+  p35:usize = call(out,p34,word34,width) {"function":"private_emit_le"}
+  word35:u64 = const() {"value":8658703}
+  p36:usize = call(out,p35,word35,width) {"function":"private_emit_le"}
+  z:usize = const() {"value":0}
+  jump b4(input,out,count,total2,z,p36)
+block b4(src:readbuf,dst:mutbuf,size:usize,total3:usize,index:usize,at:usize)
+  more:bool = compare.lt(index,size)
+  branch more b5(src,dst,size,total3,index,at) b6(total3)
+block b5(data:readbuf,target:mutbuf,size2:usize,total4:usize,i:usize,pos:usize)
+  byte:u8 = buffer.load(data,i)
+  _ = buffer.store(target,pos,byte)
+  one:usize = const() {"value":1}
+  ni:usize = int.add.checked(i,one)
+  np:usize = int.add.checked(pos,one)
+  jump b4(data,target,size2,total4,ni,np)
+block b6(result:usize)
+  result32:u32 = int.cast(result) {"mode":"wrap"}
+  ret(result32)
+end
+fn private_emit_le(output:mutbuf,offset:usize,word:u64,count:usize) -> (usize) effects(write,trap) entry(b0)
+block b0(output:mutbuf,offset:usize,word:u64,count:usize)
+  zero:usize = const() {"value":0}
+  jump b1(output,offset,word,count,zero)
+block b1(out:mutbuf,pos:usize,w:u64,n:usize,i:usize)
+  more:bool = compare.lt(i,n)
+  branch more b2(out,pos,w,n,i) b3(pos)
+block b2(dst:mutbuf,at:usize,value:u64,size:usize,index:usize)
+  mask:u64 = const() {"value":255}
+  low:u64 = bit.and(value,mask)
+  byte:u8 = int.cast(low) {"mode":"wrap"}
+  _ = buffer.store(dst,at,byte)
+  eight:u64 = const() {"value":8}
+  nextvalue:u64 = int.shr.checked(value,eight)
+  one:usize = const() {"value":1}
+  nextat:usize = int.add.checked(at,one)
+  nextindex:usize = int.add.checked(index,one)
+  jump b1(dst,nextat,nextvalue,size,nextindex)
+block b3(end:usize)
+  ret(end)
+end

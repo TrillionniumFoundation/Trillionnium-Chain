@@ -1,0 +1,33 @@
+{
+  "schema": "trnm.hia.peer-lease-store-abi.v1",
+  "target": "x86_64-linux-gnu",
+  "runtime_host_proxy": false,
+  "private_mapping_bytes": 302129152,
+  "authority_fd_source": "opened and retained by native owner",
+  "original_public_api": ["PeerLeaseStoreV1::open", "PeerLeaseStoreV1::path", "PeerLeaseStoreV1::last_hash", "PeerLeaseStoreV1::last_now_ms", "PeerLeaseStoreV1::active_lease", "PeerLeaseStoreV1::latest_generation", "Drop"],
+  "original_crate_private_api": ["PeerLeaseStoreV1::apply(request, now_ms)"],
+  "clock_authority": "original explicit now_ms argument; no remote clock authentication is implemented",
+  "word": "u64 little endian",
+  "bootstrap": {"magic": "PLSTO001", "fields": ["path_length:u64", "gate_write_fd:u64", "gate_read_fd:u64", "path:raw-bytes"], "disabled_gate_fd": 18446744073709551615, "maximum_input_path_bytes": 4095},
+  "command": {"magic": "PLSC0001", "fields": ["operation:u64", "payload:fixed-by-operation"]},
+  "response": {"magic": "PLSR0001", "fields": ["operation:u64", "category:u64", "code:u64", "payload_length:u64", "payload:bytes"], "open_operation": 18446744073709551615},
+  "scope": {"bytes": 105, "fields": ["local:bytes32", "remote:bytes32", "direction:u8", "epoch:u64", "peer_scope:bytes32"], "direction": {"1": "Outbound", "2": "Inbound"}},
+  "token": {"bytes": 185, "fields": ["scope:105", "session:bytes32", "generation:u64", "expires_at_ms:u64", "record_hash:bytes32"]},
+  "apply_request": {"bytes": 209, "fields": ["operation:u64", "now_ms:u64", "scope:105", "session:bytes32", "generation:u64", "expires_at_ms:u64", "ttl_ms:u64", "record_hash:bytes32"], "operations": {"1": "Acquire", "2": "Renew", "3": "Revalidate", "4": "Release"}},
+  "operations": {
+    "0": {"name": "drop", "request_bytes": 0, "response": "empty; process exits"},
+    "1": {"name": "last_now_ms_and_last_hash", "request_bytes": 0, "response": "now_ms:u64,hash:bytes32"},
+    "2": {"name": "active_lease", "request_bytes": 105, "response": "present:u64,optional-token:185"},
+    "3": {"name": "latest_generation", "request_bytes": 105, "response": "generation:u64"},
+    "4": {"name": "apply", "request_bytes": 209, "response": "token:185"},
+    "5": {"name": "path", "request_bytes": 0, "response": "exact-raw-original-path"}
+  },
+  "categories": {"0": "success", "1": "original InvalidRequest", "2": "original I/O", "4": "original Rejected", "100": "malformed typed method payload"},
+  "invalid_request_codes": {"1": "journal path must be absolute", "2": "journal parent", "3": "journal anchor filename", "4": "journal parent must be a directory", "5": "journal parent must have private mode 0700", "6": "journal parent must be owned by the effective user", "7": "journal parent must not be a symlink alias", "8": "journal parent ancestry must not be group/world writable", "9": "journal parent ancestry must be root- or owner-controlled", "10": "invalid lease identity", "11": "lease generation must be positive", "12": "lease TTL is outside the bounded profile", "13": "lease TTL overflow", "14": "journal parent must be a real directory", "15": "journal parent has no existing ancestor", "16": "journal authority file must be a private regular file", "17": "journal anchor descriptor/path identity changed"},
+  "io_mapping": {"raw_errno": "unchanged errno", "22": "also original embedded-NUL error without raw errno", "4096": "WriteZero", "4097": "published anchor identity changed", "4112": "new anchor private-file metadata refused and wrapped in Other", "8192_plus_errno": "new anchor metadata I/O error wrapped in Other"},
+  "journal": {"magic": "TPLR", "version": 1, "record_bytes": 236, "header_bytes": 42, "payload_bytes": 162, "digest_bytes": 32, "maximum_bytes": 268435456, "schema_changed": false},
+  "head": {"magic": "TPLH", "version": 1, "bytes": 80, "body_bytes": 48, "checksum": "SHA256(TPLH || u64LE(48) || body)", "schema_changed": false},
+  "diagnostic_gate": {"magic": "PLSCUT01", "bytes": 56, "fields": ["sequence:u64", "tag:u64", "opened:u64", "journal_fd:u64", "directory_fd:u64", "temporary_fd:u64"], "resume_hex": "01", "tags": {"1": "lock-held", "2": "before-journal-write", "3": "after-journal-write", "4": "after-journal-fsync", "5": "after-fresh-parent-fsync-before-memory-commit", "6": "after-memory-commit-before-head-create", "7": "after-head-write", "8": "after-head-fsync", "9": "after-head-rename", "10": "after-retained-directory-fsync", "11": "opened-before-response", "12": "closing"}, "can_supply_state_or_syscall_result": false},
+  "process_status": {"0": "normal owner close or framed open refusal", "64": "unadmitted transport or descriptor profile", "70": "transport I/O failed", "78": "internal policy or syscall profile refused", "79": "private mmap failed", "83": "private resource extent refused"},
+  "open_obligations": ["Unix daemon and client", "Unix credential and Core authentication", "payload metadata and body stores", "recovery acknowledgement ledger", "Node integration", "full original package retirement", "production activation", "physical power-loss qualification"]
+}

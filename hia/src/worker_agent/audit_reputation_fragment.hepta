@@ -1,0 +1,110 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_reputation_fragment_v1
+
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  input_size:usize = buffer.len(input)
+  frame_size:usize = const() {"value":21}
+  exact_size:bool = compare.eq(input_size,frame_size)
+  branch exact_size magic(input,output) invalid()
+block magic(frame:readbuf,destination:mutbuf)
+  start:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  actual:u64 = call(frame,start,four) {"function":"wa_read"}
+  expected:u64 = const() {"value":844251479}
+  magic_matches:bool = compare.eq(actual,expected)
+  branch magic_matches presence(frame,destination) invalid()
+block presence(frame_with_mask:readbuf,masked_output:mutbuf)
+  mask_at:usize = const() {"value":4}
+  presence_byte:u8 = buffer.load(frame_with_mask,mask_at)
+  mask:u64 = int.cast(presence_byte) {"mode":"wrap"}
+  max_mask:u64 = const() {"value":63}
+  canonical_mask:bool = compare.le(mask,max_mask)
+  branch canonical_mask measure(frame_with_mask,masked_output,mask) invalid()
+block measure(measure_input:readbuf,measure_output:mutbuf,measure_mask:u64)
+  no_writes:bool = const() {"value":false}
+  extent:u64 = call(measure_input,measure_output,measure_mask,no_writes) {"function":"wan_reputation_pass"}
+  invalid_extent:u64 = const() {"value":255}
+  acceptable:bool = compare.ne(extent,invalid_extent)
+  branch acceptable capacity(measure_input,measure_output,measure_mask,extent) invalid()
+block capacity(cap_input:readbuf,cap_output:mutbuf,cap_mask:u64,required:u64)
+  actual_capacity:usize = buffer.len(cap_output)
+  capacity64:u64 = int.cast(actual_capacity) {"mode":"wrap"}
+  fits:bool = compare.ge(capacity64,required)
+  branch fits emit(cap_input,cap_output,cap_mask) short()
+block emit(emit_input:readbuf,emit_output:mutbuf,emit_mask:u64)
+  write:bool = const() {"value":true}
+  written:u64 = call(emit_input,emit_output,emit_mask,write) {"function":"wan_reputation_pass"}
+  written32:u32 = int.cast(written) {"mode":"wrap"}
+  ret(written32)
+block invalid()
+  invalid_status:u32 = const() {"value":4294967295}
+  ret(invalid_status)
+block short()
+  short_status:u32 = const() {"value":4294967294}
+  ret(short_status)
+end
+
+fn wan_reputation_pass(input:readbuf,output:mutbuf,mask:u64,write:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,mask:u64,write:bool)
+  first_value:u64 = const() {"value":5}
+  zero:u64 = const() {"value":0}
+  jump field(input,output,mask,write,first_value,zero,zero)
+block field(field_input:readbuf,field_output:mutbuf,field_mask:u64,field_write:bool,input_at:u64,output_at:u64,index:u64)
+  delta_index:u64 = const() {"value":0}
+  score_index:u64 = const() {"value":3}
+  gap_index:u64 = const() {"value":5}
+  weight_index:u64 = const() {"value":2}
+  is_delta:bool = compare.eq(index,delta_index)
+  is_score:bool = compare.eq(index,score_index)
+  is_gap:bool = compare.eq(index,gap_index)
+  delta_or_score:bool = bool.or(is_delta,is_score)
+  is_signed:bool = bool.or(delta_or_score,is_gap)
+  is_weight:bool = compare.eq(index,weight_index)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  unsigned_width:u64 = select(is_weight,two,one)
+  width:u64 = select(is_signed,four,unsigned_width)
+  raw:u64 = call(field_input,input_at,width) {"function":"wa_read"}
+  next_input:u64 = int.add.wrap(input_at,width)
+  after_separator:u64 = call(field_output,output_at,field_write) {"function":"wa_separator"}
+  shifted_mask:u64 = int.shr.checked(field_mask,index)
+  present_bit:u64 = bit.and(shifted_mask,one)
+  present:bool = compare.eq(present_bit,one)
+  branch present numeral(field_input,field_output,field_mask,field_write,next_input,after_separator,index,raw,is_signed) absent(field_input,field_output,field_mask,field_write,next_input,after_separator,index,raw)
+block absent(abs_input:readbuf,abs_output:mutbuf,abs_mask:u64,abs_write:bool,abs_next:u64,abs_at:u64,abs_index:u64,abs_raw:u64)
+  zero_payload:u64 = const() {"value":0}
+  canonical_absence:bool = compare.eq(abs_raw,zero_payload)
+  branch canonical_absence dash(abs_input,abs_output,abs_mask,abs_write,abs_next,abs_at,abs_index) bad_payload()
+block dash(dash_input:readbuf,dash_output:mutbuf,dash_mask:u64,dash_write:bool,dash_next:u64,dash_at:u64,dash_index:u64)
+  dash_byte:u64 = const() {"value":45}
+  dash_one:u64 = const() {"value":1}
+  after_dash:u64 = call(dash_output,dash_at,dash_byte,dash_one,dash_write) {"function":"wa_word"}
+  jump advance(dash_input,dash_output,dash_mask,dash_write,dash_next,after_dash,dash_index)
+block numeral(num_input:readbuf,num_output:mutbuf,num_mask:u64,num_write:bool,num_next:u64,num_at:u64,num_index:u64,num_raw:u64,num_signed:bool)
+  sign_start:u64 = const() {"value":2147483648}
+  sign_bit_set:bool = compare.ge(num_raw,sign_start)
+  negative:bool = bool.and(num_signed,sign_bit_set)
+  branch negative minus(num_input,num_output,num_mask,num_write,num_next,num_at,num_index,num_raw) decimal(num_input,num_output,num_mask,num_write,num_next,num_at,num_index,num_raw)
+block minus(min_input:readbuf,min_output:mutbuf,min_mask:u64,min_write:bool,min_next:u64,min_at:u64,min_index:u64,min_raw:u64)
+  min_byte:u64 = const() {"value":45}
+  min_one:u64 = const() {"value":1}
+  after_sign:u64 = call(min_output,min_at,min_byte,min_one,min_write) {"function":"wa_word"}
+  i32_modulus:u64 = const() {"value":4294967296}
+  magnitude:u64 = int.sub.wrap(i32_modulus,min_raw)
+  jump decimal(min_input,min_output,min_mask,min_write,min_next,after_sign,min_index,magnitude)
+block decimal(dec_input:readbuf,dec_output:mutbuf,dec_mask:u64,dec_write:bool,dec_next:u64,dec_at:u64,dec_index:u64,dec_value:u64)
+  decimal_end:u64 = call(dec_output,dec_at,dec_value,dec_write) {"function":"wa_decimal"}
+  jump advance(dec_input,dec_output,dec_mask,dec_write,dec_next,decimal_end,dec_index)
+block advance(adv_input:readbuf,adv_output:mutbuf,adv_mask:u64,adv_write:bool,adv_next:u64,adv_at:u64,adv_index:u64)
+  last_index:u64 = const() {"value":5}
+  finished:bool = compare.eq(adv_index,last_index)
+  next_field_delta:u64 = const() {"value":1}
+  next_field:u64 = int.add.wrap(adv_index,next_field_delta)
+  branch finished done(adv_at) field(adv_input,adv_output,adv_mask,adv_write,adv_next,adv_at,next_field)
+block done(output_end:u64)
+  ret(output_end)
+block bad_payload()
+  bad_extent:u64 = const() {"value":255}
+  ret(bad_extent)
+end

@@ -1,0 +1,697 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_task_store_bid_v1
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u64 = int.cast(v3) {"mode":"wrap"}
+  v5:u64 = const() {"value":16}
+  v6:bool = compare.lt(v4,v5)
+  branch v6 b2(v0,v1,v2,v6) b1(v0,v1,v2)
+block b1(v7:readbuf,v8:mutbuf,v9:mutbuf)
+  v15:usize = buffer.len(v8)
+  v16:u64 = int.cast(v15) {"mode":"wrap"}
+  v17:u64 = const() {"value":65536}
+  v18:bool = compare.lt(v16,v17)
+  jump b2(v7,v8,v9,v18)
+block b2(v11:readbuf,v12:mutbuf,v13:mutbuf,v14:bool)
+  branch v14 b4(v11,v12,v13,v14) b3(v11,v12,v13)
+block b3(v19:readbuf,v20:mutbuf,v21:mutbuf)
+  v27:usize = buffer.len(v21)
+  v28:u64 = int.cast(v27) {"mode":"wrap"}
+  v29:u64 = const() {"value":262144}
+  v30:bool = compare.lt(v28,v29)
+  jump b4(v19,v20,v21,v30)
+block b4(v23:readbuf,v24:mutbuf,v25:mutbuf,v26:bool)
+  branch v26 b5(v23,v24,v25) b6(v23,v24,v25)
+block b5(v31:readbuf,v32:mutbuf,v33:mutbuf)
+  v37:u64 = const() {"value":104}
+  v38:u32 = int.cast(v37) {"mode":"wrap"}
+  ret(v38)
+block b6(v34:readbuf,v35:mutbuf,v36:mutbuf)
+  v39:u64 = call(v35) {"function":"so_frame"}
+  v40:u64 = const() {"value":0}
+  v41:bool = compare.eq(v39,v40)
+  branch v41 b8(v34,v35,v36,v39,v41) b7(v34,v35,v36,v39)
+block b7(v42:readbuf,v43:mutbuf,v44:mutbuf,v45:u64)
+  v52:u64 = const() {"value":64}
+  v53:u64 = call(v43,v52) {"function":"cp_get"}
+  v54:u64 = const() {"value":0}
+  v55:bool = compare.eq(v53,v54)
+  jump b8(v42,v43,v44,v45,v55)
+block b8(v47:readbuf,v48:mutbuf,v49:mutbuf,v50:u64,v51:bool)
+  branch v51 b10(v47,v48,v49,v50,v51) b9(v47,v48,v49,v50)
+block b9(v56:readbuf,v57:mutbuf,v58:mutbuf,v59:u64)
+  v66:u64 = const() {"value":8}
+  v67:u64 = int.add.wrap(v59,v66)
+  v68:u64 = call(v57,v67) {"function":"cp_get"}
+  v69:u64 = const() {"value":0}
+  v70:bool = compare.ne(v68,v69)
+  jump b10(v56,v57,v58,v59,v70)
+block b10(v61:readbuf,v62:mutbuf,v63:mutbuf,v64:u64,v65:bool)
+  branch v65 b11(v61,v62,v63) b12(v61,v62,v63,v64)
+block b11(v71:readbuf,v72:mutbuf,v73:mutbuf)
+  v79:u64 = const() {"value":104}
+  v80:u32 = int.cast(v79) {"mode":"wrap"}
+  ret(v80)
+block b12(v75:readbuf,v76:mutbuf,v77:mutbuf,v78:u64)
+  v81:u64 = const() {"value":176}
+  v82:u64 = call(v76,v81) {"function":"cp_get"}
+  v83:u64 = const() {"value":0}
+  v84:bool = compare.ne(v82,v83)
+  branch v84 b13(v75,v76,v77) b14(v75,v76,v77,v78)
+block b13(v85:readbuf,v86:mutbuf,v87:mutbuf)
+  v93:u32 = call(v86) {"function":"so_return"}
+  ret(v93)
+block b14(v89:readbuf,v90:mutbuf,v91:mutbuf,v92:u64)
+  v94:u64 = call(v90,v92) {"function":"cp_get"}
+  v95:u64 = const() {"value":0}
+  v96:bool = compare.eq(v94,v95)
+  branch v96 b15(v89,v90,v91,v92) b16(v89,v90,v91,v92,v94)
+block b15(v97:readbuf,v98:mutbuf,v99:mutbuf,v100:u64)
+  v107:u64 = const() {"value":2304}
+  v108:u64 = call(v98,v107) {"function":"st_allocate"}
+  v109:u64 = const() {"value":0}
+  v110:bool = compare.eq(v108,v109)
+  branch v110 b17(v97,v98,v99) b18(v97,v98,v99,v100,v108)
+block b16(v102:readbuf,v103:mutbuf,v104:mutbuf,v105:u64,v106:u64)
+  v134:u64 = const() {"value":64}
+  v135:u64 = int.add.wrap(v105,v134)
+  v136:u64 = call(v103,v135) {"function":"cp_get"}
+  v137:u64 = const() {"value":1}
+  v138:bool = compare.eq(v106,v137)
+  branch v138 b19(v102,v103,v104,v105,v136) b20(v102,v103,v104,v105,v106,v136)
+block b17(v111:readbuf,v112:mutbuf,v113:mutbuf)
+  v123:u64 = const() {"value":240}
+  v124:u32 = int.cast(v123) {"mode":"wrap"}
+  ret(v124)
+block b18(v117:readbuf,v118:mutbuf,v119:mutbuf,v120:u64,v122:u64)
+  v125:u64 = const() {"value":64}
+  v126:u64 = int.add.wrap(v120,v125)
+  v127:u64 = call(v118,v126,v122) {"function":"cp_put"}
+  v128:u64 = const() {"value":65536}
+  v129:u64 = const() {"value":168}
+  v130:u64 = call(v118,v129) {"function":"cp_get"}
+  v131:u64 = int.sub.wrap(v130,v128)
+  v132:u64 = const() {"value":1}
+  v133:u32 = call(v118,v128,v131,v132) {"function":"so_snapshot"}
+  ret(v133)
+block b19(v139:readbuf,v140:mutbuf,v141:mutbuf,v142:u64,v144:u64)
+  v151:u64 = call(v141) {"function":"tk_metadata"}
+  v152:u64 = const() {"value":3}
+  v153:u64 = const() {"value":54}
+  v154:u64 = const() {"value":23}
+  v155:u64 = const() {"value":2}
+  v156:u64 = call(v139,v140,v142,v141,v152,v153,v154,v155,v144) {"function":"cv_command"}
+  v157:u64 = const() {"value":0}
+  v158:bool = compare.ne(v156,v157)
+  branch v158 b21(v139,v140,v141) b22(v139,v140,v141,v144)
+block b20(v145:readbuf,v146:mutbuf,v147:mutbuf,v148:u64,v149:u64,v150:u64)
+  v215:u64 = const() {"value":2}
+  v216:bool = compare.eq(v149,v215)
+  branch v216 b25(v145,v146,v147,v148) b26(v145,v146,v147,v148,v149,v150)
+block b21(v159:readbuf,v160:mutbuf,v161:mutbuf)
+  v171:u64 = const() {"value":104}
+  v172:u32 = int.cast(v171) {"mode":"wrap"}
+  ret(v172)
+block b22(v165:readbuf,v166:mutbuf,v167:mutbuf,v170:u64)
+  v173:u64 = call(v166,v170) {"function":"sg_context"}
+  v174:u64 = const() {"value":0}
+  v175:bool = compare.eq(v173,v174)
+  branch v175 b23(v165,v166,v167,v170) b24(v165,v166,v167,v170)
+block b23(v176:readbuf,v177:mutbuf,v178:mutbuf,v181:u64)
+  v188:u64 = const() {"value":1}
+  v189:u64 = const() {"value":0}
+  v190:u32 = call(v177,v181,v188,v189) {"function":"bd_fail"}
+  ret(v190)
+block b24(v182:readbuf,v183:mutbuf,v184:mutbuf,v187:u64)
+  v191:u64 = const() {"value":54152}
+  v192:u64 = call(v183,v191) {"function":"cp_get"}
+  v193:u64 = call(v182,v183,v192) {"function":"so_view"}
+  v194:u64 = const() {"value":54160}
+  v195:u64 = call(v183,v194) {"function":"cp_get"}
+  v196:u64 = int.add.wrap(v193,v195)
+  v197:u64 = const() {"value":27}
+  v198:u64 = const() {"value":12}
+  v199:u64 = call(v182,v193,v196,v184,v197,v198) {"function":"tk_at"}
+  v200:u64 = const() {"value":1680}
+  v201:u64 = int.add.wrap(v187,v200)
+  v202:u64 = call(v183,v191) {"function":"cp_get"}
+  v203:u64 = int.add.wrap(v202,v199)
+  v204:u64 = int.sub.wrap(v203,v193)
+  v205:u64 = call(v183,v201,v204) {"function":"cp_put"}
+  v206:u64 = const() {"value":10}
+  v207:u64 = const() {"value":0}
+  v208:u64 = const() {"value":4}
+  v209:u64 = const() {"value":5}
+  v210:u64 = call(v183,v187,v209) {"function":"sg_f"}
+  v211:u64 = const() {"value":48}
+  v212:u64 = const() {"value":50}
+  v213:u64 = const() {"value":2}
+  v214:u32 = call(v183,v206,v207,v208,v210,v211,v212,v213) {"function":"so_call"}
+  ret(v214)
+block b25(v217:readbuf,v218:mutbuf,v219:mutbuf,v220:u64)
+  v229:u64 = const() {"value":96}
+  v230:u64 = int.add.wrap(v220,v229)
+  v231:u64 = const() {"value":54008}
+  v232:u64 = call(v218,v231) {"function":"cp_get"}
+  v233:u64 = call(v218,v230,v232) {"function":"cp_put"}
+  v234:u64 = const() {"value":104}
+  v235:u64 = int.add.wrap(v220,v234)
+  v236:u64 = const() {"value":54016}
+  v237:u64 = call(v218,v236) {"function":"cp_get"}
+  v238:u64 = call(v218,v235,v237) {"function":"cp_put"}
+  v239:u64 = const() {"value":112}
+  v240:u64 = int.add.wrap(v220,v239)
+  v241:u64 = const() {"value":54024}
+  v242:u64 = call(v218,v241) {"function":"cp_get"}
+  v243:u64 = call(v218,v240,v242) {"function":"cp_put"}
+  v244:u64 = const() {"value":120}
+  v245:u64 = int.add.wrap(v220,v244)
+  v246:u64 = const() {"value":54032}
+  v247:u64 = call(v218,v246) {"function":"cp_get"}
+  v248:u64 = call(v218,v245,v247) {"function":"cp_put"}
+  v249:u64 = const() {"value":65536}
+  v250:u64 = const() {"value":168}
+  v251:u64 = call(v218,v250) {"function":"cp_get"}
+  v252:u64 = int.sub.wrap(v251,v249)
+  v253:u64 = const() {"value":3}
+  v254:u32 = call(v218,v249,v252,v253) {"function":"so_snapshot"}
+  ret(v254)
+block b26(v223:readbuf,v224:mutbuf,v225:mutbuf,v226:u64,v227:u64,v228:u64)
+  v255:u64 = const() {"value":3}
+  v256:bool = compare.eq(v227,v255)
+  branch v256 b27(v223,v224,v225,v226,v228) b28(v223,v224,v225,v226,v227,v228)
+block b27(v257:readbuf,v258:mutbuf,v259:mutbuf,v260:u64,v262:u64)
+  v269:u64 = call(v259) {"function":"tk_metadata"}
+  v270:u64 = const() {"value":96}
+  v271:u64 = int.add.wrap(v260,v270)
+  v272:u64 = call(v258,v271) {"function":"cp_get"}
+  v273:u64 = const() {"value":104}
+  v274:u64 = int.add.wrap(v260,v273)
+  v275:u64 = call(v258,v274) {"function":"cp_get"}
+  v276:u64 = const() {"value":48}
+  v277:u64 = const() {"value":32}
+  v278:u64 = const() {"value":512}
+  v279:u64 = int.add.wrap(v262,v278)
+  v280:u64 = call(v257,v258,v259,v272,v275,v276,v277,v279) {"function":"sg_fields"}
+  v281:u64 = const() {"value":112}
+  v282:u64 = int.add.wrap(v260,v281)
+  v283:u64 = call(v258,v282) {"function":"cp_get"}
+  v284:u64 = const() {"value":120}
+  v285:u64 = int.add.wrap(v260,v284)
+  v286:u64 = call(v258,v285) {"function":"cp_get"}
+  v287:u64 = const() {"value":50}
+  v288:u64 = const() {"value":12}
+  v289:u64 = const() {"value":832}
+  v290:u64 = int.add.wrap(v262,v289)
+  v291:u64 = call(v257,v258,v259,v283,v286,v287,v288,v290) {"function":"sg_fields"}
+  v292:u64 = const() {"value":10}
+  v293:u64 = const() {"value":0}
+  v294:u64 = const() {"value":7}
+  v295:u64 = const() {"value":9}
+  v296:u64 = call(v258,v290,v295) {"function":"sg_f"}
+  v297:u64 = const() {"value":51}
+  v298:u64 = const() {"value":53}
+  v299:u64 = const() {"value":4}
+  v300:u32 = call(v258,v292,v293,v294,v296,v297,v298,v299) {"function":"so_call"}
+  ret(v300)
+block b28(v263:readbuf,v264:mutbuf,v265:mutbuf,v266:u64,v267:u64,v268:u64)
+  v301:u64 = const() {"value":4}
+  v302:bool = compare.eq(v267,v301)
+  branch v302 b29(v263,v264,v265,v266) b30(v263,v264,v265,v266,v267,v268)
+block b29(v303:readbuf,v304:mutbuf,v305:mutbuf,v306:u64)
+  v315:u64 = const() {"value":128}
+  v316:u64 = int.add.wrap(v306,v315)
+  v317:u64 = const() {"value":54008}
+  v318:u64 = call(v304,v317) {"function":"cp_get"}
+  v319:u64 = call(v304,v316,v318) {"function":"cp_put"}
+  v320:u64 = const() {"value":136}
+  v321:u64 = int.add.wrap(v306,v320)
+  v322:u64 = const() {"value":54016}
+  v323:u64 = call(v304,v322) {"function":"cp_get"}
+  v324:u64 = call(v304,v321,v323) {"function":"cp_put"}
+  v325:u64 = const() {"value":65536}
+  v326:u64 = const() {"value":168}
+  v327:u64 = call(v304,v326) {"function":"cp_get"}
+  v328:u64 = int.sub.wrap(v327,v325)
+  v329:u64 = const() {"value":5}
+  v330:u32 = call(v304,v325,v328,v329) {"function":"so_snapshot"}
+  ret(v330)
+block b30(v309:readbuf,v310:mutbuf,v311:mutbuf,v312:u64,v313:u64,v314:u64)
+  v331:u64 = const() {"value":5}
+  v332:bool = compare.eq(v313,v331)
+  branch v332 b31(v309,v310,v311,v312,v314) b32(v309,v310,v311,v312,v313)
+block b31(v333:readbuf,v334:mutbuf,v335:mutbuf,v336:u64,v338:u64)
+  v345:u64 = call(v335) {"function":"tk_metadata"}
+  v346:u64 = const() {"value":128}
+  v347:u64 = int.add.wrap(v336,v346)
+  v348:u64 = call(v334,v347) {"function":"cp_get"}
+  v349:u64 = const() {"value":136}
+  v350:u64 = int.add.wrap(v336,v349)
+  v351:u64 = call(v334,v350) {"function":"cp_get"}
+  v352:u64 = const() {"value":51}
+  v353:u64 = const() {"value":18}
+  v354:u64 = const() {"value":960}
+  v355:u64 = int.add.wrap(v338,v354)
+  v356:u64 = call(v333,v334,v335,v348,v351,v352,v353,v355) {"function":"sg_fields"}
+  v357:u64 = const() {"value":10}
+  v358:u64 = const() {"value":0}
+  v359:u64 = const() {"value":47}
+  v360:u64 = call(v334,v338,v353) {"function":"sg_f"}
+  v361:u64 = const() {"value":45}
+  v362:u64 = const() {"value":46}
+  v363:u64 = const() {"value":6}
+  v364:u32 = call(v334,v357,v358,v359,v360,v361,v362,v363) {"function":"so_call"}
+  ret(v364)
+block b32(v339:readbuf,v340:mutbuf,v341:mutbuf,v342:u64,v343:u64)
+  v365:u64 = const() {"value":6}
+  v366:bool = compare.eq(v343,v365)
+  branch v366 b33(v339,v340,v341,v342) b34(v339,v340,v341,v342,v343)
+block b33(v367:readbuf,v368:mutbuf,v369:mutbuf,v370:u64)
+  v379:u64 = const() {"value":144}
+  v380:u64 = int.add.wrap(v370,v379)
+  v381:u64 = const() {"value":54008}
+  v382:u64 = call(v368,v381) {"function":"cp_get"}
+  v383:u64 = call(v368,v380,v382) {"function":"cp_put"}
+  v384:u64 = const() {"value":152}
+  v385:u64 = int.add.wrap(v370,v384)
+  v386:u64 = const() {"value":54016}
+  v387:u64 = call(v368,v386) {"function":"cp_get"}
+  v388:u64 = call(v368,v385,v387) {"function":"cp_put"}
+  v389:u64 = const() {"value":160}
+  v390:u64 = int.add.wrap(v370,v389)
+  v391:u64 = const() {"value":54024}
+  v392:u64 = call(v368,v391) {"function":"cp_get"}
+  v393:u64 = call(v368,v390,v392) {"function":"cp_put"}
+  v394:u64 = const() {"value":168}
+  v395:u64 = int.add.wrap(v370,v394)
+  v396:u64 = const() {"value":54032}
+  v397:u64 = call(v368,v396) {"function":"cp_get"}
+  v398:u64 = call(v368,v395,v397) {"function":"cp_put"}
+  v399:u64 = const() {"value":65536}
+  v400:u64 = call(v368,v394) {"function":"cp_get"}
+  v401:u64 = int.sub.wrap(v400,v399)
+  v402:u64 = const() {"value":7}
+  v403:u32 = call(v368,v399,v401,v402) {"function":"so_snapshot"}
+  ret(v403)
+block b34(v373:readbuf,v374:mutbuf,v375:mutbuf,v376:u64,v377:u64)
+  v404:u64 = const() {"value":7}
+  v405:bool = compare.eq(v377,v404)
+  branch v405 b35(v373,v374,v375,v376) b36(v373,v374,v375,v377)
+block b35(v406:readbuf,v407:mutbuf,v408:mutbuf,v409:u64)
+  v418:u32 = call(v406,v407,v409,v408) {"function":"bd_apply"}
+  ret(v418)
+block b36(v412:readbuf,v413:mutbuf,v414:mutbuf,v416:u64)
+  v419:u64 = const() {"value":8}
+  v420:bool = compare.eq(v416,v419)
+  branch v420 b37(v412,v413,v414) b38(v412,v413,v414)
+block b37(v421:readbuf,v422:mutbuf,v423:mutbuf)
+  v433:u32 = call(v422) {"function":"sg_done"}
+  ret(v433)
+block b38(v427:readbuf,v428:mutbuf,v429:mutbuf)
+  v434:u64 = const() {"value":104}
+  v435:u32 = int.cast(v434) {"mode":"wrap"}
+  ret(v435)
+end
+fn bd_bound(v0:mutbuf,v1:u64) -> (u64) effects(read,write,trap) entry(b0)
+block b0(v0:mutbuf,v1:u64)
+  v2:u64 = const() {"value":320}
+  v3:u64 = int.add.wrap(v1,v2)
+  v4:u64 = const() {"value":7}
+  v5:u64 = call(v0,v1,v4) {"function":"sg_f"}
+  v6:u64 = const() {"value":4}
+  v7:u64 = call(v0,v3,v6) {"function":"sg_f"}
+  v8:u64 = const() {"value":32}
+  v9:u64 = call(v0,v5,v7,v8) {"function":"so_equal"}
+  v10:u64 = const() {"value":0}
+  v11:bool = compare.eq(v9,v10)
+  branch v11 b2(v0,v1,v3,v11) b1(v0,v1,v3)
+block b1(v12:mutbuf,v13:u64,v14:u64)
+  v20:u64 = const() {"value":8}
+  v21:u64 = call(v12,v13,v20) {"function":"sg_f"}
+  v22:u64 = const() {"value":5}
+  v23:u64 = call(v12,v14,v22) {"function":"sg_f"}
+  v24:u64 = const() {"value":32}
+  v25:u64 = call(v12,v21,v23,v24) {"function":"so_equal"}
+  v26:u64 = const() {"value":0}
+  v27:bool = compare.eq(v25,v26)
+  jump b2(v12,v13,v14,v27)
+block b2(v16:mutbuf,v17:u64,v18:u64,v19:bool)
+  branch v19 b4(v16,v17,v18,v19) b3(v16,v17,v18)
+block b3(v28:mutbuf,v29:u64,v30:u64)
+  v36:u64 = const() {"value":9}
+  v37:u64 = const() {"value":6}
+  v38:u64 = call(v28,v29,v36,v30,v37) {"function":"cv_same_field"}
+  v39:u64 = const() {"value":0}
+  v40:bool = compare.eq(v38,v39)
+  jump b4(v28,v29,v30,v40)
+block b4(v32:mutbuf,v33:u64,v34:u64,v35:bool)
+  branch v35 b5(v32) b6(v32,v33,v34)
+block b5(v41:mutbuf)
+  v47:u64 = const() {"value":0}
+  ret(v47)
+block b6(v44:mutbuf,v45:u64,v46:u64)
+  v48:u64 = const() {"value":10}
+  v49:u64 = call(v44,v45,v48) {"function":"sg_n"}
+  v50:u64 = const() {"value":9}
+  v51:u64 = call(v44,v46,v50) {"function":"sg_n"}
+  v52:bool = compare.ne(v49,v51)
+  branch v52 b8(v44,v45,v46,v52) b7(v44,v45,v46)
+block b7(v53:mutbuf,v54:u64,v55:u64)
+  v61:u64 = const() {"value":11}
+  v62:u64 = call(v53,v54,v61) {"function":"sg_f"}
+  v63:u64 = call(v53,v62) {"function":"sg_u16"}
+  v64:u64 = const() {"value":10}
+  v65:u64 = call(v53,v55,v64) {"function":"sg_f"}
+  v66:u64 = call(v53,v65) {"function":"sg_u16"}
+  v67:bool = compare.ne(v63,v66)
+  jump b8(v53,v54,v55,v67)
+block b8(v57:mutbuf,v58:u64,v59:u64,v60:bool)
+  branch v60 b10(v57,v58,v59,v60) b9(v57,v58,v59)
+block b9(v68:mutbuf,v69:u64,v70:u64)
+  v76:u64 = const() {"value":12}
+  v77:u64 = call(v68,v69,v76) {"function":"sg_n"}
+  v78:u64 = const() {"value":11}
+  v79:u64 = call(v68,v70,v78) {"function":"sg_n"}
+  v80:bool = compare.ne(v77,v79)
+  jump b10(v68,v69,v70,v80)
+block b10(v72:mutbuf,v73:u64,v74:u64,v75:bool)
+  branch v75 b11(v72) b12(v72,v73,v74)
+block b11(v81:mutbuf)
+  v87:u64 = const() {"value":0}
+  ret(v87)
+block b12(v84:mutbuf,v85:u64,v86:u64)
+  v88:u64 = const() {"value":832}
+  v89:u64 = int.add.wrap(v85,v88)
+  v90:u64 = const() {"value":5}
+  v91:u64 = call(v84,v89,v90) {"function":"sg_f"}
+  v92:usize = int.cast(v91) {"mode":"wrap"}
+  v93:u8 = buffer.load(v84,v92)
+  v94:u64 = int.cast(v93) {"mode":"wrap"}
+  v95:u64 = const() {"value":0}
+  v96:bool = compare.ne(v94,v95)
+  branch v96 b14(v84,v85,v86,v96) b13(v84,v85,v86)
+block b13(v97:mutbuf,v98:u64,v99:u64)
+  v105:u64 = const() {"value":832}
+  v106:u64 = int.add.wrap(v98,v105)
+  v107:u64 = const() {"value":3}
+  v108:u64 = call(v97,v106,v107) {"function":"sg_n"}
+  v109:u64 = const() {"value":6}
+  v110:u64 = call(v97,v98,v109) {"function":"sg_n"}
+  v111:bool = compare.ne(v108,v110)
+  jump b14(v97,v98,v99,v111)
+block b14(v101:mutbuf,v102:u64,v103:u64,v104:bool)
+  branch v104 b16(v101,v102,v103,v104) b15(v101,v102,v103)
+block b15(v112:mutbuf,v113:u64,v114:u64)
+  v120:u64 = const() {"value":21}
+  v121:u64 = call(v112,v113,v120) {"function":"sg_n"}
+  v122:u64 = const() {"value":1232}
+  v123:u64 = int.add.wrap(v113,v122)
+  v124:u64 = call(v112,v123) {"function":"cp_get"}
+  v125:bool = compare.lt(v121,v124)
+  jump b16(v112,v113,v114,v125)
+block b16(v116:mutbuf,v117:u64,v118:u64,v119:bool)
+  branch v119 b17(v116) b18(v116,v117,v118)
+block b17(v126:mutbuf)
+  v132:u64 = const() {"value":0}
+  ret(v132)
+block b18(v129:mutbuf,v130:u64,v131:u64)
+  v133:u64 = const() {"value":13}
+  v134:u64 = call(v129,v130,v133) {"function":"sg_f"}
+  v135:u64 = const() {"value":960}
+  v136:u64 = int.add.wrap(v130,v135)
+  v137:u64 = const() {"value":7}
+  v138:u64 = call(v129,v136,v137) {"function":"sg_f"}
+  v139:u64 = const() {"value":32}
+  v140:u64 = call(v129,v134,v138,v139) {"function":"so_equal"}
+  v141:u64 = const() {"value":0}
+  v142:bool = compare.eq(v140,v141)
+  branch v142 b20(v129,v130,v131,v142) b19(v129,v130,v131)
+block b19(v143:mutbuf,v144:u64,v145:u64)
+  v151:u64 = const() {"value":14}
+  v152:u64 = call(v143,v144,v151) {"function":"sg_f"}
+  v153:u64 = const() {"value":16}
+  v154:u64 = call(v143,v152,v153) {"function":"so_all_zero"}
+  v155:u64 = const() {"value":0}
+  v156:bool = compare.ne(v154,v155)
+  jump b20(v143,v144,v145,v156)
+block b20(v147:mutbuf,v148:u64,v149:u64,v150:bool)
+  branch v150 b22(v147,v148,v149,v150) b21(v147,v148,v149)
+block b21(v157:mutbuf,v158:u64,v159:u64)
+  v165:u64 = const() {"value":14}
+  v166:u64 = call(v157,v158,v165) {"function":"sg_f"}
+  v167:u64 = const() {"value":960}
+  v168:u64 = int.add.wrap(v158,v167)
+  v169:u64 = const() {"value":9}
+  v170:u64 = call(v157,v168,v169) {"function":"sg_f"}
+  v171:u64 = call(v157,v166,v170) {"function":"cv_compare"}
+  v172:u64 = const() {"value":2}
+  v173:bool = compare.eq(v171,v172)
+  jump b22(v157,v158,v159,v173)
+block b22(v161:mutbuf,v162:u64,v163:u64,v164:bool)
+  branch v164 b23(v161) b24(v161,v162,v163)
+block b23(v174:mutbuf)
+  v180:u64 = const() {"value":0}
+  ret(v180)
+block b24(v177:mutbuf,v178:u64,v179:u64)
+  v181:u64 = const() {"value":1472}
+  v182:u64 = int.add.wrap(v178,v181)
+  v183:u64 = const() {"value":2}
+  v184:u64 = call(v177,v182,v183) {"function":"sg_f"}
+  v185:u64 = const() {"value":4}
+  v186:u64 = call(v177,v179,v185) {"function":"sg_f"}
+  v187:u64 = const() {"value":32}
+  v188:u64 = call(v177,v184,v186,v187) {"function":"so_equal"}
+  v189:u64 = const() {"value":0}
+  v190:bool = compare.eq(v188,v189)
+  branch v190 b26(v177,v178,v190) b25(v177,v178)
+block b25(v191:mutbuf,v192:u64)
+  v199:u64 = const() {"value":1568}
+  v200:u64 = int.add.wrap(v192,v199)
+  v201:u64 = const() {"value":8}
+  v202:u64 = call(v191,v200,v201) {"function":"sg_f"}
+  v203:usize = int.cast(v202) {"mode":"wrap"}
+  v204:u8 = buffer.load(v191,v203)
+  v205:u64 = int.cast(v204) {"mode":"wrap"}
+  v206:u64 = const() {"value":0}
+  v207:bool = compare.ne(v205,v206)
+  jump b26(v191,v192,v207)
+block b26(v195:mutbuf,v196:u64,v198:bool)
+  branch v198 b27(v195) b28(v195,v196)
+block b27(v208:mutbuf)
+  v214:u64 = const() {"value":0}
+  ret(v214)
+block b28(v211:mutbuf,v212:u64)
+  v215:u64 = const() {"value":1568}
+  v216:u64 = int.add.wrap(v212,v215)
+  v217:u64 = const() {"value":4}
+  v218:u64 = call(v211,v216,v217) {"function":"sg_f"}
+  v219:u64 = const() {"value":1680}
+  v220:u64 = int.add.wrap(v212,v219)
+  v221:u64 = call(v211,v220) {"function":"cp_get"}
+  v222:u64 = call(v211,v218,v221) {"function":"cv_compare"}
+  v223:u64 = const() {"value":0}
+  v224:bool = compare.eq(v222,v223)
+  branch v224 b30(v211,v224) b29(v211,v212)
+block b29(v225:mutbuf,v226:u64)
+  v233:u64 = const() {"value":512}
+  v234:u64 = int.add.wrap(v226,v233)
+  v235:u64 = const() {"value":27}
+  v236:u64 = call(v225,v234,v235) {"function":"sg_n"}
+  v237:u64 = const() {"value":1232}
+  v238:u64 = int.add.wrap(v226,v237)
+  v239:u64 = call(v225,v238) {"function":"cp_get"}
+  v240:bool = compare.lt(v236,v239)
+  jump b30(v225,v240)
+block b30(v229:mutbuf,v232:bool)
+  v241:u64 = const() {"value":0}
+  v242:u64 = const() {"value":1}
+  v243:u64 = select(v232,v241,v242)
+  ret(v243)
+end
+fn bd_apply(v0:readbuf,v1:mutbuf,v2:u64,v3:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:u64,v3:mutbuf)
+  v4:u64 = const() {"value":64}
+  v5:u64 = int.add.wrap(v2,v4)
+  v6:u64 = call(v1,v5) {"function":"cp_get"}
+  v7:u64 = call(v3) {"function":"tk_metadata"}
+  v8:u64 = const() {"value":144}
+  v9:u64 = int.add.wrap(v2,v8)
+  v10:u64 = call(v1,v9) {"function":"cp_get"}
+  v11:u64 = const() {"value":152}
+  v12:u64 = int.add.wrap(v2,v11)
+  v13:u64 = call(v1,v12) {"function":"cp_get"}
+  v14:u64 = const() {"value":45}
+  v15:u64 = const() {"value":8}
+  v16:u64 = const() {"value":1472}
+  v17:u64 = int.add.wrap(v6,v16)
+  v18:u64 = call(v0,v1,v3,v10,v13,v14,v15,v17) {"function":"sg_fields"}
+  v19:u64 = const() {"value":160}
+  v20:u64 = int.add.wrap(v2,v19)
+  v21:u64 = call(v1,v20) {"function":"cp_get"}
+  v22:u64 = const() {"value":168}
+  v23:u64 = int.add.wrap(v2,v22)
+  v24:u64 = call(v1,v23) {"function":"cp_get"}
+  v25:u64 = const() {"value":46}
+  v26:u64 = const() {"value":9}
+  v27:u64 = const() {"value":1568}
+  v28:u64 = int.add.wrap(v6,v27)
+  v29:u64 = call(v0,v1,v3,v21,v24,v25,v26,v28) {"function":"sg_fields"}
+  v30:u64 = call(v1,v6) {"function":"bd_bound"}
+  v31:u64 = const() {"value":0}
+  v32:bool = compare.eq(v30,v31)
+  branch v32 b1(v0,v1,v3,v6) b2(v0,v1,v3,v6)
+block b1(v33:readbuf,v34:mutbuf,v36:mutbuf,v37:u64)
+  v43:u64 = const() {"value":14}
+  v44:u64 = const() {"value":1}
+  v45:u32 = call(v34,v37,v43,v44) {"function":"bd_fail"}
+  ret(v45)
+block b2(v38:readbuf,v39:mutbuf,v41:mutbuf,v42:u64)
+  v46:u64 = const() {"value":1200}
+  v47:u64 = int.add.wrap(v42,v46)
+  v48:u64 = call(v39,v47) {"function":"cp_get"}
+  v49:u64 = const() {"value":1208}
+  v50:u64 = int.add.wrap(v42,v49)
+  v51:u64 = call(v39,v50) {"function":"cp_get"}
+  v52:u64 = const() {"value":54}
+  v53:u64 = const() {"value":1344}
+  v54:u64 = int.add.wrap(v42,v53)
+  v55:u64 = call(v39,v41,v48,v51,v52,v54) {"function":"cv_hash"}
+  v56:u64 = const() {"value":0}
+  v57:bool = compare.ne(v55,v56)
+  branch v57 b3(v38,v39,v41) b4(v38,v39,v41,v42)
+block b3(v58:readbuf,v59:mutbuf,v61:mutbuf)
+  v68:u64 = const() {"value":104}
+  v69:u32 = int.cast(v68) {"mode":"wrap"}
+  ret(v69)
+block b4(v63:readbuf,v64:mutbuf,v66:mutbuf,v67:u64)
+  v70:u64 = const() {"value":54216}
+  v71:u64 = call(v64,v70) {"function":"cp_get"}
+  v72:u64 = const() {"value":18446744073709551569}
+  v73:bool = compare.gt(v71,v72)
+  branch v73 b5(v63,v64,v66) b6(v63,v64,v66,v67,v71)
+block b5(v74:readbuf,v75:mutbuf,v77:mutbuf)
+  v86:u64 = const() {"value":103}
+  v87:u32 = int.cast(v86) {"mode":"wrap"}
+  ret(v87)
+block b6(v80:readbuf,v81:mutbuf,v83:mutbuf,v84:u64,v85:u64)
+  v88:u64 = const() {"value":46}
+  v89:u64 = int.add.wrap(v85,v88)
+  v90:u64 = call(v81,v89) {"function":"st_allocate"}
+  v91:u64 = const() {"value":0}
+  v92:bool = compare.eq(v90,v91)
+  branch v92 b7(v80,v81,v83) b8(v80,v81,v83,v84,v85,v90)
+block b7(v93:readbuf,v94:mutbuf,v96:mutbuf)
+  v107:u64 = const() {"value":240}
+  v108:u32 = int.cast(v107) {"mode":"wrap"}
+  ret(v108)
+block b8(v100:readbuf,v101:mutbuf,v103:mutbuf,v104:u64,v105:u64,v106:u64)
+  v109:u64 = const() {"value":46}
+  v110:u64 = int.add.wrap(v105,v109)
+  v111:u64 = call(v101,v106,v110) {"function":"sg_zero"}
+  v112:u64 = const() {"value":1344}
+  v113:u64 = int.add.wrap(v104,v112)
+  v114:u64 = call(v101,v106,v113) {"function":"sg_prefix"}
+  v115:u64 = const() {"value":1280}
+  v116:u64 = int.add.wrap(v104,v115)
+  v117:u64 = const() {"value":5}
+  v118:u64 = const() {"value":1200}
+  v119:u64 = int.add.wrap(v104,v118)
+  v120:u64 = call(v101,v119) {"function":"cp_get"}
+  v121:u64 = const() {"value":1208}
+  v122:u64 = int.add.wrap(v104,v121)
+  v123:u64 = call(v101,v122) {"function":"cp_get"}
+  v124:u64 = const() {"value":8}
+  v125:u32 = call(v101,v116,v117,v113,v120,v123,v106,v110,v124) {"function":"cv_insert"}
+  ret(v125)
+end
+fn bd_fail(v0:mutbuf,v1:u64,v2:u64,v3:u64) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:mutbuf,v1:u64,v2:u64,v3:u64)
+  v4:u64 = const() {"value":1800}
+  v5:u64 = int.add.wrap(v1,v4)
+  v6:u64 = call(v0,v5,v3) {"function":"bd_text"}
+  v7:u64 = int.sub.wrap(v6,v5)
+  v8:u64 = const() {"value":0}
+  v9:u64 = call(v0,v2,v5,v7,v8) {"function":"st_error"}
+  v10:u32 = call(v0) {"function":"so_return"}
+  ret(v10)
+end
+fn bd_text(v0:mutbuf,v1:u64,v2:u64) -> (u64) effects(read,write,trap) entry(b0)
+block b0(v0:mutbuf,v1:u64,v2:u64)
+  v3:u64 = const() {"value":0}
+  v4:bool = compare.eq(v2,v3)
+  branch v4 b1(v0,v1) b2(v0,v1,v2)
+block b1(v5:mutbuf,v6:u64)
+  v11:u64 = const() {"value":0}
+  v12:u64 = int.add.wrap(v6,v11)
+  v13:u64 = const() {"value":7142836979261661807}
+  v14:u64 = call(v5,v12,v13) {"function":"cp_put"}
+  v15:u64 = const() {"value":8}
+  v16:u64 = int.add.wrap(v6,v15)
+  v17:u64 = const() {"value":7214894663494561391}
+  v18:u64 = call(v5,v16,v17) {"function":"cp_put"}
+  v19:u64 = const() {"value":16}
+  v20:u64 = int.add.wrap(v6,v19)
+  v21:u64 = const() {"value":7359008726288066153}
+  v22:u64 = call(v5,v20,v21) {"function":"cp_put"}
+  v23:u64 = const() {"value":24}
+  v24:u64 = int.add.wrap(v6,v23)
+  v25:u64 = const() {"value":7885080994132094834}
+  v26:u64 = call(v5,v24,v25) {"function":"cp_put"}
+  v27:u64 = const() {"value":32}
+  v28:u64 = int.add.wrap(v6,v27)
+  v29:u64 = const() {"value":8246126533286327401}
+  v30:u64 = call(v5,v28,v29) {"function":"cp_put"}
+  v31:u64 = const() {"value":40}
+  v32:u64 = int.add.wrap(v6,v31)
+  v33:u64 = const() {"value":7142828234675025007}
+  v34:u64 = call(v5,v32,v33) {"function":"cp_put"}
+  v35:u64 = const() {"value":48}
+  v36:u64 = int.add.wrap(v6,v35)
+  v37:u64 = const() {"value":128060447026799}
+  v38:u64 = call(v5,v36,v37) {"function":"cp_put"}
+  v39:u64 = const() {"value":54}
+  v40:u64 = int.add.wrap(v6,v39)
+  ret(v40)
+block b2(v8:mutbuf,v9:u64,v10:u64)
+  v41:u64 = const() {"value":1}
+  v42:bool = compare.eq(v10,v41)
+  branch v42 b3(v8,v9) b4(v8,v9)
+block b3(v43:mutbuf,v44:u64)
+  v49:u64 = const() {"value":0}
+  v50:u64 = int.add.wrap(v44,v49)
+  v51:u64 = const() {"value":8315174762840353122}
+  v52:u64 = call(v43,v50,v51) {"function":"cp_put"}
+  v53:u64 = const() {"value":8}
+  v54:u64 = int.add.wrap(v44,v53)
+  v55:u64 = const() {"value":7955998108258627104}
+  v56:u64 = call(v43,v54,v55) {"function":"cp_put"}
+  v57:u64 = const() {"value":16}
+  v58:u64 = int.add.wrap(v44,v57)
+  v59:u64 = const() {"value":2338603376795000932}
+  v60:u64 = call(v43,v58,v59) {"function":"cp_put"}
+  v61:u64 = const() {"value":24}
+  v62:u64 = int.add.wrap(v44,v61)
+  v63:u64 = const() {"value":8314054069742563439}
+  v64:u64 = call(v43,v62,v63) {"function":"cp_put"}
+  v65:u64 = const() {"value":32}
+  v66:u64 = int.add.wrap(v44,v65)
+  v67:u64 = const() {"value":7235444497380814699}
+  v68:u64 = call(v43,v66,v67) {"function":"cp_put"}
+  v69:u64 = const() {"value":40}
+  v70:u64 = int.add.wrap(v44,v69)
+  v71:u64 = const() {"value":3414975842121380453}
+  v72:u64 = call(v43,v70,v71) {"function":"cp_put"}
+  v73:u64 = const() {"value":48}
+  v74:u64 = int.add.wrap(v44,v73)
+  v75:u64 = const() {"value":8391086150553006704}
+  v76:u64 = call(v43,v74,v75) {"function":"cp_put"}
+  v77:u64 = const() {"value":56}
+  v78:u64 = int.add.wrap(v44,v77)
+  v79:u64 = const() {"value":6648929}
+  v80:u64 = call(v43,v78,v79) {"function":"cp_put"}
+  v81:u64 = const() {"value":59}
+  v82:u64 = int.add.wrap(v44,v81)
+  ret(v82)
+block b4(v46:mutbuf,v47:u64)
+  ret(v47)
+end

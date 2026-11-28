@@ -1,0 +1,322 @@
+[
+  [
+    "trust_context",
+    "InvalidContext",
+    "fresh-genesis trust context is invalid"
+  ],
+  [
+    "authorities_distinct",
+    "InvalidContext",
+    "provider and consumer authorities must be distinct"
+  ],
+  [
+    "provider_key",
+    "InvalidContext",
+    "provider public key is invalid"
+  ],
+  [
+    "provider_weak",
+    "InvalidContext",
+    "provider public key is weak"
+  ],
+  [
+    "consumer_key",
+    "InvalidContext",
+    "consumer public key is invalid"
+  ],
+  [
+    "consumer_weak",
+    "InvalidContext",
+    "consumer public key is weak"
+  ],
+  [
+    "accounts_distinct",
+    "InvalidContext",
+    "settlement accounts must be distinct"
+  ],
+  [
+    "trust_policy",
+    "InvalidBounds",
+    "bounded settlement policy or funding is invalid"
+  ],
+  [
+    "price_count",
+    "InvalidBounds",
+    "price table size is invalid"
+  ],
+  [
+    "price_sorted",
+    "NonCanonical",
+    "price table must be strictly sorted and unique"
+  ],
+  [
+    "price_unique",
+    "NonCanonical",
+    "price table resource keys must be unique"
+  ],
+  [
+    "price_entry",
+    "InvalidBounds",
+    "price entry is out of bounds"
+  ],
+  [
+    "certificate_count",
+    "InvalidBounds",
+    "at least one evidence certificate is required"
+  ],
+  [
+    "certificate_sorted",
+    "NonCanonical",
+    "evidence certificates must be strictly sorted and unique"
+  ],
+  [
+    "receipt_closed",
+    "InvalidTransition",
+    "receipt admission is closed after rollup creation"
+  ],
+  [
+    "receipt_context",
+    "InvalidContext",
+    "receipt does not bind the bounded trust context"
+  ],
+  [
+    "receipt_period",
+    "InvalidBounds",
+    "receipt period is not bound to execution height"
+  ],
+  [
+    "certificate_unauthorized",
+    "Unauthorized",
+    "evidence certificate is outside the local trust bundle"
+  ],
+  [
+    "usage_count",
+    "InvalidBounds",
+    "usage entry count is invalid"
+  ],
+  [
+    "usage_sorted",
+    "NonCanonical",
+    "resource usage must be strictly sorted and unique"
+  ],
+  [
+    "usage_unique",
+    "NonCanonical",
+    "resource usage keys must be unique"
+  ],
+  [
+    "usage_entry",
+    "InvalidBounds",
+    "resource usage entry is invalid"
+  ],
+  [
+    "signature_authority",
+    "Unauthorized",
+    "bilateral authority statement does not match the current key"
+  ],
+  [
+    "registered_key",
+    "InvalidSignature",
+    "registered Ed25519 key is invalid"
+  ],
+  [
+    "registered_weak",
+    "InvalidSignature",
+    "registered Ed25519 key is weak"
+  ],
+  [
+    "signature_length",
+    "InvalidSignature",
+    "Ed25519 signature length is invalid"
+  ],
+  [
+    "signature_invalid",
+    "InvalidSignature",
+    "bilateral signature verification failed"
+  ],
+  [
+    "receipt_sequence",
+    "SequenceGap",
+    "receipt sequence is not the exact successor"
+  ],
+  [
+    "receipt_first",
+    "SequenceGap",
+    "sequence one must have no prior receipt"
+  ],
+  [
+    "period_overflow",
+    "ArithmeticOverflow",
+    "period height overflow"
+  ],
+  [
+    "receipt_prior",
+    "SequenceGap",
+    "receipt prior identity or period is not contiguous"
+  ],
+  [
+    "cumulative_overflow",
+    "ArithmeticOverflow",
+    "cumulative usage overflow"
+  ],
+  [
+    "cumulative_continue",
+    "InvalidTransition",
+    "bounded receipt must continue every cumulative resource key"
+  ],
+  [
+    "cumulative_root",
+    "RootMismatch",
+    "cumulative usage preimage or root is invalid"
+  ],
+  [
+    "usage_price",
+    "Unauthorized",
+    "usage has no committed price"
+  ],
+  [
+    "usage_charge",
+    "ArithmeticOverflow",
+    "usage charge overflow"
+  ],
+  [
+    "period_charge",
+    "ArithmeticOverflow",
+    "period charge overflow"
+  ],
+  [
+    "cumulative_charge",
+    "ArithmeticOverflow",
+    "cumulative charge overflow"
+  ],
+  [
+    "receipt_funds",
+    "InsufficientFunds",
+    "receipt cumulative charge is invalid or exceeds escrow"
+  ],
+  [
+    "rollup_closed",
+    "InvalidTransition",
+    "bounded candidate permits exactly one nonempty rollup"
+  ],
+  [
+    "rollup_context",
+    "InvalidContext",
+    "rollup does not bind the bounded trust context"
+  ],
+  [
+    "rollup_interval",
+    "Conflict",
+    "rollup interval is incomplete, reordered, or already assigned"
+  ],
+  [
+    "rollup_root",
+    "RootMismatch",
+    "rollup receipts root is invalid"
+  ],
+  [
+    "rollup_totals",
+    "ConservationViolation",
+    "rollup totals do not equal the exact receipt chain"
+  ],
+  [
+    "rollup_close",
+    "ArithmeticOverflow",
+    "rollup challenge close height overflow"
+  ],
+  [
+    "receipt_version",
+    "ArithmeticOverflow",
+    "receipt state version overflow"
+  ],
+  [
+    "settlement_consumed",
+    "AlreadyConsumed",
+    "settlement is one-shot"
+  ],
+  [
+    "rollup_absent",
+    "NotFound",
+    "rollup is absent"
+  ],
+  [
+    "settlement_stale",
+    "StaleVersion",
+    "settlement trigger does not match authenticated state"
+  ],
+  [
+    "settlement_state",
+    "InvalidTransition",
+    "result or rollup state cannot settle"
+  ],
+  [
+    "settlement_mature",
+    "NotMature",
+    "rollup challenge window has not closed"
+  ],
+  [
+    "settlement_funds",
+    "InsufficientFunds",
+    "rollup charge exceeds durable escrow"
+  ],
+  [
+    "settlement_fee",
+    "ArithmeticOverflow",
+    "protocol fee ratio is invalid or unrepresentable"
+  ],
+  [
+    "settlement_outputs",
+    "ArithmeticOverflow",
+    "settlement output total overflow"
+  ],
+  [
+    "settlement_conservation",
+    "ConservationViolation",
+    "settlement outputs do not conserve escrow input"
+  ],
+  [
+    "account_absent",
+    "NotFound",
+    "settlement destination account is absent"
+  ],
+  [
+    "account_balance",
+    "ArithmeticOverflow",
+    "destination balance overflow"
+  ],
+  [
+    "account_version",
+    "ArithmeticOverflow",
+    "account version overflow"
+  ],
+  [
+    "escrow_version",
+    "ArithmeticOverflow",
+    "escrow version overflow"
+  ],
+  [
+    "result_revision",
+    "ArithmeticOverflow",
+    "result revision overflow"
+  ],
+  [
+    "rollup_version",
+    "ArithmeticOverflow",
+    "rollup version overflow"
+  ],
+  [
+    "replay_conflict",
+    "Conflict",
+    "operation ID replay differs from durable bytes"
+  ],
+  [
+    "execution_context",
+    "InvalidContext",
+    "execution context does not match fresh genesis"
+  ],
+  [
+    "execution_order",
+    "StaleVersion",
+    "order-confirmation input regresses or conflicts at one height"
+  ]
+]

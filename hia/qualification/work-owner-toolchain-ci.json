@@ -1,0 +1,2036 @@
+{
+  "archive": {
+    "bytes": 469184,
+    "path": "hia/qualification/work-owner-toolchain-ci.tar.xz",
+    "sha256": "e1596d84aab6df35eb5593f2e1774db6b57a832f5c9a9bd851f8f89eb08ba616"
+  },
+  "components_independent_full_readback": {
+    "components": {
+      "actual_runtime_reexecuted": false,
+      "complete_disjoint_coverage": true,
+      "discovered_tests": [
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_actual_original_stages_preserve_raw_named_execution_and_independent_receipts",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_always_pack_keeps_failed_raw_independent_binary_and_special_metadata",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_binding_requires_exact_head_run_attempt_complete_counts_and_finite_scope",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_committed_blob_and_source_pair_use_actual_git_head",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_full_frame_journal_is_the_complete_actual_output_and_input_prefix",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_omission_roster_changes_with_the_complete_dynamic_source_set",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_pack_detects_bound_evidence_change_and_still_preserves_all_actual_bytes",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_physical_receipt_rechecks_actual_bytes_exit_and_instrumentation",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_private_call_pairing_capabilities_and_fixture_writes_reject_fabrication",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_public_admission_refusals_cannot_hide_original_execution_or_missing_raw",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_public_optimized_reader_refuses_before_work_and_pack_never_invents_a_binding",
+        "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_written_archive_reopen_rejects_damage_missing_duplicate_special_and_hidden_members",
+        "hia.tests.test_audit_event.AuditEventNative.test_actual_unchanged_original_crate_and_all_original_unit_tests",
+        "hia.tests.test_audit_event.AuditEventNative.test_builder_growth_and_empty_values_preserve_all_following_fields",
+        "hia.tests.test_audit_event.AuditEventNative.test_complete_constructor_builders_clone_and_equality",
+        "hia.tests.test_audit_event.AuditEventNative.test_equality_observes_each_amount_bit_in_both_directions",
+        "hia.tests.test_audit_event.AuditEventNative.test_equality_validates_both_records_before_an_unequal_result",
+        "hia.tests.test_audit_event.AuditEventNative.test_extent_and_utf8_refusals_never_publish",
+        "hia.tests.test_audit_event.AuditEventNative.test_native_output_is_the_next_value_and_input_is_unchanged",
+        "hia.tests.test_audit_event.AuditEventNative.test_no_artificial_string_limit_and_all_u128_bits",
+        "hia.tests.test_audit_event.AuditEventNative.test_none_is_distinct_from_empty_and_amount_zero",
+        "hia.tests.test_audit_event.AuditEventNative.test_outer_u64_fields_refuse_without_overflow_or_publication",
+        "hia.tests.test_audit_event.AuditEventNative.test_utf8_sequences_cannot_cross_declared_field_boundaries",
+        "hia.tests.test_binary64.Binary64NativeTests.test_add_multiply_divide_full_finite_exponent_and_subnormal_domain",
+        "hia.tests.test_binary64.Binary64NativeTests.test_refusal_is_atomic_and_no_invalid_float_becomes_input",
+        "hia.tests.test_binary64.Binary64NativeTests.test_u64_conversion_and_rounding_boundaries",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_all_truncations_and_noncanonical_envelope_lengths",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_complete_canonical_value_round_trip_and_all_u64_endpoints",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_deterministic_full_width_fields_and_second_native_compiler",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_every_record_byte_and_every_checksum_bit",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_every_required_field_and_exact_original_field_priority",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_generation_watermark_joins_and_decoder_error_order",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_original_big_endian_hash_domain_and_complete_checksum",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_original_rust_crate_differential_if_configured",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_output_and_scratch_capacity_and_no_failure_output_writes",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_successor_exact_generation_scope_checksum_and_unconstrained_other_fields",
+        "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_watermark_constructor_full_sequence_range_and_no_hash_workspace",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_author_excluded_two_evaluator_roster",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_container_truncation_trailing_and_header_failures",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_exact_capacity_and_actual_native_oversize_refusal",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_exact_unicode_and_empty_string_identities",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_full_u64_domain_endpoints",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_independent_container_oracle_and_second_native_backend",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_invalid_utf8_is_rejected_before_policy",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_long_names_with_exact_original_identity",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_missing_is_pending_and_zero_is_complete",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_original_every_arrival_order",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_output_is_written_only_for_complete",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_roster_authority_evidence_pending_precedence",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_unsorted_or_duplicate_roster_and_votes_are_not_maps",
+        "hia.tests.test_closed_round.ClosedRoundTests.test_utf8_decoder_against_independent_codec",
+        "hia.tests.test_component_partition.ComponentPartitions.test_actual_lineage_has_no_partial_or_numeric_coercion",
+        "hia.tests.test_component_partition.ComponentPartitions.test_actual_start_finish_rosters_cannot_be_inferred_from_count",
+        "hia.tests.test_component_partition.ComponentPartitions.test_both_partitions_execute_every_fixture_exactly_once",
+        "hia.tests.test_component_partition.ComponentPartitions.test_invalid_discovery_never_silently_drops_a_test",
+        "hia.tests.test_component_partition.ComponentReadback.test_artifact_bytes_roster_and_source_fences_are_independently_checked",
+        "hia.tests.test_component_partition.ComponentReadback.test_complete_raw_summary_cannot_be_missing_changed_or_skipped",
+        "hia.tests.test_component_partition.ComponentReadback.test_duplicate_and_nonfinite_json_are_refused",
+        "hia.tests.test_component_partition.ComponentReadback.test_report_rejects_source_run_status_skips_and_scope_mutants",
+        "hia.tests.test_component_partition.ComponentReadback.test_two_coherent_wrong_producer_trees_cannot_replace_consumer_tree",
+        "hia.tests.test_component_partition.ComponentReadback.test_two_complete_artifacts_cover_full_roster_and_keep_scope_finite",
+        "hia.tests.test_composition.CompositionTests.test_build_rechecks_a_source_used_only_for_dependency_admission",
+        "hia.tests.test_composition.CompositionTests.test_component_is_independently_admitted_but_caller_still_names_every_function",
+        "hia.tests.test_composition.CompositionTests.test_duplicate_manifest_key_and_invalid_dependency_refused",
+        "hia.tests.test_composition.CompositionTests.test_duplicate_symbol_is_not_hidden_by_independent_component_admission",
+        "hia.tests.test_composition.CompositionTests.test_even_unselected_component_functions_must_pass_original_core",
+        "hia.tests.test_composition.CompositionTests.test_exact_inclusion_then_whole_program_admission",
+        "hia.tests.test_composition.CompositionTests.test_imported_functions_cannot_be_selected_as_component_owned_exports",
+        "hia.tests.test_composition.CompositionTests.test_native_owner_roots_keep_component_and_parent_symlink_refusal",
+        "hia.tests.test_composition.CompositionTests.test_native_owner_roots_use_the_same_explicit_composition",
+        "hia.tests.test_composition.CompositionTests.test_nested_admission_does_not_supply_a_missing_caller_callee",
+        "hia.tests.test_composition.CompositionTests.test_nested_declarations_keep_path_symlink_and_cycle_refusals",
+        "hia.tests.test_composition.CompositionTests.test_nested_source_cannot_change_its_declared_callee_contract",
+        "hia.tests.test_composition.CompositionTests.test_no_implicit_resolution",
+        "hia.tests.test_composition.CompositionTests.test_parent_absolute_alias_and_missing_paths_refused",
+        "hia.tests.test_composition.CompositionTests.test_recursive_include_refused",
+        "hia.tests.test_composition.CompositionTests.test_source_roots_do_not_admit_other_directories_or_types",
+        "hia.tests.test_composition.CompositionTests.test_symlink_dependency_refused_even_for_identical_bytes",
+        "hia.tests.test_composition.CompositionTests.test_unknown_duplicate_and_colliding_functions_refused",
+        "hia.tests.test_consensus_work.ConsensusWork.test_actual_original_consensus_module",
+        "hia.tests.test_consensus_work.ConsensusWork.test_complete_512_bit_arithmetic_and_conversion",
+        "hia.tests.test_consensus_work.ConsensusWork.test_frame_refusal_has_no_effects",
+        "hia.tests.test_consensus_work.ConsensusWork.test_output_commit_and_scratch_boundaries",
+        "hia.tests.test_consensus_work.ConsensusWork.test_retained_independent_integer_vectors",
+        "hia.tests.test_consensus_work.ConsensusWork.test_retarget_parent_window_and_time_policy",
+        "hia.tests.test_crypto.CryptoNativeTests.test_actual_unaligned_buffers_and_oversized_input_refusal",
+        "hia.tests.test_crypto.CryptoNativeTests.test_pon_domains_parts_and_exact_framing_against_original_oracle",
+        "hia.tests.test_crypto.CryptoNativeTests.test_pon_full_declared_boundaries",
+        "hia.tests.test_crypto.CryptoNativeTests.test_pon_length_prefixes_disambiguate_parts",
+        "hia.tests.test_crypto.CryptoNativeTests.test_pon_malformed_descriptor_preserves_entire_outputs",
+        "hia.tests.test_crypto.CryptoNativeTests.test_sha256_capacity_rejection_is_transactional",
+        "hia.tests.test_crypto.CryptoNativeTests.test_sha256_multiblock_and_one_mib_boundary",
+        "hia.tests.test_crypto.CryptoNativeTests.test_single_arena_refuses_overlap_and_short_capacity_before_writes",
+        "hia.tests.test_crypto.CryptoNativeTests.test_single_arena_sha_preserves_input_gap_and_guard_tail",
+        "hia.tests.test_crypto.CryptoNativeTests.test_standard_and_complete_short_length_sha256_vectors",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_distinct_native_backend_matches_selected_strict_cases",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_error_precedence_and_capacity_are_explicit",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_field_full_carry_and_deterministic_random_arithmetic",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_field_inverse_and_noncanonical_inputs",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_group_addition_and_all_scalar_bits",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_nonweak_mixed_order_signature_preserves_original_contract",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_original_rust_crate_differential_and_original_signing",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_point_roundtrip_off_curve_canonical_and_torsion",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_published_known_answers_and_independent_signatures",
+        "hia.tests.test_ed25519.Ed25519NativeTests.test_weak_noncanonical_malleable_and_corrupted_signatures",
+        "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_exact_sources_and_native_backend",
+        "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_nonzero_torsion_residuals_fail_without_cofactor_shortcut",
+        "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_same_arena_reuse_across_modules_lengths_and_early_rejection",
+        "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_true_unaligned_pointers_for_field_points_and_strict_verify",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_compiler_binding_rejects_wrong_tool_bytes_paths_versions_and_cargo_commands",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_composition_uses_exact_owned_function_bytes_without_reexport_or_implicit_repair",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_failed_unsettled_missing_reordered_or_repeated_original_stages_are_refused",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_foreign_or_failed_download_is_refused_before_unpack_or_source_execution",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_independent_capture_refuses_changed_source_and_existing_destination",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_named_test_output_must_show_actual_nonignored_exact_execution",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_original_hook_requires_exact_unmodified_production_prefix_and_captured_fixtures",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_original_stage_rechecks_raw_bytes_and_independent_receipt",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_pack_preserves_failed_original_raw_binary_and_metadata_without_false_qualification",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_predecessor_requires_complete_same_source_run_attempt_and_finite_scope",
+        "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_private_journal_requires_complete_immutable_calls_and_explicit_counter_fixture",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_all_reported_library_outputs_contribute_without_assuming_debug_deps",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_build_script_and_binary_outputs_do_not_add_dependency_directories",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_cargo_failure_or_ambiguous_output_never_invokes_rustc",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_compile_command_uses_reported_directories_and_preserves_logs_and_budgets",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_malformed_library_metadata_is_refused",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_missing_failed_or_repeated_build_completion_is_refused",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_missing_required_library_or_rlib_is_refused",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_multiple_rlibs_or_duplicate_filenames_are_refused",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_outside_relative_and_parent_traversal_library_paths_are_refused",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_profile_root_rlib_does_not_hide_transitive_deps_directory",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_repeated_dependency_names_for_distinct_versions_are_not_extern_ambiguity",
+        "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_repeated_required_target_is_refused_even_when_filename_matches",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_adaptive_reasons_mixed_keys_and_exact_float_boundaries",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_adaptive_sampling_includes_both_endpoints_and_2048_sample",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_deep_wide_group_span_and_maximum_adaptive_batch_floor",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_empty_payload_identity_ties_and_object_domain_edges",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_exhaustive_four_transaction_access_graphs",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_explicit_reader_regression_and_seven_strategies",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_hot_bucket_full_fanout_sparse_ties_and_unsigned_rotation",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_random_full_strategy_configs_and_duplicate_references",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_raw_unaligned_reused_arena_and_beyond_runner_megabyte",
+        "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_wire_config_and_version_refusals_keep_output_atomic",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_aliased_receipts_and_duplicate_json_fields_are_refused",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_archive_member_sizes_require_actual_integers_before_extraction",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_failed_transfer_keeps_actual_downloaded_archive_and_metadata",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_json_counts_and_lineage_reject_numeric_type_substitution",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_json_nonfinite_constants_and_numeric_overflow_are_refused",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_missing_extra_and_changed_regular_bytes_are_refused",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_nested_json_identity_keeps_boolean_integer_and_float_distinct",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_optimized_public_cli_fails_before_transfer",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_pack_retains_real_fifo_and_link_metadata_without_opening_or_restoring_them",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_previous_source_run_attempt_and_incomplete_results_are_refused",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_traversal_duplicate_and_unexpected_roots_are_refused_before_extraction",
+        "hia.tests.test_foundation_ci.FoundationTransfer.test_untracked_or_mutated_source_cannot_claim_committed_identity",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_cli_optimization_and_failed_binding_preserve_failure",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_complete_archive_roster_and_metadata_are_required",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_complete_before_after_and_actual_git_blob_identity",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_native_complete_counts_scope_and_cleanup_cannot_be_forged",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_original_requires_actual_complete_tests_sources_and_settled_stages",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_parent_requires_same_head_run_attempt_and_finite_complete_proof",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_real_process_streams_and_transfer_origin_are_checked",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_shallow_head_still_verifies_every_current_tracked_byte",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_special_files_are_metadata_only_and_failure_download_is_preserved",
+        "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_xz_truncation_concatenation_and_expansion_are_rejected",
+        "hia.tests.test_host_checkpoint.HostEvidenceTests.test_absolute_cli_works_from_independent_directory",
+        "hia.tests.test_host_checkpoint.HostEvidenceTests.test_complete_original_sources_are_bound_and_tamper_is_rejected",
+        "hia.tests.test_host_checkpoint.HostEvidenceTests.test_optimized_python_is_rejected",
+        "hia.tests.test_host_checkpoint.HostEvidenceTests.test_synthetic_trace_parser_rejects_missing_boundaries",
+        "hia.tests.test_host_production.HostProductionControls.test_actual_already_exited_child_keeps_both_unread_pipes",
+        "hia.tests.test_host_production.HostProductionControls.test_actual_local_cli_refuses_before_outputs_or_provision",
+        "hia.tests.test_host_production.HostProductionControls.test_actual_partial_receipt_is_retained_on_eof",
+        "hia.tests.test_host_production.HostProductionControls.test_actual_unit_install_refuses_existing_or_dangling_targets_unchanged",
+        "hia.tests.test_host_production.HostProductionControls.test_context_refuses_self_hosted_root_and_missing_identity",
+        "hia.tests.test_host_production.HostProductionControls.test_escaped_payload_and_known_path_payload_remain_byte_exact",
+        "hia.tests.test_host_production.HostProductionControls.test_optimized_cli_cannot_admit_privileged_qualification",
+        "hia.tests.test_host_production.HostProductionControls.test_original_failed_production_trace_is_replayed_without_rewriting_status",
+        "hia.tests.test_host_production.HostProductionControls.test_owned_service_keeps_fixed_slice_and_drops_capabilities",
+        "hia.tests.test_host_production.HostProductionControls.test_production_trace_mapping_cannot_accept_other_parent_or_process_leader",
+        "hia.tests.test_host_production.HostProductionControls.test_real_failure_log_tail_is_bounded_and_workflow_text_is_escaped",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_archive_cannot_rebind_modified_or_added_evidence",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_archive_reopen_refuses_changed_missing_duplicate_and_trailing_payloads",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_failed_run_preserves_complete_binary_isolated_source_and_special_metadata",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_pack_refuses_aliased_evidence_root",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_pack_refuses_cross_run_binding",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_pack_rejects_nonpassing_same_run_binding_and_retains_manifest",
+        "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_unknown_source_observation_refuses_before_component_reader",
+        "hia.tests.test_mempool_ci.MempoolCIWitnessTests.test_exact_twelve_witness_transitions_bind_to_complete_baseline",
+        "hia.tests.test_mempool_ci.MempoolCIWitnessTests.test_witness_binding_rejects_self_consistent_summary_or_overlay_drift",
+        "hia.tests.test_mempool_ci.MempoolPreflightBoundaryTests.test_public_readback_rejects_audit_mode_without_opening_evidence",
+        "hia.tests.test_mempool_ci.MempoolPreflightBoundaryTests.test_real_detached_checkout_requires_explicit_audit_and_keeps_project_boundaries",
+        "hia.tests.test_mempool_owner.MempoolOwner.test_actual_complete_original_rust_gate_for_every_public_sequence",
+        "hia.tests.test_mempool_owner.MempoolOwner.test_exhaustive_short_histories_zero_and_max_ids",
+        "hia.tests.test_mempool_owner.MempoolOwner.test_invalid_requests_do_not_publish_or_mutate_owner",
+        "hia.tests.test_mempool_owner.MempoolOwner.test_malformed_private_shape_is_refused_without_repair",
+        "hia.tests.test_mempool_owner.MempoolOwner.test_real_allocator_failure_is_atomic_and_close_does_not_allocate",
+        "hia.tests.test_mempool_owner.MempoolOwner.test_stateful_public_sequences_and_wraparound",
+        "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_actual_original_lane_modules",
+        "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_actual_original_qos_snapshot_after_real_admissions",
+        "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_composite_projection_one_call_and_canaries",
+        "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_malformed_frames_do_not_publish_an_output",
+        "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_native_full_u64_and_reserve_boundaries",
+        "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_original_pop_lane_choice_after_actual_ingress",
+        "hia.tests.test_migration_inventory.CompleteSourceInventory.test_duplicate_source_or_identity_cannot_hide_ownership",
+        "hia.tests.test_migration_inventory.CompleteSourceInventory.test_finite_foundation_cannot_claim_node_integration_or_retirement",
+        "hia.tests.test_migration_inventory.CompleteSourceInventory.test_kernels_runtime_and_native_callers_are_all_accounted_for",
+        "hia.tests.test_migration_inventory.CompleteSourceInventory.test_missing_aliased_or_escaping_inputs_are_refused",
+        "hia.tests.test_migration_inventory.CompleteSourceInventory.test_unlisted_source_in_any_hia_subdirectory_is_refused",
+        "hia.tests.test_node_delta_cli.NodeDeltaEntrypoints.test_native_qualification_help",
+        "hia.tests.test_node_delta_cli.NodeDeltaEntrypoints.test_original_reference_help",
+        "hia.tests.test_node_settings.CompactStateRootContracts.test_complete_grammar_collision_limits_and_capacity",
+        "hia.tests.test_node_settings.CompactStateRootContracts.test_empty_absence_order_and_non_seven_row_counts",
+        "hia.tests.test_node_settings.NativeDefaultSettings.test_all_original_fixed_sources_are_exact",
+        "hia.tests.test_node_settings.NativeDefaultSettings.test_complete_default_and_same_timestamp_override_differ",
+        "hia.tests.test_node_settings.NativeDefaultSettings.test_descriptor_and_capacity_refusals_write_nothing",
+        "hia.tests.test_node_settings.NativeDefaultSettings.test_integer_decimal_boundaries_and_i64_maximum",
+        "hia.tests.test_node_settings.NativeDefaultSettings.test_original_genesis_time_refusals_restore_output",
+        "hia.tests.test_node_settings_memory.SettingsPrivateMemory.test_unaligned_repeated_success_error_and_capacity_in_one_arena",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_actual_executable_command_and_profile_are_not_replaceable",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_actual_recorded_fault_and_both_platform_baselines",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_all_actual_raw_streams_are_bound",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_build_script_artifact_is_distinct_from_real_test_library",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_coherent_auxv_metadata_cannot_hide_another_write",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_complete_clock_and_injection_receipts_are_required",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_count_uses_complete_actual_events_without_a_scheduling_constant",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_failure_or_unreaped_capture_cannot_borrow_valid_observation",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_full_compiler_version_and_explicit_tools_are_required",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_independent_binary_is_read_only_single_link_and_actual_test_artifact",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_settled_process_and_raw_outputs_cannot_drift_after_success",
+        "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_task_calls_cannot_cross_actual_birth_and_terminal_boundaries",
+        "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_owned_cleanup_esrch_retains_exit_raw_and_receipt",
+        "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_owned_cleanup_permission_error_is_not_swallowed",
+        "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_run_native_esrch_retains_timeout_exit_raw_and_receipt",
+        "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_run_native_permission_error_is_not_swallowed",
+        "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_trace_esrch_retains_timeout_exit_raw_and_receipt",
+        "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_trace_permission_error_is_not_swallowed",
+        "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_child_eperm_propagates_and_records_failure",
+        "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_child_esrch_preserves_reaped_output_and_cleanup_receipt",
+        "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_trace_eperm_propagates",
+        "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_trace_esrch_preserves_actual_exit_timeout_and_raw_receipt",
+        "hia.tests.test_platform_reactor_contracts.ReactorPolicyContractTests.test_native_policy_contracts",
+        "hia.tests.test_pnx1.Pnx1RustDifferentialTests.test_original_decode_encode_and_error_order",
+        "hia.tests.test_pnx1.Pnx1Tests.test_all_current_tags_and_outer_error_precedence",
+        "hia.tests.test_pnx1.Pnx1Tests.test_allocation_exact_order_count_and_first_differing_key_byte",
+        "hia.tests.test_pnx1.Pnx1Tests.test_both_shared_factor_grammars_and_scratch_extent",
+        "hia.tests.test_pnx1.Pnx1Tests.test_fixed_payloads_are_opaque_at_this_decoder",
+        "hia.tests.test_pnx1.Pnx1Tests.test_funded_contract_all_commitments_and_u64_boundaries",
+        "hia.tests.test_pnx1.Pnx1Tests.test_funded_decision_verdict_and_zero_output",
+        "hia.tests.test_pnx1.Pnx1Tests.test_proof_list_and_nested_opaque_envelope_extents",
+        "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_empty_evolution_ignores_live_and_poisoned_scratch_suffixes",
+        "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_funded_deadline_carries_and_only_provider_arbitrator_inequality",
+        "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_inner_refusals_precede_nonce_fee_and_outer_limits_precede_all",
+        "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_opaque_payload_identity_signature_and_legacy_length_dispatch",
+        "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_scratch_extent_error_is_local_and_outer_failures_do_not_write",
+        "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_stale_scratch_cannot_complete_a_truncated_factor_payload",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_all_canonical_graphs_and_masks",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_deferred_canonicality_preserves_decoder_error_priority",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_original_independent_model_vectors",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_shape_version_order_and_rank_budget",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_truncation_and_coefficient_boundaries",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_factor_all_ranks_slots_and_truncations",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_factor_complete_coefficient_positions_and_shape_errors",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_factor_error_precedence",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_growth_header_strict_outer_and_nested_header",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_hash_lowercase_alphabet_and_all_positions",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_id_complete_byte_alphabet_and_extent_boundaries",
+        "hia.tests.test_protocol.ProtocolNativeTests.test_pnh1_matches_retained_independent_header_oracle",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_actual_original_rust_raw_bindings_entire_method_bodies",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_complete_binding_histories_exact_bytes_and_capacity",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_dirty_initial_arena_and_zero_capacity_maximum_stride",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_every_digest_and_body_byte_affects_exact_binding",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_exhaustive_short_histories_including_consumed_mismatch",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_frame_capacity_lifetime_refusals_are_unchanged",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_invalid_private_shape_refuses_without_mutation",
+        "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_private_body_bound_preserves_original_duplicate_and_full_priority",
+        "hia.tests.test_replay.ReplayNativeTests.test_ack_requires_the_complete_pending_frame",
+        "hia.tests.test_replay.ReplayNativeTests.test_all_session_components_are_compared",
+        "hia.tests.test_replay.ReplayNativeTests.test_complete_check_proposal_recovery_ack_sequence",
+        "hia.tests.test_replay.ReplayNativeTests.test_deterministic_cross_compiler_state_matrix",
+        "hia.tests.test_replay.ReplayNativeTests.test_digest_and_payload_bounds",
+        "hia.tests.test_replay.ReplayNativeTests.test_native_output_can_be_recovered_in_a_new_process",
+        "hia.tests.test_replay.ReplayNativeTests.test_pending_replay_identity_and_error_priority",
+        "hia.tests.test_replay.ReplayNativeTests.test_prior_comparison_is_a_fact_and_checks_all_state_bytes",
+        "hia.tests.test_replay.ReplayNativeTests.test_recovery_rejects_noncanonical_or_inconsistent_state",
+        "hia.tests.test_replay.ReplayNativeTests.test_recovery_round_trip_and_no_pending_maximum_nonce",
+        "hia.tests.test_replay.ReplayNativeTests.test_unsigned_nonce_limits_stale_and_gap",
+        "hia.tests.test_replay.ReplayNativeTests.test_wire_header_lengths_and_no_failure_writes",
+        "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_closed_round_scores_authority_and_arrival_order",
+        "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_closed_round_strings_maps_and_full_width_random_scores",
+        "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_all_identity_components_and_failure_precedence",
+        "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_full_width_deterministic_state_matrix",
+        "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_recovery_nonce_pending_and_ack_boundaries",
+        "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_successors_recover_across_new_processes",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_actual_event_path_is_selected_without_directory_scan",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_bin_non_test_missing_executable_and_path_escape_are_refused",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_corpus_retains_full_unsigned_time_values_and_none",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_duplicate_json_fields_and_non_json_text_are_refused",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_identical_duplicate_and_conflicting_artifacts_are_refused",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_missing_or_incomplete_cargo_build_is_refused",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_original_source_drift_and_symlink_are_refused",
+        "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_wrong_library_source_identity_is_refused",
+        "hia.tests.test_sha512.Sha512NativeTests.test_backend_is_the_pinned_native_compiler",
+        "hia.tests.test_sha512.Sha512NativeTests.test_bit_patterns_and_seeded_binary_messages",
+        "hia.tests.test_sha512.Sha512NativeTests.test_capacity_refusals_preserve_all_caller_bytes",
+        "hia.tests.test_sha512.Sha512NativeTests.test_every_byte_length_zero_through_259",
+        "hia.tests.test_sha512.Sha512NativeTests.test_large_message_and_maximum_input_boundary",
+        "hia.tests.test_sha512.Sha512NativeTests.test_minimum_capacity_and_preexisting_arena_bytes",
+        "hia.tests.test_sha512.Sha512NativeTests.test_padding_and_block_boundaries",
+        "hia.tests.test_sha512.Sha512NativeTests.test_real_unaligned_pointers_preserve_every_guard",
+        "hia.tests.test_sha512.Sha512NativeTests.test_standard_empty_and_abc_digests",
+        "hia.tests.test_state_root.StateRootContracts.test_actual_key_and_value_bytes_are_hashed",
+        "hia.tests.test_state_root.StateRootContracts.test_arbitrary_binary_keys_and_value_extent_boundaries",
+        "hia.tests.test_state_root.StateRootContracts.test_capacity_refusals_write_nothing",
+        "hia.tests.test_state_root.StateRootContracts.test_duplicate_paths_are_not_collapsed_or_accepted",
+        "hia.tests.test_state_root.StateRootContracts.test_empty_single_and_absence_are_distinct",
+        "hia.tests.test_state_root.StateRootContracts.test_entry_order_does_not_change_the_root",
+        "hia.tests.test_state_root.StateRootContracts.test_every_truncation_and_trailing_byte_preserves_outputs",
+        "hia.tests.test_state_root.StateRootContracts.test_limit_and_descriptor_error_precedence",
+        "hia.tests.test_state_root.StateRootContracts.test_original_rust_protocol_relation",
+        "hia.tests.test_state_root.StateRootContracts.test_random_sparse_paths_and_unbalanced_heap_lengths",
+        "hia.tests.test_state_root.StateRootContracts.test_separately_selected_direct_machine_backend",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_00_full_65536_rows_and_one_byte_short_reuse",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_actual_unaligned_residues_and_absent_is_not_empty",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_exact_native_source_and_backend",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_full_grammar_pass_limits_and_error_precedence_before_writes",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_insertion_orders_heap_boundaries_and_stale_arena",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_repeated_key_hash_collisions_never_publish_a_partial_root",
+        "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_transcript_padding_maximum_key_and_value_are_real_bytes",
+        "hia.tests.test_state_string.StateStringTests.test_native_model_and_bounds",
+        "hia.tests.test_state_string.StateStringTests.test_original_serde_and_m06_differential",
+        "hia.tests.test_state_value.StateValueTests.test_native_model_and_bounds",
+        "hia.tests.test_state_value.StateValueTests.test_original_value_and_m06_differential",
+        "hia.tests.test_storage_native.StorageCliTests.test_absolute_scripts_start_without_import_environment",
+        "hia.tests.test_storage_native.StorageCliTests.test_optimized_python_cannot_silently_disable_storage_oracles",
+        "hia.tests.test_storage_native.StorageNativeTests.test_native_exact_addressing_and_sequence_contracts",
+        "hia.tests.test_storage_native.StorageNativeTests.test_native_policy_rejects_all_bad_buffer_shapes_before_effects",
+        "hia.tests.test_storage_native.StorageNativeTests.test_native_required_file_open_commands_are_nonblocking",
+        "hia.tests.test_storage_native.StorageNativeTests.test_native_storage_sha_framing_against_hashlib_and_canaries",
+        "hia.tests.test_storage_recovery.StorageRecoveryCliTests.test_absolute_cli_is_independent_of_import_environment",
+        "hia.tests.test_storage_recovery.StorageRecoveryCliTests.test_optimized_python_cannot_disable_physical_recovery_oracles",
+        "hia.tests.test_verifier.CompleteVerifierTests.test_abi_extent_refusals_leave_all_bytes_unchanged",
+        "hia.tests.test_verifier.CompleteVerifierTests.test_complete_relation_and_product",
+        "hia.tests.test_verifier.CompleteVerifierTests.test_dense_relation_with_nonzero_scratch_and_late_product_refusal",
+        "hia.tests.test_verifier.CompleteVerifierTests.test_original_error_order_and_late_refusals",
+        "hia.tests.test_verifier.CompleteVerifierTests.test_target_uses_first_differing_big_endian_byte",
+        "hia.tests.test_work.EncodingTests.test_all_three_matrices_and_noncanonical_values",
+        "hia.tests.test_work.EncodingTests.test_length_magic_and_field_order",
+        "hia.tests.test_work.FieldTests.test_multiply_add_and_denoise",
+        "hia.tests.test_work.FieldTests.test_u64_reduction_boundaries_and_random",
+        "hia.tests.test_work.MatrixTests.test_exact_modular_products",
+        "hia.tests.test_work.MatrixTests.test_rejections_never_modify_outputs",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_archive_rejects_roster_metadata_and_content_mutants",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_archive_rejects_truncated_concatenated_or_hidden_stream",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_cannot_omit_new_full_raw_or_clock_artifacts",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_rejects_wrong_head_attempt_and_boolean_counts",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_requires_full_binary_and_source_closure",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_canonical_paths_and_identity_types",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_patch_exact_stream_bytes_and_empty_patch",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_patch_rejects_replacement_paths_types_and_duplicate_members",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_raw_roster_and_types_reject_before_opening_files",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_complete_archive_positive_and_independent_extraction",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_duplicate_and_nonfinite_json_are_rejected",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_failed_binding_still_retains_actual_full_bytes_without_qualification",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_actual_json_types_do_not_use_python_number_equality",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_named_test_does_not_count_ignored_or_other_test",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_pre_worker_shape_is_distinct_from_worker_results",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_primitive_complete_raw_summary_has_exact_integer_types",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_regular_reader_rejects_symlink_and_archive_preexisting_destination",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_scope_and_complete_retained_roster_cannot_expand",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_unbound_pack_never_claims_a_CI_pass",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_complete_source_and_reader_maps_are_not_digest_only",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_failure_pack_preserves_available_bytes_without_creating_success_binding",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_final_scope_and_receipt_types_cannot_be_coerced",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_full_raw_arena_and_original_binary_are_required_after_coherent_reindex",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_mutated_final_member_cannot_hide_behind_intact_prior_archive",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_original_binary_or_whole_archive_cannot_be_omitted_after_transfer",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_original_cannot_consume_another_native_predecessor",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_package_binding_and_complete_archive_identity_are_independently_checked",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_phase_counts_are_exact_and_cannot_hide_skips_or_changed_run",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_action_cannot_silently_ignore_qualification_requirement",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_cli_requires_actual_upstream_success_before_any_unpack",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_qualified_readback_rejects_not_bound_development_package",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_real_archive_roundtrip_is_a_transport_not_final_qualification",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_whole_two_archive_chain_replays_both_actual_transport_members"
+      ],
+      "lineage": {
+        "attempt": 1,
+        "git_head": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+        "run_id": "44041831642"
+      },
+      "old_stack_can_be_removed": false,
+      "partitions": {
+        "general": {
+          "files": {
+            "hia-bootstrap/bootstrap.json": {
+              "bytes": 110393,
+              "sha256": "c044adcc83286852541efb0aa9b5cf73e2de974c4eec36e44ce05c82e6948aee"
+            },
+            "hia-observations/qualification.json": {
+              "bytes": 354997,
+              "sha256": "e2da3d625ab6fa81746429aea530f6cecfed20f29ad97cacc35a6fd3ec5bcfbf"
+            },
+            "hia-observations/qualification.log": {
+              "bytes": 68986,
+              "sha256": "644c986c7735e4e546fe3b4827b46a5184181bec862400c3df6c6f565a065a0c"
+            },
+            "hia-observations/source-after.json": {
+              "bytes": 423,
+              "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+            },
+            "hia-observations/source.json": {
+              "bytes": 423,
+              "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+            },
+            "original-rust-build.jsonl": {
+              "bytes": 81966,
+              "sha256": "c329c55f9b7fa29d2923d5bd7f972a8cc9930039de80f5518604d80e539be261"
+            }
+          },
+          "group": "general",
+          "original_oracles": {
+            "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+              "executable_sha256": "305d55b39b5ec1511e9ffc6915b0e16b363db61fd68814bb9ab467096f5bd7f1"
+            },
+            "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+              "executable_sha256": "8734701793a5139c2405d93c37ea0b6d7d9e4642d4b7311cc4896021305c7480"
+            },
+            "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+              "executable_sha256": "d094b9adebafddae2362f1290b5add3ecfa2d03b65c1d740401ad560f7f40a04"
+            },
+            "TRNM_HIA_RUST_REFERENCE": {
+              "executable_sha256": "a13ddf1ea386e4653677dd7721148747a83f5b181735b384924b0901a02f7588"
+            },
+            "TRNM_HIA_RUST_STATE_REFERENCE": {
+              "executable_sha256": "bc61a2ad0c95b869e2a414c1bf6d5240b2229b7bf8f57d0eb6d923e5fad3e282"
+            }
+          },
+          "selected_tests": [
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_actual_original_stages_preserve_raw_named_execution_and_independent_receipts",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_always_pack_keeps_failed_raw_independent_binary_and_special_metadata",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_binding_requires_exact_head_run_attempt_complete_counts_and_finite_scope",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_committed_blob_and_source_pair_use_actual_git_head",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_full_frame_journal_is_the_complete_actual_output_and_input_prefix",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_omission_roster_changes_with_the_complete_dynamic_source_set",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_pack_detects_bound_evidence_change_and_still_preserves_all_actual_bytes",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_physical_receipt_rechecks_actual_bytes_exit_and_instrumentation",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_private_call_pairing_capabilities_and_fixture_writes_reject_fabrication",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_public_admission_refusals_cannot_hide_original_execution_or_missing_raw",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_public_optimized_reader_refuses_before_work_and_pack_never_invents_a_binding",
+            "hia.tests.test_application_ci.ApplicationEvidenceBoundaries.test_written_archive_reopen_rejects_damage_missing_duplicate_special_and_hidden_members",
+            "hia.tests.test_audit_event.AuditEventNative.test_actual_unchanged_original_crate_and_all_original_unit_tests",
+            "hia.tests.test_audit_event.AuditEventNative.test_builder_growth_and_empty_values_preserve_all_following_fields",
+            "hia.tests.test_audit_event.AuditEventNative.test_complete_constructor_builders_clone_and_equality",
+            "hia.tests.test_audit_event.AuditEventNative.test_equality_observes_each_amount_bit_in_both_directions",
+            "hia.tests.test_audit_event.AuditEventNative.test_equality_validates_both_records_before_an_unequal_result",
+            "hia.tests.test_audit_event.AuditEventNative.test_extent_and_utf8_refusals_never_publish",
+            "hia.tests.test_audit_event.AuditEventNative.test_native_output_is_the_next_value_and_input_is_unchanged",
+            "hia.tests.test_audit_event.AuditEventNative.test_no_artificial_string_limit_and_all_u128_bits",
+            "hia.tests.test_audit_event.AuditEventNative.test_none_is_distinct_from_empty_and_amount_zero",
+            "hia.tests.test_audit_event.AuditEventNative.test_outer_u64_fields_refuse_without_overflow_or_publication",
+            "hia.tests.test_audit_event.AuditEventNative.test_utf8_sequences_cannot_cross_declared_field_boundaries",
+            "hia.tests.test_binary64.Binary64NativeTests.test_add_multiply_divide_full_finite_exponent_and_subnormal_domain",
+            "hia.tests.test_binary64.Binary64NativeTests.test_refusal_is_atomic_and_no_invalid_float_becomes_input",
+            "hia.tests.test_binary64.Binary64NativeTests.test_u64_conversion_and_rounding_boundaries",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_all_truncations_and_noncanonical_envelope_lengths",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_complete_canonical_value_round_trip_and_all_u64_endpoints",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_deterministic_full_width_fields_and_second_native_compiler",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_every_record_byte_and_every_checksum_bit",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_every_required_field_and_exact_original_field_priority",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_generation_watermark_joins_and_decoder_error_order",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_original_big_endian_hash_domain_and_complete_checksum",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_original_rust_crate_differential_if_configured",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_output_and_scratch_capacity_and_no_failure_output_writes",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_successor_exact_generation_scope_checksum_and_unconstrained_other_fields",
+            "hia.tests.test_checkpoint.CheckpointValueNativeTests.test_watermark_constructor_full_sequence_range_and_no_hash_workspace",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_author_excluded_two_evaluator_roster",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_container_truncation_trailing_and_header_failures",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_exact_capacity_and_actual_native_oversize_refusal",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_exact_unicode_and_empty_string_identities",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_full_u64_domain_endpoints",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_independent_container_oracle_and_second_native_backend",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_invalid_utf8_is_rejected_before_policy",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_long_names_with_exact_original_identity",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_missing_is_pending_and_zero_is_complete",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_original_every_arrival_order",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_output_is_written_only_for_complete",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_roster_authority_evidence_pending_precedence",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_unsorted_or_duplicate_roster_and_votes_are_not_maps",
+            "hia.tests.test_closed_round.ClosedRoundTests.test_utf8_decoder_against_independent_codec",
+            "hia.tests.test_component_partition.ComponentPartitions.test_actual_lineage_has_no_partial_or_numeric_coercion",
+            "hia.tests.test_component_partition.ComponentPartitions.test_actual_start_finish_rosters_cannot_be_inferred_from_count",
+            "hia.tests.test_component_partition.ComponentPartitions.test_both_partitions_execute_every_fixture_exactly_once",
+            "hia.tests.test_component_partition.ComponentPartitions.test_invalid_discovery_never_silently_drops_a_test",
+            "hia.tests.test_component_partition.ComponentReadback.test_artifact_bytes_roster_and_source_fences_are_independently_checked",
+            "hia.tests.test_component_partition.ComponentReadback.test_complete_raw_summary_cannot_be_missing_changed_or_skipped",
+            "hia.tests.test_component_partition.ComponentReadback.test_duplicate_and_nonfinite_json_are_refused",
+            "hia.tests.test_component_partition.ComponentReadback.test_report_rejects_source_run_status_skips_and_scope_mutants",
+            "hia.tests.test_component_partition.ComponentReadback.test_two_coherent_wrong_producer_trees_cannot_replace_consumer_tree",
+            "hia.tests.test_component_partition.ComponentReadback.test_two_complete_artifacts_cover_full_roster_and_keep_scope_finite",
+            "hia.tests.test_composition.CompositionTests.test_build_rechecks_a_source_used_only_for_dependency_admission",
+            "hia.tests.test_composition.CompositionTests.test_component_is_independently_admitted_but_caller_still_names_every_function",
+            "hia.tests.test_composition.CompositionTests.test_duplicate_manifest_key_and_invalid_dependency_refused",
+            "hia.tests.test_composition.CompositionTests.test_duplicate_symbol_is_not_hidden_by_independent_component_admission",
+            "hia.tests.test_composition.CompositionTests.test_even_unselected_component_functions_must_pass_original_core",
+            "hia.tests.test_composition.CompositionTests.test_exact_inclusion_then_whole_program_admission",
+            "hia.tests.test_composition.CompositionTests.test_imported_functions_cannot_be_selected_as_component_owned_exports",
+            "hia.tests.test_composition.CompositionTests.test_native_owner_roots_keep_component_and_parent_symlink_refusal",
+            "hia.tests.test_composition.CompositionTests.test_native_owner_roots_use_the_same_explicit_composition",
+            "hia.tests.test_composition.CompositionTests.test_nested_admission_does_not_supply_a_missing_caller_callee",
+            "hia.tests.test_composition.CompositionTests.test_nested_declarations_keep_path_symlink_and_cycle_refusals",
+            "hia.tests.test_composition.CompositionTests.test_nested_source_cannot_change_its_declared_callee_contract",
+            "hia.tests.test_composition.CompositionTests.test_no_implicit_resolution",
+            "hia.tests.test_composition.CompositionTests.test_parent_absolute_alias_and_missing_paths_refused",
+            "hia.tests.test_composition.CompositionTests.test_recursive_include_refused",
+            "hia.tests.test_composition.CompositionTests.test_source_roots_do_not_admit_other_directories_or_types",
+            "hia.tests.test_composition.CompositionTests.test_symlink_dependency_refused_even_for_identical_bytes",
+            "hia.tests.test_composition.CompositionTests.test_unknown_duplicate_and_colliding_functions_refused",
+            "hia.tests.test_consensus_work.ConsensusWork.test_actual_original_consensus_module",
+            "hia.tests.test_consensus_work.ConsensusWork.test_complete_512_bit_arithmetic_and_conversion",
+            "hia.tests.test_consensus_work.ConsensusWork.test_frame_refusal_has_no_effects",
+            "hia.tests.test_consensus_work.ConsensusWork.test_output_commit_and_scratch_boundaries",
+            "hia.tests.test_consensus_work.ConsensusWork.test_retained_independent_integer_vectors",
+            "hia.tests.test_consensus_work.ConsensusWork.test_retarget_parent_window_and_time_policy",
+            "hia.tests.test_crypto.CryptoNativeTests.test_actual_unaligned_buffers_and_oversized_input_refusal",
+            "hia.tests.test_crypto.CryptoNativeTests.test_pon_domains_parts_and_exact_framing_against_original_oracle",
+            "hia.tests.test_crypto.CryptoNativeTests.test_pon_full_declared_boundaries",
+            "hia.tests.test_crypto.CryptoNativeTests.test_pon_length_prefixes_disambiguate_parts",
+            "hia.tests.test_crypto.CryptoNativeTests.test_pon_malformed_descriptor_preserves_entire_outputs",
+            "hia.tests.test_crypto.CryptoNativeTests.test_sha256_capacity_rejection_is_transactional",
+            "hia.tests.test_crypto.CryptoNativeTests.test_sha256_multiblock_and_one_mib_boundary",
+            "hia.tests.test_crypto.CryptoNativeTests.test_single_arena_refuses_overlap_and_short_capacity_before_writes",
+            "hia.tests.test_crypto.CryptoNativeTests.test_single_arena_sha_preserves_input_gap_and_guard_tail",
+            "hia.tests.test_crypto.CryptoNativeTests.test_standard_and_complete_short_length_sha256_vectors",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_distinct_native_backend_matches_selected_strict_cases",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_error_precedence_and_capacity_are_explicit",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_field_full_carry_and_deterministic_random_arithmetic",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_field_inverse_and_noncanonical_inputs",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_group_addition_and_all_scalar_bits",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_nonweak_mixed_order_signature_preserves_original_contract",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_original_rust_crate_differential_and_original_signing",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_point_roundtrip_off_curve_canonical_and_torsion",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_published_known_answers_and_independent_signatures",
+            "hia.tests.test_ed25519.Ed25519NativeTests.test_weak_noncanonical_malleable_and_corrupted_signatures",
+            "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_exact_sources_and_native_backend",
+            "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_nonzero_torsion_residuals_fail_without_cofactor_shortcut",
+            "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_same_arena_reuse_across_modules_lengths_and_early_rejection",
+            "hia.tests.test_ed25519_adversarial.Ed25519AdversarialNativeTests.test_true_unaligned_pointers_for_field_points_and_strict_verify",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_compiler_binding_rejects_wrong_tool_bytes_paths_versions_and_cargo_commands",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_composition_uses_exact_owned_function_bytes_without_reexport_or_implicit_repair",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_failed_unsettled_missing_reordered_or_repeated_original_stages_are_refused",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_foreign_or_failed_download_is_refused_before_unpack_or_source_execution",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_independent_capture_refuses_changed_source_and_existing_destination",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_named_test_output_must_show_actual_nonignored_exact_execution",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_original_hook_requires_exact_unmodified_production_prefix_and_captured_fixtures",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_original_stage_rechecks_raw_bytes_and_independent_receipt",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_pack_preserves_failed_original_raw_binary_and_metadata_without_false_qualification",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_predecessor_requires_complete_same_source_run_attempt_and_finite_scope",
+            "hia.tests.test_execution_ci.ExecutionEvidenceBoundaries.test_private_journal_requires_complete_immutable_calls_and_explicit_counter_fixture",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_all_reported_library_outputs_contribute_without_assuming_debug_deps",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_build_script_and_binary_outputs_do_not_add_dependency_directories",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_cargo_failure_or_ambiguous_output_never_invokes_rustc",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_compile_command_uses_reported_directories_and_preserves_logs_and_budgets",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_malformed_library_metadata_is_refused",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_missing_failed_or_repeated_build_completion_is_refused",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_missing_required_library_or_rlib_is_refused",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_multiple_rlibs_or_duplicate_filenames_are_refused",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_outside_relative_and_parent_traversal_library_paths_are_refused",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_profile_root_rlib_does_not_hide_transitive_deps_directory",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_repeated_dependency_names_for_distinct_versions_are_not_extern_ambiguity",
+            "hia.tests.test_executor_original_linking.CargoLibraryDiscovery.test_repeated_required_target_is_refused_even_when_filename_matches",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_adaptive_reasons_mixed_keys_and_exact_float_boundaries",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_adaptive_sampling_includes_both_endpoints_and_2048_sample",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_deep_wide_group_span_and_maximum_adaptive_batch_floor",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_empty_payload_identity_ties_and_object_domain_edges",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_exhaustive_four_transaction_access_graphs",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_explicit_reader_regression_and_seven_strategies",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_hot_bucket_full_fanout_sparse_ties_and_unsigned_rotation",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_random_full_strategy_configs_and_duplicate_references",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_raw_unaligned_reused_arena_and_beyond_runner_megabyte",
+            "hia.tests.test_executor_schedule.ExecutorScheduleNativeTests.test_wire_config_and_version_refusals_keep_output_atomic",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_aliased_receipts_and_duplicate_json_fields_are_refused",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_archive_member_sizes_require_actual_integers_before_extraction",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_failed_transfer_keeps_actual_downloaded_archive_and_metadata",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_json_counts_and_lineage_reject_numeric_type_substitution",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_json_nonfinite_constants_and_numeric_overflow_are_refused",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_missing_extra_and_changed_regular_bytes_are_refused",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_nested_json_identity_keeps_boolean_integer_and_float_distinct",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_optimized_public_cli_fails_before_transfer",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_pack_retains_real_fifo_and_link_metadata_without_opening_or_restoring_them",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_previous_source_run_attempt_and_incomplete_results_are_refused",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_traversal_duplicate_and_unexpected_roots_are_refused_before_extraction",
+            "hia.tests.test_foundation_ci.FoundationTransfer.test_untracked_or_mutated_source_cannot_claim_committed_identity",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_cli_optimization_and_failed_binding_preserve_failure",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_complete_archive_roster_and_metadata_are_required",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_complete_before_after_and_actual_git_blob_identity",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_native_complete_counts_scope_and_cleanup_cannot_be_forged",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_original_requires_actual_complete_tests_sources_and_settled_stages",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_parent_requires_same_head_run_attempt_and_finite_complete_proof",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_real_process_streams_and_transfer_origin_are_checked",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_shallow_head_still_verifies_every_current_tracked_byte",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_special_files_are_metadata_only_and_failure_download_is_preserved",
+            "hia.tests.test_genesis_ci.GenesisEvidenceGates.test_xz_truncation_concatenation_and_expansion_are_rejected",
+            "hia.tests.test_host_checkpoint.HostEvidenceTests.test_absolute_cli_works_from_independent_directory",
+            "hia.tests.test_host_checkpoint.HostEvidenceTests.test_complete_original_sources_are_bound_and_tamper_is_rejected",
+            "hia.tests.test_host_checkpoint.HostEvidenceTests.test_optimized_python_is_rejected",
+            "hia.tests.test_host_checkpoint.HostEvidenceTests.test_synthetic_trace_parser_rejects_missing_boundaries",
+            "hia.tests.test_host_production.HostProductionControls.test_actual_already_exited_child_keeps_both_unread_pipes",
+            "hia.tests.test_host_production.HostProductionControls.test_actual_local_cli_refuses_before_outputs_or_provision",
+            "hia.tests.test_host_production.HostProductionControls.test_actual_partial_receipt_is_retained_on_eof",
+            "hia.tests.test_host_production.HostProductionControls.test_actual_unit_install_refuses_existing_or_dangling_targets_unchanged",
+            "hia.tests.test_host_production.HostProductionControls.test_context_refuses_self_hosted_root_and_missing_identity",
+            "hia.tests.test_host_production.HostProductionControls.test_escaped_payload_and_known_path_payload_remain_byte_exact",
+            "hia.tests.test_host_production.HostProductionControls.test_optimized_cli_cannot_admit_privileged_qualification",
+            "hia.tests.test_host_production.HostProductionControls.test_original_failed_production_trace_is_replayed_without_rewriting_status",
+            "hia.tests.test_host_production.HostProductionControls.test_owned_service_keeps_fixed_slice_and_drops_capabilities",
+            "hia.tests.test_host_production.HostProductionControls.test_production_trace_mapping_cannot_accept_other_parent_or_process_leader",
+            "hia.tests.test_host_production.HostProductionControls.test_real_failure_log_tail_is_bounded_and_workflow_text_is_escaped",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_archive_cannot_rebind_modified_or_added_evidence",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_archive_reopen_refuses_changed_missing_duplicate_and_trailing_payloads",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_failed_run_preserves_complete_binary_isolated_source_and_special_metadata",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_pack_refuses_aliased_evidence_root",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_pack_refuses_cross_run_binding",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_pack_rejects_nonpassing_same_run_binding_and_retains_manifest",
+            "hia.tests.test_mempool_ci.MempoolCIPackageTests.test_unknown_source_observation_refuses_before_component_reader",
+            "hia.tests.test_mempool_ci.MempoolCIWitnessTests.test_exact_twelve_witness_transitions_bind_to_complete_baseline",
+            "hia.tests.test_mempool_ci.MempoolCIWitnessTests.test_witness_binding_rejects_self_consistent_summary_or_overlay_drift",
+            "hia.tests.test_mempool_ci.MempoolPreflightBoundaryTests.test_public_readback_rejects_audit_mode_without_opening_evidence",
+            "hia.tests.test_mempool_ci.MempoolPreflightBoundaryTests.test_real_detached_checkout_requires_explicit_audit_and_keeps_project_boundaries",
+            "hia.tests.test_mempool_owner.MempoolOwner.test_actual_complete_original_rust_gate_for_every_public_sequence",
+            "hia.tests.test_mempool_owner.MempoolOwner.test_exhaustive_short_histories_zero_and_max_ids",
+            "hia.tests.test_mempool_owner.MempoolOwner.test_invalid_requests_do_not_publish_or_mutate_owner",
+            "hia.tests.test_mempool_owner.MempoolOwner.test_malformed_private_shape_is_refused_without_repair",
+            "hia.tests.test_mempool_owner.MempoolOwner.test_real_allocator_failure_is_atomic_and_close_does_not_allocate",
+            "hia.tests.test_mempool_owner.MempoolOwner.test_stateful_public_sequences_and_wraparound",
+            "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_actual_original_lane_modules",
+            "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_actual_original_qos_snapshot_after_real_admissions",
+            "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_composite_projection_one_call_and_canaries",
+            "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_malformed_frames_do_not_publish_an_output",
+            "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_native_full_u64_and_reserve_boundaries",
+            "hia.tests.test_mempool_quota.NativeMempoolQuotaTests.test_original_pop_lane_choice_after_actual_ingress",
+            "hia.tests.test_migration_inventory.CompleteSourceInventory.test_duplicate_source_or_identity_cannot_hide_ownership",
+            "hia.tests.test_migration_inventory.CompleteSourceInventory.test_finite_foundation_cannot_claim_node_integration_or_retirement",
+            "hia.tests.test_migration_inventory.CompleteSourceInventory.test_kernels_runtime_and_native_callers_are_all_accounted_for",
+            "hia.tests.test_migration_inventory.CompleteSourceInventory.test_missing_aliased_or_escaping_inputs_are_refused",
+            "hia.tests.test_migration_inventory.CompleteSourceInventory.test_unlisted_source_in_any_hia_subdirectory_is_refused",
+            "hia.tests.test_node_delta_cli.NodeDeltaEntrypoints.test_native_qualification_help",
+            "hia.tests.test_node_delta_cli.NodeDeltaEntrypoints.test_original_reference_help",
+            "hia.tests.test_node_settings.CompactStateRootContracts.test_complete_grammar_collision_limits_and_capacity",
+            "hia.tests.test_node_settings.CompactStateRootContracts.test_empty_absence_order_and_non_seven_row_counts",
+            "hia.tests.test_node_settings.NativeDefaultSettings.test_all_original_fixed_sources_are_exact",
+            "hia.tests.test_node_settings.NativeDefaultSettings.test_complete_default_and_same_timestamp_override_differ",
+            "hia.tests.test_node_settings.NativeDefaultSettings.test_descriptor_and_capacity_refusals_write_nothing",
+            "hia.tests.test_node_settings.NativeDefaultSettings.test_integer_decimal_boundaries_and_i64_maximum",
+            "hia.tests.test_node_settings.NativeDefaultSettings.test_original_genesis_time_refusals_restore_output",
+            "hia.tests.test_node_settings_memory.SettingsPrivateMemory.test_unaligned_repeated_success_error_and_capacity_in_one_arena",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_actual_executable_command_and_profile_are_not_replaceable",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_actual_recorded_fault_and_both_platform_baselines",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_all_actual_raw_streams_are_bound",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_build_script_artifact_is_distinct_from_real_test_library",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_coherent_auxv_metadata_cannot_hide_another_write",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_complete_clock_and_injection_receipts_are_required",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_count_uses_complete_actual_events_without_a_scheduling_constant",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_failure_or_unreaped_capture_cannot_borrow_valid_observation",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_full_compiler_version_and_explicit_tools_are_required",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_independent_binary_is_read_only_single_link_and_actual_test_artifact",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_settled_process_and_raw_outputs_cannot_drift_after_success",
+            "hia.tests.test_paid_cpu_ci.PaidCpuCiAdmission.test_task_calls_cannot_cross_actual_birth_and_terminal_boundaries",
+            "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_owned_cleanup_esrch_retains_exit_raw_and_receipt",
+            "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_owned_cleanup_permission_error_is_not_swallowed",
+            "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_run_native_esrch_retains_timeout_exit_raw_and_receipt",
+            "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_run_native_permission_error_is_not_swallowed",
+            "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_trace_esrch_retains_timeout_exit_raw_and_receipt",
+            "hia.tests.test_platform_cleanup.PlatformCleanupTests.test_trace_permission_error_is_not_swallowed",
+            "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_child_eperm_propagates_and_records_failure",
+            "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_child_esrch_preserves_reaped_output_and_cleanup_receipt",
+            "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_trace_eperm_propagates",
+            "hia.tests.test_platform_reactor_cleanup.ReactorCleanupTests.test_trace_esrch_preserves_actual_exit_timeout_and_raw_receipt",
+            "hia.tests.test_platform_reactor_contracts.ReactorPolicyContractTests.test_native_policy_contracts",
+            "hia.tests.test_pnx1.Pnx1RustDifferentialTests.test_original_decode_encode_and_error_order",
+            "hia.tests.test_pnx1.Pnx1Tests.test_all_current_tags_and_outer_error_precedence",
+            "hia.tests.test_pnx1.Pnx1Tests.test_allocation_exact_order_count_and_first_differing_key_byte",
+            "hia.tests.test_pnx1.Pnx1Tests.test_both_shared_factor_grammars_and_scratch_extent",
+            "hia.tests.test_pnx1.Pnx1Tests.test_fixed_payloads_are_opaque_at_this_decoder",
+            "hia.tests.test_pnx1.Pnx1Tests.test_funded_contract_all_commitments_and_u64_boundaries",
+            "hia.tests.test_pnx1.Pnx1Tests.test_funded_decision_verdict_and_zero_output",
+            "hia.tests.test_pnx1.Pnx1Tests.test_proof_list_and_nested_opaque_envelope_extents",
+            "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_empty_evolution_ignores_live_and_poisoned_scratch_suffixes",
+            "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_funded_deadline_carries_and_only_provider_arbitrator_inequality",
+            "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_inner_refusals_precede_nonce_fee_and_outer_limits_precede_all",
+            "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_opaque_payload_identity_signature_and_legacy_length_dispatch",
+            "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_scratch_extent_error_is_local_and_outer_failures_do_not_write",
+            "hia.tests.test_pnx1_adversarial.Pnx1AdversarialTests.test_stale_scratch_cannot_complete_a_truncated_factor_payload",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_all_canonical_graphs_and_masks",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_deferred_canonicality_preserves_decoder_error_priority",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_original_independent_model_vectors",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_shape_version_order_and_rank_budget",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_evolution_truncation_and_coefficient_boundaries",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_factor_all_ranks_slots_and_truncations",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_factor_complete_coefficient_positions_and_shape_errors",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_factor_error_precedence",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_growth_header_strict_outer_and_nested_header",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_hash_lowercase_alphabet_and_all_positions",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_id_complete_byte_alphabet_and_extent_boundaries",
+            "hia.tests.test_protocol.ProtocolNativeTests.test_pnh1_matches_retained_independent_header_oracle",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_actual_original_rust_raw_bindings_entire_method_bodies",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_complete_binding_histories_exact_bytes_and_capacity",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_dirty_initial_arena_and_zero_capacity_maximum_stride",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_every_digest_and_body_byte_affects_exact_binding",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_exhaustive_short_histories_including_consumed_mismatch",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_frame_capacity_lifetime_refusals_are_unchanged",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_invalid_private_shape_refuses_without_mutation",
+            "hia.tests.test_raw_bindings_owner.RawBindingsOwner.test_private_body_bound_preserves_original_duplicate_and_full_priority",
+            "hia.tests.test_replay.ReplayNativeTests.test_ack_requires_the_complete_pending_frame",
+            "hia.tests.test_replay.ReplayNativeTests.test_all_session_components_are_compared",
+            "hia.tests.test_replay.ReplayNativeTests.test_complete_check_proposal_recovery_ack_sequence",
+            "hia.tests.test_replay.ReplayNativeTests.test_deterministic_cross_compiler_state_matrix",
+            "hia.tests.test_replay.ReplayNativeTests.test_digest_and_payload_bounds",
+            "hia.tests.test_replay.ReplayNativeTests.test_native_output_can_be_recovered_in_a_new_process",
+            "hia.tests.test_replay.ReplayNativeTests.test_pending_replay_identity_and_error_priority",
+            "hia.tests.test_replay.ReplayNativeTests.test_prior_comparison_is_a_fact_and_checks_all_state_bytes",
+            "hia.tests.test_replay.ReplayNativeTests.test_recovery_rejects_noncanonical_or_inconsistent_state",
+            "hia.tests.test_replay.ReplayNativeTests.test_recovery_round_trip_and_no_pending_maximum_nonce",
+            "hia.tests.test_replay.ReplayNativeTests.test_unsigned_nonce_limits_stale_and_gap",
+            "hia.tests.test_replay.ReplayNativeTests.test_wire_header_lengths_and_no_failure_writes",
+            "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_closed_round_scores_authority_and_arrival_order",
+            "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_closed_round_strings_maps_and_full_width_random_scores",
+            "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_all_identity_components_and_failure_precedence",
+            "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_full_width_deterministic_state_matrix",
+            "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_recovery_nonce_pending_and_ack_boundaries",
+            "hia.tests.test_rust_differential.OriginalRustDifferentialTests.test_original_replay_successors_recover_across_new_processes",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_actual_event_path_is_selected_without_directory_scan",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_bin_non_test_missing_executable_and_path_escape_are_refused",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_corpus_retains_full_unsigned_time_values_and_none",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_duplicate_json_fields_and_non_json_text_are_refused",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_identical_duplicate_and_conflicting_artifacts_are_refused",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_missing_or_incomplete_cargo_build_is_refused",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_original_source_drift_and_symlink_are_refused",
+            "hia.tests.test_settings_original_gate.SettingsOriginalGateControls.test_wrong_library_source_identity_is_refused",
+            "hia.tests.test_sha512.Sha512NativeTests.test_backend_is_the_pinned_native_compiler",
+            "hia.tests.test_sha512.Sha512NativeTests.test_bit_patterns_and_seeded_binary_messages",
+            "hia.tests.test_sha512.Sha512NativeTests.test_capacity_refusals_preserve_all_caller_bytes",
+            "hia.tests.test_sha512.Sha512NativeTests.test_every_byte_length_zero_through_259",
+            "hia.tests.test_sha512.Sha512NativeTests.test_large_message_and_maximum_input_boundary",
+            "hia.tests.test_sha512.Sha512NativeTests.test_minimum_capacity_and_preexisting_arena_bytes",
+            "hia.tests.test_sha512.Sha512NativeTests.test_padding_and_block_boundaries",
+            "hia.tests.test_sha512.Sha512NativeTests.test_real_unaligned_pointers_preserve_every_guard",
+            "hia.tests.test_sha512.Sha512NativeTests.test_standard_empty_and_abc_digests",
+            "hia.tests.test_state_root.StateRootContracts.test_actual_key_and_value_bytes_are_hashed",
+            "hia.tests.test_state_root.StateRootContracts.test_arbitrary_binary_keys_and_value_extent_boundaries",
+            "hia.tests.test_state_root.StateRootContracts.test_capacity_refusals_write_nothing",
+            "hia.tests.test_state_root.StateRootContracts.test_duplicate_paths_are_not_collapsed_or_accepted",
+            "hia.tests.test_state_root.StateRootContracts.test_empty_single_and_absence_are_distinct",
+            "hia.tests.test_state_root.StateRootContracts.test_entry_order_does_not_change_the_root",
+            "hia.tests.test_state_root.StateRootContracts.test_every_truncation_and_trailing_byte_preserves_outputs",
+            "hia.tests.test_state_root.StateRootContracts.test_limit_and_descriptor_error_precedence",
+            "hia.tests.test_state_root.StateRootContracts.test_original_rust_protocol_relation",
+            "hia.tests.test_state_root.StateRootContracts.test_random_sparse_paths_and_unbalanced_heap_lengths",
+            "hia.tests.test_state_root.StateRootContracts.test_separately_selected_direct_machine_backend",
+            "hia.tests.test_state_string.StateStringTests.test_native_model_and_bounds",
+            "hia.tests.test_state_string.StateStringTests.test_original_serde_and_m06_differential",
+            "hia.tests.test_state_value.StateValueTests.test_native_model_and_bounds",
+            "hia.tests.test_state_value.StateValueTests.test_original_value_and_m06_differential",
+            "hia.tests.test_storage_native.StorageCliTests.test_absolute_scripts_start_without_import_environment",
+            "hia.tests.test_storage_native.StorageCliTests.test_optimized_python_cannot_silently_disable_storage_oracles",
+            "hia.tests.test_storage_native.StorageNativeTests.test_native_exact_addressing_and_sequence_contracts",
+            "hia.tests.test_storage_native.StorageNativeTests.test_native_policy_rejects_all_bad_buffer_shapes_before_effects",
+            "hia.tests.test_storage_native.StorageNativeTests.test_native_required_file_open_commands_are_nonblocking",
+            "hia.tests.test_storage_native.StorageNativeTests.test_native_storage_sha_framing_against_hashlib_and_canaries",
+            "hia.tests.test_storage_recovery.StorageRecoveryCliTests.test_absolute_cli_is_independent_of_import_environment",
+            "hia.tests.test_storage_recovery.StorageRecoveryCliTests.test_optimized_python_cannot_disable_physical_recovery_oracles",
+            "hia.tests.test_verifier.CompleteVerifierTests.test_abi_extent_refusals_leave_all_bytes_unchanged",
+            "hia.tests.test_verifier.CompleteVerifierTests.test_complete_relation_and_product",
+            "hia.tests.test_verifier.CompleteVerifierTests.test_dense_relation_with_nonzero_scratch_and_late_product_refusal",
+            "hia.tests.test_verifier.CompleteVerifierTests.test_original_error_order_and_late_refusals",
+            "hia.tests.test_verifier.CompleteVerifierTests.test_target_uses_first_differing_big_endian_byte",
+            "hia.tests.test_work.EncodingTests.test_all_three_matrices_and_noncanonical_values",
+            "hia.tests.test_work.EncodingTests.test_length_magic_and_field_order",
+            "hia.tests.test_work.FieldTests.test_multiply_add_and_denoise",
+            "hia.tests.test_work.FieldTests.test_u64_reduction_boundaries_and_random",
+            "hia.tests.test_work.MatrixTests.test_exact_modular_products",
+            "hia.tests.test_work.MatrixTests.test_rejections_never_modify_outputs",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_archive_rejects_roster_metadata_and_content_mutants",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_archive_rejects_truncated_concatenated_or_hidden_stream",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_cannot_omit_new_full_raw_or_clock_artifacts",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_rejects_wrong_head_attempt_and_boolean_counts",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_requires_full_binary_and_source_closure",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_canonical_paths_and_identity_types",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_patch_exact_stream_bytes_and_empty_patch",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_patch_rejects_replacement_paths_types_and_duplicate_members",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_raw_roster_and_types_reject_before_opening_files",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_complete_archive_positive_and_independent_extraction",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_duplicate_and_nonfinite_json_are_rejected",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_failed_binding_still_retains_actual_full_bytes_without_qualification",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_actual_json_types_do_not_use_python_number_equality",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_named_test_does_not_count_ignored_or_other_test",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_pre_worker_shape_is_distinct_from_worker_results",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_primitive_complete_raw_summary_has_exact_integer_types",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_regular_reader_rejects_symlink_and_archive_preexisting_destination",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_scope_and_complete_retained_roster_cannot_expand",
+            "hia.tests.test_work_owner_ci.EvidenceAdmission.test_unbound_pack_never_claims_a_CI_pass",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_complete_source_and_reader_maps_are_not_digest_only",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_failure_pack_preserves_available_bytes_without_creating_success_binding",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_final_scope_and_receipt_types_cannot_be_coerced",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_full_raw_arena_and_original_binary_are_required_after_coherent_reindex",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_mutated_final_member_cannot_hide_behind_intact_prior_archive",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_original_binary_or_whole_archive_cannot_be_omitted_after_transfer",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_original_cannot_consume_another_native_predecessor",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_package_binding_and_complete_archive_identity_are_independently_checked",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_phase_counts_are_exact_and_cannot_hide_skips_or_changed_run",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_action_cannot_silently_ignore_qualification_requirement",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_cli_requires_actual_upstream_success_before_any_unpack",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_qualified_readback_rejects_not_bound_development_package",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_real_archive_roundtrip_is_a_transport_not_final_qualification",
+            "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_whole_two_archive_chain_replays_both_actual_transport_members"
+          ],
+          "source_set_sha256": "9aeaf7b379b8449460af3ae161777f4d619993f145eda78eb273f58e066d1ce0",
+          "source_tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0",
+          "status": "PASS",
+          "tests": 376
+        },
+        "state-root": {
+          "files": {
+            "hia-bootstrap/bootstrap.json": {
+              "bytes": 110394,
+              "sha256": "957ed294b318ecf1b7d26afe14fd27bf80e1698909ae380660146fc54eefa805"
+            },
+            "hia-observations/qualification.json": {
+              "bytes": 143721,
+              "sha256": "6cfc226c16fe93136b7440f279eb9e532da654ff6f904b923b4ad5a861b12e66"
+            },
+            "hia-observations/qualification.log": {
+              "bytes": 4970,
+              "sha256": "6f8b70ee30d91cf624c5b758719f4f91ef6889f80d17eb02d4a494efb92c4d1a"
+            },
+            "hia-observations/source-after.json": {
+              "bytes": 423,
+              "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+            },
+            "hia-observations/source.json": {
+              "bytes": 423,
+              "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+            },
+            "original-rust-build.jsonl": {
+              "bytes": 81966,
+              "sha256": "246d67e3755596c0012b97c285149ddb58ca914c3ebccbd3896b7ee3e1919117"
+            }
+          },
+          "group": "state-root",
+          "original_oracles": {
+            "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+              "executable_sha256": "305d55b39b5ec1511e9ffc6915b0e16b363db61fd68814bb9ab467096f5bd7f1"
+            },
+            "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+              "executable_sha256": "8734701793a5139c2405d93c37ea0b6d7d9e4642d4b7311cc4896021305c7480"
+            },
+            "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+              "executable_sha256": "d094b9adebafddae2362f1290b5add3ecfa2d03b65c1d740401ad560f7f40a04"
+            },
+            "TRNM_HIA_RUST_REFERENCE": {
+              "executable_sha256": "a13ddf1ea386e4653677dd7721148747a83f5b181735b384924b0901a02f7588"
+            },
+            "TRNM_HIA_RUST_STATE_REFERENCE": {
+              "executable_sha256": "bc61a2ad0c95b869e2a414c1bf6d5240b2229b7bf8f57d0eb6d923e5fad3e282"
+            }
+          },
+          "selected_tests": [
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_00_full_65536_rows_and_one_byte_short_reuse",
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_actual_unaligned_residues_and_absent_is_not_empty",
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_exact_native_source_and_backend",
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_full_grammar_pass_limits_and_error_precedence_before_writes",
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_insertion_orders_heap_boundaries_and_stale_arena",
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_repeated_key_hash_collisions_never_publish_a_partial_root",
+            "hia.tests.test_state_root_adversarial.StateRootAdversarialNativeTests.test_transcript_padding_maximum_key_and_value_are_real_bytes"
+          ],
+          "source_set_sha256": "9aeaf7b379b8449460af3ae161777f4d619993f145eda78eb273f58e066d1ce0",
+          "source_tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0",
+          "status": "PASS",
+          "tests": 7
+        }
+      },
+      "production_activation": false,
+      "rust_build_event_chain_revalidated": false,
+      "schema": "trnm.hia.component-ci-readback.v1",
+      "source_set_sha256": "9aeaf7b379b8449460af3ae161777f4d619993f145eda78eb273f58e066d1ce0",
+      "source_tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0",
+      "status": "PASS",
+      "tests": 383,
+      "whole_chain_native": false
+    },
+    "hosted_consumer_full_report_exact_match": true,
+    "independent_test_runtime_reexecuted": false,
+    "pr_native_failed_log": {
+      "bytes": 54354,
+      "sha256": "33fe0ce0da4375969e63f9353c694c921169cc74982dc998f99d607fa32ce7aa"
+    },
+    "producer_and_consumer_source": {
+      "head": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+      "tracked_bytes": 2987162724,
+      "tracked_entries": 40869,
+      "tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0"
+    },
+    "public_readback_elapsed_ns": 1374554029,
+    "repair_archive": {
+      "bytes": 52260,
+      "sha256": "6e72b590b16d108b048e5769d35b6c9f8ae7a5deee548eb3b94d1d22a3922a80"
+    },
+    "repair_complete_members": 81,
+    "rust_build_event_chain_revalidated": false,
+    "schema": "trnm.bd620.root-components-and-repair-readback.v1",
+    "status": "PASS",
+    "whole_project_gates_closed": false
+  },
+  "entries": {
+    "components/general/index.json": {
+      "bytes": 1638,
+      "mode": 384,
+      "sha256": "bb33280f385f1507996e34bd07a1a9e9ca7c86be71e2bb40fb2f454d13454023"
+    },
+    "components/general/original-artifact.zip": {
+      "bytes": 106874,
+      "mode": 384,
+      "sha256": "0eee0033f60cd56dd5a88f4630e923488aa0365c8a7d7f82cffd2dbe3c842132"
+    },
+    "components/readback/index.json": {
+      "bytes": 1140,
+      "mode": 384,
+      "sha256": "515e929550117bf30add13964e076a971bbe103ac26e3eef44c367637b9329b2"
+    },
+    "components/readback/original-artifact.zip": {
+      "bytes": 19859,
+      "mode": 384,
+      "sha256": "a37b32434124c3e03022d67a8dbd6612c2f64b831aeb16a6f9f6c93ee17ad50a"
+    },
+    "components/state-root/index.json": {
+      "bytes": 1636,
+      "mode": 384,
+      "sha256": "0977c0e0eb0f0a6d5021ec86c03870c1ccfaf2b8f9250606e5d91ef44b7aad8b"
+    },
+    "components/state-root/original-artifact.zip": {
+      "bytes": 64629,
+      "mode": 384,
+      "sha256": "5cf92140bed078dae3740d56cfe925a48df13f8a02199c143fc7e84b49a8fcd1"
+    },
+    "diagnosis/candidate-workflow.yml": {
+      "bytes": 297599,
+      "mode": 384,
+      "sha256": "4b001c8cf1e35a49b8a47c1c2a41a814b61a22f2b72e0ef21c29c44fcbade591"
+    },
+    "diagnosis/diagnosis.json": {
+      "bytes": 3886,
+      "mode": 384,
+      "sha256": "3f176791d8292fa92e7b01c2cfad4ce12676a726800dafae53848c98173e701a"
+    },
+    "diagnosis/diagnostics-index.json": {
+      "bytes": 2299,
+      "mode": 384,
+      "sha256": "a8d93d345491ac7d74171bddf4399cfaf94824ff38178b088c5e63a818db0745"
+    },
+    "diagnosis/diagnostics-original.zip": {
+      "bytes": 31664,
+      "mode": 384,
+      "sha256": "0752f4b9d0b285ecec44ac013d70ebfceb6f7aa65f22cb77727ee00333fcd74a"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-final-source.json": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/execution.log": {
+      "bytes": 1222,
+      "mode": 384,
+      "sha256": "0c185f41590446f45d1f87f344ecad24b74962b3dd5af2818c30ec7b9d284991"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/packaging.log": {
+      "bytes": 1348,
+      "mode": 384,
+      "sha256": "830dee39df7d714349102e5561e3c96d5ea7331ea7a5d0b40b69dfc8e620fd8c"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-after.json": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-after.log": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-before.json": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-before.log": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-controls/report.json": {
+      "bytes": 10604,
+      "mode": 384,
+      "sha256": "7712d75b8976b0b235d92a7d59f25c3d82465fa10287354988187e07bf3cafe3"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-controls/stderr.raw": {
+      "bytes": 12726,
+      "mode": 384,
+      "sha256": "74ad4808babf45fa146f49ef90ad4a4b857275f895f4c55c06da6963b85931b0"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/source-controls/stdout.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/diagnostics/hia-work-owner-native-observations/transfer-error.json": {
+      "bytes": 1453,
+      "mode": 384,
+      "sha256": "a290d74e41a005d9d472d7faab9cd378d02ad92df3b9ebc798cc4dcca2cf29c6"
+    },
+    "diagnosis/download_verified_artifact.py": {
+      "bytes": 2996,
+      "mode": 384,
+      "sha256": "5472fe53b02b959ab90f1f3ebf428dd17cfdbc2ef409c7378889069100f9671f"
+    },
+    "diagnosis/explicit-pinned/hia-work-owner-native-observations/source-controls/report.json": {
+      "bytes": 10594,
+      "mode": 384,
+      "sha256": "f845051909f93adefefeb8dd2f9895c959b5a5a217d76546707e8d07184116f3"
+    },
+    "diagnosis/explicit-pinned/hia-work-owner-native-observations/source-controls/stderr.raw": {
+      "bytes": 11621,
+      "mode": 384,
+      "sha256": "d7322faa9b2c5d934726d5022cf64c3c31bba85284e85ff24f557ff4db95c9ed"
+    },
+    "diagnosis/explicit-pinned/hia-work-owner-native-observations/source-controls/stdout.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/finalize_v1.py": {
+      "bytes": 6191,
+      "mode": 384,
+      "sha256": "8bb33d7bcbe972660c7ea5a85d80f5e149704fc10252fff6e046c444a48bc8d9"
+    },
+    "diagnosis/full-source-after.json": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/full-source-before.json": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/github-env": {
+      "bytes": 49,
+      "mode": 384,
+      "sha256": "9d5745a8f56260d1b3a5dcc162bb05e784c617828051c75a7eb412be78f74caf"
+    },
+    "diagnosis/github-path": {
+      "bytes": 69,
+      "mode": 384,
+      "sha256": "cc07b16fa2cfd415e2aea1e4dab328aa6594a4d971e288c8e518cc81b8ebc33e"
+    },
+    "diagnosis/original-handoff.json": {
+      "bytes": 684,
+      "mode": 384,
+      "sha256": "b90a2636c27bd1858447d8b1fadef00c83bb0e04f1772cbf438a31ef6d592bf5"
+    },
+    "diagnosis/prepare_and_run_v1.py": {
+      "bytes": 12921,
+      "mode": 384,
+      "sha256": "54676f0fc21d59c07ab83634636433ae5e8911b5dad1cb27e5bc776540248a1f"
+    },
+    "diagnosis/select-toolchain.sh": {
+      "bytes": 341,
+      "mode": 384,
+      "sha256": "4a4727b53f9fcb61bda1a13b6564d19ea1d80898ecc6bd4b8276fa8a5dce9047"
+    },
+    "diagnosis/source-after.json": {
+      "bytes": 22708,
+      "mode": 384,
+      "sha256": "06bf17a3f98f468ce31be55bd07dc0102c6ea71ed1c0ed9cc91818770d82f1bb"
+    },
+    "diagnosis/source-before.json": {
+      "bytes": 22708,
+      "mode": 384,
+      "sha256": "06bf17a3f98f468ce31be55bd07dc0102c6ea71ed1c0ed9cc91818770d82f1bb"
+    },
+    "diagnosis/upstream-attempt1-jobs.json": {
+      "bytes": 216915,
+      "mode": 384,
+      "sha256": "58408d1fa956ed92e540b319b3a921204278efc303e176d71db47e5eb6de47a0"
+    },
+    "diagnosis/upstream-diagnostic-api.json": {
+      "bytes": 851,
+      "mode": 384,
+      "sha256": "4efe7daafd30d21e431c9042acbad99247edc524d31f4823306b56ce13073512"
+    },
+    "diagnosis/upstream-job-steps.json": {
+      "bytes": 2364,
+      "mode": 384,
+      "sha256": "b5274d7499c1b45d2c35c5360b200ebbfe17f4b80f3eaa28a1d0e2f162fcf9f9"
+    },
+    "diagnosis/upstream-job133897989699.log": {
+      "bytes": 55551,
+      "mode": 384,
+      "sha256": "8be58605e82108f8c202c9282d2b427466adbfe5a3611b3c2486f4bdc68ce173"
+    },
+    "diagnosis/upstream-workflow.yml": {
+      "bytes": 296790,
+      "mode": 384,
+      "sha256": "7bb970bedc696e97cd7bb33c2ab896fe815a15bdecdd9b0d92f7a25894cabf18"
+    },
+    "diagnosis/verification-v1-pty-pages.json": {
+      "bytes": 5892,
+      "mode": 384,
+      "sha256": "dad1c64e466209f35d01c327f8321fc21d0378eb72e0050c9b950fa23657ee20"
+    },
+    "diagnosis/verification-v1-report.json": {
+      "bytes": 3080,
+      "mode": 384,
+      "sha256": "e23312f3719d439687e8755838e134cb982bc49a36ebe0746000c26d9ab31bf3"
+    },
+    "diagnosis/verification-v1-terminal.raw": {
+      "bytes": 921,
+      "mode": 384,
+      "sha256": "0a2f7f1ede516c0e3ebca82f08d39b7be4cdc955f7e63c9b5af5dbe282efa34a"
+    },
+    "diagnosis/verification-v1/actual-workflow-toolchain-selection/receipt.json": {
+      "bytes": 497,
+      "mode": 384,
+      "sha256": "cbc6d9ded8d9a288d0e486dceda70bcea998ca6532620a17cdabeec792b63166"
+    },
+    "diagnosis/verification-v1/actual-workflow-toolchain-selection/stderr.raw": {
+      "bytes": 290,
+      "mode": 384,
+      "sha256": "499b069a1437e6148bba171ae20cfc76c4260f157462b902d09d29206cd67c6c"
+    },
+    "diagnosis/verification-v1/actual-workflow-toolchain-selection/stdout.raw": {
+      "bytes": 84,
+      "mode": 384,
+      "sha256": "d52c04f0652ef6ed9f7e597b93675ee2ef337916417d5d42bc21acf5ed7a4947"
+    },
+    "diagnosis/verification-v1/explicit-pinned-public-controls/receipt.json": {
+      "bytes": 475,
+      "mode": 384,
+      "sha256": "1ca32ba0c417630b4477e56a9605772a89331805421d5031aa49268bf5a0ad51"
+    },
+    "diagnosis/verification-v1/explicit-pinned-public-controls/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/explicit-pinned-public-controls/stdout.raw": {
+      "bytes": 138,
+      "mode": 384,
+      "sha256": "4c8bd4cc88a7fd70ec94171901e43527841b4da40730032938ae45dabf928bc2"
+    },
+    "diagnosis/verification-v1/full-source-after/receipt.json": {
+      "bytes": 671,
+      "mode": 384,
+      "sha256": "e2f9899e96af18df9c510a43ae359db4f6048b0daa6415ea6a6e29cfe7e4c8bf"
+    },
+    "diagnosis/verification-v1/full-source-after/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/full-source-after/stdout.raw": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/verification-v1/full-source-before/receipt.json": {
+      "bytes": 673,
+      "mode": 384,
+      "sha256": "3030bda99dc3c8cd79a69c484a0decdff65caa53ee7d7aab32622ef3ad328460"
+    },
+    "diagnosis/verification-v1/full-source-before/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/full-source-before/stdout.raw": {
+      "bytes": 423,
+      "mode": 384,
+      "sha256": "b49c502228c3b4bcf200da852ac61d07e51ef9b93b452e9f3b25799078a0dc75"
+    },
+    "diagnosis/verification-v1/preflight/receipt.json": {
+      "bytes": 429,
+      "mode": 384,
+      "sha256": "72c79640da60c34e65158fe6eadb99ac120dfd6d68f60ba6c1360c2dd90d1db2"
+    },
+    "diagnosis/verification-v1/preflight/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/preflight/stdout.raw": {
+      "bytes": 173,
+      "mode": 384,
+      "sha256": "080eaab434f54474ae5082e812aa30208e09b85e76e9e8a2b5de266714d53fab"
+    },
+    "diagnosis/verification-v1/selected-direct-version/receipt.json": {
+      "bytes": 390,
+      "mode": 384,
+      "sha256": "be2a7fa6ee8329e3bb4789a65c8f43629a82d7fedc53c941e06a6e70229fa55b"
+    },
+    "diagnosis/verification-v1/selected-direct-version/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/selected-direct-version/stdout.raw": {
+      "bytes": 196,
+      "mode": 384,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    "diagnosis/verification-v1/selector-bash-syntax/receipt.json": {
+      "bytes": 500,
+      "mode": 384,
+      "sha256": "7470c416fb37cc4b7ad9c5d19e15cedc9d17eb137b295319799b74294840b0b1"
+    },
+    "diagnosis/verification-v1/selector-bash-syntax/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/selector-bash-syntax/stdout.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/wrong-default-public-controls/receipt.json": {
+      "bytes": 476,
+      "mode": 384,
+      "sha256": "a8436b56cdbd9130646b28dcf53a00593789d000f57658b5dfac34ed5cbfa3db"
+    },
+    "diagnosis/verification-v1/wrong-default-public-controls/stderr.raw": {
+      "bytes": 1197,
+      "mode": 384,
+      "sha256": "145912f30ebca2d07a446567ad5e4c2bbc9133f8a198ca78ca6030a20c8e5b9f"
+    },
+    "diagnosis/verification-v1/wrong-default-public-controls/stdout.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/wrong-direct-compiler-path/receipt.json": {
+      "bytes": 463,
+      "mode": 384,
+      "sha256": "75d1d3fb362ef25f31a5dbb2a73f626f324200c68558dad11169bd7d25c275a6"
+    },
+    "diagnosis/verification-v1/wrong-direct-compiler-path/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/wrong-direct-compiler-path/stdout.raw": {
+      "bytes": 75,
+      "mode": 384,
+      "sha256": "ce6124a253efb4c9359366236e4d9e7e791b5f0d21da1f2420261c2ad754d169"
+    },
+    "diagnosis/verification-v1/wrong-direct-version/receipt.json": {
+      "bytes": 391,
+      "mode": 384,
+      "sha256": "cfd3aa5de2290c0e00595ab1452164706b72dfc9cc26cf905d249e226b8188d0"
+    },
+    "diagnosis/verification-v1/wrong-direct-version/stderr.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/verification-v1/wrong-direct-version/stdout.raw": {
+      "bytes": 196,
+      "mode": 384,
+      "sha256": "f22d5e4e9ced367e774ce5bc140d9e6b1235c1882fec80d011044851f3ae6369"
+    },
+    "diagnosis/workflow-diff-check.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/workflow-diff-check.stdout": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnosis/workflow.patch": {
+      "bytes": 1886,
+      "mode": 384,
+      "sha256": "6ff84f2a08de11e50e8d6f332bda076a347a7023276a361b9ed87969cec33a6a"
+    },
+    "diagnosis/wrong-default/hia-work-owner-native-observations/source-controls/report.json": {
+      "bytes": 10594,
+      "mode": 384,
+      "sha256": "1b8e6317ba8bc3b859b523c87c47f5920c25a28dbe8671b87495f0fbef8a9448"
+    },
+    "diagnosis/wrong-default/hia-work-owner-native-observations/source-controls/stderr.raw": {
+      "bytes": 12711,
+      "mode": 384,
+      "sha256": "65a442e9e1aa5fc2c8dc720362a66e2384e2b62bb2b292a3c579e50467c07ca4"
+    },
+    "diagnosis/wrong-default/hia-work-owner-native-observations/source-controls/stdout.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pr-diagnosis/capture/index.json": {
+      "bytes": 2934,
+      "mode": 384,
+      "sha256": "1781c35752ce0cee67aa6a2e397e9451e66a1cf2bfc4809a1b9b65862daeb5d8"
+    },
+    "pr-diagnosis/capture/original-artifact.zip": {
+      "bytes": 31664,
+      "mode": 384,
+      "sha256": "f6080b9810afdaa7235b8516175d1681aa71eb1aa6f4dca02c89d8bf0d5a42a0"
+    },
+    "pr-diagnosis/report.json": {
+      "bytes": 1849,
+      "mode": 384,
+      "sha256": "b5fce24aba667ad8d9170dbefbc7d4c1f799b0f426282cd1bda6b8ef88d9d6ec"
+    },
+    "root/bd620-job-observation.json": {
+      "bytes": 475689,
+      "mode": 384,
+      "sha256": "570a291491dfe53363b485e0e9ffe36e1cd0aba1c80249e78be6860527b692b8"
+    },
+    "root/bd620-pr-native-work-owner-full.log": {
+      "bytes": 54354,
+      "mode": 384,
+      "sha256": "33fe0ce0da4375969e63f9353c694c921169cc74982dc998f99d607fa32ce7aa"
+    },
+    "root/components-independent-readback.json": {
+      "bytes": 93384,
+      "mode": 384,
+      "sha256": "5e91a5e7d0ebe3fa92fec0456e68e4e6f7d4ae860ee08a3ce97abce6e4dd9aeb"
+    },
+    "root/components-independent-readback.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/components-independent-readback.stdout": {
+      "bytes": 69,
+      "mode": 384,
+      "sha256": "c8257b938e0116511c7bed4d70ebd0e8c929deedb4fe24abeacd02f198d7b056"
+    },
+    "root/driver-observations.json": {
+      "bytes": 5182,
+      "mode": 384,
+      "sha256": "ffb26cba801316ce1f6f32f6639a736e1600cbd6e6ba3521e219bd36e143552d"
+    },
+    "root/install-report.json": {
+      "bytes": 2868,
+      "mode": 384,
+      "sha256": "4d02d0db4f92cf9144e143a72192760b85ccb6814a392310aeee0e9ab77ac46a"
+    },
+    "root/preflight-install.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/preflight-install.stdout": {
+      "bytes": 171,
+      "mode": 384,
+      "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+    },
+    "root/preflight-pack.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/preflight-pack.stdout": {
+      "bytes": 171,
+      "mode": 384,
+      "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+    },
+    "root/preflight-readback.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/preflight-readback.stdout": {
+      "bytes": 171,
+      "mode": 384,
+      "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+    },
+    "root/preflight.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/preflight.stdout": {
+      "bytes": 171,
+      "mode": 384,
+      "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+    },
+    "root/readback-driver-v1.py": {
+      "bytes": 416848,
+      "mode": 384,
+      "sha256": "692b8d6e961fa442d641f5322656ec46dfc0b9a89346dac71a5cf775a5acb207"
+    },
+    "root/root-readback-report.json": {
+      "bytes": 96010,
+      "mode": 384,
+      "sha256": "68bac2dce9645c1f8eed96361ba316c1e481bd1fc5b0e94ec2f57dc9ab1b38d3"
+    },
+    "root/selector.sh": {
+      "bytes": 340,
+      "mode": 384,
+      "sha256": "a4d109434554d77881b8db2b9cad30362b364c6356eff384d116f8503f9541e9"
+    },
+    "root/source-after-install.json": {
+      "bytes": 932221,
+      "mode": 384,
+      "sha256": "cc021b669a6994c3fefa616a0460a3fb17f4dbb47d7f079ff35f4dd6df5e3457"
+    },
+    "root/source-before.json": {
+      "bytes": 933172,
+      "mode": 384,
+      "sha256": "de2a2fc396fc3db2c966440dfe621c2c0627306488b73c5827ba568ae2e5a616"
+    },
+    "root/validation-v1/actual-native-controls/hia-work-owner-native-observations/source-controls/report.json": {
+      "bytes": 10594,
+      "mode": 384,
+      "sha256": "b5ba4994791c2d6cb9aeac6e17afcc0ea2e1a307191df297a79a8cc27ec5f7ef"
+    },
+    "root/validation-v1/actual-native-controls/hia-work-owner-native-observations/source-controls/stderr.raw": {
+      "bytes": 11621,
+      "mode": 384,
+      "sha256": "f391d825aa6618fb50428f76c8aca63e6287457457709d694b63ce0d81f05523"
+    },
+    "root/validation-v1/actual-native-controls/hia-work-owner-native-observations/source-controls/stdout.raw": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v1/preflight.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v1/preflight.stdout": {
+      "bytes": 171,
+      "mode": 384,
+      "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+    },
+    "root/validation-v1/public-native-controls.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v1/public-native-controls.stdout": {
+      "bytes": 138,
+      "mode": 384,
+      "sha256": "4c714735e9b69bf12b3181e20af9fbd7369f3359c2acf0ef02970eaaf55bb895"
+    },
+    "root/validation-v1/report.json": {
+      "bytes": 2776,
+      "mode": 384,
+      "sha256": "33810118f17b60ed032890824e9184a1617f165bc720ddf01bdb9d41ee1277c4"
+    },
+    "root/validation-v1/rustup-which.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v1/rustup-which.stdout": {
+      "bytes": 75,
+      "mode": 384,
+      "sha256": "243513c3ce04d68278e450b9406ac8d65ffc73da605e77a745965cff5ca1d1a0"
+    },
+    "root/validation-v1/selected-rustc.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v1/selected-rustc.stdout": {
+      "bytes": 196,
+      "mode": 384,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    "root/validation-v2/bootstrap-controls.stderr": {
+      "bytes": 721,
+      "mode": 384,
+      "sha256": "e77aabf0d99c742dc6b57c1549261db7dbd2dc74e2074052f5c7fd001138d806"
+    },
+    "root/validation-v2/bootstrap-controls.stdout": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v2/preflight.stderr": {
+      "bytes": 0,
+      "mode": 384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "root/validation-v2/preflight.stdout": {
+      "bytes": 171,
+      "mode": 384,
+      "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+    },
+    "root/validation-v2/report.json": {
+      "bytes": 12914,
+      "mode": 384,
+      "sha256": "04178e31f30ae27c0d7b10272b08cadea23acd0dad34a4d9d732216d88270f50"
+    }
+  },
+  "excluded_tool_generated_empty_lock_metadata": [
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-0e502d1578061a1c6225ca47",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-3ba2ca0441a1a15a5fcfe256",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-5523fe59c0da94e797fe4ef0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-692a3305f26a068d512696d4",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-81c6d6ef16c455ccad35aed3",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-9cfdb25f4d6701eca6044499",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-cfb0cc4d20956ef1196049dd",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-e26b53af0f3565a1e4b51749",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": ".hepta-lock-f57c8994ebddf60532e7812c",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "frozen_native_runtime_reexecuted": false,
+  "historical_original_diagnosis_archive": {
+    "bytes": 52260,
+    "sha256": "6e72b590b16d108b048e5769d35b6c9f8ae7a5deee548eb3b94d1d22a3922a80"
+  },
+  "installation": {
+    "after": {
+      ".github/workflows/hia-native-migration.yml": {
+        "bytes": 297599,
+        "sha256": "4b001c8cf1e35a49b8a47c1c2a41a814b61a22f2b72e0ef21c29c44fcbade591"
+      },
+      "config/pon/pq-cross-branch-corpus-v1.json": {
+        "bytes": 525351,
+        "sha256": "8e45621a2e334e2a3dc9bd539a5617b456ae4bdd0fa0f185fbc1dee4a351a75c"
+      },
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+        "bytes": 1278587,
+        "sha256": "27af19810f4cd345f6d47b355d97e38d2349427963494314f52e2156ee983d1f"
+      },
+      "hia/AUDIT.md": {
+        "bytes": 97526,
+        "sha256": "a5591c3fdc122f0f0b6aea0ed3409ffcb542c2665c9a24947e8bc3b673dbd763"
+      },
+      "hia/README.md": {
+        "bytes": 28853,
+        "sha256": "66a5109c063d3c86560e19a691845253db50189aff2df1d08d4dff7d3a99c435"
+      },
+      "hia/qualification/ARCHIVES.md": {
+        "bytes": 6508,
+        "sha256": "df92546395db23be781b8d6a3fba999164232565596d64ba7f59983695bc218e"
+      }
+    },
+    "all_job_deadlines_minutes": 20,
+    "before": {
+      ".github/workflows/hia-native-migration.yml": {
+        "bytes": 296790,
+        "sha256": "7bb970bedc696e97cd7bb33c2ab896fe815a15bdecdd9b0d92f7a25894cabf18"
+      },
+      "config/pon/pq-cross-branch-corpus-v1.json": {
+        "bytes": 525351,
+        "sha256": "a56988b8d31c7aa8323c050c4eb321eae855165301baf017f29b963de800d56f"
+      },
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+        "bytes": 1275871,
+        "sha256": "4415ad87ff53901d072bf828f6979aba8a306f0e1876a4f15be7a1a38236a3ba"
+      },
+      "hia/AUDIT.md": {
+        "bytes": 95745,
+        "sha256": "3e9cd83eddfe53691a0eeffc7d44abe3da158ca394fd682f73eb0f8bbb0cc88b"
+      },
+      "hia/README.md": {
+        "bytes": 28383,
+        "sha256": "d0145339b80425d4f890c9783417194befd186ce07c783925aee77dfc86cec82"
+      },
+      "hia/qualification/ARCHIVES.md": {
+        "bytes": 5880,
+        "sha256": "40af36c15c352b62415632d6c0e6e4d6bb78d1b10451df2ea3e0188b1ef76175"
+      }
+    },
+    "changed_jobs": [
+      "native-work-owner",
+      "native-work-owner-original"
+    ],
+    "ci_reader_sources": "106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca",
+    "fresh_hosted_result": "NOT_RUN",
+    "native_bootstraps": 36,
+    "native_runtime_reexecuted": false,
+    "native_sources": "ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c",
+    "original_source_changes": [
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "original_sources_after": "66d5d00b50a0bd9d924af3dd11e099729dade416a2e578d84bf9ec544ceca08c",
+    "original_sources_before": "5b0e74a9ded3e0c264f4ea7257c86f9aeda9897665d74ccae9d64df2cdc34cb4",
+    "parent": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+    "plan_pin_after": "5bd793d264296ac1fe1c0c57ac3ac2bfba44df2a",
+    "plan_pin_before": "37d94892a3cccd1201bbd90cec6f58c8cf200076",
+    "schema": "trnm.work-owner.toolchain-repair-install.v1",
+    "status": "PASS",
+    "workflow_jobs": 46
+  },
+  "local_controls": {
+    "actual_public_control_report": {
+      "argv": [
+        "/usr/bin/python3",
+        "-P",
+        "-B",
+        "-m",
+        "unittest",
+        "hia.tests.test_work_owner_ci",
+        "hia.tests.test_work_owner_transfer_ci",
+        "hia.platform.work_owner.test_integrity",
+        "hia.platform.work_owner.test_primitive_evidence",
+        "hia.platform.work_owner.test_clock_evidence",
+        "-v"
+      ],
+      "cwd": "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo",
+      "elapsed_ns": 22848228128,
+      "exit_code": 0,
+      "interpreter": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "module_search_roots": [
+        "/tmp/trnm-resource-prod-integrate-20261116-7r00baeh/repo"
+      ],
+      "reader_sources": {
+        "hia/tests/test_work_owner_ci.py": {
+          "bytes": 22429,
+          "sha256": "dd004ded017df7a41ce57151109e34d4d3f857750e7c51fb8318abd8665410f9"
+        },
+        "hia/tests/test_work_owner_transfer_ci.py": {
+          "bytes": 18873,
+          "sha256": "2b70f1b8c8771f2f87b6ebf65e65a12297af7c263783c45705e5d60bba114690"
+        },
+        "hia/tools/qualify_foundation_ci.py": {
+          "bytes": 27411,
+          "sha256": "4ce280ecc52f5810b157e368b9969e0074fcf1763bc46d5053e5127281dce78f"
+        },
+        "hia/tools/qualify_work_owner_ci.py": {
+          "bytes": 62190,
+          "sha256": "72dfe72935df2898df587de3202c08df40559517fc38426d3fd467de761a3c93"
+        },
+        "hia/tools/work_owner_clock_ci.py": {
+          "bytes": 20542,
+          "sha256": "dd2c972c6c94d032b6049ef3f7ea3d8ee826a7ae13095a8de6800c9ab11dfe4b"
+        },
+        "hia/tools/work_owner_transfer_ci.py": {
+          "bytes": 26595,
+          "sha256": "69c3d23acf35b85447c69fb98061bbcc591be89b0fbcc7c153ef566e8eb31b85"
+        }
+      },
+      "reader_sources_before": {
+        "hia/tests/test_work_owner_ci.py": {
+          "bytes": 22429,
+          "sha256": "dd004ded017df7a41ce57151109e34d4d3f857750e7c51fb8318abd8665410f9"
+        },
+        "hia/tests/test_work_owner_transfer_ci.py": {
+          "bytes": 18873,
+          "sha256": "2b70f1b8c8771f2f87b6ebf65e65a12297af7c263783c45705e5d60bba114690"
+        },
+        "hia/tools/qualify_foundation_ci.py": {
+          "bytes": 27411,
+          "sha256": "4ce280ecc52f5810b157e368b9969e0074fcf1763bc46d5053e5127281dce78f"
+        },
+        "hia/tools/qualify_work_owner_ci.py": {
+          "bytes": 62190,
+          "sha256": "72dfe72935df2898df587de3202c08df40559517fc38426d3fd467de761a3c93"
+        },
+        "hia/tools/work_owner_clock_ci.py": {
+          "bytes": 20542,
+          "sha256": "dd2c972c6c94d032b6049ef3f7ea3d8ee826a7ae13095a8de6800c9ab11dfe4b"
+        },
+        "hia/tools/work_owner_transfer_ci.py": {
+          "bytes": 26595,
+          "sha256": "69c3d23acf35b85447c69fb98061bbcc591be89b0fbcc7c153ef566e8eb31b85"
+        }
+      },
+      "schema": "trnm.hia.work-owner-ci-source-controls.v1",
+      "stderr": {
+        "bytes": 11621,
+        "sha256": "f391d825aa6618fb50428f76c8aca63e6287457457709d694b63ce0d81f05523"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests": [
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_archive_rejects_roster_metadata_and_content_mutants",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_archive_rejects_truncated_concatenated_or_hidden_stream",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_cannot_omit_new_full_raw_or_clock_artifacts",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_rejects_wrong_head_attempt_and_boolean_counts",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_binding_requires_full_binary_and_source_closure",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_canonical_paths_and_identity_types",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_patch_exact_stream_bytes_and_empty_patch",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_patch_rejects_replacement_paths_types_and_duplicate_members",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_clock_raw_roster_and_types_reject_before_opening_files",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_complete_archive_positive_and_independent_extraction",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_duplicate_and_nonfinite_json_are_rejected",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_failed_binding_still_retains_actual_full_bytes_without_qualification",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_actual_json_types_do_not_use_python_number_equality",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_named_test_does_not_count_ignored_or_other_test",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_original_pre_worker_shape_is_distinct_from_worker_results",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_primitive_complete_raw_summary_has_exact_integer_types",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_regular_reader_rejects_symlink_and_archive_preexisting_destination",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_scope_and_complete_retained_roster_cannot_expand",
+        "hia.tests.test_work_owner_ci.EvidenceAdmission.test_unbound_pack_never_claims_a_CI_pass",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_complete_source_and_reader_maps_are_not_digest_only",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_failure_pack_preserves_available_bytes_without_creating_success_binding",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_final_scope_and_receipt_types_cannot_be_coerced",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_full_raw_arena_and_original_binary_are_required_after_coherent_reindex",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_mutated_final_member_cannot_hide_behind_intact_prior_archive",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_original_binary_or_whole_archive_cannot_be_omitted_after_transfer",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_original_cannot_consume_another_native_predecessor",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_package_binding_and_complete_archive_identity_are_independently_checked",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_phase_counts_are_exact_and_cannot_hide_skips_or_changed_run",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_action_cannot_silently_ignore_qualification_requirement",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_cli_requires_actual_upstream_success_before_any_unpack",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_public_qualified_readback_rejects_not_bound_development_package",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_real_archive_roundtrip_is_a_transport_not_final_qualification",
+        "hia.tests.test_work_owner_transfer_ci.CompleteTransfers.test_whole_two_archive_chain_replays_both_actual_transport_members",
+        "hia.platform.work_owner.test_integrity.Admission.test_actual_artifact_selector_excludes_build_scripts_and_other_library",
+        "hia.platform.work_owner.test_integrity.Admission.test_artifact_path_alias_and_extra_files_are_observed",
+        "hia.platform.work_owner.test_integrity.Admission.test_complete_declared_source_closure",
+        "hia.platform.work_owner.test_integrity.Admission.test_control_claims_cannot_omit_duplicate_or_relabel_actual_rows",
+        "hia.platform.work_owner.test_integrity.Admission.test_independent_complete_corpus_and_protocol_separation",
+        "hia.platform.work_owner.test_integrity.Admission.test_literal_and_bound_manifest_include_graph",
+        "hia.platform.work_owner.test_integrity.Admission.test_public_compiler_runtime_override_rejected_before_copy",
+        "hia.platform.work_owner.test_integrity.Admission.test_public_complete_source_sets_required",
+        "hia.platform.work_owner.test_integrity.Admission.test_public_duplicate_json_fields_rejected",
+        "hia.platform.work_owner.test_integrity.Admission.test_public_nonfinite_json_refused_before_copy",
+        "hia.platform.work_owner.test_integrity.Admission.test_public_optimized_python_refused",
+        "hia.platform.work_owner.test_integrity.Admission.test_public_source_identity_counts_keep_integer_type",
+        "hia.platform.work_owner.test_integrity.Admission.test_raw_frame_reader_rejects_coherent_numeric_type_changes",
+        "hia.platform.work_owner.test_integrity.Admission.test_targets_cannot_overlap_isolated_or_source_trees",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_ancestor_replacement_before_open_is_refused_and_after_pin_cannot_redirect",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_buffer_extent_and_metadata_numeric_types_cannot_substitute",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_chunk_omission_extra_and_content_change_are_real_file_refusals",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_final_fence_detects_same_content_replacement_and_new_roster",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_public_byte_reader_refuses_optimized_python_before_output",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_regular_file_and_alias_requirements_do_not_block_on_fifo",
+        "hia.platform.work_owner.test_primitive_evidence.PrimitiveBytes.test_whole_buffer_reconstruction_and_original_guard_bytes",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_actual_normal_compiler_loader_identity",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_argv_environment_and_timeout_are_bounded",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_bad_faults_refused_before_child_or_output",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_capture_exact_regular_roster_and_fence",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_capture_rejects_links_and_nonregular_files",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_exact_fault_admission_never_forks",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_exact_original_input_projection",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_loader_keeps_canonical_directory_identity",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_native_envelope_or_changed_control_cannot_be_original_input",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_panic_observation_cannot_publish_normal_authority",
+        "hia.platform.work_owner.test_clock_evidence.ClockEvidence.test_retained_progress_distinguishes_json_types"
+      ]
+    },
+    "actual_public_native_control_count": 65,
+    "actual_verbose_successful_tests": 65,
+    "all_job_deadlines_minutes": 20,
+    "bootstrap_control_groups": 4,
+    "bootstrap_gates": 36,
+    "business_runtime_executed": false,
+    "changed_job_shells": 15,
+    "ci_reader_source_set_sha256": "106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca",
+    "fresh_hosted_result": "NOT_RUN",
+    "native_source_set_sha256": "ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c",
+    "prior_failure_preserved": true,
+    "prior_validation_report": {
+      "bytes": 2776,
+      "sha256": "33810118f17b60ed032890824e9184a1617f165bc720ddf01bdb9d41ee1277c4"
+    },
+    "prior_validation_status": "FAIL_LOG_PARSER_AFTER_SUCCESSFUL_PUBLIC_CONTROL_EXIT",
+    "public_native_controls_reexecuted_by_this_readback": false,
+    "schema": "trnm.work-owner.toolchain-repair-root-controls.v2",
+    "skipped": 0,
+    "source_after": "MATCH",
+    "status": "PASS",
+    "steps": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "elapsed_ns": 115030006,
+        "exit_code": 0,
+        "name": "preflight",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 171,
+          "sha256": "cebe063c39ec331f07e192323dab8921b94bc0b3fc2b420f32ecd704ea41e4b2"
+        }
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/ci",
+          "-p",
+          "test_hia_workflow_bootstrap.py",
+          "-v"
+        ],
+        "elapsed_ns": 18509587113,
+        "exit_code": 0,
+        "name": "bootstrap-controls",
+        "stderr": {
+          "bytes": 721,
+          "sha256": "e77aabf0d99c742dc6b57c1549261db7dbd2dc74e2074052f5c7fd001138d806"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ]
+  },
+  "new_commit_hosted_qualification": "NOT_RUN",
+  "old_stack_can_be_removed": false,
+  "original_Rust_or_Cargo_build_executed": false,
+  "original_runtime_reexecuted": false,
+  "parent_commit": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+  "parent_tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0",
+  "pr_diagnosis": {
+    "artifact": {
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14310227088/zip",
+      "created_at": "2026-11-17T08:00:46Z",
+      "digest": "sha256:f6080b9810afdaa7235b8516175d1681aa71eb1aa6f4dca02c89d8bf0d5a42a0",
+      "expired": false,
+      "expires_at": "2026-12-17T08:00:45Z",
+      "id": 14310227088,
+      "name": "hia-work-owner-native-diagnostics-bd6201646f92a37edc641b2ab0ae8032507b5784-44041858435-1",
+      "size_in_bytes": 31664,
+      "updated_at": "2026-11-17T08:00:46Z",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14310227088",
+      "workflow_run": {
+        "head_branch": "feature/chain-hia-native",
+        "head_repository_id": 1323087357,
+        "head_sha": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+        "id": 44041858435,
+        "repository_id": 1323087357
+      }
+    },
+    "attempt": 1,
+    "errors": 1,
+    "head": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+    "hosted_actual_default_rustc_version": "NOT_CAPTURED",
+    "job": 133898076690,
+    "native_execution": "NOT_RUN",
+    "original_report_source": {
+      "base": null,
+      "candidate": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+      "tested_tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2987162724,
+      "tracked_entries": 40869,
+      "tracked_worktree_verified": true
+    },
+    "passed": 64,
+    "run": 44041858435,
+    "source_before_after_final": "MATCH",
+    "status": "ACTUAL_PR_FAILURE_INDEPENDENTLY_CONFIRMED",
+    "stderr": {
+      "bytes": 12726,
+      "sha256": "6944000dc1856647fd308d20631fbf85c99e277ee361983bce6347c18a28fe95"
+    },
+    "tests": 65
+  },
+  "production_activation": false,
+  "public_native_controls": 65,
+  "push_diagnosis": {
+    "all_job_timeouts_minutes": 20,
+    "candidate_workflow": {
+      "bytes": 297599,
+      "sha256": "4b001c8cf1e35a49b8a47c1c2a41a814b61a22f2b72e0ef21c29c44fcbade591"
+    },
+    "diagnostic_zip": {
+      "bytes": 31664,
+      "sha256": "0752f4b9d0b285ecec44ac013d70ebfceb6f7aa65f22cb77727ee00333fcd74a"
+    },
+    "exact_current_full_source_before_after": "MATCH",
+    "failed_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/44041831642/job/133897989699",
+    "four_stage_call_graph": {
+      "native": {
+        "actual_std": "native-controls -> controls -> unittest test_clock_evidence.test_actual_normal_compiler_loader_identity -> captured_std + capture_loader",
+        "new_install_and_selection": true
+      },
+      "original": {
+        "actual_std": "rust_oracle.original_comparison/check plus original-pack -> original(live=True) -> captured_std/executable_interpreter; sqlite_and_loader(live=True) -> capture_loader",
+        "new_install_and_selection": true
+      },
+      "qualification": {
+        "actual_std": false,
+        "installation_added": false,
+        "path": "qualify-pack -> transfer.qualify_pack -> assess(..., live=False) -> original(..., live=False) -> stored std sources/binaries and captured dependencies"
+      },
+      "readback": {
+        "actual_std": false,
+        "installation_added": false,
+        "path": "readback -> assess(...,live=False); validate_controls re-reads all raw results and discovers IDs without executing tests"
+      }
+    },
+    "frozen_runtime_and_reader_files_changed": false,
+    "full_job_log": {
+      "bytes": 55551,
+      "sha256": "8be58605e82108f8c202c9282d2b427466adbfe5a3611b3c2486f4bdc68ce173"
+    },
+    "future_hosted_run": "NOT_RUN",
+    "head": "bd6201646f92a37edc641b2ab0ae8032507b5784",
+    "hosted_actual_default_rustc_version": "NOT_CAPTURED; not inferred from local control",
+    "local_explicit_pinned_control": {
+      "passed": 65,
+      "report": {
+        "bytes": 10594,
+        "sha256": "f845051909f93adefefeb8dd2f9895c959b5a5a217d76546707e8d07184116f3"
+      },
+      "skipped": 0,
+      "status": "PASS",
+      "stderr": {
+        "bytes": 11621,
+        "sha256": "d7322faa9b2c5d934726d5022cf64c3c31bba85284e85ff24f557ff4db95c9ed"
+      },
+      "tests": 65
+    },
+    "local_full_65_control_seconds": 23.73697791,
+    "local_selected_toolchain_install_seconds": 29.260055434,
+    "local_true_wrong_compiler_control": {
+      "errors": 1,
+      "passed": 64,
+      "report": {
+        "bytes": 10594,
+        "sha256": "1b8e6317ba8bc3b859b523c87c47f5920c25a28dbe8671b87495f0fbef8a9448"
+      },
+      "status": "REJECTED",
+      "stderr": {
+        "bytes": 12711,
+        "sha256": "65a442e9e1aa5fc2c8dc720362a66e2384e2b62bb2b292a3c579e50467c07ca4"
+      },
+      "tests": 65
+    },
+    "native133": "ded1230a8810c345bd705070045228b4b72078f35f007747351aa5a01c19908c",
+    "native_runtime_in_failed_job": "NOT_RUN",
+    "observed_root_cause": "65 mandatory controls executed; only actual pinned compiler/std identity test failed. Native producer had no locked Rust installation/selection.",
+    "only_changed_jobs": [
+      "native-work-owner",
+      "native-work-owner-original"
+    ],
+    "original_prerequisite_jobs_skipped": [
+      133899939617,
+      133899939629,
+      133899939474
+    ],
+    "original_run_remains": "FAILURE",
+    "reader6": "106c29eef6b8a3264ddf0bf6957a83b793e106892b6e7d6c4d2e7be71beea4ca",
+    "rustup_install_observation": "Existing pinned 1.95/rust-src unchanged; installer logged tool-manager self-update discovery/download. No compiler/std contract was relaxed.",
+    "rustup_install_stderr_preserved": true,
+    "schema": "trnm.work-owner.bd620-toolchain-diagnosis.v1",
+    "status": "OBSERVED_AND_LOCAL_CORRECTION_VERIFIED",
+    "tree": "8a273894649be8393e2b1dc493d7482b2a07d6c0",
+    "whole_Node_or_service_success_claimed": false,
+    "workflow_patch": {
+      "bytes": 1886,
+      "sha256": "6ff84f2a08de11e50e8d6f332bda076a347a7023276a361b9ed87969cec33a6a"
+    },
+    "workflow_total_jobs": 46
+  },
+  "retired_packages": 0,
+  "schema": "trnm.hia.work-owner-toolchain-ci-correction.v1",
+  "skipped": 0,
+  "status": "LOCAL_PREREQUISITE_CORRECTION_VERIFIED",
+  "whole_chain_native": false,
+  "write_then_complete_member_readback": true
+}

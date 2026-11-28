@@ -1,0 +1,162 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_pon_domain_hash
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  n0:usize = buffer.len(input)
+  n1:usize = buffer.len(output)
+  n2:usize = buffer.len(scratch)
+  n3:usize = const() {"value":131128}
+  n4:bool = compare.le(n0,n3)
+  n5:usize = const() {"value":32}
+  n6:bool = compare.ge(n1,n5)
+  n7:usize = const() {"value":132256}
+  n8:bool = compare.ge(n2,n7)
+  n9:bool = bool.and(n4,n6)
+  n10:bool = bool.and(n9,n8)
+  branch n10 minimum(input,output,scratch,n0) bad()
+block minimum(min_input:readbuf,min_output:mutbuf,min_scratch:mutbuf,min_len:usize)
+  n11:usize = const() {"value":4}
+  n12:bool = compare.ge(min_len,n11)
+  branch n12 header(min_input,min_output,min_scratch,min_len) length()
+block header(head_input:readbuf,head_output:mutbuf,head_scratch:mutbuf,head_len:usize)
+  n13:usize = const() {"value":0}
+  n14:usize = const() {"value":2}
+  n15:usize = call(head_input,n13,n14) {"function":"pon_descriptor_le"}
+  n16:usize = const() {"value":2}
+  n17:usize = const() {"value":2}
+  n18:usize = call(head_input,n16,n17) {"function":"pon_descriptor_le"}
+  n19:usize = const() {"value":64}
+  n20:bool = compare.le(n18,n19)
+  branch n20 tag_extent(head_input,head_output,head_scratch,head_len,n15,n18) limit()
+block tag_extent(tag_input:readbuf,tag_output:mutbuf,tag_scratch:mutbuf,tag_len:usize,tag_bytes:usize,tag_count:usize)
+  n21:usize = const() {"value":4}
+  n22:usize = int.add.wrap(tag_bytes,n21)
+  n23:bool = compare.le(n22,tag_len)
+  n24:usize = const() {"value":0}
+  branch n23 parts(tag_input,tag_output,tag_scratch,tag_len,tag_count,n24,n22) length()
+block parts(parts_input:readbuf,parts_output:mutbuf,parts_scratch:mutbuf,parts_len:usize,parts_count:usize,parts_index:usize,parts_pos:usize)
+  n25:bool = compare.lt(parts_index,parts_count)
+  branch n25 part_header(parts_input,parts_output,parts_scratch,parts_len,parts_count,parts_index,parts_pos) complete(parts_input,parts_output,parts_scratch,parts_len,parts_pos)
+block part_header(ph_input:readbuf,ph_output:mutbuf,ph_scratch:mutbuf,ph_len:usize,ph_count:usize,ph_index:usize,ph_pos:usize)
+  n26:usize = const() {"value":4}
+  n27:usize = int.add.wrap(ph_pos,n26)
+  n28:bool = compare.le(n27,ph_len)
+  branch n28 part_body(ph_input,ph_output,ph_scratch,ph_len,ph_count,ph_index,ph_pos,n27) length()
+block part_body(pb_input:readbuf,pb_output:mutbuf,pb_scratch:mutbuf,pb_len:usize,pb_count:usize,pb_index:usize,pb_pos:usize,pb_begin:usize)
+  n29:usize = const() {"value":4}
+  n30:usize = call(pb_input,pb_pos,n29) {"function":"pon_descriptor_le"}
+  n31:usize = int.add.wrap(pb_begin,n30)
+  n32:bool = compare.le(n31,pb_len)
+  n33:usize = const() {"value":1}
+  n34:usize = int.add.wrap(pb_index,n33)
+  branch n32 parts(pb_input,pb_output,pb_scratch,pb_len,pb_count,n34,n31) length()
+block complete(complete_input:readbuf,complete_output:mutbuf,complete_scratch:mutbuf,complete_len:usize,complete_pos:usize)
+  n35:bool = compare.eq(complete_len,complete_pos)
+  branch n35 frame(complete_input,complete_output,complete_scratch,complete_len) length()
+block frame(frame_input:readbuf,frame_output:mutbuf,frame_scratch:mutbuf,frame_len:usize)
+  n36:usize = const() {"value":0}
+  n37:u8 = const() {"value":84}
+  _ = buffer.store(frame_scratch,n36,n37)
+  n38:usize = const() {"value":1}
+  n39:u8 = const() {"value":82}
+  _ = buffer.store(frame_scratch,n38,n39)
+  n40:usize = const() {"value":2}
+  n41:u8 = const() {"value":78}
+  _ = buffer.store(frame_scratch,n40,n41)
+  n42:usize = const() {"value":3}
+  n43:u8 = const() {"value":77}
+  _ = buffer.store(frame_scratch,n42,n43)
+  n44:usize = const() {"value":4}
+  n45:u8 = const() {"value":45}
+  _ = buffer.store(frame_scratch,n44,n45)
+  n46:usize = const() {"value":5}
+  n47:u8 = const() {"value":80}
+  _ = buffer.store(frame_scratch,n46,n47)
+  n48:usize = const() {"value":6}
+  n49:u8 = const() {"value":79}
+  _ = buffer.store(frame_scratch,n48,n49)
+  n50:usize = const() {"value":7}
+  n51:u8 = const() {"value":78}
+  _ = buffer.store(frame_scratch,n50,n51)
+  n52:usize = const() {"value":8}
+  n53:u8 = const() {"value":49}
+  _ = buffer.store(frame_scratch,n52,n53)
+  n54:usize = const() {"value":9}
+  n55:u8 = const() {"value":0}
+  _ = buffer.store(frame_scratch,n54,n55)
+  n56:usize = const() {"value":0}
+  n57:u8 = buffer.load(frame_input,n56)
+  n58:usize = const() {"value":10}
+  _ = buffer.store(frame_scratch,n58,n57)
+  n59:usize = const() {"value":1}
+  n60:u8 = buffer.load(frame_input,n59)
+  n61:usize = const() {"value":11}
+  _ = buffer.store(frame_scratch,n61,n60)
+  n62:usize = const() {"value":4}
+  jump copy_frame(frame_input,frame_output,frame_scratch,frame_len,n62)
+block copy_frame(cf_input:readbuf,cf_output:mutbuf,cf_scratch:mutbuf,cf_len:usize,cf_pos:usize)
+  n63:bool = compare.lt(cf_pos,cf_len)
+  branch n63 frame_byte(cf_input,cf_output,cf_scratch,cf_len,cf_pos) hash(cf_output,cf_scratch,cf_len)
+block frame_byte(fb_input:readbuf,fb_output:mutbuf,fb_scratch:mutbuf,fb_len:usize,fb_pos:usize)
+  n64:u8 = buffer.load(fb_input,fb_pos)
+  n65:usize = const() {"value":8}
+  n66:usize = int.add.wrap(fb_pos,n65)
+  _ = buffer.store(fb_scratch,n66,n64)
+  n67:usize = const() {"value":1}
+  n68:usize = int.add.wrap(fb_pos,n67)
+  jump copy_frame(fb_input,fb_output,fb_scratch,fb_len,n68)
+block hash(hash_output:mutbuf,hash_scratch:mutbuf,hash_len:usize)
+  n69:usize = const() {"value":8}
+  n70:usize = int.add.wrap(hash_len,n69)
+  n71:u32 = call(hash_scratch,n70) {"function":"sha256_arena"}
+  n72:u32 = const() {"value":32}
+  n73:bool = compare.eq(n71,n72)
+  n74:usize = const() {"value":0}
+  branch n73 digest(hash_output,hash_scratch,n74) propagate(n71)
+block digest(digest_output:mutbuf,digest_scratch:mutbuf,digest_pos:usize)
+  n75:usize = const() {"value":32}
+  n76:bool = compare.lt(digest_pos,n75)
+  branch n76 digest_byte(digest_output,digest_scratch,digest_pos) ok()
+block digest_byte(db_output:mutbuf,db_scratch:mutbuf,db_pos:usize)
+  n77:usize = const() {"value":131136}
+  n78:usize = int.add.wrap(db_pos,n77)
+  n79:u8 = buffer.load(db_scratch,n78)
+  _ = buffer.store(db_output,db_pos,n79)
+  n80:usize = const() {"value":1}
+  n81:usize = int.add.wrap(db_pos,n80)
+  jump digest(db_output,db_scratch,n81)
+block ok()
+  n82:u32 = const() {"value":32}
+  ret(n82)
+block bad()
+  n83:u32 = const() {"value":4294967293}
+  ret(n83)
+block length()
+  n84:u32 = const() {"value":1}
+  ret(n84)
+block limit()
+  n85:u32 = const() {"value":4}
+  ret(n85)
+block propagate(unexpected:u32)
+  ret(unexpected)
+end
+fn pon_descriptor_le(input:readbuf,start:usize,count:usize) -> (usize) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:usize,count:usize)
+  n0:usize = const() {"value":0}
+  jump loop(input,start,count,n0,n0)
+block loop(loop_input:readbuf,loop_start:usize,loop_count:usize,loop_index:usize,loop_value:usize)
+  n1:bool = compare.lt(loop_index,loop_count)
+  branch n1 read(loop_input,loop_start,loop_count,loop_index,loop_value) done(loop_value)
+block read(read_input:readbuf,read_start:usize,read_count:usize,read_index:usize,read_value:usize)
+  n2:usize = int.add.wrap(read_start,read_index)
+  n3:u8 = buffer.load(read_input,n2)
+  n4:usize = int.cast(n3) {"mode":"wrap"}
+  n5:usize = const() {"value":8}
+  n6:usize = int.mul.wrap(read_index,n5)
+  n7:usize = int.shl.checked(n4,n6)
+  n8:usize = bit.or(read_value,n7)
+  n9:usize = const() {"value":1}
+  n10:usize = int.add.wrap(read_index,n9)
+  jump loop(read_input,read_start,read_count,n10,n8)
+block done(result:usize)
+  ret(result)
+end

@@ -1,0 +1,313 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_m13_bounded_mixed_delta
+fn bm_validate(raw:readbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  first:u64 = const() {"value":8}
+  second:u64 = const() {"value":400}
+  third:u64 = const() {"value":792}
+  delete_tag:u64 = const() {"value":2392310034673190212}
+  insert_tag:u64 = const() {"value":2392310034673651273}
+  update_tag:u64 = const() {"value":2392310034672668757}
+  first_ok:bool = call(raw,first,delete_tag) {"function":"bm_shape"}
+  second_ok:bool = call(raw,second,insert_tag) {"function":"bm_shape"}
+  third_ok:bool = call(raw,third,update_tag) {"function":"bm_shape"}
+  fst_two:bool = bool.and(first_ok,second_ok)
+  valid:bool = bool.and(fst_two,third_ok)
+  branch valid sort(raw,first,second,third) bad()
+block sort(data:readbuf,a:u64,b:u64,c:u64)
+  less_ab:bool = call(data,a,b) {"function":"bm_order"}
+  less_bc:bool = call(data,b,c) {"function":"bm_order"}
+  sorted:bool = bool.and(less_ab,less_bc)
+  ret(sorted)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn bm_shape(raw:readbuf,at:u64,need_tag:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,at:u64,need_tag:u64)
+  actual:u64 = call(raw,at) {"function":"tr_read"}
+  tag_ok:bool = compare.eq(actual,need_tag)
+  ns_rel:u64 = const() {"value":8}
+  key_rel:u64 = const() {"value":16}
+  val_rel:u64 = const() {"value":256}
+  ns_at:u64 = int.add.wrap(at,ns_rel)
+  key_at:u64 = int.add.wrap(at,key_rel)
+  val_at:u64 = int.add.wrap(at,val_rel)
+  ns:u64 = call(raw,ns_at) {"function":"tr_read"}
+  key:u64 = call(raw,key_at) {"function":"tr_read"}
+  val:u64 = call(raw,val_at) {"function":"tr_read"}
+  lower:u64 = const() {"value":1}
+  key_limit:u64 = const() {"value":64}
+  value_limit:u64 = const() {"value":128}
+  ns_min:bool = compare.ge(ns,lower)
+  ns_max:bool = compare.le(ns,key_limit)
+  key_min:bool = compare.ge(key,lower)
+  key_max:bool = compare.le(key,key_limit)
+  val_max:bool = compare.le(val,value_limit)
+  ns_ok:bool = bool.and(ns_min,ns_max)
+  key_ok:bool = bool.and(key_min,key_max)
+  keys:bool = bool.and(ns_ok,key_ok)
+  remaining:bool = bool.and(val_max,tag_ok)
+  okay:bool = bool.and(keys,remaining)
+  ret(okay)
+end
+
+fn bm_order(raw:readbuf,a:u64,b:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,a:u64,b:u64)
+  ns_len_rel:u64 = const() {"value":8}
+  ns_raw_rel:u64 = const() {"value":24}
+  ns_len_a:u64 = int.add.wrap(a,ns_len_rel)
+  ns_len_b:u64 = int.add.wrap(b,ns_len_rel)
+  ns_a:u64 = int.add.wrap(a,ns_raw_rel)
+  ns_b:u64 = int.add.wrap(b,ns_raw_rel)
+  n_a:u64 = call(raw,ns_len_a) {"function":"tr_read"}
+  n_b:u64 = call(raw,ns_len_b) {"function":"tr_read"}
+  compared:u32 = call(raw,ns_a,n_a,ns_b,n_b) {"function":"step_lex"}
+  same:u32 = const() {"value":0}
+  equal_ns:bool = compare.eq(compared,same)
+  branch equal_ns keys(raw,a,b) less(compared)
+block keys(data:readbuf,l:u64,r:u64)
+  key_len_rel:u64 = const() {"value":16}
+  key_raw_rel:u64 = const() {"value":88}
+  key_len_l:u64 = int.add.wrap(l,key_len_rel)
+  key_len_r:u64 = int.add.wrap(r,key_len_rel)
+  key_l:u64 = int.add.wrap(l,key_raw_rel)
+  key_r:u64 = int.add.wrap(r,key_raw_rel)
+  num_l:u64 = call(data,key_len_l) {"function":"tr_read"}
+  num_r:u64 = call(data,key_len_r) {"function":"tr_read"}
+  compared_keys:u32 = call(data,key_l,num_l,key_r,num_r) {"function":"step_lex"}
+  jump less(compared_keys)
+block less(result:u32)
+  before:u32 = const() {"value":2}
+  increasing:bool = compare.eq(result,before)
+  ret(increasing)
+end
+
+fn bm_scan(raw:readbuf,mem:mutbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  zero:u64 = const() {"value":0}
+  jump scan(raw,mem,work,zero)
+block scan(r:readbuf,m:mutbuf,w:mutbuf,slot:u64)
+  _focus:u64 = call(w,slot) {"function":"bm_focus"}
+  match:bool = call(r,w) {"function":"dw_key_match"}
+  branch match match_kind(r,m,w,slot) next(r,m,w,slot)
+block match_kind(mr:readbuf,mm:mutbuf,mw:mutbuf,mi:u64)
+  tag_pos:u64 = const() {"value":902000}
+  tag:u64 = call(mw,tag_pos) {"function":"cp_get"}
+  kind:u64 = call(tag) {"function":"bm_kind"}
+  insert_id:u64 = const() {"value":2}
+  is_insert:bool = compare.eq(kind,insert_id)
+  branch is_insert bad() known(mr,mm,mw,mi)
+block known(kr:readbuf,km:mutbuf,kw:mutbuf,ki:u64)
+  digest:bool = call(kw) {"function":"dw_digest_match"}
+  branch digest changed(kr,km,kw,ki) bad()
+block changed(cr:readbuf,cm:mutbuf,cw:mutbuf,ci:u64)
+  update_tag_pos:u64 = const() {"value":902000}
+  update_tag:u64 = call(cw,update_tag_pos) {"function":"cp_get"}
+  update_kind:u64 = call(update_tag) {"function":"bm_kind"}
+  is_update:u64 = const() {"value":3}
+  update_slot:bool = compare.eq(update_kind,is_update)
+  branch update_slot update(cr,cm,cw,ci) mark(cm,ci)
+block update(ur:readbuf,um:mutbuf,uw:mutbuf,ui:u64)
+  same:bool = call(ur,uw) {"function":"dw_value_matches"}
+  branch same bad() mark(um,ui)
+block mark(mark_mem:mutbuf,mark_index:u64)
+  width:u64 = const() {"value":8}
+  base:u64 = const() {"value":160}
+  offset:u64 = int.mul.wrap(mark_index,width)
+  at:u64 = int.add.wrap(base,offset)
+  present:u64 = call(mark_mem,at) {"function":"cp_get"}
+  zero_mark:u64 = const() {"value":0}
+  first:bool = compare.eq(present,zero_mark)
+  branch first record(mark_mem,at) bad()
+block record(record_mem:mutbuf,record_at:u64)
+  one:u64 = const() {"value":1}
+  _saved:u64 = call(record_mem,record_at,one) {"function":"cp_put"}
+  jump good()
+block next(nr:readbuf,nm:mutbuf,nw:mutbuf,ni:u64)
+  increment:u64 = const() {"value":1}
+  length_at:u64 = const() {"value":152}
+  length:u64 = call(nm,length_at) {"function":"cp_get"}
+  more:u64 = int.add.wrap(ni,increment)
+  finished:bool = compare.eq(more,length)
+  branch finished good() scan(nr,nm,nw,more)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn bm_focus(work:mutbuf,slot:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,slot:u64)
+  width:u64 = const() {"value":392}
+  base:u64 = const() {"value":904000}
+  dest:u64 = const() {"value":902000}
+  offset:u64 = int.mul.wrap(slot,width)
+  from:u64 = int.add.wrap(base,offset)
+  copied:u64 = call(work,from,dest,width) {"function":"cp_wcopy"}
+  ret(copied)
+end
+
+fn bm_load(mem:mutbuf,work:mutbuf,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,work:mutbuf,index:u64)
+  mode:u64 = const() {"value":96}
+  cursor:u64 = const() {"value":144}
+  tag_at:u64 = const() {"value":902000}
+  _loaded:u64 = call(work,index) {"function":"bm_focus"}
+  tag:u64 = call(work,tag_at) {"function":"cp_get"}
+  operation:u64 = call(tag) {"function":"bm_kind"}
+  _mode:u64 = call(mem,mode,operation) {"function":"cp_put"}
+  _cursor:u64 = call(mem,cursor,index) {"function":"cp_put"}
+  ret(operation)
+end
+
+fn bm_start(mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,work:mutbuf)
+  all_at:u64 = const() {"value":152}
+  total:u64 = call(mem,all_at) {"function":"cp_get"}
+  zero:u64 = const() {"value":0}
+  jump scan(mem,work,zero,total,zero,zero)
+block scan(scan_m:mutbuf,scan_w:mutbuf,at:u64,goal:u64,inserted:u64,deleted:u64)
+  _focus:u64 = call(scan_w,at) {"function":"bm_focus"}
+  tag_at:u64 = const() {"value":902000}
+  tag:u64 = call(scan_w,tag_at) {"function":"cp_get"}
+  mode:u64 = call(tag) {"function":"bm_kind"}
+  ins_id:u64 = const() {"value":2}
+  del_id:u64 = const() {"value":1}
+  zero_found:u64 = const() {"value":0}
+  ins:bool = compare.eq(mode,ins_id)
+  del:bool = compare.eq(mode,del_id)
+  expect:u64 = select(ins,zero_found,del_id)
+  size:u64 = const() {"value":8}
+  flags:u64 = const() {"value":160}
+  multiple:u64 = int.mul.wrap(at,size)
+  flag_at:u64 = int.add.wrap(multiple,flags)
+  observed:u64 = call(scan_m,flag_at) {"function":"cp_get"}
+  bound:bool = compare.eq(observed,expect)
+  branch bound count(scan_m,scan_w,at,goal,inserted,deleted,ins,del) bad()
+block count(cm:mutbuf,cw:mutbuf,ci:u64,cz:u64,ii:u64,dd:u64,is_i:bool,is_d:bool)
+  one:u64 = const() {"value":1}
+  prev_plus_i:u64 = int.add.wrap(ii,one)
+  prev_plus_d:u64 = int.add.wrap(dd,one)
+  new_i:u64 = select(is_i,prev_plus_i,ii)
+  new_d:u64 = select(is_d,prev_plus_d,dd)
+  next:u64 = int.add.wrap(ci,one)
+  ready:bool = compare.eq(next,cz)
+  branch ready check_total(cm,cw,new_i,new_d) scan(cm,cw,next,cz,new_i,new_d)
+block check_total(tm:mutbuf,tw:mutbuf,n_i:u64,n_d:u64)
+  before_at:u64 = const() {"value":72}
+  before:u64 = call(tm,before_at) {"function":"cp_get"}
+  more:u64 = int.add.wrap(before,n_i)
+  nonnegative:bool = compare.ge(more,n_d)
+  branch nonnegative max_count(tm,tw,more,n_d) bad()
+block max_count(mm:mutbuf,mw:mutbuf,positive:u64,reduction:u64)
+  expected:u64 = int.sub.wrap(positive,reduction)
+  limit:u64 = const() {"value":100000000}
+  bounded:bool = compare.le(expected,limit)
+  branch bounded start(mm,mw,expected) bad()
+block start(in_mem:mutbuf,in_work:mutbuf,expect_after:u64)
+  future_count_at:u64 = const() {"value":232}
+  _save_count:u64 = call(in_mem,future_count_at,expect_after) {"function":"cp_put"}
+  first:u64 = const() {"value":0}
+  first_operation:u64 = call(in_mem,in_work,first) {"function":"bm_load"}
+  scheduled:u32 = call(in_mem,first_operation) {"function":"bm_request"}
+  ret(scheduled)
+block bad()
+  refusal:u32 = const() {"value":100}
+  ret(refusal)
+end
+
+fn bm_next(mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,work:mutbuf)
+  slot_at:u64 = const() {"value":144}
+  slot:u64 = call(mem,slot_at) {"function":"cp_get"}
+  total_at:u64 = const() {"value":152}
+  total:u64 = call(mem,total_at) {"function":"cp_get"}
+  advance:u64 = const() {"value":1}
+  next_slot:u64 = int.add.wrap(slot,advance)
+  end:bool = compare.eq(next_slot,total)
+  branch end metadata(mem) next(mem,work,next_slot)
+block next(nm:mutbuf,nw:mutbuf,idx:u64)
+  selected:u64 = call(nm,nw,idx) {"function":"bm_load"}
+  scheduled:u32 = call(nm,selected) {"function":"bm_request"}
+  ret(scheduled)
+block metadata(mm:mutbuf)
+  scheduled_metadata:u32 = call(mm) {"function":"dw_sql_update"}
+  ret(scheduled_metadata)
+end
+
+fn bm_request(mem:mutbuf,mode:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(mem:mutbuf,mode:u64)
+  del_id:u64 = const() {"value":1}
+  deleting:bool = compare.eq(mode,del_id)
+  branch deleting delete(mem) other(mem,mode)
+block other(om:mutbuf,o:u64)
+  ins_id:u64 = const() {"value":2}
+  inserting:bool = compare.eq(o,ins_id)
+  branch inserting insert(om) update(om)
+block delete(dm:mutbuf)
+  scheduled_delete:u32 = call(dm) {"function":"dw_sql_delete"}
+  ret(scheduled_delete)
+block insert(im:mutbuf)
+  scheduled_insert:u32 = call(im) {"function":"dw_sql_insert"}
+  ret(scheduled_insert)
+block update(um:mutbuf)
+  scheduled_update:u32 = call(um) {"function":"dw_sql_existing"}
+  ret(scheduled_update)
+end
+
+fn bm_kind(tag:u64) -> (u64) effects() entry(entry)
+block entry(tag:u64)
+  d:u64 = const() {"value":2392310034673190212}
+  i:u64 = const() {"value":2392310034673651273}
+  u:u64 = const() {"value":2392310034672668757}
+  d_test:bool = compare.eq(tag,d)
+  i_test:bool = compare.eq(tag,i)
+  u_test:bool = compare.eq(tag,u)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  zero:u64 = const() {"value":0}
+  base:u64 = select(u_test,three,zero)
+  tail:u64 = select(i_test,two,base)
+  result:u64 = select(d_test,one,tail)
+  ret(result)
+end
+
+fn bm_vector(raw:readbuf,count:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,count:u64)
+  first:u64 = const() {"value":16}
+  zero:u64 = const() {"value":0}
+  jump scan(raw,first,count,zero)
+block scan(sr:readbuf,offset:u64,left:u64,prior:u64)
+  tag:u64 = call(sr,offset) {"function":"tr_read"}
+  kind:u64 = call(tag) {"function":"bm_kind"}
+  none:u64 = const() {"value":0}
+  known:bool = compare.ne(kind,none)
+  branch known shape(sr,offset,left,prior,tag) bad()
+block shape(shr:readbuf,sho:u64,shl:u64,shp:u64,sht:u64)
+  admissible:bool = call(shr,sho,sht) {"function":"bm_shape"}
+  branch admissible order(shr,sho,shl,shp) bad()
+block order(ord_r:readbuf,ord_o:u64,ord_l:u64,ord_p:u64)
+  absent:u64 = const() {"value":0}
+  first_entry:bool = compare.eq(ord_p,absent)
+  branch first_entry next(ord_r,ord_o,ord_l) compare(ord_r,ord_o,ord_l,ord_p)
+block compare(cr:readbuf,co:u64,cl:u64,cp:u64)
+  sorted:bool = call(cr,cp,co) {"function":"bm_order"}
+  branch sorted next(cr,co,cl) bad()
+block next(nr:readbuf,no:u64,nl:u64)
+  one:u64 = const() {"value":1}
+  width:u64 = const() {"value":392}
+  ended:bool = compare.eq(nl,one)
+  rest:u64 = int.sub.wrap(nl,one)
+  more:u64 = int.add.wrap(no,width)
+  branch ended good() scan(nr,more,rest,no)
+block good()
+  ok:bool = const() {"value":true}
+  ret(ok)
+block bad()
+  refused:bool = const() {"value":false}
+  ret(refused)
+end

@@ -1,0 +1,103 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_rs46_committed_slot_readback_v1
+fn f0(a_r:readbuf,a_o:mutbuf,a_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_o:mutbuf,a_w:mutbuf)
+  a_size:usize = buffer.len(a_r)
+  a_n:u64 = int.cast(a_size) {"mode":"wrap"}
+  a_min:u64 = const() {"value":238}
+  a_max:u64 = const() {"value":2097238}
+  a_lo:bool = compare.ge(a_n,a_min)
+  a_hi:bool = compare.le(a_n,a_max)
+  a_ok:bool = bool.and(a_lo,a_hi)
+  branch a_ok framing(a_r,a_o,a_w,a_n) frame_failure()
+block framing(b_r:readbuf,b_o:mutbuf,b_w:mutbuf,b_n:u64)
+  b_five:u64 = const() {"value":5}
+  b_four:u64 = const() {"value":4}
+  b_one:u64 = const() {"value":1}
+  b_trailer:u64 = int.sub.wrap(b_n,b_five)
+  b_slot_at:u64 = int.add.wrap(b_trailer,b_four)
+  b_rcb_n:u64 = call(b_r,b_trailer,b_four) {"function":"ca_read_be"}
+  b_slot:u64 = call(b_r,b_slot_at,b_one) {"function":"ca_read_be"}
+  b_fits:bool = compare.le(b_rcb_n,b_trailer)
+  branch b_fits validate(b_r,b_o,b_w,b_rcb_n,b_trailer,b_slot) frame_failure()
+block validate(c_r:readbuf,c_o:mutbuf,c_w:mutbuf,c_rcb_n:u64,c_end:u64,c_slot:u64)
+  c_s:u32,c_word:u64 = call(c_r,c_w,c_rcb_n) {"function":"rcb_validate"}
+  c_zero:u32 = const() {"value":0}
+  c_valid:bool = compare.eq(c_s,c_zero)
+  c_crs_n:u64 = int.sub.wrap(c_end,c_rcb_n)
+  branch c_valid shape(c_r,c_o,c_w,c_word,c_rcb_n,c_crs_n,c_slot) failure(c_s)
+block shape(d_r:readbuf,d_o:mutbuf,d_w:mutbuf,d_word:u64,d_crs:u64,d_crs_n:u64,d_slot:u64)
+  d_s:u32 = call(d_r,d_crs_n,d_crs) {"function":"rs46_shape_at"}
+  d_zero:u32 = const() {"value":0}
+  d_good:bool = compare.eq(d_s,d_zero)
+  branch d_good relation(d_r,d_o,d_w,d_word,d_crs,d_crs_n,d_slot) shard_failure(d_s)
+block relation(e_r:readbuf,e_o:mutbuf,e_w:mutbuf,e_word:u64,e_crs:u64,e_crs_n:u64,e_slot:u64)
+  e_fields:u64 = const() {"value":4}
+  e_size:u64 = const() {"value":72}
+  e_one:u64 = const() {"value":1}
+  e_index:u64 = const() {"value":76}
+  e_slot_at:u64 = int.add.wrap(e_crs,e_index)
+  e_word_start:u64 = int.add.wrap(e_word,e_fields)
+  e_crs_start:u64 = int.add.wrap(e_crs,e_fields)
+  e_actual_slot:u64 = call(e_r,e_slot_at,e_one) {"function":"ca_read_be"}
+  e_equal:u64 = call(e_r,e_word_start,e_crs_start,e_size) {"function":"cp_equal_read"}
+  e_fixed:bool = compare.eq(e_equal,e_one)
+  e_slot_ok:bool = compare.eq(e_slot,e_actual_slot)
+  e_good:bool = bool.and(e_fixed,e_slot_ok)
+  branch e_good hash_init(e_r,e_o,e_w,e_word,e_crs,e_crs_n,e_slot) not_committed()
+block hash_init(f_r:readbuf,f_o:mutbuf,f_w:mutbuf,f_word:u64,f_crs:u64,f_crs_n:u64,f_slot:u64)
+  f_s:u64 = call(f_w) {"function":"rs46_digest_init"}
+  f_zero:u64 = const() {"value":0}
+  f_good:bool = compare.eq(f_s,f_zero)
+  branch f_good hash_wire(f_r,f_o,f_w,f_word,f_crs,f_crs_n,f_slot) internal()
+block hash_wire(g_r:readbuf,g_o:mutbuf,g_w:mutbuf,g_word:u64,g_crs:u64,g_crs_n:u64,g_slot:u64)
+  g_zero:u64 = const() {"value":0}
+  g_s:u64 = call(g_r,g_crs,g_crs_n,g_w) {"function":"tr_sha_update"}
+  g_good:bool = compare.eq(g_s,g_zero)
+  branch g_good hash_finish(g_r,g_o,g_w,g_word,g_crs,g_slot) internal()
+block hash_finish(h_r:readbuf,h_o:mutbuf,h_w:mutbuf,h_word:u64,h_crs:u64,h_slot:u64)
+  h_s:u64 = call(h_w) {"function":"tr_sha_final"}
+  h_zero:u64 = const() {"value":0}
+  h_good:bool = compare.eq(h_s,h_zero)
+  branch h_good pin(h_r,h_o,h_w,h_word,h_crs,h_slot) internal()
+block pin(i_r:readbuf,i_o:mutbuf,i_w:mutbuf,i_word:u64,i_crs:u64,i_slot:u64)
+  i_base:u64 = const() {"value":76}
+  i_width:u64 = const() {"value":32}
+  i_digest:u64 = const() {"value":1168}
+  i_step:u64 = int.mul.wrap(i_slot,i_width)
+  i_first:u64 = int.add.wrap(i_word,i_base)
+  i_at:u64 = int.add.wrap(i_first,i_step)
+  i_equal:u64 = call(i_r,i_at,i_w,i_digest,i_width) {"function":"ca_equal"}
+  i_one:u64 = const() {"value":1}
+  i_good:bool = compare.eq(i_equal,i_one)
+  branch i_good output(i_r,i_o,i_w,i_crs,i_digest) not_committed()
+block output(j_r:readbuf,j_o:mutbuf,j_w:mutbuf,j_crs:u64,j_digest:u64)
+  j_n:usize = buffer.len(j_o)
+  j_need:usize = const() {"value":113}
+  j_good:bool = compare.ge(j_n,j_need)
+  branch j_good publish(j_r,j_o,j_w,j_crs,j_digest) short()
+block publish(k_r:readbuf,k_o:mutbuf,k_w:mutbuf,k_crs:u64,k_digest:u64)
+  k_zero:u64 = const() {"value":0}
+  k_n:u64 = const() {"value":81}
+  k_after:u64 = call(k_w,k_o,k_digest,k_zero) {"function":"td_copy"}
+  k_last:u64 = call(k_r,k_crs,k_o,k_after,k_n) {"function":"cs_copy"}
+  k_success:u32 = const() {"value":0}
+  ret(k_success)
+block shard_failure(l_s:u32)
+  l_base:u32 = const() {"value":30}
+  l_code:u32 = int.add.wrap(l_base,l_s)
+  ret(l_code)
+block not_committed()
+  m_code:u32 = const() {"value":36}
+  ret(m_code)
+block frame_failure()
+  n_code:u32 = const() {"value":100}
+  ret(n_code)
+block short()
+  o_code:u32 = const() {"value":102}
+  ret(o_code)
+block internal()
+  p_code:u32 = const() {"value":103}
+  ret(p_code)
+block failure(q_s:u32)
+  ret(q_s)
+end

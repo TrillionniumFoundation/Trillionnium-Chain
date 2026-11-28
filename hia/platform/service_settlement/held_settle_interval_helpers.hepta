@@ -1,0 +1,819 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_settle_interval_helpers
+fn hfs_marker_offset(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  width:u64 = const() {"value":296}
+  base:u64 = const() {"value":420000}
+  prior:u64 = int.mul.wrap(index,width)
+  pos:u64 = int.add.wrap(base,prior)
+  ret(pos)
+end
+
+fn hfs_receipt_mark(r:readbuf,m:mutbuf,seq:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,seq:u64)
+  checked:u64 = call(m) {"function":"hfs_settle_index"}
+  zero:u64 = const() {"value":0}
+  valid:bool = compare.gt(checked,zero)
+  branch valid route(r,m,seq,checked) bad()
+block route(rr:readbuf,rm:mutbuf,rseq:u64,settle_index:u64)
+  four:u64 = const() {"value":4}
+  last:bool = compare.eq(rseq,four)
+  idx:u64 = select(last,settle_index,rseq)
+  base:u64 = call(idx) {"function":"hfs_marker_offset"}
+  eight:u64 = const() {"value":8}
+  state_field:u64 = const() {"value":136}
+  coords:u64 = int.add.wrap(base,eight)
+  root:u64 = int.add.wrap(base,state_field)
+  a:usize = int.cast(coords) {"mode":"wrap"}
+  b:usize = int.cast(root) {"mode":"wrap"}
+  ac:usize = const() {"value":100}
+  ar:usize = const() {"value":140}
+  wc:u64 = const() {"value":40}
+  wr:u64 = const() {"value":32}
+  matched_c:bool = call(rr,rm,ac,a,wc) {"function":"smr_eq_bound"}
+  matched_r:bool = call(rr,rm,ar,b,wr) {"function":"smr_eq_bound"}
+  yes:bool = bool.and(matched_c,matched_r)
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_save_receipt(r:readbuf,m:mutbuf,seq:u64,profile:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,seq:u64,profile:u64)
+  one:u64 = const() {"value":1}
+  four:u64 = const() {"value":4}
+  stride:u64 = const() {"value":153}
+  base:u64 = const() {"value":430000}
+  head:u64 = const() {"value":24}
+  earlier:u64 = const() {"value":149}
+  settled:u64 = const() {"value":181}
+  index:u64 = int.sub.wrap(seq,one)
+  moved:u64 = int.mul.wrap(index,stride)
+  record:u64 = int.add.wrap(base,moved)
+  payload:u64 = int.add.wrap(record,four)
+  fourth:bool = compare.eq(seq,four)
+  settled_profile:bool = call(profile) {"function":"hfs_settled"}
+  at_tail:bool = bool.and(fourth,settled_profile)
+  width:u64 = select(at_tail,settled,earlier)
+  stored:u64 = call(m,record,width) {"function":"cp_put"}
+  end:u64 = call(r,head,m,payload,width) {"function":"cp_copy"}
+  ret(end)
+end
+
+fn hfs_bank_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  bank:u64 = const() {"value":12}
+  linear:bool = compare.eq(profile,bank)
+  mixed:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  enabled:bool = bool.or(linear,mixed)
+  ret(enabled)
+end
+
+fn hfs_bank_feed(r:readbuf,m:mutbuf,w:mutbuf,seq:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,w:mutbuf,seq:u64)
+  one:u64 = const() {"value":1}
+  nine:u64 = const() {"value":9}
+  ten:u64 = const() {"value":10}
+  at:u64 = const() {"value":88}
+  seen_at:u64 = const() {"value":459992}
+  seen:u64 = call(m,seen_at) {"function":"cp_get"}
+  count:u64 = call(m,at) {"function":"cp_get"}
+  next:u64 = int.add.wrap(seen,one)
+  profile_at:u64 = const() {"value":349024}
+  profile:u64 = call(m,profile_at) {"function":"cp_get"}
+  mixed:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  four:u64 = const() {"value":4}
+  chosen:u64 = select(mixed,four,nine)
+  sequential:bool = compare.eq(seq,next)
+  smallest:bool = compare.ge(seq,one)
+  largest:bool = compare.le(seq,chosen)
+  exactly_ten:bool = compare.eq(count,ten)
+  first_seq:bool = compare.eq(seq,one)
+  validate_mixed:bool = bool.and(mixed,first_seq)
+  known_linear_or_later:bool = bool.or(exactly_ten,mixed)
+  branch validate_mixed check_plan(r,m,w,seq,chosen,sequential,smallest,largest) bounded(r,m,w,seq,chosen,sequential,smallest,largest,known_linear_or_later)
+block check_plan(p_r:readbuf,p_m:mutbuf,p_w:mutbuf,p_s:u64,p_max:u64,p_seq:bool,p_low:bool,p_high:bool)
+  false_const:bool = const() {"value":false}
+  plan_ok:bool = call(p_m,false_const) {"function":"hfs_mixed_plan"}
+  branch plan_ok bounded(p_r,p_m,p_w,p_s,p_max,p_seq,p_low,p_high,plan_ok) bad()
+block bounded(b_r:readbuf,b_m:mutbuf,b_w:mutbuf,b_s:u64,b_max:u64,b_seq:bool,b_low:bool,b_high:bool,b_mark:bool)
+  range:bool = bool.and(b_low,b_high)
+  valid_count:bool = bool.and(b_mark,range)
+  valid:bool = bool.and(b_seq,valid_count)
+  branch valid save_journal(b_r,b_m,b_w,b_s,b_max) bad()
+block save_journal(jr:readbuf,jm:mutbuf,jw:mutbuf,js:u64,j_max:u64)
+  zero_j:usize = const() {"value":0}
+  backup:usize = const() {"value":474000}
+  sha_extent:u64 = const() {"value":1208}
+  saved:u64 = call(jw,jm,zero_j,backup,sha_extent) {"function":"sscid_copy"}
+  one_j:u64 = const() {"value":1}
+  first:bool = compare.eq(js,one_j)
+  zero_index:u64 = const() {"value":0}
+  branch first seed(jr,jm,jw,js,zero_index,j_max) feed(jr,jm,jw,js,js,j_max)
+block seed(ser:readbuf,sem:mutbuf,sew:mutbuf,ses:u64,sei:u64,semx:u64)
+  linear_max:u64 = const() {"value":9}
+  linear_seed:bool = compare.eq(semx,linear_max)
+  branch linear_seed linear_mask(ser,sem,sew,ses,sei,semx) init(ser,sem,sew,ses,sei,semx)
+block linear_mask(lmr:readbuf,lmm:mutbuf,lmw:mutbuf,lms:u64,lmi:u64,lmx:u64)
+  full_mask:u64 = const() {"value":1023}
+  mask_at:u64 = const() {"value":459984}
+  mask_saved:u64 = call(lmm,mask_at,full_mask) {"function":"cp_put"}
+  jump init(lmr,lmm,lmw,lms,lmi,lmx)
+block init(ir:readbuf,im:mutbuf,iw:mutbuf,is:u64,ii:u64,i_max:u64)
+  anchor:u64 = const() {"value":0}
+  one_i:u64 = const() {"value":1}
+  source_off:u64 = const() {"value":88}
+  target_off:u64 = const() {"value":96}
+  start:bool = compare.eq(ii,anchor)
+  preceding:u64 = int.sub.wrap(ii,one_i)
+  expected_source:u64 = select(start,anchor,preceding)
+  marker:u64 = call(ii) {"function":"hfs_marker_offset"}
+  source_at:u64 = int.add.wrap(marker,source_off)
+  target_at:u64 = int.add.wrap(marker,target_off)
+  source:u64 = call(im,source_at) {"function":"cp_get"}
+  target:u64 = call(im,target_at) {"function":"cp_get"}
+  source_ok:bool = compare.eq(source,expected_source)
+  target_ok:bool = compare.eq(target,ii)
+  linear:bool = bool.and(source_ok,target_ok)
+  four_i:u64 = const() {"value":4}
+  planned:bool = compare.eq(i_max,four_i)
+  exact:bool = bool.or(linear,planned)
+  branch exact select_context(ir,im,iw,is,ii,start,i_max) bad()
+block select_context(scr:readbuf,scm:mutbuf,scw:mutbuf,scs:u64,sci:u64,scz:bool,scx:u64)
+  active_i:bool = call(scm,sci) {"function":"hfs_bank_endpoint"}
+  branch active_i new_context(scr,scm,scw,scs,sci,scz,scx) next_init(scr,scm,scw,scs,sci,scx)
+block new_context(nr:readbuf,nm:mutbuf,nw:mutbuf,ns:u64,ni:u64,nz:bool,n_max:u64)
+  okay:bool = call(nw,ni) {"function":"sjr_prefix"}
+  branch okay init_choose(nr,nm,nw,ns,ni,nz,n_max) bad()
+block init_choose(cr:readbuf,cm:mutbuf,cw:mutbuf,cs:u64,ci:u64,cz:bool,c_max:u64)
+  branch cz genesis(cr,cm,cw,cs,ci,c_max) keep_init(cr,cm,cw,cs,ci,c_max)
+block genesis(gr:readbuf,gm:mutbuf,gw:mutbuf,gs:u64,gi:u64,g_max:u64)
+  exact_g:bool = call(gm,gw,gi) {"function":"hfs_bank_finish"}
+  branch exact_g next_init(gr,gm,gw,gs,gi,g_max) bad()
+block keep_init(kr:readbuf,km:mutbuf,kw:mutbuf,ks:u64,ki:u64,k_max:u64)
+  kept:u64 = call(km,kw,ki) {"function":"hfs_bank_store"}
+  jump next_init(kr,km,kw,ks,ki,k_max)
+block next_init(nir:readbuf,nim:mutbuf,niw:mutbuf,nis:u64,nii:u64,ni_max:u64)
+  done_i:bool = compare.eq(nii,ni_max)
+  by_one:u64 = const() {"value":1}
+  next_i:u64 = int.add.wrap(nii,by_one)
+  branch done_i feed(nir,nim,niw,nis,nis,ni_max) init(nir,nim,niw,nis,next_i,ni_max)
+block feed(far:readbuf,fam:mutbuf,faw:mutbuf,fas:u64,fai:u64,fa_max:u64)
+  active_f:bool = call(fam,fai) {"function":"hfs_bank_endpoint"}
+  branch active_f feed_active(far,fam,faw,fas,fai,fa_max) next_row(far,fam,faw,fas,fai,fa_max)
+block feed_active(fr:readbuf,fm:mutbuf,fw:mutbuf,fs:u64,fi:u64,f_max:u64)
+  slot:u64 = call(fi) {"function":"hfs_bank_offset"}
+  src:usize = int.cast(slot) {"mode":"wrap"}
+  zero_f:usize = const() {"value":0}
+  width_f:u64 = const() {"value":1208}
+  loaded_f:u64 = call(fm,fw,src,zero_f,width_f) {"function":"sscid_copy"}
+  ordinary_receipt:u64 = const() {"value":149}
+  settled_receipt:u64 = const() {"value":181}
+  four_f:u64 = const() {"value":4}
+  is_mixed:bool = compare.eq(f_max,four_f)
+  final_row:bool = compare.eq(fs,f_max)
+  settle_row:bool = bool.and(is_mixed,final_row)
+  receipt_width:u64 = select(settle_row,settled_receipt,ordinary_receipt)
+  updated:bool = call(fr,fw,receipt_width) {"function":"sjr_receipt"}
+  step_finished:bool = compare.eq(fi,fs)
+  branch updated capture(fr,fm,fw,fs,fi,step_finished,f_max) bad()
+block capture(car:readbuf,cam:mutbuf,caw:mutbuf,cas:u64,cai:u64,caz:bool,ca_max:u64)
+  branch caz finish(car,cam,caw,cas,cai,ca_max) save(car,cam,caw,cas,cai,ca_max)
+block finish(zr:readbuf,zm:mutbuf,zw:mutbuf,zs:u64,zi:u64,z_max:u64)
+  valid_z:bool = call(zm,zw,zi) {"function":"hfs_bank_finish"}
+  branch valid_z next_row(zr,zm,zw,zs,zi,z_max) bad()
+block save(sr:readbuf,sm:mutbuf,sw:mutbuf,ss:u64,si:u64,s_max:u64)
+  digest_context:u64 = call(sm,sw,si) {"function":"hfs_bank_store"}
+  jump next_row(sr,sm,sw,ss,si,s_max)
+block next_row(qr:readbuf,qm:mutbuf,qw:mutbuf,qs:u64,qi:u64,q_max:u64)
+  ended:bool = compare.eq(qi,q_max)
+  one_q:u64 = const() {"value":1}
+  after_q:u64 = int.add.wrap(qi,one_q)
+  branch ended restore(qm,qw,qs) feed(qr,qm,qw,qs,after_q,q_max)
+block restore(rsm:mutbuf,rsw:mutbuf,rss:u64)
+  backup_r:usize = const() {"value":474000}
+  zero_r:usize = const() {"value":0}
+  width_r:u64 = const() {"value":1208}
+  restored:u64 = call(rsm,rsw,backup_r,zero_r,width_r) {"function":"sscid_copy"}
+  count_r:u64 = const() {"value":459992}
+  remembered:u64 = call(rsm,count_r,rss) {"function":"cp_put"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_bank_endpoint(m:mutbuf,index:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,index:u64)
+  mask_at:u64 = const() {"value":459984}
+  mask:u64 = call(m,mask_at) {"function":"cp_get"}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  flag:u64 = int.shl.checked(one,index)
+  selected:u64 = bit.and(mask,flag)
+  active:bool = compare.ne(selected,zero)
+  ret(active)
+end
+
+fn hfs_bank_offset(index:u64) -> (u64) effects() entry(entry)
+block entry(index:u64)
+  extent:u64 = const() {"value":1208}
+  start:u64 = const() {"value":460000}
+  stride:u64 = int.mul.wrap(index,extent)
+  at:u64 = int.add.wrap(start,stride)
+  ret(at)
+end
+
+fn hfs_bank_store(m:mutbuf,w:mutbuf,index:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,index:u64)
+  raw:u64 = call(index) {"function":"hfs_bank_offset"}
+  at:usize = int.cast(raw) {"mode":"wrap"}
+  zero:usize = const() {"value":0}
+  width:u64 = const() {"value":1208}
+  stored:u64 = call(w,m,zero,at,width) {"function":"sscid_copy"}
+  ret(stored)
+end
+
+fn hfs_bank_finish(m:mutbuf,w:mutbuf,index:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,index:u64)
+  outcome:u64 = call(w) {"function":"tr_sha_final_full"}
+  zero:u64 = const() {"value":0}
+  fine:bool = compare.eq(outcome,zero)
+  branch fine digest(m,w,index) bad()
+block digest(dm:mutbuf,dw:mutbuf,di:u64)
+  from:usize = const() {"value":1168}
+  width:u64 = const() {"value":32}
+  base:u64 = const() {"value":440000}
+  to:u64 = int.mul.wrap(di,width)
+  a:u64 = int.add.wrap(base,to)
+  ofs:usize = int.cast(a) {"mode":"wrap"}
+  copied:u64 = call(dw,dm,from,ofs,width) {"function":"sscid_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_install_id(r:readbuf,m:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf)
+  base:u64 = const() {"value":400000}
+  len_at:u64 = const() {"value":349008}
+  extent:u64 = call(m,len_at) {"function":"cp_get"}
+  end:u64 = int.add.wrap(base,extent)
+  pos:u64 = call(m,base,end) {"function":"ssi_settlement_option"}
+  count:u64 = const() {"value":33}
+  readable:u64 = call(pos,end,count) {"function":"srci_take"}
+  fits:bool = compare.le(readable,end)
+  branch fits proof(r,m,pos,count) bad()
+block proof(pr:readbuf,pm:mutbuf,pp:u64,pn:u64)
+  at:usize = int.cast(pp) {"mode":"wrap"}
+  rt:usize = const() {"value":172}
+  one:u8 = const() {"value":1}
+  tag:u8 = buffer.load(pm,at)
+  right:bool = compare.eq(tag,one)
+  equal:bool = call(pr,pm,rt,at,pn) {"function":"smr_eq_bound"}
+  good:bool = bool.and(right,equal)
+  ret(good)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_collect_roots(m:mutbuf,w:mutbuf,rows:u64,bytes:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,rows:u64,bytes:u64)
+  cap_w:usize = buffer.len(w)
+  required:usize = const() {"value":8192}
+  cap_ok:bool = compare.ge(cap_w,required)
+  max:u64 = const() {"value":1480}
+  fits:bool = compare.le(bytes,max)
+  safe:bool = bool.and(cap_ok,fits)
+  branch safe collect(m,w,rows,bytes) denied()
+block collect(cm:mutbuf,cw:mutbuf,cr:u64,cn:u64)
+  receipts:usize = const() {"value":430000}
+  slot:usize = const() {"value":4100}
+  copied:u64 = call(cm,cw,receipts,slot,cn) {"function":"sscid_copy"}
+  base:u64 = const() {"value":4100}
+  end_at:u64 = int.add.wrap(base,cn)
+  result:u32 = call(cw,end_at,cr) {"function":"jph_collect"}
+  zero:u32 = const() {"value":0}
+  checked:bool = compare.eq(result,zero)
+  branch checked save(cm,cw,cr) denied()
+block save(sm:mutbuf,sw:mutbuf,sr:u64)
+  first:usize = const() {"value":3000}
+  destination:usize = const() {"value":440000}
+  stride:u64 = const() {"value":32}
+  extra:u64 = const() {"value":1}
+  count:u64 = int.add.wrap(sr,extra)
+  n:u64 = int.mul.wrap(count,stride)
+  written:u64 = call(sw,sm,first,destination,n) {"function":"sscid_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block denied()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_mixed_plan_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  mixed:u64 = const() {"value":13}
+  enabled:bool = compare.eq(profile,mixed)
+  ret(enabled)
+end
+
+fn hfs_mixed_plan(m:mutbuf,verify:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,verify:bool)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  lower:u64 = const() {"value":2}
+  upper:u64 = const() {"value":11}
+  min_ok:bool = compare.ge(count,lower)
+  max_ok:bool = compare.le(count,upper)
+  sized:bool = bool.and(min_ok,max_ok)
+  zero:u64 = const() {"value":0}
+  branch sized start_plan(m,verify,count,zero) bad()
+block start_plan(stm:mutbuf,stv:bool,stn:u64,stz:u64)
+  branch stv read_marker(stm,stv,stn,stz,stz) clear_plan(stm,stv,stn,stz)
+block clear_plan(cpm:mutbuf,cpv:bool,cpn:u64,cpz:u64)
+  mask_loc:u64 = const() {"value":459984}
+  clear_mask:u64 = call(cpm,mask_loc,cpz) {"function":"cp_put"}
+  jump read_marker(cpm,cpv,cpn,cpz,cpz)
+block read_marker(rm:mutbuf,rv:bool,rn:u64,ri:u64,previous:u64)
+  base:u64 = call(ri) {"function":"hfs_marker_offset"}
+  source_off:u64 = const() {"value":88}
+  target_off:u64 = const() {"value":96}
+  source_at:u64 = int.add.wrap(base,source_off)
+  target_at:u64 = int.add.wrap(base,target_off)
+  src:u64 = call(rm,source_at) {"function":"cp_get"}
+  dst:u64 = call(rm,target_at) {"function":"cp_get"}
+  cap:u64 = const() {"value":4}
+  no_gap:bool = compare.eq(src,previous)
+  zero_r:u64 = const() {"value":0}
+  first:bool = compare.eq(ri,zero_r)
+  maximum:u64 = select(first,zero_r,cap)
+  above:bool = compare.ge(dst,src)
+  small:bool = compare.le(dst,cap)
+  adj:bool = compare.le(dst,maximum)
+  possible:bool = bool.and(above,small)
+  contiguous:bool = bool.and(no_gap,adj)
+  valid:bool = bool.and(possible,contiguous)
+  branch valid phase(rm,rv,rn,ri,base,src,dst) bad()
+block phase(pm:mutbuf,pv:bool,pn:u64,pi:u64,pb:u64,ps:u64,pt:u64)
+  branch pv roots(pm,pn,pi,pb,ps,pt,pv) endpoint(pm,pn,pi,pt,pv)
+block endpoint(em:mutbuf,en:u64,ei:u64,et:u64,ev:bool)
+  mask_at:u64 = const() {"value":459984}
+  mask:u64 = call(em,mask_at) {"function":"cp_get"}
+  one_e:u64 = const() {"value":1}
+  bit_e:u64 = int.shl.checked(one_e,et)
+  selected_e:u64 = bit.or(mask,bit_e)
+  saved_e:u64 = call(em,mask_at,selected_e) {"function":"cp_put"}
+  jump advance(em,en,ei,et,ev)
+block roots(mm:mutbuf,mn:u64,mi:u64,mb:u64,ms:u64,mt:u64,mv:bool)
+  checked:bool = call(mm,mb,mi,ms,mt) {"function":"hfs_check_marker"}
+  branch checked advance(mm,mn,mi,mt,mv) bad()
+block advance(am:mutbuf,an:u64,ai:u64,at:u64,av:bool)
+  plus:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(ai,plus)
+  done:bool = compare.eq(after,an)
+  branch done terminal(at) read_marker(am,av,an,after,at)
+block terminal(tn:u64)
+  four:u64 = const() {"value":4}
+  full:bool = compare.eq(tn,four)
+  ret(full)
+block bad()
+  refuse:bool = const() {"value":false}
+  ret(refuse)
+end
+
+fn hfs_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf)
+  profile_at:u64 = const() {"value":349024}
+  profile:u64 = call(m,profile_at) {"function":"cp_get"}
+  bank:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  branch bank finish_bank(m) old_roots(m,w)
+block finish_bank(fm:mutbuf)
+  seen_at:u64 = const() {"value":459992}
+  seen:u64 = call(fm,seen_at) {"function":"cp_get"}
+  four_f:u64 = const() {"value":4}
+  complete:bool = compare.eq(seen,four_f)
+  branch complete verify_bank(fm) bad()
+block verify_bank(vm:mutbuf)
+  truth:bool = const() {"value":true}
+  roots:bool = call(vm,truth) {"function":"hfs_mixed_plan"}
+  ret(roots)
+block old_roots(om:mutbuf,ow:mutbuf)
+  rows:u64 = const() {"value":4}
+  extent:u64 = const() {"value":644}
+  got:bool = call(om,ow,rows,extent) {"function":"hfs_collect_roots"}
+  branch got next_marker(om) bad()
+block next_marker(nm:mutbuf)
+  start:u64 = const() {"value":0}
+  result:bool = call(nm,start) {"function":"hfs_compare_markers"}
+  ret(result)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_settle_index(m:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  lo:u64 = const() {"value":7}
+  hi:u64 = const() {"value":11}
+  lower:bool = compare.ge(count,lo)
+  upper:bool = compare.le(count,hi)
+  safe:bool = bool.and(lower,upper)
+  branch safe begin(m,count) bad()
+block begin(bm:mutbuf,limit:u64)
+  start:u64 = const() {"value":6}
+  prior:u64 = const() {"value":0}
+  jump scan(bm,limit,start,prior)
+block scan(sm:mutbuf,sl:u64,si:u64,sp:u64)
+  within:bool = compare.lt(si,sl)
+  eight:u64 = const() {"value":8}
+  allowed:bool = compare.le(si,eight)
+  present:bool = bool.and(within,allowed)
+  branch present examine(sm,sl,si,sp) finish(sl,sp)
+block examine(em:mutbuf,el:u64,ei:u64,ep:u64)
+  row:u64 = call(ei) {"function":"hfs_marker_offset"}
+  fsource:u64 = const() {"value":88}
+  ftarget:u64 = const() {"value":96}
+  asource:u64 = int.add.wrap(row,fsource)
+  atarget:u64 = int.add.wrap(row,ftarget)
+  src:u64 = call(em,asource) {"function":"cp_get"}
+  dest:u64 = call(em,atarget) {"function":"cp_get"}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  a:bool = compare.eq(src,three)
+  b:bool = compare.eq(dest,four)
+  same:bool = bool.and(a,b)
+  zero:u64 = const() {"value":0}
+  already:bool = compare.gt(ep,zero)
+  twice:bool = bool.and(same,already)
+  next_witness:u64 = select(same,ei,ep)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(ei,one)
+  branch twice bad() scan(em,el,next,next_witness)
+block finish(fl:u64,fp:u64)
+  zero_f:u64 = const() {"value":0}
+  one_f:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  tail:u64 = int.sub.wrap(fl,one_f)
+  trailing:u64 = int.sub.wrap(tail,fp)
+  present_f:bool = compare.gt(fp,zero_f)
+  fewer:bool = compare.le(trailing,two)
+  fit:bool = bool.and(present_f,fewer)
+  answer:u64 = select(fit,fp,zero_f)
+  ret(answer)
+block bad()
+  no:u64 = const() {"value":0}
+  ret(no)
+end
+
+fn hfs_compare_markers(m:mutbuf,start:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,start:u64)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  settle:u64 = call(m) {"function":"hfs_settle_index"}
+  zero_entry:u64 = const() {"value":0}
+  fit:bool = compare.gt(settle,zero_entry)
+  branch fit one(m,start,count,settle) bad()
+block one(om:mutbuf,oi:u64,oc:u64,os:u64)
+  zero:u64 = const() {"value":0}
+  unit:u64 = const() {"value":1}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  is_genesis:bool = compare.eq(oi,zero)
+  max_normal:bool = compare.le(oi,three)
+  after:bool = compare.gt(oi,os)
+  settled:bool = compare.ge(oi,os)
+  prev:u64 = int.sub.wrap(oi,unit)
+  start_min:u64 = select(is_genesis,zero,prev)
+  start_other:u64 = select(after,four,three)
+  source:u64 = select(max_normal,start_min,start_other)
+  target_other:u64 = select(settled,four,three)
+  target:u64 = select(max_normal,oi,target_other)
+  base:u64 = call(oi) {"function":"hfs_marker_offset"}
+  sure:bool = call(om,base,oi,source,target) {"function":"hfs_check_marker"}
+  branch sure cycle(om,oi,oc,os) bad()
+block cycle(cm:mutbuf,ci:u64,limit:u64,settle_i:u64)
+  c1:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(ci,c1)
+  more:bool = compare.lt(next,limit)
+  branch more one(cm,next,limit,settle_i) good()
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_check_marker(m:mutbuf,base:u64,index:u64,source:u64,target:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,base:u64,index:u64,source:u64,target:u64)
+  fixed_at:u64 = const() {"value":8307}
+  measured_at:u64 = const() {"value":349040}
+  profile_at:u64 = const() {"value":349024}
+  profile:u64 = call(m,profile_at) {"function":"cp_get"}
+  measured:bool = call(profile) {"function":"hfs_variable"}
+  gen_at:u64 = select(measured,measured_at,fixed_at)
+  prior:u64 = call(m,gen_at) {"function":"cp_get"}
+  height:u64 = int.add.wrap(prior,index)
+  eight:u64 = const() {"value":8}
+  source_at:u64 = const() {"value":88}
+  target_at:u64 = const() {"value":96}
+  n:u64 = call(m,base) {"function":"cp_get"}
+  hat:u64 = int.add.wrap(base,eight)
+  h:u64 = call(m,hat) {"function":"cp_get"}
+  sf:u64 = int.add.wrap(base,source_at)
+  tf:u64 = int.add.wrap(base,target_at)
+  sn:u64 = call(m,sf) {"function":"cp_get"}
+  tn:u64 = call(m,tf) {"function":"cp_get"}
+  a:bool = compare.eq(n,index)
+  b:bool = compare.eq(h,height)
+  c:bool = compare.eq(sn,source)
+  d:bool = compare.eq(tn,target)
+  ab:bool = bool.and(a,b)
+  cd:bool = bool.and(c,d)
+  exact:bool = bool.and(ab,cd)
+  branch exact roots(m,base,source,target) bad()
+block roots(rm:mutbuf,rb:u64,rs:u64,rt:u64)
+  state_left:u64 = const() {"value":104}
+  state_right:u64 = const() {"value":136}
+  journal_left:u64 = const() {"value":168}
+  journal_right:u64 = const() {"value":200}
+  state_b:u64 = const() {"value":441000}
+  journal_b:u64 = const() {"value":440000}
+  w:u64 = const() {"value":32}
+  s_ix:u64 = int.mul.wrap(rs,w)
+  t_ix:u64 = int.mul.wrap(rt,w)
+  ss:bool = call(rm,rb,state_left,state_b,s_ix) {"function":"hfs_check_root"}
+  st:bool = call(rm,rb,state_right,state_b,t_ix) {"function":"hfs_check_root"}
+  js:bool = call(rm,rb,journal_left,journal_b,s_ix) {"function":"hfs_check_root"}
+  jt:bool = call(rm,rb,journal_right,journal_b,t_ix) {"function":"hfs_check_root"}
+  s_ok:bool = bool.and(ss,st)
+  j_ok:bool = bool.and(js,jt)
+  yes:bool = bool.and(s_ok,j_ok)
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_check_root(m:mutbuf,row:u64,field:u64,family:u64,offset:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,row:u64,field:u64,family:u64,offset:u64)
+  first:u64 = int.add.wrap(row,field)
+  second:u64 = int.add.wrap(family,offset)
+  a:usize = int.cast(first) {"mode":"wrap"}
+  b:usize = int.cast(second) {"mode":"wrap"}
+  n:u64 = const() {"value":32}
+  yes:bool = call(m,a,b,n) {"function":"smk_eq"}
+  ret(yes)
+end
+
+fn hfs_capture_engine(r:readbuf,m:mutbuf,seq:u64,main_end:usize) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,seq:u64,main_end:usize)
+  width:u64 = const() {"value":32}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  base_roots:u64 = const() {"value":441000}
+  old_rel:u64 = int.sub.wrap(seq,one)
+  old_off:u64 = int.mul.wrap(old_rel,width)
+  old_abs:u64 = int.add.wrap(base_roots,old_off)
+  first:bool = compare.eq(old_rel,zero)
+  branch first initial(r,m,main_end,old_abs,seq) check(r,m,main_end,old_abs,seq)
+block initial(ir:readbuf,im:mutbuf,ie:usize,io:u64,is:u64)
+  where:u64 = int.cast(ie) {"mode":"wrap"}
+  w0:u64 = const() {"value":32}
+  value:u64 = call(ir,where,im,io,w0) {"function":"cp_copy"}
+  jump store(ir,im,is)
+block check(cr:readbuf,cm:mutbuf,ce:usize,co:u64,cs:u64)
+  at:usize = int.cast(co) {"mode":"wrap"}
+  c32:u64 = const() {"value":32}
+  same:bool = call(cr,cm,ce,at,c32) {"function":"smr_eq_bound"}
+  branch same store(cr,cm,cs) bad()
+block store(sr:readbuf,sm:mutbuf,si:u64)
+  roots:u64 = const() {"value":441000}
+  r_from:u64 = const() {"value":40}
+  extent:u64 = const() {"value":32}
+  off:u64 = int.mul.wrap(si,extent)
+  to:u64 = int.add.wrap(roots,off)
+  saved:u64 = call(sr,r_from,sm,to,extent) {"function":"cp_copy"}
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_sameblock_receipt(r:readbuf,m:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,m:mutbuf,n:u64)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  two:u64 = const() {"value":2}
+  actual:bool = compare.eq(count,two)
+  branch actual match_coords(r,m,n) bad()
+block match_coords(cr:readbuf,cm:mutbuf,cn:u64)
+  current:usize = const() {"value":100}
+  marker_current:usize = const() {"value":420304}
+  coords:u64 = const() {"value":40}
+  same:bool = call(cr,cm,current,marker_current,coords) {"function":"smr_eq_bound"}
+  end:u64 = const() {"value":2}
+  final_row:bool = compare.eq(cn,end)
+  branch same tail(cr,cm,final_row) bad()
+block tail(tr:readbuf,tm:mutbuf,tlast:bool)
+  branch tlast check(tr,tm) good()
+block check(rr:readbuf,rm:mutbuf)
+  receipt:usize = const() {"value":140}
+  marker:usize = const() {"value":420432}
+  w:u64 = const() {"value":32}
+  okay:bool = call(rr,rm,receipt,marker,w) {"function":"smr_eq_bound"}
+  ret(okay)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_sameblock_roots(m:mutbuf,w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf)
+  rows:u64 = const() {"value":2}
+  extent:u64 = const() {"value":306}
+  got:bool = call(m,w,rows,extent) {"function":"hfs_collect_roots"}
+  branch got compare_markers(m) bad()
+block compare_markers(pm:mutbuf)
+  n0:u64 = const() {"value":0}
+  n1:u64 = const() {"value":1}
+  n2:u64 = const() {"value":2}
+  m0:u64 = const() {"value":420000}
+  m1:u64 = const() {"value":420296}
+  initial:bool = call(pm,m0,n0,n0,n0) {"function":"hfs_check_marker"}
+  final:bool = call(pm,m1,n1,n0,n2) {"function":"hfs_check_marker"}
+  both_roots:bool = bool.and(initial,final)
+  ret(both_roots)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn hfs_limit(profile:u64) -> (u64) effects() entry(entry)
+block entry(profile:u64)
+  pair:u64 = const() {"value":2}
+  need_pair:bool = call(profile) {"function":"hfs_same_profile"}
+  limit:u64 = select(need_pair,pair,profile)
+  variable:u64 = const() {"value":6}
+  one:u64 = const() {"value":1}
+  is_variable:bool = compare.eq(profile,variable)
+  rows:u64 = select(is_variable,one,limit)
+  var_pair:u64 = const() {"value":7}
+  is_var_pair:bool = compare.eq(profile,var_pair)
+  result:u64 = select(is_var_pair,pair,rows)
+  var_settle:u64 = const() {"value":8}
+  four:u64 = const() {"value":4}
+  old_var_settle:bool = compare.eq(profile,var_settle)
+  plan_mixed:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  is_var_settle:bool = bool.or(old_var_settle,plan_mixed)
+  final:u64 = select(is_var_settle,four,result)
+  linear:bool = call(profile) {"function":"hfs_linear3"}
+  three:u64 = const() {"value":3}
+  rows3:u64 = select(linear,three,final)
+  ret(rows3)
+end
+
+fn hfs_same_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  fixed:u64 = const() {"value":5}
+  measured:u64 = const() {"value":11}
+  old:bool = compare.eq(profile,fixed)
+  sized:bool = compare.eq(profile,measured)
+  same:bool = bool.or(old,sized)
+  ret(same)
+end
+
+fn hfs_variable(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  single:u64 = const() {"value":6}
+  pair:u64 = const() {"value":7}
+  is_one:bool = compare.eq(profile,single)
+  is_two:bool = compare.eq(profile,pair)
+  mixed:u64 = const() {"value":8}
+  legacy_mixed:bool = compare.eq(profile,mixed)
+  is_plan:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  is_mixed:bool = bool.or(legacy_mixed,is_plan)
+  old:bool = bool.or(is_one,is_two)
+  measured:bool = bool.or(old,is_mixed)
+  linear:bool = call(profile) {"function":"hfs_linear_profile"}
+  original:bool = bool.or(measured,linear)
+  generic_same:u64 = const() {"value":11}
+  is_generic_same:bool = compare.eq(profile,generic_same)
+  variable:bool = bool.or(original,is_generic_same)
+  ret(variable)
+end
+
+fn hfs_settled(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  fixed:u64 = const() {"value":4}
+  measured:u64 = const() {"value":8}
+  is_fixed:bool = compare.eq(profile,fixed)
+  is_measured:bool = compare.eq(profile,measured)
+  known:bool = bool.or(is_fixed,is_measured)
+  is_plan:bool = call(profile) {"function":"hfs_mixed_plan_profile"}
+  proof:bool = bool.or(known,is_plan)
+  ret(proof)
+end
+
+fn hfs_linear3(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  stage:u64 = const() {"value":9}
+  measured:bool = compare.eq(profile,stage)
+  ret(measured)
+end
+
+fn hfs_linear_roots(m:mutbuf,w:mutbuf,rows:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,w:mutbuf,rows:u64)
+  count_at:u64 = const() {"value":88}
+  count:u64 = call(m,count_at) {"function":"cp_get"}
+  one_c:u64 = const() {"value":1}
+  cap_c:u64 = const() {"value":8}
+  floor:u64 = const() {"value":3}
+  extent:u64 = int.add.wrap(rows,one_c)
+  exact:bool = compare.eq(count,extent)
+  mode_at:u64 = const() {"value":349024}
+  mode:u64 = call(m,mode_at) {"function":"cp_get"}
+  bank:bool = call(mode) {"function":"hfs_bank_profile"}
+  cap_bank:u64 = const() {"value":9}
+  selected:u64 = select(bank,cap_bank,cap_c)
+  below:bool = compare.le(rows,selected)
+  above:bool = compare.ge(rows,floor)
+  limits:bool = bool.and(below,above)
+  safe:bool = bool.and(exact,limits)
+  branch safe route(m,w,rows,bank) bad()
+block route(rrm:mutbuf,rrw:mutbuf,rrn:u64,rrb:bool)
+  branch rrb verify_bank(rrm,rrn) setup(rrm,rrw,rrn)
+block verify_bank(bm:mutbuf,bn:u64)
+  seen_at:u64 = const() {"value":459992}
+  nine:u64 = const() {"value":9}
+  zero_b:u64 = const() {"value":0}
+  count_seen:u64 = call(bm,seen_at) {"function":"cp_get"}
+  valid_seen:bool = compare.eq(count_seen,nine)
+  exact_n:bool = compare.eq(bn,nine)
+  ready:bool = bool.and(valid_seen,exact_n)
+  branch ready walk(bm,zero_b,bn) bad()
+block setup(sm:mutbuf,sw:mutbuf,sn:u64)
+  stride:u64 = const() {"value":153}
+  packed_bytes:u64 = int.mul.wrap(sn,stride)
+  got:bool = call(sm,sw,sn,packed_bytes) {"function":"hfs_collect_roots"}
+  zero:u64 = const() {"value":0}
+  branch got walk(sm,zero,sn) bad()
+block walk(vm:mutbuf,vi:u64,max:u64)
+  first:u64 = const() {"value":0}
+  unit:u64 = const() {"value":1}
+  genesis:bool = compare.eq(vi,first)
+  predecessor:u64 = int.sub.wrap(vi,unit)
+  src:u64 = select(genesis,first,predecessor)
+  marker:u64 = call(vi) {"function":"hfs_marker_offset"}
+  checked:bool = call(vm,marker,vi,src,vi) {"function":"hfs_check_marker"}
+  branch checked continue(vm,vi,max,unit) bad()
+block continue(cm:mutbuf,ci:u64,cl:u64,cu:u64)
+  end_c:bool = compare.eq(ci,cl)
+  step:u64 = int.add.wrap(ci,cu)
+  branch end_c good() walk(cm,step,cl)
+block good()
+  verified:bool = const() {"value":true}
+  ret(verified)
+block bad()
+  refused:bool = const() {"value":false}
+  ret(refused)
+end
+
+fn hfs_long(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  bound:u64 = const() {"value":10}
+  ordinary:bool = compare.eq(profile,bound)
+  bank_no:u64 = const() {"value":12}
+  bank:bool = compare.eq(profile,bank_no)
+  long:bool = bool.or(ordinary,bank)
+  ret(long)
+end
+
+fn hfs_linear_profile(profile:u64) -> (bool) effects() entry(entry)
+block entry(profile:u64)
+  three:bool = call(profile) {"function":"hfs_linear3"}
+  linear:bool = call(profile) {"function":"hfs_long"}
+  either:bool = bool.or(three,linear)
+  ret(either)
+end
+
+fn hfs_actual_limit(m:mutbuf,profile:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(m:mutbuf,profile:u64)
+  legal:bool = call(profile) {"function":"hfs_long"}
+  prior:u64 = call(profile) {"function":"hfs_limit"}
+  at:u64 = const() {"value":7002}
+  rows:u64 = call(m,at) {"function":"cp_get"}
+  choose:u64 = select(legal,rows,prior)
+  ret(choose)
+end

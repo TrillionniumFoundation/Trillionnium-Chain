@@ -1,0 +1,70 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_state_id
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  span:usize = buffer.len(raw)
+  low:usize = const() {"value":111}
+  high:usize = const() {"value":65536}
+  lo:bool = compare.ge(span,low)
+  hi:bool = compare.le(span,high)
+  fit:bool = bool.and(lo,hi)
+  branch fit capacity(raw,out,w,span) malformed()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:usize)
+  required:usize = const() {"value":33}
+  on:usize = buffer.len(co)
+  wn:usize = buffer.len(cw)
+  ofit:bool = compare.ge(on,required)
+  wfit:bool = compare.ge(wn,cn)
+  enough:bool = bool.and(ofit,wfit)
+  branch enough stage(cr,co,cw,cn) short()
+block stage(sr:readbuf,so:mutbuf,sw:mutbuf,sn:usize)
+  n64:u64 = int.cast(sn) {"mode":"wrap"}
+  base:u64 = const() {"value":0}
+  end64:u64 = call(sr,base,sw,base,n64) {"function":"cp_copy"}
+  parsed:u64 = call(sw,base,end64) {"function":"sks_state"}
+  exact:bool = compare.eq(parsed,end64)
+  branch exact locate(so,sw,base,end64) malformed()
+block locate(lout:mutbuf,lwork:mutbuf,lbase:u64,lend:u64)
+  where:u64 = call(lwork,lbase,lend) {"function":"ssi_settlement_option"}
+  has:bool = compare.lt(where,lend)
+  branch has classify(lout,lwork,where) malformed()
+block classify(tr_o:mutbuf,tr_w:mutbuf,tr_at:u64)
+  here:usize = int.cast(tr_at) {"mode":"wrap"}
+  disc:u8 = buffer.load(tr_w,here)
+  some_tag:u8 = const() {"value":1}
+  some:bool = compare.eq(disc,some_tag)
+  branch some present(tr_o,tr_w,tr_at) absent(tr_o)
+block present(po:mutbuf,pw:mutbuf,ps:u64)
+  zero_p:u64 = const() {"value":0}
+  full:u64 = const() {"value":33}
+  written:u64 = call(pw,ps,po,zero_p,full) {"function":"cp_wout"}
+  ok_p:u32 = const() {"value":0}
+  ret(ok_p)
+block absent(ao:mutbuf)
+  start:usize = const() {"value":0}
+  limit:usize = const() {"value":33}
+  jump clear(ao,start,limit)
+block clear(dw:mutbuf,offset:usize,finish:usize)
+  octet:u8 = const() {"value":0}
+  _ = buffer.store(dw,offset,octet)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(offset,one)
+  more:bool = compare.lt(next,finish)
+  branch more clear(dw,next,finish) success()
+block success()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block short()
+  tiny:u32 = const() {"value":102}
+  ret(tiny)
+end
+
+fn ssi_settlement_option(w:mutbuf,first:u64,last:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,first:u64,last:u64)
+  rollup:u64 = call(w,first,last) {"function":"sks_receipt_states"}
+  arm:u64 = const() {"value":1}
+  pos:u64 = call(w,rollup,last,arm) {"function":"sks_optional"}
+  ret(pos)
+end

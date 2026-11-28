@@ -1,0 +1,83 @@
+name: HIA ARM64 RAC1 diagnostic
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - .github/workflows/hia-arm64-rac1.yml
+      - scripts/ci/hia_arm64_rac1.py
+      - scripts/ci/hia_arm64_rac1_carrier.py
+      - scripts/ci/hia_arm64_rac1_data.py
+      - scripts/ci/test_hia_arm64_rac1.py
+      - hia/src/release_bundle/artifact_header.hepta
+      - hia/tests/test_release_artifact_header.py
+      - trillionnium/crates/trnm-release-bundle/src/lib.rs
+      - trillionnium/crates/trnm-release-bundle/src/content_v1.rs
+      - rust-toolchain.toml
+permissions:
+  contents: read
+jobs:
+  rac1-arm64-diagnostic:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.event.pull_request.number == 949 && github.event.pull_request.draft == true && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/chain-hia-native'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      HIA_DIAGNOSTIC_HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /hia/tests/native_support.py
+            /hia/tests/test_release_artifact_header.py
+            /hia/src/release_bundle/artifact_header.hepta
+            /trillionnium/crates/trnm-release-bundle/src/lib.rs
+            /trillionnium/crates/trnm-release-bundle/src/content_v1.rs
+            /rust-toolchain.toml
+            /scripts/ci/hia_arm64_rac1.py
+            /scripts/ci/hia_arm64_rac1_carrier.py
+            /scripts/ci/hia_arm64_rac1_data.py
+            /scripts/ci/test_hia_arm64_rac1.py
+          persist-credentials: false
+      - name: Fetch exact public Hepta and install signed native toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -sm)" = "Linux aarch64"
+          test "$RUNNER_OS/$RUNNER_ARCH" = "Linux/ARM64"
+          export GIT_TERMINAL_PROMPT=0
+          dst="$RUNNER_TEMP/hia-rac1-hepta"
+          pin=f33d8da316de8fdf27b504371f1a5310997ff548
+          git init -q "$dst"
+          git -C "$dst" config credential.helper ""
+          git -C "$dst" config http.extraHeader ""
+          git -C "$dst" remote add origin https://github.com/TrillionniumFoundation/Hepta.git
+          git -C "$dst" -c protocol.version=2 fetch --depth=1 --filter=blob:none origin "$pin"
+          git -C "$dst" sparse-checkout set --cone hepta
+          git -C "$dst" checkout --detach "$pin"
+          test "$(git -C "$dst" rev-parse HEAD)" = "$pin"
+          sudo apt-get -o Acquire::Retries=1 update
+          sudo apt-get -o Acquire::Retries=1 install --no-install-recommends -y 'clang-20=1:20.1.2-0ubuntu1~24.04.3'
+          rustup toolchain install 1.95.0 --profile minimal
+      - name: Execute and verify actual literal RAC1 on Linux ARM64
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$(dirname "$(rustup which --toolchain 1.95.0 rustc)"):$PATH"
+          upstream="$RUNNER_TEMP/hia-rac1-hepta"
+          out="$RUNNER_TEMP/hia-rac1"
+          mkdir "$out"
+          PYTHONPATH="$upstream" python3 -B scripts/ci/test_hia_arm64_rac1.py
+          python3 -B scripts/ci/hia_arm64_rac1.py collect "$GITHUB_WORKSPACE" "$upstream" "$out" "$HIA_DIAGNOSTIC_HEAD"
+          python3 -B scripts/ci/hia_arm64_rac1.py verify "$out" "$HIA_DIAGNOSTIC_HEAD" "$(git rev-parse 'HEAD^{tree}')" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
+          tar -C "$out" --format=ustar -cf "$RUNNER_TEMP/hia-arm64-rac1.tar" report.json original.stdout native.request native.stdout native.o reference.rs driver.rs
+          test "$(stat -c %s "$RUNNER_TEMP/hia-arm64-rac1.tar")" -le 262144
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-arm64-rac1-${{ env.HIA_DIAGNOSTIC_HEAD }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hia-arm64-rac1.tar
+          if-no-files-found: error
+          retention-days: 7

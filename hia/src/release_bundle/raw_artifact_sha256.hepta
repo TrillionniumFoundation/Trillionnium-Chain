@@ -1,0 +1,139 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_raw_artifact_sha256
+fn f0(frame:readbuf,digest:mutbuf,state:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(frame:readbuf,digest:mutbuf,state:mutbuf)
+  extent:usize = buffer.len(frame)
+  state_extent:usize = buffer.len(state)
+  zero:usize = const() {"value":0}
+  minimum:usize = const() {"value":1224}
+  nonempty:bool = compare.gt(extent,zero)
+  state_fits:bool = compare.ge(state_extent,minimum)
+  sizes_ok:bool = bool.and(nonempty,state_fits)
+  branch sizes_ok dispatch(frame,digest,state,extent) bad_frame()
+block dispatch(input:readbuf,output:mutbuf,arena:mutbuf,input_extent:usize)
+  offset:usize = const() {"value":0}
+  operation:u8 = buffer.load(input,offset)
+  init_tag:u8 = const() {"value":0}
+  is_init:bool = compare.eq(operation,init_tag)
+  branch is_init init_gate(input,arena,input_extent) operation_gate(input,output,arena,input_extent,operation)
+block init_gate(init_input:readbuf,init_arena:mutbuf,init_extent:usize)
+  size_bytes:usize = const() {"value":9}
+  exact:bool = compare.eq(init_extent,size_bytes)
+  branch exact init_size(init_input,init_arena) bad_frame()
+block init_size(size_input:readbuf,size_arena:mutbuf)
+  size_offset:u64 = const() {"value":1}
+  expected:u64 = call(size_input,size_offset) {"function":"tr_read"}
+  valid:bool = call(expected) {"function":"rah_size_valid"}
+  branch valid init_apply(size_arena,expected) bad_length()
+block init_apply(new_state:mutbuf,declared:u64)
+  initialized:u64 = call(new_state) {"function":"tr_sha_init"}
+  zero_h:u64 = const() {"value":0}
+  ok:bool = compare.eq(initialized,zero_h)
+  branch ok init_record(new_state,declared) bad_state()
+block init_record(record_state:mutbuf,record_expected:u64)
+  marker_at:u64 = const() {"value":1208}
+  marker:u64 = const() {"value":826818898}
+  expected_at:u64 = const() {"value":1216}
+  _marker:u64 = call(record_state,marker_at,marker) {"function":"tr_put"}
+  _expected:u64 = call(record_state,expected_at,record_expected) {"function":"tr_put"}
+  jump success()
+block operation_gate(op_input:readbuf,op_output:mutbuf,op_arena:mutbuf,op_extent:usize,op_code:u8)
+  update_tag:u8 = const() {"value":1}
+  is_update:bool = compare.eq(op_code,update_tag)
+  branch is_update active(op_input,op_output,op_arena,op_extent,is_update) finish_gate(op_input,op_output,op_arena,op_extent,op_code,is_update)
+block finish_gate(fin_input:readbuf,fin_output:mutbuf,fin_arena:mutbuf,fin_extent:usize,fin_code:u8,fin_is_update:bool)
+  finish_tag:u8 = const() {"value":2}
+  only_tag:usize = const() {"value":1}
+  known:bool = compare.eq(fin_code,finish_tag)
+  exact_frame:bool = compare.eq(fin_extent,only_tag)
+  allowed:bool = bool.and(known,exact_frame)
+  branch allowed active(fin_input,fin_output,fin_arena,fin_extent,fin_is_update) bad_frame()
+block active(active_input:readbuf,active_output:mutbuf,active_arena:mutbuf,active_extent:usize,active_update:bool)
+  active_marker_at:u64 = const() {"value":1208}
+  active_marker:u64 = const() {"value":826818898}
+  found_marker:u64 = call(active_arena,active_marker_at) {"function":"tr_get"}
+  marker_ok:bool = compare.eq(found_marker,active_marker)
+  branch marker_ok counters(active_input,active_output,active_arena,active_extent,active_update) bad_state()
+block counters(cnt_input:readbuf,cnt_output:mutbuf,cnt_arena:mutbuf,cnt_extent:usize,cnt_update:bool)
+  total_at:u64 = const() {"value":1088}
+  pending_at:u64 = const() {"value":1096}
+  finalized_at:u64 = const() {"value":1200}
+  declared_at:u64 = const() {"value":1216}
+  total:u64 = call(cnt_arena,total_at) {"function":"tr_get"}
+  pending:u64 = call(cnt_arena,pending_at) {"function":"tr_get"}
+  finalized:u64 = call(cnt_arena,finalized_at) {"function":"tr_get"}
+  declared_size:u64 = call(cnt_arena,declared_at) {"function":"tr_get"}
+  declared_valid:bool = call(declared_size) {"function":"rah_size_valid"}
+  block_size_mask:u64 = const() {"value":63}
+  expected_pending:u64 = bit.and(total,block_size_mask)
+  zero_count:u64 = const() {"value":0}
+  pending_ok:bool = compare.eq(expected_pending,pending)
+  active_state:bool = compare.eq(finalized,zero_count)
+  total_ok:bool = compare.le(total,declared_size)
+  format_ok:bool = bool.and(declared_valid,active_state)
+  counters_ok:bool = bool.and(pending_ok,total_ok)
+  state_ok:bool = bool.and(format_ok,counters_ok)
+  branch state_ok select_op(cnt_input,cnt_output,cnt_arena,cnt_extent,cnt_update,total,declared_size) bad_state()
+block select_op(sel_input:readbuf,sel_output:mutbuf,sel_arena:mutbuf,sel_extent:usize,sel_update:bool,sel_total:u64,sel_size:u64)
+  branch sel_update update_gate(sel_input,sel_arena,sel_extent,sel_total,sel_size) finish_length(sel_output,sel_arena,sel_total,sel_size)
+block update_gate(up_input:readbuf,up_arena:mutbuf,up_extent:usize,up_total:u64,up_size:u64)
+  up_extent64:u64 = int.cast(up_extent) {"mode":"wrap"}
+  data_at:u64 = const() {"value":1}
+  data_len:u64 = int.sub.wrap(up_extent64,data_at)
+  remaining:u64 = int.sub.wrap(up_size,up_total)
+  permitted:bool = compare.le(data_len,remaining)
+  branch permitted update_bytes(up_input,up_arena,data_at,data_len) bad_length()
+block update_bytes(bytes_input:readbuf,bytes_arena:mutbuf,bytes_at:u64,bytes_len:u64)
+  updated:u64 = call(bytes_input,bytes_at,bytes_len,bytes_arena) {"function":"tr_sha_update_full"}
+  upd_zero:u64 = const() {"value":0}
+  update_ok:bool = compare.eq(updated,upd_zero)
+  branch update_ok success() bad_state()
+block finish_length(fl_output:mutbuf,fl_arena:mutbuf,fl_total:u64,fl_size:u64)
+  finished:bool = compare.eq(fl_total,fl_size)
+  branch finished finish_capacity(fl_output,fl_arena) bad_length()
+block finish_capacity(fc_output:mutbuf,fc_arena:mutbuf)
+  fc_extent:usize = buffer.len(fc_output)
+  digest_size:usize = const() {"value":32}
+  fits:bool = compare.ge(fc_extent,digest_size)
+  branch fits finish_apply(fc_output,fc_arena) short_output()
+block finish_apply(fa_output:mutbuf,fa_arena:mutbuf)
+  finish_result:u64 = call(fa_arena) {"function":"tr_sha_final_full"}
+  finish_zero:u64 = const() {"value":0}
+  finalized_ok:bool = compare.eq(finish_result,finish_zero)
+  branch finalized_ok copy_digest(fa_output,fa_arena,finish_zero) bad_state()
+block copy_digest(copy_out:mutbuf,copy_state:mutbuf,digest_index:u64)
+  state_digest_at:u64 = const() {"value":1168}
+  state_at:u64 = int.add.wrap(state_digest_at,digest_index)
+  source_index:usize = int.cast(state_at) {"mode":"wrap"}
+  target_index:usize = int.cast(digest_index) {"mode":"wrap"}
+  octet:u8 = buffer.load(copy_state,source_index)
+  _ = buffer.store(copy_out,target_index,octet)
+  digest_byte:u64 = const() {"value":1}
+  digest_end:u64 = const() {"value":32}
+  next_index:u64 = int.add.wrap(digest_index,digest_byte)
+  done:bool = compare.eq(next_index,digest_end)
+  branch done success() copy_digest(copy_out,copy_state,next_index)
+block success()
+  success_code:u32 = const() {"value":0}
+  ret(success_code)
+block bad_frame()
+  frame_code:u32 = const() {"value":100}
+  ret(frame_code)
+block bad_state()
+  state_code:u32 = const() {"value":101}
+  ret(state_code)
+block bad_length()
+  length_code:u32 = const() {"value":102}
+  ret(length_code)
+block short_output()
+  short_code:u32 = const() {"value":103}
+  ret(short_code)
+end
+fn rah_size_valid(declared_bytes:u64) -> (bool) effects() entry(entry)
+block entry(declared_bytes:u64)
+  zero_size:u64 = const() {"value":0}
+  release_artifact_max:u64 = const() {"value":137438953472}
+  positive:bool = compare.gt(declared_bytes,zero_size)
+  within:bool = compare.le(declared_bytes,release_artifact_max)
+  valid:bool = bool.and(positive,within)
+  ret(valid)
+end

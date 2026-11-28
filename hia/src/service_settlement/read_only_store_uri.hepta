@@ -1,0 +1,188 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_read_only_uri
+fn f0(path:readbuf,uri:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(path:readbuf,uri:mutbuf,unused:mutbuf)
+  n:usize = buffer.len(path)
+  maximum:usize = const() {"value":4096}
+  in_bound:bool = compare.le(n,maximum)
+  zero:usize = const() {"value":0}
+  overhead:usize = const() {"value":13}
+  branch in_bound start(path,uri,n,zero,overhead) invalid()
+block start(s_path:readbuf,s_uri:mutbuf,s_n:usize,s_zero:usize,s_overhead:usize)
+  s_empty:bool = compare.eq(s_n,s_zero)
+  s_no:bool = const() {"value":false}
+  branch s_empty capacity(s_path,s_uri,s_n,s_overhead,s_no) first(s_path,s_uri,s_n,s_zero,s_overhead)
+block first(f_path:readbuf,f_uri:mutbuf,f_n:usize,f_zero:usize,f_overhead:usize)
+  f_octet:u8 = buffer.load(f_path,f_zero)
+  f_slash:u8 = const() {"value":47}
+  f_first_slash:bool = compare.eq(f_octet,f_slash)
+  jump count(f_path,f_uri,f_n,f_zero,f_overhead,f_first_slash)
+block count(c_path:readbuf,c_uri:mutbuf,c_n:usize,c_i:usize,c_size:usize,c_slash:bool)
+  c_more:bool = compare.lt(c_i,c_n)
+  branch c_more count_step(c_path,c_uri,c_n,c_i,c_size,c_slash) capacity(c_path,c_uri,c_n,c_size,c_slash)
+block count_step(cs_path:readbuf,cs_uri:mutbuf,cs_n:usize,cs_i:usize,cs_size:usize,cs_slash:bool)
+  cs_byte:u8 = buffer.load(cs_path,cs_i)
+  cs_lit:bool = call(cs_byte,cs_i,cs_slash) {"function":"suri_literal"}
+  cs_one:usize = const() {"value":1}
+  cs_next:usize = int.add.wrap(cs_i,cs_one)
+  branch cs_lit count_literal(cs_path,cs_uri,cs_n,cs_next,cs_size,cs_slash) count_percent(cs_path,cs_uri,cs_n,cs_next,cs_size,cs_slash)
+block count_literal(cl_path:readbuf,cl_uri:mutbuf,cl_n:usize,cl_i:usize,cl_size:usize,cl_slash:bool)
+  cl_one:usize = const() {"value":1}
+  cl_next:usize = int.add.wrap(cl_size,cl_one)
+  jump count(cl_path,cl_uri,cl_n,cl_i,cl_next,cl_slash)
+block count_percent(cp_path:readbuf,cp_uri:mutbuf,cp_n:usize,cp_i:usize,cp_size:usize,cp_slash:bool)
+  cp_three:usize = const() {"value":3}
+  cp_next:usize = int.add.wrap(cp_size,cp_three)
+  jump count(cp_path,cp_uri,cp_n,cp_i,cp_next,cp_slash)
+block capacity(k_path:readbuf,k_uri:mutbuf,k_n:usize,k_size:usize,k_slash:bool)
+  k_cap:usize = buffer.len(k_uri)
+  k_fit:bool = compare.le(k_size,k_cap)
+  branch k_fit prefix(k_path,k_uri,k_n,k_slash) short()
+block prefix(p_path:readbuf,p_uri:mutbuf,p_n:usize,p_slash:bool)
+  p_at0:usize = const() {"value":0}
+  p_b0:u8 = const() {"value":102}
+  _ = buffer.store(p_uri,p_at0,p_b0)
+  p_at1:usize = const() {"value":1}
+  p_b1:u8 = const() {"value":105}
+  _ = buffer.store(p_uri,p_at1,p_b1)
+  p_at2:usize = const() {"value":2}
+  p_b2:u8 = const() {"value":108}
+  _ = buffer.store(p_uri,p_at2,p_b2)
+  p_at3:usize = const() {"value":3}
+  p_b3:u8 = const() {"value":101}
+  _ = buffer.store(p_uri,p_at3,p_b3)
+  p_at4:usize = const() {"value":4}
+  p_b4:u8 = const() {"value":58}
+  _ = buffer.store(p_uri,p_at4,p_b4)
+  p_end:usize = const() {"value":5}
+  jump emit(p_path,p_uri,p_n,p_at0,p_end,p_slash)
+block emit(e_path:readbuf,e_uri:mutbuf,e_n:usize,e_i:usize,e_at:usize,e_slash:bool)
+  e_more:bool = compare.lt(e_i,e_n)
+  branch e_more emit_step(e_path,e_uri,e_n,e_i,e_at,e_slash) suffix(e_uri,e_at)
+block emit_step(es_path:readbuf,es_uri:mutbuf,es_n:usize,es_i:usize,es_at:usize,es_slash:bool)
+  es_byte:u8 = buffer.load(es_path,es_i)
+  es_lit:bool = call(es_byte,es_i,es_slash) {"function":"suri_literal"}
+  es_one:usize = const() {"value":1}
+  es_next:usize = int.add.wrap(es_i,es_one)
+  branch es_lit emit_literal(es_path,es_uri,es_n,es_next,es_at,es_slash,es_byte) emit_percent(es_path,es_uri,es_n,es_next,es_at,es_slash,es_byte)
+block emit_literal(el_path:readbuf,el_uri:mutbuf,el_n:usize,el_i:usize,el_at:usize,el_slash:bool,el_byte:u8)
+  _ = buffer.store(el_uri,el_at,el_byte)
+  el_one:usize = const() {"value":1}
+  el_next:usize = int.add.wrap(el_at,el_one)
+  jump emit(el_path,el_uri,el_n,el_i,el_next,el_slash)
+block emit_percent(ep_path:readbuf,ep_uri:mutbuf,ep_n:usize,ep_i:usize,ep_at:usize,ep_slash:bool,ep_byte:u8)
+  ep_pct:u8 = const() {"value":37}
+  _ = buffer.store(ep_uri,ep_at,ep_pct)
+  ep_four:u8 = const() {"value":4}
+  ep_mask:u8 = const() {"value":15}
+  ep_hi:u8 = int.shr.checked(ep_byte,ep_four)
+  ep_lo:u8 = bit.and(ep_byte,ep_mask)
+  ep_left:u8 = call(ep_hi) {"function":"suri_hex"}
+  ep_right:u8 = call(ep_lo) {"function":"suri_hex"}
+  ep_one:usize = const() {"value":1}
+  ep_two:usize = const() {"value":2}
+  ep_three:usize = const() {"value":3}
+  ep_left_at:usize = int.add.wrap(ep_at,ep_one)
+  ep_right_at:usize = int.add.wrap(ep_at,ep_two)
+  _ = buffer.store(ep_uri,ep_left_at,ep_left)
+  _ = buffer.store(ep_uri,ep_right_at,ep_right)
+  ep_next:usize = int.add.wrap(ep_at,ep_three)
+  jump emit(ep_path,ep_uri,ep_n,ep_i,ep_next,ep_slash)
+block suffix(t_uri:mutbuf,t_begin:usize)
+  t_d0:usize = const() {"value":0}
+  t_at0:usize = int.add.wrap(t_begin,t_d0)
+  t_b0:u8 = const() {"value":63}
+  _ = buffer.store(t_uri,t_at0,t_b0)
+  t_d1:usize = const() {"value":1}
+  t_at1:usize = int.add.wrap(t_begin,t_d1)
+  t_b1:u8 = const() {"value":109}
+  _ = buffer.store(t_uri,t_at1,t_b1)
+  t_d2:usize = const() {"value":2}
+  t_at2:usize = int.add.wrap(t_begin,t_d2)
+  t_b2:u8 = const() {"value":111}
+  _ = buffer.store(t_uri,t_at2,t_b2)
+  t_d3:usize = const() {"value":3}
+  t_at3:usize = int.add.wrap(t_begin,t_d3)
+  t_b3:u8 = const() {"value":100}
+  _ = buffer.store(t_uri,t_at3,t_b3)
+  t_d4:usize = const() {"value":4}
+  t_at4:usize = int.add.wrap(t_begin,t_d4)
+  t_b4:u8 = const() {"value":101}
+  _ = buffer.store(t_uri,t_at4,t_b4)
+  t_d5:usize = const() {"value":5}
+  t_at5:usize = int.add.wrap(t_begin,t_d5)
+  t_b5:u8 = const() {"value":61}
+  _ = buffer.store(t_uri,t_at5,t_b5)
+  t_d6:usize = const() {"value":6}
+  t_at6:usize = int.add.wrap(t_begin,t_d6)
+  t_b6:u8 = const() {"value":114}
+  _ = buffer.store(t_uri,t_at6,t_b6)
+  t_d7:usize = const() {"value":7}
+  t_at7:usize = int.add.wrap(t_begin,t_d7)
+  t_b7:u8 = const() {"value":111}
+  _ = buffer.store(t_uri,t_at7,t_b7)
+  t_eight:usize = const() {"value":8}
+  t_end:usize = int.add.wrap(t_begin,t_eight)
+  t_written:u32 = int.cast(t_end) {"mode":"wrap"}
+  ret(t_written)
+block invalid()
+  invalid_result:u32 = const() {"value":4294967295}
+  ret(invalid_result)
+block short()
+  short_result:u32 = const() {"value":4294967294}
+  ret(short_result)
+end
+
+fn suri_literal(octet:u8,index:usize,first_slash:bool) -> (bool) effects() entry(entry)
+block entry(octet:u8,index:usize,first_slash:bool)
+  digit_min:u8 = const() {"value":48}
+  digit_max:u8 = const() {"value":57}
+  digit_above:bool = compare.ge(octet,digit_min)
+  digit_below:bool = compare.le(octet,digit_max)
+  digit_ok:bool = bool.and(digit_above,digit_below)
+  lower_min:u8 = const() {"value":97}
+  lower_max:u8 = const() {"value":122}
+  lower_above:bool = compare.ge(octet,lower_min)
+  lower_below:bool = compare.le(octet,lower_max)
+  lower_ok:bool = bool.and(lower_above,lower_below)
+  upper_min:u8 = const() {"value":65}
+  upper_max:u8 = const() {"value":90}
+  upper_above:bool = compare.ge(octet,upper_min)
+  upper_below:bool = compare.le(octet,upper_max)
+  upper_ok:bool = bool.and(upper_above,upper_below)
+  slash_byte:u8 = const() {"value":47}
+  slash:bool = compare.eq(octet,slash_byte)
+  dot_byte:u8 = const() {"value":46}
+  dot:bool = compare.eq(octet,dot_byte)
+  underscore_byte:u8 = const() {"value":95}
+  underscore:bool = compare.eq(octet,underscore_byte)
+  hyphen_byte:u8 = const() {"value":45}
+  hyphen:bool = compare.eq(octet,hyphen_byte)
+  second:usize = const() {"value":1}
+  at_second:bool = compare.eq(index,second)
+  leading_pair:bool = bool.and(first_slash,at_second)
+  authority:bool = bool.and(leading_pair,slash)
+  not_authority:bool = bool.not(authority)
+  punctuation_1:bool = bool.or(slash,dot)
+  punctuation_2:bool = bool.or(underscore,hyphen)
+  punctuation:bool = bool.or(punctuation_1,punctuation_2)
+  letters:bool = bool.or(lower_ok,upper_ok)
+  alnum:bool = bool.or(letters,digit_ok)
+  plain:bool = bool.or(alnum,punctuation)
+  literal:bool = bool.and(plain,not_authority)
+  ret(literal)
+end
+
+fn suri_hex(nibble:u8) -> (u8) effects() entry(entry)
+block entry(nibble:u8)
+  nine:u8 = const() {"value":9}
+  decimal:bool = compare.le(nibble,nine)
+  branch decimal ascii_digit(nibble) ascii_letter(nibble)
+block ascii_digit(d:u8)
+  zero:u8 = const() {"value":48}
+  digit:u8 = int.add.wrap(zero,d)
+  ret(digit)
+block ascii_letter(l:u8)
+  upper_offset:u8 = const() {"value":55}
+  letter:u8 = int.add.wrap(upper_offset,l)
+  ret(letter)
+end

@@ -1,0 +1,66 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_protocol_pnh1_encode
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  in_len:usize = buffer.len(input)
+  out_len:usize = buffer.len(output)
+  body_len:usize = const() {"value":312}
+  wire_len:usize = const() {"value":318}
+  in_ok:bool = compare.eq(in_len,body_len)
+  out_ok:bool = compare.ge(out_len,wire_len)
+  ok:bool = bool.and(in_ok,out_ok)
+  branch ok encode(input,output) length()
+block encode(body:readbuf,wire:mutbuf)
+  p0:usize = const() {"value":0}
+  p1:usize = const() {"value":1}
+  p2:usize = const() {"value":2}
+  p3:usize = const() {"value":3}
+  p4:usize = const() {"value":4}
+  p5:usize = const() {"value":5}
+  p6:usize = const() {"value":6}
+  a:u8 = const() {"value":80}
+  b:u8 = const() {"value":78}
+  c:u8 = const() {"value":72}
+  d:u8 = const() {"value":49}
+  major:u8 = const() {"value":1}
+  minor:u8 = const() {"value":0}
+  _ = buffer.store(wire,p0,a)
+  _ = buffer.store(wire,p1,b)
+  _ = buffer.store(wire,p2,c)
+  _ = buffer.store(wire,p3,d)
+  _ = buffer.store(wire,p4,major)
+  _ = buffer.store(wire,p5,minor)
+  leading_len:usize = const() {"value":96}
+  numbers_at:usize = const() {"value":288}
+  numbers_len:usize = const() {"value":16}
+  height_at:usize = const() {"value":102}
+  target_at:usize = const() {"value":118}
+  trailing_len:usize = const() {"value":192}
+  nonce_in:usize = const() {"value":304}
+  nonce_at:usize = const() {"value":310}
+  nonce_len:usize = const() {"value":8}
+  first:u32 = call(body,wire,p0,p6,leading_len) {"function":"pnh1_copy"}
+  second:u32 = call(body,wire,numbers_at,height_at,numbers_len) {"function":"pnh1_copy"}
+  third:u32 = call(body,wire,leading_len,target_at,trailing_len) {"function":"pnh1_copy"}
+  fourth:u32 = call(body,wire,nonce_in,nonce_at,nonce_len) {"function":"pnh1_copy"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block length()
+  failed:u32 = const() {"value":1}
+  ret(failed)
+end
+fn pnh1_copy(source:readbuf,output:mutbuf,from:usize,to:usize,size:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(source:readbuf,output:mutbuf,from:usize,to:usize,size:usize)
+  jump copy(source,output,from,to,size)
+block copy(src:readbuf,dst:mutbuf,start:usize,offset:usize,left:usize)
+  byte:u8 = buffer.load(src,start)
+  _ = buffer.store(dst,offset,byte)
+  step:usize = const() {"value":1}
+  next:usize = int.add.wrap(start,step)
+  after:usize = int.add.wrap(offset,step)
+  remaining:usize = int.sub.wrap(left,step)
+  done:bool = compare.eq(left,step)
+  branch done finish() copy(src,dst,next,after,remaining)
+block finish()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+end

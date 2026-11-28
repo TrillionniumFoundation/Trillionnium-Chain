@@ -1,0 +1,177 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_export_order_step
+fn f0(input:readbuf,unused:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,unused:mutbuf,work:mutbuf)
+  size:usize = buffer.len(input)
+  raw_size:u64 = int.cast(size) {"mode":"wrap"}
+  suffix:u64 = const() {"value":52}
+  available:bool = compare.ge(raw_size,suffix)
+  branch available parse(input,work,raw_size,suffix) malformed()
+block parse(raw:readbuf,arena:mutbuf,total:u64,tail_width:u64)
+  trailer:u64 = int.sub.wrap(total,tail_width)
+  first:u64 = call(raw,trailer) {"function":"tr_read"}
+  mask:u64 = const() {"value":4294967295}
+  ns:u64 = bit.and(first,mask)
+  high:u64 = const() {"value":32}
+  key:u64 = int.shr.checked(first,high)
+  eight:u64 = const() {"value":8}
+  mid_pos:u64 = int.add.wrap(trailer,eight)
+  middle:u64 = call(raw,mid_pos) {"function":"tr_read"}
+  value:u64 = bit.and(middle,mask)
+  prior_ns:u64 = int.shr.checked(middle,high)
+  sixteen:u64 = const() {"value":16}
+  last_pos:u64 = int.add.wrap(trailer,sixteen)
+  last:u64 = call(raw,last_pos) {"function":"tr_read"}
+  prior_key:u64 = bit.and(last,mask)
+  first_two:u64 = int.add.wrap(ns,key)
+  current_end:u64 = int.add.wrap(first_two,value)
+  prior_total:u64 = int.add.wrap(prior_ns,prior_key)
+  complete:u64 = int.add.wrap(current_end,prior_total)
+  exact:bool = compare.eq(complete,trailer)
+  branch exact prior_shape(raw,arena,ns,key,value,first_two,current_end,prior_ns,prior_key,trailer) malformed()
+block prior_shape(ps_raw:readbuf,ps_arena:mutbuf,ps_ns:u64,ps_key:u64,ps_val:u64,ps_vals:u64,ps_pstart:u64,ps_pn:u64,ps_pk:u64,ps_tail:u64)
+  zero_prior:u64 = const() {"value":0}
+  no_namespace:bool = compare.eq(ps_pn,zero_prior)
+  no_key:bool = compare.eq(ps_pk,zero_prior)
+  paired:bool = compare.eq(no_namespace,no_key)
+  max_namespace:u64 = const() {"value":128}
+  max_key:u64 = const() {"value":65536}
+  namespace_bounded:bool = compare.le(ps_pn,max_namespace)
+  key_bounded:bool = compare.le(ps_pk,max_key)
+  prior_bounded:bool = bool.and(namespace_bounded,key_bounded)
+  prior_valid:bool = bool.and(paired,prior_bounded)
+  branch prior_valid shape(ps_raw,ps_arena,ps_ns,ps_key,ps_val,ps_vals,ps_pstart,ps_pn,ps_pk,ps_tail) malformed()
+block shape(shape_raw:readbuf,shape_work:mutbuf,sns:u64,sk:u64,sv:u64,more_at:u64,shape_prior:u64,shape_pn:u64,shape_pk:u64,trailer_at:u64)
+  zero:u64 = const() {"value":0}
+  cap_ns:u64 = const() {"value":128}
+  cap_key:u64 = const() {"value":65536}
+  cap_val:u64 = const() {"value":16777216}
+  n_nonzero:bool = compare.gt(sns,zero)
+  k_nonzero:bool = compare.gt(sk,zero)
+  n_fits:bool = compare.le(sns,cap_ns)
+  k_fits:bool = compare.le(sk,cap_key)
+  v_fits:bool = compare.le(sv,cap_val)
+  nonzero:bool = bool.and(n_nonzero,k_nonzero)
+  bounded:bool = bool.and(n_fits,k_fits)
+  ok_nk:bool = bool.and(nonzero,bounded)
+  shape_ok:bool = bool.and(ok_nk,v_fits)
+  branch shape_ok capacity(shape_raw,shape_work,sns,sk,sv,more_at,shape_prior,shape_pn,shape_pk,trailer_at) invalid()
+block capacity(msg:readbuf,hash_work:mutbuf,n_len:u64,k_len:u64,v_len:u64,v_start:u64,prior_start:u64,prior_n:u64,prior_k:u64,tail_start:u64)
+  wlen:usize = buffer.len(hash_work)
+  wmin:usize = const() {"value":1248}
+  room:bool = compare.ge(wlen,wmin)
+  branch room hash(msg,hash_work,n_len,k_len,v_len,v_start,prior_start,prior_n,prior_k,tail_start) short()
+block hash(hash_input:readbuf,arena_hash:mutbuf,hn:u64,hk:u64,hv:u64,hv_start:u64,h_prior:u64,h_pn:u64,h_pk:u64,ht:u64)
+  hashed:bool = call(hash_input,arena_hash,hn,hk,hv,hv_start) {"function":"r_hash"}
+  branch hashed digest(hash_input,arena_hash,hn,hk,h_prior,h_pn,h_pk,ht) internal()
+block digest(dig_input:readbuf,dig_work:mutbuf,dig_ns:u64,dig_key:u64,dig_prior:u64,dig_pn:u64,dig_pk:u64,dig_tail:u64)
+  suffix_offset:u64 = const() {"value":20}
+  in_digest_at:u64 = int.add.wrap(dig_tail,suffix_offset)
+  equal:bool = call(dig_input,dig_work,in_digest_at) {"function":"r_digest_match"}
+  branch equal policy(dig_input,dig_ns,dig_key,dig_prior,dig_pn,dig_pk) invalid()
+block policy(policy_input:readbuf,policy_ns:u64,policy_key:u64,p_start:u64,p_ns:u64,p_key:u64)
+  prefix_limit:usize = int.cast(policy_ns) {"mode":"wrap"}
+  p1:bool = call(policy_input,prefix_limit) {"function":"f1"}
+  p2:bool = call(policy_input,prefix_limit) {"function":"f2"}
+  p3:bool = call(policy_input,prefix_limit) {"function":"f3"}
+  p4:bool = call(policy_input,prefix_limit) {"function":"f4"}
+  p5:bool = call(policy_input,prefix_limit) {"function":"f5"}
+  p6:bool = call(policy_input,prefix_limit) {"function":"f6"}
+  p7:bool = call(policy_input,prefix_limit) {"function":"f7"}
+  acc2:bool = bool.or(p1,p2)
+  acc3:bool = bool.or(acc2,p3)
+  acc4:bool = bool.or(acc3,p4)
+  acc5:bool = bool.or(acc4,p5)
+  acc6:bool = bool.or(acc5,p6)
+  acc7:bool = bool.or(acc6,p7)
+  branch acc7 forbidden() order(policy_input,policy_ns,policy_key,p_start,p_ns,p_key)
+block order(order_raw:readbuf,order_ns:u64,order_key:u64,order_pstart:u64,order_pn:u64,order_pk:u64)
+  is_ordered:bool = call(order_raw,order_ns,order_key,order_pstart,order_pn,order_pk) {"function":"step_ordered"}
+  branch is_ordered success() out_of_order()
+block out_of_order()
+  order_error:u32 = const() {"value":109}
+  ret(order_error)
+block malformed()
+  code_malformed:u32 = const() {"value":100}
+  ret(code_malformed)
+block invalid()
+  code_invalid:u32 = const() {"value":101}
+  ret(code_invalid)
+block short()
+  code_capacity:u32 = const() {"value":102}
+  ret(code_capacity)
+block internal()
+  code_internal:u32 = const() {"value":103}
+  ret(code_internal)
+block forbidden()
+  code_forbidden:u32 = const() {"value":104}
+  ret(code_forbidden)
+block success()
+  code_ok:u32 = const() {"value":0}
+  ret(code_ok)
+end
+
+fn step_ordered(raw:readbuf,ns:u64,key:u64,prior_start:u64,prior_ns:u64,prior_key:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(raw:readbuf,ns:u64,key:u64,prior_start:u64,prior_ns:u64,prior_key:u64)
+  zero:u64 = const() {"value":0}
+  first:bool = compare.eq(prior_ns,zero)
+  branch first accept() namespace(raw,ns,key,prior_start,prior_ns,prior_key)
+block namespace(bytes:readbuf,ns_width:u64,key_width:u64,prior_at:u64,pn:u64,pk:u64)
+  start:u64 = const() {"value":0}
+  n_order:u32 = call(bytes,start,ns_width,prior_at,pn) {"function":"step_lex"}
+  zero_order:u32 = const() {"value":0}
+  equal:bool = compare.eq(n_order,zero_order)
+  branch equal key_order(bytes,ns_width,key_width,prior_at,pn,pk) decide(n_order)
+block key_order(data:readbuf,cn:u64,ck:u64,p_base:u64,p_width:u64,p_key_width:u64)
+  p_key_start:u64 = int.add.wrap(p_base,p_width)
+  lex:u32 = call(data,cn,ck,p_key_start,p_key_width) {"function":"step_lex"}
+  jump decide(lex)
+block decide(code:u32)
+  after:u32 = const() {"value":1}
+  in_order:bool = compare.eq(code,after)
+  ret(in_order)
+block accept()
+  first_row:bool = const() {"value":true}
+  ret(first_row)
+end
+
+fn step_lex(raw:readbuf,left_at:u64,left_size:u64,right_at:u64,right_size:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(raw:readbuf,left_at:u64,left_size:u64,right_at:u64,right_size:u64)
+  i:u64 = const() {"value":0}
+  jump inspect(raw,left_at,left_size,right_at,right_size,i)
+block inspect(data:readbuf,left:u64,sz_left:u64,right:u64,sz_right:u64,pos:u64)
+  exists_l:bool = compare.lt(pos,sz_left)
+  exists_r:bool = compare.lt(pos,sz_right)
+  both:bool = bool.and(exists_l,exists_r)
+  branch both compare(data,left,sz_left,right,sz_right,pos) prefix(sz_left,sz_right)
+block compare(source:readbuf,left_base:u64,left_n:u64,right_base:u64,right_n:u64,j:u64)
+  l_offset:u64 = int.add.wrap(left_base,j)
+  r_offset:u64 = int.add.wrap(right_base,j)
+  l_idx:usize = int.cast(l_offset) {"mode":"wrap"}
+  r_idx:usize = int.cast(r_offset) {"mode":"wrap"}
+  l:u8 = buffer.load(source,l_idx)
+  r:u8 = buffer.load(source,r_idx)
+  same:bool = compare.eq(l,r)
+  branch same advance(source,left_base,left_n,right_base,right_n,j) different(l,r)
+block advance(next_input:readbuf,next_l:u64,next_l_len:u64,next_r:u64,next_r_len:u64,k:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(k,one)
+  jump inspect(next_input,next_l,next_l_len,next_r,next_r_len,next)
+block different(lhs:u8,rhs:u8)
+  greater:bool = compare.gt(lhs,rhs)
+  branch greater after() before()
+block prefix(l_len:u64,r_len:u64)
+  equal_len:bool = compare.eq(l_len,r_len)
+  branch equal_len equal() unequal_len(l_len,r_len)
+block unequal_len(left_len:u64,right_len:u64)
+  longer:bool = compare.gt(left_len,right_len)
+  branch longer after() before()
+block equal()
+  code_eq:u32 = const() {"value":0}
+  ret(code_eq)
+block after()
+  code_gt:u32 = const() {"value":1}
+  ret(code_gt)
+block before()
+  code_lt:u32 = const() {"value":2}
+  ret(code_lt)
+end

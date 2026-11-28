@@ -1,0 +1,69 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_cache_capacity_v4
+exports(cache_max_shm_bytes,cache_max_wal_bytes)
+fn cache_max_wal_bytes(database:u64,logical:u64,chunks:u64,manifests:u64) -> (u64) effects(trap) entry(entry)
+block entry(database:u64,logical:u64,chunks:u64,manifests:u64)
+  allowed:bool = call(database,logical,chunks,manifests) {"function":"cache_valid"}
+  branch allowed size(database) invalid()
+block size(size_database:u64)
+  shift:u64 = const() {"value":12}
+  pages:u64 = int.shr.checked(size_database,shift)
+  padding:u64 = const() {"value":16}
+  frames:u64 = int.add.checked(pages,padding)
+  frame_bytes:u64 = const() {"value":4120}
+  payload_bytes:u64 = int.mul.checked(frames,frame_bytes)
+  header_bytes:u64 = const() {"value":32}
+  result:u64 = int.add.checked(header_bytes,payload_bytes)
+  ret(result)
+block invalid()
+  refused:u64 = const() {"value":0}
+  ret(refused)
+end
+fn cache_max_shm_bytes(database:u64,logical:u64,chunks:u64,manifests:u64) -> (u64) effects(trap) entry(entry)
+block entry(database:u64,logical:u64,chunks:u64,manifests:u64)
+  allowed:bool = call(database,logical,chunks,manifests) {"function":"cache_valid"}
+  branch allowed size(database) invalid()
+block size(size_database:u64)
+  shift:u64 = const() {"value":12}
+  pages:u64 = int.shr.checked(size_database,shift)
+  padding:u64 = const() {"value":16}
+  frames:u64 = int.add.checked(pages,padding)
+  before_boundary:u64 = const() {"value":4095}
+  rounded_frames:u64 = int.add.checked(frames,before_boundary)
+  rounded_regions:u64 = int.shr.checked(rounded_frames,shift)
+  first_region:u64 = const() {"value":1}
+  all_regions:u64 = int.add.checked(rounded_regions,first_region)
+  region_bytes:u64 = const() {"value":32768}
+  result:u64 = int.mul.checked(all_regions,region_bytes)
+  ret(result)
+block invalid()
+  refused:u64 = const() {"value":0}
+  ret(refused)
+end
+fn cache_valid(database:u64,logical:u64,chunks:u64,manifests:u64) -> (bool) effects() entry(entry)
+block entry(database:u64,logical:u64,chunks:u64,manifests:u64)
+  min_database:u64 = const() {"value":262144}
+  max_database:u64 = const() {"value":2199023255552}
+  mask:u64 = const() {"value":4095}
+  zero:u64 = const() {"value":0}
+  max_logical:u64 = const() {"value":1099511627776}
+  max_rows:u64 = const() {"value":1048576}
+  db_lower:bool = compare.ge(database,min_database)
+  db_upper:bool = compare.le(database,max_database)
+  residual:u64 = bit.and(database,mask)
+  db_aligned:bool = compare.eq(residual,zero)
+  logical_lower:bool = compare.gt(logical,zero)
+  logical_upper:bool = compare.le(logical,max_logical)
+  chunk_lower:bool = compare.gt(chunks,zero)
+  chunk_upper:bool = compare.le(chunks,max_rows)
+  manifest_lower:bool = compare.gt(manifests,zero)
+  manifest_upper:bool = compare.le(manifests,max_rows)
+  db_range:bool = bool.and(db_lower,db_upper)
+  db_ok:bool = bool.and(db_range,db_aligned)
+  logical_ok:bool = bool.and(logical_lower,logical_upper)
+  chunk_ok:bool = bool.and(chunk_lower,chunk_upper)
+  manifest_ok:bool = bool.and(manifest_lower,manifest_upper)
+  row_ok:bool = bool.and(chunk_ok,manifest_ok)
+  capacity_ok:bool = bool.and(db_ok,logical_ok)
+  result:bool = bool.and(capacity_ok,row_ok)
+  ret(result)
+end

@@ -1,0 +1,534 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_owned_last_close
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  n:usize = buffer.len(raw)
+  min:usize = const() {"value":568}
+  max:usize = const() {"value":4312}
+  low:bool = compare.ge(n,min)
+  high:bool = compare.le(n,max)
+  shape:bool = bool.and(low,high)
+  branch shape cap(raw,out,n) bad()
+block cap(cr:readbuf,co:mutbuf,cn:usize)
+  have:usize = buffer.len(co)
+  need:usize = const() {"value":56}
+  room:bool = compare.ge(have,need)
+  branch room start(cr,co,cn) short()
+block start(r:readbuf,o:mutbuf,ns:usize)
+  z:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  p:u64 = const() {"value":568}
+  n64:u64 = int.cast(ns) {"mode":"wrap"}
+  policy:u64 = call(r,z) {"function":"tr_read"}
+  v1:bool = compare.eq(policy,one)
+  v2:bool = compare.eq(policy,two)
+  supported:bool = bool.or(v1,v2)
+  header_ok:bool = call(r,v1) {"function":"mcl_header"}
+  rows_ok:bool = call(r,v1) {"function":"mcl_rows"}
+  a1:bool = bool.and(supported,header_ok)
+  ready:bool = bool.and(a1,rows_ok)
+  i:u64 = select(v1,z,one)
+  ix1:u64 = const() {"value":40}
+  ix2:u64 = const() {"value":48}
+  h1:u64 = call(r,ix1) {"function":"tr_read"}
+  h2:u64 = call(r,ix2) {"function":"tr_read"}
+  seq:u64 = int.add.wrap(h1,h2)
+  branch ready loop(r,o,n64,p,i,seq,z) bad()
+block loop(lr:readbuf,lo:mutbuf,le:u64,lp:u64,li:u64,ls:u64,lt:u64)
+  extent:u64 = const() {"value":112}
+  zero_l:u64 = const() {"value":0}
+  next_head:u64 = int.add.wrap(lp,extent)
+  valid_bound:bool = compare.le(next_head,le)
+  normal:bool = compare.eq(li,zero_l)
+  branch valid_bound step(lr,lo,le,lp,li,ls,lt,normal) bad()
+block step(sr:readbuf,so:mutbuf,se:u64,sp:u64,si:u64,ss:u64,st:u64,normal_s:bool)
+  last:u64,bytes:u64 = call(sr,sp,se,normal_s) {"function":"mrf_receipt"}
+  zero_s:u64 = const() {"value":0}
+  framed:bool = compare.ne(last,zero_s)
+  branch framed verify(sr,so,se,sp,si,ss,st,last,bytes) bad()
+block verify(vr:readbuf,vo:mutbuf,ve:u64,vp:u64,vi:u64,vs:u64,vt:u64,vl:u64,vb:u64)
+  v8:u64 = const() {"value":8}
+  address:u64 = int.add.wrap(vp,v8)
+  event_ok:bool = call(vr,address,vl,vi,vs) {"function":"mcl_route"}
+  branch event_ok progress(vr,vo,ve,vi,vs,vt,vl,vb) bad()
+block progress(gr:readbuf,go:mutbuf,ge:u64,gi:u64,gs:u64,gt:u64,gp:u64,gb:u64)
+  one_g:u64 = const() {"value":1}
+  six:u64 = const() {"value":6}
+  ni:u64 = int.add.wrap(gi,one_g)
+  nq:u64 = int.add.wrap(gs,one_g)
+  nt:u64 = int.add.wrap(gt,gb)
+  more:bool = compare.lt(ni,six)
+  branch more loop(gr,go,ge,gp,ni,nq,nt) final(gr,go,ge,gp,nq,nt)
+block final(fr:readbuf,fo:mutbuf,fe:u64,fp:u64,fs:u64,ft:u64)
+  old_at:u64 = const() {"value":56}
+  end_at:u64 = const() {"value":80}
+  old:u64 = call(fr,old_at) {"function":"tr_read"}
+  post:u64 = call(fr,end_at) {"function":"tr_read"}
+  predicted:u64 = int.add.wrap(old,ft)
+  exact:bool = compare.eq(fe,fp)
+  sum_ok:bool = compare.eq(predicted,post)
+  final_ok:bool = bool.and(exact,sum_ok)
+  branch final_ok publication(fr,fo,fs,ft) bad()
+block publication(ur:readbuf,uo:mutbuf,us:u64,ut:u64)
+  consume:u64 = call(ur,uo,us,ut) {"function":"mcl_write"}
+  rc:u32 = const() {"value":0}
+  ret(rc)
+block bad()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block short()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+end
+fn mcl_header(r:readbuf,v1:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,v1:bool)
+  z:u64 = const() {"value":0}
+  i_rd:u64 = const() {"value":8}
+  rd:u64 = call(r,z,i_rd) {"function":"mlj_fixed"}
+  i_ri:u64 = const() {"value":16}
+  ri:u64 = call(r,z,i_ri) {"function":"mlj_fixed"}
+  i_ad:u64 = const() {"value":24}
+  ad:u64 = call(r,z,i_ad) {"function":"mlj_fixed"}
+  i_ai:u64 = const() {"value":32}
+  ai:u64 = call(r,z,i_ai) {"function":"mlj_fixed"}
+  i_bo:u64 = const() {"value":40}
+  bo:u64 = call(r,z,i_bo) {"function":"mlj_fixed"}
+  i_bc:u64 = const() {"value":48}
+  bc:u64 = call(r,z,i_bc) {"function":"mlj_fixed"}
+  i_bb:u64 = const() {"value":56}
+  bb:u64 = call(r,z,i_bb) {"function":"mlj_fixed"}
+  i_ao:u64 = const() {"value":64}
+  ao:u64 = call(r,z,i_ao) {"function":"mlj_fixed"}
+  i_ac:u64 = const() {"value":72}
+  ac:u64 = call(r,z,i_ac) {"function":"mlj_fixed"}
+  i_ab:u64 = const() {"value":80}
+  ab:u64 = call(r,z,i_ab) {"function":"mlj_fixed"}
+  i_pm:u64 = const() {"value":88}
+  pm:u64 = call(r,z,i_pm) {"function":"mlj_fixed"}
+  i_pn:u64 = const() {"value":96}
+  pn:u64 = call(r,z,i_pn) {"function":"mlj_fixed"}
+  i_rm:u64 = const() {"value":104}
+  rm:u64 = call(r,z,i_rm) {"function":"mlj_fixed"}
+  i_rn:u64 = const() {"value":112}
+  rn:u64 = call(r,z,i_rn) {"function":"mlj_fixed"}
+  one:u64 = const() {"value":1}
+  five:u64 = const() {"value":5}
+  seven:u64 = const() {"value":7}
+  ocap:u64 = const() {"value":1024}
+  ccap:u64 = const() {"value":256}
+  event_cap:u64 = const() {"value":512}
+  n_before:u64 = int.add.wrap(bo,bc)
+  n_after:u64 = int.add.wrap(ao,ac)
+  cap_before:u64 = int.mul.wrap(n_before,event_cap)
+  cap_after:u64 = int.mul.wrap(n_after,event_cap)
+  inc:u64 = select(v1,one,z)
+  no:u64 = int.add.wrap(bo,inc)
+  nc:u64 = int.add.wrap(bc,five)
+  dev:bool = compare.eq(rd,ad)
+  ino:bool = compare.eq(ri,ai)
+  root:bool = compare.ne(ri,z)
+  o:bool = compare.eq(no,ao)
+  c:bool = compare.eq(nc,ac)
+  bo_ok:bool = compare.le(bo,ocap)
+  ao_ok:bool = compare.le(ao,ocap)
+  bc_ok:bool = compare.le(bc,ccap)
+  ac_ok:bool = compare.le(ac,ccap)
+  bb_ok:bool = compare.le(bb,cap_before)
+  ab_ok:bool = compare.le(ab,cap_after)
+  p0:bool = compare.eq(pm,seven)
+  p1:bool = compare.eq(pn,one)
+  r0:bool = compare.eq(rm,seven)
+  r1:bool = compare.eq(rn,one)
+  and0:bool = bool.and(dev,ino)
+  and1:bool = bool.and(and0,root)
+  and2:bool = bool.and(and1,o)
+  and3:bool = bool.and(and2,c)
+  and4:bool = bool.and(and3,bo_ok)
+  and5:bool = bool.and(and4,ao_ok)
+  and6:bool = bool.and(and5,bc_ok)
+  and7:bool = bool.and(and6,ac_ok)
+  and8:bool = bool.and(and7,bb_ok)
+  and9:bool = bool.and(and8,ab_ok)
+  and10:bool = bool.and(and9,p0)
+  and11:bool = bool.and(and10,p1)
+  and12:bool = bool.and(and11,r0)
+  and13:bool = bool.and(and12,r1)
+  ret(and13)
+end
+fn mcl_rows(r:readbuf,v1:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,v1:bool)
+  z:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  m:u64 = const() {"value":120}
+  w:u64 = const() {"value":232}
+  s:u64 = const() {"value":344}
+  f:u64 = const() {"value":456}
+  i_root:u64 = const() {"value":8}
+  root:u64 = call(r,z,i_root) {"function":"mlj_fixed"}
+  valid_m:bool = call(r,m,root,one,z,v1) {"function":"mcl_row"}
+  valid_w:bool = call(r,w,root,one,z,v1) {"function":"mcl_row"}
+  valid_s:bool = call(r,s,root,z,one,v1) {"function":"mcl_row"}
+  valid_f:bool = call(r,f,root,z,z,v1) {"function":"mcl_row"}
+  i_mg:u64 = const() {"value":0}
+  mg:u64 = call(r,m,i_mg) {"function":"mlj_fixed"}
+  i_mi:u64 = const() {"value":16}
+  mi:u64 = call(r,m,i_mi) {"function":"mlj_fixed"}
+  i_wg:u64 = const() {"value":0}
+  wg:u64 = call(r,w,i_wg) {"function":"mlj_fixed"}
+  i_wi:u64 = const() {"value":16}
+  wi:u64 = call(r,w,i_wi) {"function":"mlj_fixed"}
+  i_sg:u64 = const() {"value":0}
+  sg0:u64 = call(r,s,i_sg) {"function":"mlj_fixed"}
+  i_si:u64 = const() {"value":16}
+  si0:u64 = call(r,s,i_si) {"function":"mlj_fixed"}
+  i_fg:u64 = const() {"value":0}
+  fg:u64 = call(r,f,i_fg) {"function":"mlj_fixed"}
+  i_fi:u64 = const() {"value":16}
+  fi:u64 = call(r,f,i_fi) {"function":"mlj_fixed"}
+  i_old:u64 = const() {"value":24}
+  old:u64 = call(r,m,i_old) {"function":"mlj_fixed"}
+  i_new:u64 = const() {"value":24}
+  new:u64 = call(r,f,i_new) {"function":"mlj_fixed"}
+  sg:bool = compare.eq(mg,fg)
+  si:bool = compare.eq(mi,fi)
+  app:bool = compare.lt(old,new)
+  gmw:bool = compare.ne(mg,wg)
+  gms:bool = compare.ne(mg,sg0)
+  gws:bool = compare.ne(wg,sg0)
+  imw:bool = compare.ne(mi,wi)
+  ims:bool = compare.ne(mi,si0)
+  iws:bool = compare.ne(wi,si0)
+  and0:bool = bool.and(valid_m,valid_w)
+  and1:bool = bool.and(and0,valid_s)
+  and2:bool = bool.and(and1,valid_f)
+  and3:bool = bool.and(and2,sg)
+  and4:bool = bool.and(and3,si)
+  and5:bool = bool.and(and4,app)
+  and6:bool = bool.and(and5,gmw)
+  and7:bool = bool.and(and6,gms)
+  and8:bool = bool.and(and7,gws)
+  and9:bool = bool.and(and8,imw)
+  and10:bool = bool.and(and9,ims)
+  and11:bool = bool.and(and10,iws)
+  ret(and11)
+end
+fn mcl_row(r:readbuf,p:u64,root:u64,h:u64,k:u64,v1:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,root:u64,h:u64,k:u64,v1:bool)
+  i_g:u64 = const() {"value":0}
+  g:u64 = call(r,p,i_g) {"function":"mlj_fixed"}
+  i_d:u64 = const() {"value":8}
+  d:u64 = call(r,p,i_d) {"function":"mlj_fixed"}
+  i_ino:u64 = const() {"value":16}
+  ino:u64 = call(r,p,i_ino) {"function":"mlj_fixed"}
+  i_x:u64 = const() {"value":24}
+  x:u64 = call(r,p,i_x) {"function":"mlj_fixed"}
+  i_blocks:u64 = const() {"value":32}
+  blocks:u64 = call(r,p,i_blocks) {"function":"mlj_fixed"}
+  i_rd:u64 = const() {"value":40}
+  rd:u64 = call(r,p,i_rd) {"function":"mlj_fixed"}
+  i_ri:u64 = const() {"value":48}
+  ri:u64 = call(r,p,i_ri) {"function":"mlj_fixed"}
+  i_rx:u64 = const() {"value":56}
+  rx:u64 = call(r,p,i_rx) {"function":"mlj_fixed"}
+  i_rb:u64 = const() {"value":64}
+  rb:u64 = call(r,p,i_rb) {"function":"mlj_fixed"}
+  i_high:u64 = const() {"value":72}
+  high:u64 = call(r,p,i_high) {"function":"mlj_fixed"}
+  i_rh:u64 = const() {"value":80}
+  rh:u64 = call(r,p,i_rh) {"function":"mlj_fixed"}
+  i_rp:u64 = const() {"value":88}
+  rp:u64 = call(r,p,i_rp) {"function":"mlj_fixed"}
+  i_rs:u64 = const() {"value":96}
+  rs:u64 = call(r,p,i_rs) {"function":"mlj_fixed"}
+  i_rl:u64 = const() {"value":104}
+  rl:u64 = call(r,p,i_rl) {"function":"mlj_fixed"}
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  reserve:u64 = const() {"value":65536}
+  cap:u64 = const() {"value":16777216}
+  a:bool = compare.ne(g,zero)
+  b:bool = compare.ne(ino,zero)
+  c:bool = compare.ne(x,zero)
+  f:bool = compare.eq(d,root)
+  dd:bool = compare.eq(d,rd)
+  ii:bool = compare.eq(ino,ri)
+  xx:bool = compare.eq(x,rx)
+  bb:bool = compare.eq(blocks,rb)
+  hh:bool = compare.eq(h,rh)
+  pp:bool = compare.eq(rp,zero)
+  ss:bool = compare.eq(k,rs)
+  ll:bool = compare.eq(rl,one)
+  width:bool = compare.le(x,high)
+  bound:bool = compare.le(high,cap)
+  exact:bool = compare.eq(x,high)
+  rounded:bool = compare.eq(high,reserve)
+  policy:bool = select(v1,exact,rounded)
+  and0:bool = bool.and(a,b)
+  and1:bool = bool.and(and0,c)
+  and2:bool = bool.and(and1,f)
+  and3:bool = bool.and(and2,dd)
+  and4:bool = bool.and(and3,ii)
+  and5:bool = bool.and(and4,xx)
+  and6:bool = bool.and(and5,bb)
+  and7:bool = bool.and(and6,hh)
+  and8:bool = bool.and(and7,pp)
+  and9:bool = bool.and(and8,ss)
+  and10:bool = bool.and(and9,ll)
+  and11:bool = bool.and(and10,width)
+  and12:bool = bool.and(and11,bound)
+  and13:bool = bool.and(and12,policy)
+  ret(and13)
+end
+fn mcl_route(r:readbuf,p:u64,e:u64,j:u64,s:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,e:u64,j:u64,s:u64)
+  n0:u64 = const() {"value":0}
+  same0:bool = compare.eq(j,n0)
+  branch same0 qok0(r,p,e,s) q1(r,p,e,j,s)
+block qok0(ar0:readbuf,ap0:u64,ae0:u64,as0:u64)
+  v0_0:u64 = const() {"value":0}
+  v0_1:u64 = const() {"value":4}
+  v0_2:u64 = const() {"value":456}
+  v0_3:u64 = const() {"value":120}
+  v0_4:u64 = const() {"value":1}
+  v0_5:u64 = const() {"value":1}
+  v0_6:u64 = const() {"value":0}
+  b0:bool = call(ar0,ap0,ae0,as0,v0_0,v0_1,v0_2,v0_3,v0_4,v0_5,v0_6) {"function":"mcl_event"}
+  ret(b0)
+block q1(r1:readbuf,p1:u64,e1:u64,j1:u64,s1:u64)
+  n1:u64 = const() {"value":1}
+  same1:bool = compare.eq(j1,n1)
+  branch same1 qok1(r1,p1,e1,s1) q2(r1,p1,e1,j1,s1)
+block qok1(ar1:readbuf,ap1:u64,ae1:u64,as1:u64)
+  v1_0:u64 = const() {"value":2}
+  v1_1:u64 = const() {"value":12}
+  v1_2:u64 = const() {"value":344}
+  v1_3:u64 = const() {"value":344}
+  v1_4:u64 = const() {"value":0}
+  v1_5:u64 = const() {"value":0}
+  v1_6:u64 = const() {"value":1}
+  b1:bool = call(ar1,ap1,ae1,as1,v1_0,v1_1,v1_2,v1_3,v1_4,v1_5,v1_6) {"function":"mcl_event"}
+  ret(b1)
+block q2(r2:readbuf,p2:u64,e2:u64,j2:u64,s2:u64)
+  n2:u64 = const() {"value":2}
+  same2:bool = compare.eq(j2,n2)
+  branch same2 qok2(r2,p2,e2,s2) q3(r2,p2,e2,j2,s2)
+block qok2(ar2:readbuf,ap2:u64,ae2:u64,as2:u64)
+  v2_0:u64 = const() {"value":2}
+  v2_1:u64 = const() {"value":11}
+  v2_2:u64 = const() {"value":344}
+  v2_3:u64 = const() {"value":344}
+  v2_4:u64 = const() {"value":0}
+  v2_5:u64 = const() {"value":0}
+  v2_6:u64 = const() {"value":0}
+  b2:bool = call(ar2,ap2,ae2,as2,v2_0,v2_1,v2_2,v2_3,v2_4,v2_5,v2_6) {"function":"mcl_event"}
+  ret(b2)
+block q3(r3:readbuf,p3:u64,e3:u64,j3:u64,s3:u64)
+  n3:u64 = const() {"value":3}
+  same3:bool = compare.eq(j3,n3)
+  branch same3 qok3(r3,p3,e3,s3) q4(r3,p3,e3,j3,s3)
+block qok3(ar3:readbuf,ap3:u64,ae3:u64,as3:u64)
+  v3_0:u64 = const() {"value":1}
+  v3_1:u64 = const() {"value":10}
+  v3_2:u64 = const() {"value":232}
+  v3_3:u64 = const() {"value":232}
+  v3_4:u64 = const() {"value":1}
+  v3_5:u64 = const() {"value":0}
+  v3_6:u64 = const() {"value":0}
+  b3:bool = call(ar3,ap3,ae3,as3,v3_0,v3_1,v3_2,v3_3,v3_4,v3_5,v3_6) {"function":"mcl_event"}
+  ret(b3)
+block q4(r4:readbuf,p4:u64,e4:u64,j4:u64,s4:u64)
+  n4:u64 = const() {"value":4}
+  same4:bool = compare.eq(j4,n4)
+  branch same4 qok4(r4,p4,e4,s4) q5(r4,p4,e4,j4,s4)
+block qok4(ar4:readbuf,ap4:u64,ae4:u64,as4:u64)
+  v4_0:u64 = const() {"value":1}
+  v4_1:u64 = const() {"value":12}
+  v4_2:u64 = const() {"value":232}
+  v4_3:u64 = const() {"value":232}
+  v4_4:u64 = const() {"value":0}
+  v4_5:u64 = const() {"value":0}
+  v4_6:u64 = const() {"value":0}
+  b4:bool = call(ar4,ap4,ae4,as4,v4_0,v4_1,v4_2,v4_3,v4_4,v4_5,v4_6) {"function":"mcl_event"}
+  ret(b4)
+block q5(r5:readbuf,p5:u64,e5:u64,j5:u64,s5:u64)
+  jump qok5(r5,p5,e5,s5)
+block qok5(ar5:readbuf,ap5:u64,ae5:u64,as5:u64)
+  v5_0:u64 = const() {"value":0}
+  v5_1:u64 = const() {"value":10}
+  v5_2:u64 = const() {"value":456}
+  v5_3:u64 = const() {"value":456}
+  v5_4:u64 = const() {"value":1}
+  v5_5:u64 = const() {"value":0}
+  v5_6:u64 = const() {"value":0}
+  b5:bool = call(ar5,ap5,ae5,as5,v5_0,v5_1,v5_2,v5_3,v5_4,v5_5,v5_6) {"function":"mcl_event"}
+  ret(b5)
+end
+fn mcl_event(r:readbuf,p:u64,e:u64,seq:u64,role:u64,tag:u64,b:u64,a:u64,link:u64,h:u64,sh:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,e:u64,seq:u64,role:u64,tag:u64,b:u64,a:u64,link:u64,h:u64,sh:u64)
+  i_etag:u64 = const() {"value":0}
+  etag:u64 = call(r,p,i_etag) {"function":"mlj_fixed"}
+  i_eseq:u64 = const() {"value":8}
+  eseq:u64 = call(r,p,i_eseq) {"function":"mlj_fixed"}
+  i_egen:u64 = const() {"value":16}
+  egen:u64 = call(r,p,i_egen) {"function":"mlj_fixed"}
+  i_ed:u64 = const() {"value":24}
+  ed:u64 = call(r,p,i_ed) {"function":"mlj_fixed"}
+  i_ei:u64 = const() {"value":32}
+  ei:u64 = call(r,p,i_ei) {"function":"mlj_fixed"}
+  i_el:u64 = const() {"value":40}
+  el:u64 = call(r,p,i_el) {"function":"mlj_fixed"}
+  i_eh:u64 = const() {"value":48}
+  eh:u64 = call(r,p,i_eh) {"function":"mlj_fixed"}
+  i_ep:u64 = const() {"value":56}
+  ep:u64 = call(r,p,i_ep) {"function":"mlj_fixed"}
+  i_es:u64 = const() {"value":64}
+  es:u64 = call(r,p,i_es) {"function":"mlj_fixed"}
+  i_ew:u64 = const() {"value":72}
+  ew:u64 = call(r,p,i_ew) {"function":"mlj_fixed"}
+  i_ex:u64 = const() {"value":80}
+  ex:u64 = call(r,p,i_ex) {"function":"mlj_fixed"}
+  i_req:u64 = const() {"value":88}
+  req:u64 = call(r,p,i_req) {"function":"mlj_fixed"}
+  i_opt:u64 = const() {"value":96}
+  opt:u64 = call(r,p,i_opt) {"function":"mlj_fixed"}
+  i_bg:u64 = const() {"value":0}
+  bg:u64 = call(r,b,i_bg) {"function":"mlj_fixed"}
+  i_bd:u64 = const() {"value":8}
+  bd:u64 = call(r,b,i_bd) {"function":"mlj_fixed"}
+  i_bi:u64 = const() {"value":16}
+  bi:u64 = call(r,b,i_bi) {"function":"mlj_fixed"}
+  i_bw:u64 = const() {"value":72}
+  bw:u64 = call(r,b,i_bw) {"function":"mlj_fixed"}
+  i_ax:u64 = const() {"value":24}
+  ax:u64 = call(r,a,i_ax) {"function":"mlj_fixed"}
+  z:u64 = const() {"value":0}
+  three:u64 = const() {"value":3}
+  namestart:u64 = const() {"value":104}
+  name:u64 = int.add.wrap(p,namestart)
+  name_ok:bool = call(r,name,e,role) {"function":"mcl_name"}
+  t:bool = compare.eq(etag,tag)
+  s:bool = compare.eq(eseq,seq)
+  g:bool = compare.eq(egen,bg)
+  d:bool = compare.eq(ed,bd)
+  i:bool = compare.eq(ei,bi)
+  l:bool = compare.eq(el,link)
+  hc:bool = compare.eq(eh,h)
+  pc:bool = compare.eq(ep,z)
+  sc:bool = compare.eq(es,sh)
+  wc:bool = compare.eq(ew,bw)
+  xc:bool = compare.eq(ex,ax)
+  rq:bool = compare.eq(req,z)
+  op:bool = compare.eq(opt,three)
+  and0:bool = bool.and(name_ok,t)
+  and1:bool = bool.and(and0,s)
+  and2:bool = bool.and(and1,g)
+  and3:bool = bool.and(and2,d)
+  and4:bool = bool.and(and3,i)
+  and5:bool = bool.and(and4,l)
+  and6:bool = bool.and(and5,hc)
+  and7:bool = bool.and(and6,pc)
+  and8:bool = bool.and(and7,sc)
+  and9:bool = bool.and(and8,wc)
+  and10:bool = bool.and(and9,xc)
+  and11:bool = bool.and(and10,rq)
+  and12:bool = bool.and(and11,op)
+  ret(and12)
+end
+fn mcl_name(r:readbuf,p:u64,e:u64,role:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,e:u64,role:u64)
+  z:u64 = const() {"value":0}
+  small:u64 = const() {"value":13}
+  big:u64 = const() {"value":17}
+  is_main:bool = compare.eq(role,z)
+  len:u64 = select(is_main,small,big)
+  got:u64 = int.sub.wrap(e,p)
+  exact:bool = compare.eq(got,len)
+  branch exact loop(r,p,len,role,z) no()
+block loop(lr:readbuf,lp:u64,ln:u64,lrole:u64,li:u64)
+  pos:u64 = int.add.wrap(lp,li)
+  byte_at:usize = int.cast(pos) {"mode":"wrap"}
+  byte:u8 = buffer.load(lr,byte_at)
+  actual:u64 = int.cast(byte) {"mode":"wrap"}
+  expect:u64 = call(lrole,li) {"function":"mcl_letter"}
+  same:bool = compare.eq(actual,expect)
+  branch same step(lr,lp,ln,lrole,li) no()
+block step(sr:readbuf,sp:u64,sn:u64,sl:u64,si:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(si,one)
+  more:bool = compare.lt(next,sn)
+  branch more loop(sr,sp,sn,sl,next) yes()
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+end
+fn mcl_letter(r:u64,i:u64) -> (u64) effects(trap) entry(entry)
+block entry(r:u64,i:u64)
+  eight:u64 = const() {"value":8}
+  first:bool = compare.lt(i,eight)
+  branch first early(i,eight) late(r,i,eight)
+block early(ei:u64,ee:u64)
+  prefix:u64 = const() {"value":8299682722540183918}
+  mask:u64 = const() {"value":255}
+  shift:u64 = int.mul.wrap(ei,ee)
+  x:u64 = int.shr.checked(prefix,shift)
+  v:u64 = bit.and(x,mask)
+  ret(v)
+block late(lr:u64,li:u64,le:u64)
+  sixteen:u64 = const() {"value":16}
+  one:u64 = const() {"value":1}
+  part:bool = compare.lt(li,sixteen)
+  wal:bool = compare.eq(lr,one)
+  branch part middle(li,le,wal) final(wal)
+block middle(mi:u64,me:u64,mw:bool)
+  wal_word:u64 = const() {"value":7023132057675590769}
+  shm_word:u64 = const() {"value":7526409316034243697}
+  mask_m:u64 = const() {"value":255}
+  word:u64 = select(mw,wal_word,shm_word)
+  delta:u64 = int.sub.wrap(mi,me)
+  shift_m:u64 = int.mul.wrap(delta,me)
+  part_m:u64 = int.shr.checked(word,shift_m)
+  letter:u64 = bit.and(part_m,mask_m)
+  ret(letter)
+block final(fw:bool)
+  ell:u64 = const() {"value":108}
+  em:u64 = const() {"value":109}
+  last:u64 = select(fw,ell,em)
+  ret(last)
+end
+fn mcl_write(r:readbuf,o:mutbuf,s:u64,t:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,s:u64,t:u64)
+  m:u64 = const() {"value":456}
+  w:u64 = const() {"value":232}
+  sh:u64 = const() {"value":344}
+  i_high:u64 = const() {"value":72}
+  high:u64 = call(r,m,i_high) {"function":"mlj_fixed"}
+  i_wal:u64 = const() {"value":72}
+  wal:u64 = call(r,w,i_wal) {"function":"mlj_fixed"}
+  i_shm:u64 = const() {"value":72}
+  shm:u64 = call(r,sh,i_shm) {"function":"mlj_fixed"}
+  i_gen:u64 = const() {"value":0}
+  gen:u64 = call(r,m,i_gen) {"function":"mlj_fixed"}
+  i_dev:u64 = const() {"value":8}
+  dev:u64 = call(r,m,i_dev) {"function":"mlj_fixed"}
+  i_ino:u64 = const() {"value":16}
+  ino:u64 = call(r,m,i_ino) {"function":"mlj_fixed"}
+  refund:u64 = int.add.wrap(wal,shm)
+  o0:u64 = const() {"value":0}
+  out0:u64 = call(o,o0,s) {"function":"tr_put"}
+  o1:u64 = const() {"value":8}
+  out1:u64 = call(o,o1,t) {"function":"tr_put"}
+  o2:u64 = const() {"value":16}
+  out2:u64 = call(o,o2,high) {"function":"tr_put"}
+  o3:u64 = const() {"value":24}
+  out3:u64 = call(o,o3,refund) {"function":"tr_put"}
+  o4:u64 = const() {"value":32}
+  out4:u64 = call(o,o4,gen) {"function":"tr_put"}
+  o5:u64 = const() {"value":40}
+  out5:u64 = call(o,o5,dev) {"function":"tr_put"}
+  o6:u64 = const() {"value":48}
+  out6:u64 = call(o,o6,ino) {"function":"tr_put"}
+  ret(out6)
+end

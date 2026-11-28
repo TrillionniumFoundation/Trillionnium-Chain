@@ -1,0 +1,111 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_da_attestation_coordinate
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  size:usize = buffer.len(r)
+  n:u64 = int.cast(size) {"mode":"wrap"}
+  low:u64 = const() {"value":305}
+  high:u64 = const() {"value":1048576}
+  above:bool = compare.ge(n,low)
+  below:bool = compare.le(n,high)
+  fit:bool = bool.and(above,below)
+  branch fit chain(r,o,w,n,low) malformed()
+block chain(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64,clow:u64)
+  room:u64 = int.sub.wrap(cn,clow)
+  clat:u64 = const() {"value":36}
+  clen:u64 = call(cr,clat) {"function":"daav_u32"}
+  cfit:bool = compare.le(clen,room)
+  branch cfit author(cr,co,cw,clen,room) malformed()
+block author(ar:readbuf,ao:mutbuf,aw:mutbuf,ac:u64,aroom:u64)
+  nbase:u64 = const() {"value":76}
+  nc:u64 = int.add.wrap(nbase,ac)
+  albase:u64 = const() {"value":177}
+  alat:u64 = int.add.wrap(nc,albase)
+  al:u64 = call(ar,alat) {"function":"daav_u32"}
+  an:u64 = int.sub.wrap(aroom,ac)
+  same:bool = compare.eq(al,an)
+  branch same utf8(ar,ao,aw,ac,nc,al) malformed()
+block utf8(ur:readbuf,uo:mutbuf,uw:mutbuf,uc:u64,un:u64,ua:u64)
+  uat:u64 = const() {"value":40}
+  uresult:u64 = call(ur,uat,uc) {"function":"research_utf8"}
+  uyes:u64 = const() {"value":1}
+  uvalid:bool = compare.eq(uresult,uyes)
+  branch uvalid capacity(ur,uo,uw,un,ua) malformed()
+block capacity(qr:readbuf,qo:mutbuf,qw:mutbuf,qn:u64,qa:u64)
+  ws:usize = buffer.len(qw)
+  os:usize = buffer.len(qo)
+  work:usize = const() {"value":1280}
+  output:usize = const() {"value":32}
+  wf:bool = compare.ge(ws,work)
+  of:bool = compare.ge(os,output)
+  fitq:bool = bool.and(wf,of)
+  branch fitq compute(qr,qo,qw,qn,qa) short()
+block compute(dr:readbuf,do:mutbuf,dw:mutbuf,dn:u64,da:u64)
+  two:u64 = const() {"value":2}
+  seven:u64 = const() {"value":7}
+  first:u64 = int.add.wrap(dn,seven)
+  atbias:u64 = const() {"value":145}
+  at:u64 = int.add.wrap(dn,atbias)
+  lenbias:u64 = const() {"value":44}
+  second:u64 = int.add.wrap(da,lenbias)
+  ini:u64 = call(dw) {"function":"tr_sha_init"}
+  dom:u64 = call(dw) {"function":"daco_domain"}
+  p1:u64 = call(dr,two,first,dw) {"function":"tr_sha_update"}
+  p2:u64 = call(dr,at,second,dw) {"function":"tr_sha_update"}
+  fin:u64 = call(dw) {"function":"tr_sha_final"}
+  z1:u64 = bit.or(ini,dom)
+  z2:u64 = bit.or(p1,p2)
+  z3:u64 = bit.or(z1,z2)
+  z4:u64 = bit.or(z3,fin)
+  zero:u64 = const() {"value":0}
+  okd:bool = compare.eq(z4,zero)
+  branch okd publish(do,dw) inner_error()
+block publish(po:mutbuf,pw:mutbuf)
+  digest:u64 = const() {"value":1168}
+  dest:u64 = const() {"value":0}
+  copy:u64 = call(pw,digest,po,dest) {"function":"dab_copy32"}
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block short()
+  cap:u32 = const() {"value":102}
+  ret(cap)
+block inner_error()
+  err:u32 = const() {"value":103}
+  ret(err)
+end
+
+fn daco_domain(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  k0:u64 = const() {"value":1208}
+  v0:u64 = const() {"value":7885365840114090048}
+  p0:u64 = call(w,k0,v0) {"function":"tr_put"}
+  k1:u64 = const() {"value":1216}
+  v1:u64 = const() {"value":7809911856577867822}
+  p1:u64 = call(w,k1,v1) {"function":"tr_put"}
+  k2:u64 = const() {"value":1224}
+  v2:u64 = const() {"value":3270004954025569893}
+  p2:u64 = call(w,k2,v2) {"function":"tr_put"}
+  k3:u64 = const() {"value":1232}
+  v3:u64 = const() {"value":8386112020112766049}
+  p3:u64 = call(w,k3,v3) {"function":"tr_put"}
+  k4:u64 = const() {"value":1240}
+  v4:u64 = const() {"value":7380959311061479273}
+  p4:u64 = call(w,k4,v4) {"function":"tr_put"}
+  k5:u64 = const() {"value":1248}
+  v5:u64 = const() {"value":8029745707502233964}
+  p5:u64 = call(w,k5,v5) {"function":"tr_put"}
+  k6:u64 = const() {"value":1256}
+  v6:u64 = const() {"value":3343206260205511794}
+  p6:u64 = call(w,k6,v6) {"function":"tr_put"}
+  k7:u64 = const() {"value":1264}
+  v7:u64 = const() {"value":8386094384959873379}
+  p7:u64 = call(w,k7,v7) {"function":"tr_put"}
+  k8:u64 = const() {"value":1272}
+  v8:u64 = const() {"value":829828709}
+  p8:u64 = call(w,k8,v8) {"function":"tr_put"}
+  span:u64 = const() {"value":68}
+  feed:u64 = call(w,k0,span) {"function":"tr_sha_update_work"}
+  ret(feed)
+end

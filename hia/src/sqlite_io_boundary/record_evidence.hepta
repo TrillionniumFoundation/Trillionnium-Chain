@@ -1,0 +1,165 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_record_evidence
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  extent:usize = buffer.len(raw)
+  fixed:usize = const() {"value":80}
+  framed:bool = compare.eq(extent,fixed)
+  branch framed capacity(raw,out) invalid()
+block capacity(cr:readbuf,co:mutbuf)
+  ol:usize = buffer.len(co)
+  need:usize = const() {"value":72}
+  room:bool = compare.ge(ol,need)
+  branch room header(cr,co) short()
+block header(hr:readbuf,ho:mutbuf)
+  a0:u64 = const() {"value":0}
+  a8:u64 = const() {"value":8}
+  a16:u64 = const() {"value":16}
+  a24:u64 = const() {"value":24}
+  a32:u64 = const() {"value":32}
+  a40:u64 = const() {"value":40}
+  a48:u64 = const() {"value":48}
+  a56:u64 = const() {"value":56}
+  a64:u64 = const() {"value":64}
+  a72:u64 = const() {"value":72}
+  mode:u64 = call(hr,a0) {"function":"tr_read"}
+  measured:u64 = call(hr,a8) {"function":"tr_read"}
+  ordinary:u64 = call(hr,a16) {"function":"tr_read"}
+  cleanup:u64 = call(hr,a24) {"function":"tr_read"}
+  next_seq:u64 = call(hr,a32) {"function":"tr_read"}
+  total:u64 = call(hr,a40) {"function":"tr_read"}
+  complete:u64 = call(hr,a48) {"function":"tr_read"}
+  denied:u64 = call(hr,a56) {"function":"tr_read"}
+  tag:u64 = call(hr,a64) {"function":"tr_read"}
+  code:u64 = call(hr,a72) {"function":"tr_read"}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  normal:bool = compare.eq(mode,one)
+  clean:bool = compare.eq(mode,two)
+  action:bool = bool.or(normal,clean)
+  branch action apply(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code) invalid()
+block apply(a_ho:mutbuf,a_normal:bool,a_measured:u64,a_ordinary:u64,a_cleanup:u64,a_next_seq:u64,a_total:u64,a_complete:u64,a_denied:u64,a_tag:u64,a_code:u64)
+  minima:u64 = const() {"value":72}
+  applied:u32 = call(a_ho,a_normal,a_measured,a_ordinary,a_cleanup,a_next_seq,a_total,a_complete,a_denied,a_tag,a_code,minima) {"function":"evidence_apply"}
+  ret(applied)
+block invalid()
+  unusable:u32 = const() {"value":100}
+  ret(unusable)
+block short()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+end
+
+fn evidence_apply(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64,minimum:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(ho:mutbuf,normal:bool,measured:u64,ordinary:u64,cleanup:u64,next_seq:u64,total:u64,complete:u64,denied:u64,tag:u64,code:u64,minimum:u64)
+  one:u64 = const() {"value":1}
+  count_o:u64 = const() {"value":1024}
+  count_c:u64 = const() {"value":256}
+  event_max:u64 = const() {"value":512}
+  measured_max:u64 = const() {"value":4096}
+  length_low:bool = compare.ge(measured,one)
+  length_hi:bool = compare.le(measured,measured_max)
+  length_good:bool = bool.and(length_low,length_hi)
+  o_good:bool = compare.le(ordinary,count_o)
+  c_good:bool = compare.le(cleanup,count_c)
+  counted:u64 = int.add.wrap(ordinary,cleanup)
+  width:u64 = int.mul.wrap(counted,event_max)
+  limits:bool = bool.and(o_good,c_good)
+  valid_seq:bool = compare.eq(next_seq,counted)
+  db:bool = compare.le(total,width)
+  is_bool:bool = compare.le(complete,one)
+  e_ok:bool = call(tag,code) {"function":"evidence_first_valid"}
+  s1:bool = bool.and(limits,valid_seq)
+  s2:bool = bool.and(db,is_bool)
+  s3:bool = bool.and(s2,e_ok)
+  sx:bool = bool.and(length_good,s1)
+  safe:bool = bool.and(sx,s3)
+  branch safe choose(ho,normal,measured,ordinary,cleanup,next_seq,total,complete,denied,tag,code,minimum) malformed()
+block choose(qo:mutbuf,qnormal:bool,qbytes:u64,qcount_o:u64,qcount_c:u64,qseq:u64,qtotal:u64,qcomplete:u64,qdenied:u64,qtag:u64,qcode:u64,qmin:u64)
+  qordinary_max:u64 = const() {"value":1024}
+  qcleanup_max:u64 = const() {"value":256}
+  qrecord_max:u64 = const() {"value":512}
+  qord_full:bool = compare.eq(qcount_o,qordinary_max)
+  qcl_full:bool = compare.eq(qcount_c,qcleanup_max)
+  full:bool = select(qnormal,qord_full,qcl_full)
+  oversized:bool = compare.gt(qbytes,qrecord_max)
+  refuse:bool = bool.or(full,oversized)
+  branch refuse failed(qo,qcount_o,qcount_c,qseq,qtotal,qdenied,qtag,qcode) capacity(qo,qnormal,qbytes,qcount_o,qcount_c,qseq,qtotal,qcomplete,qdenied,qtag,qcode,qmin)
+block capacity(co:mutbuf,cn:bool,cb:u64,coc:u64,ccc:u64,cs:u64,ct:u64,ccomplete:u64,cd:u64,cg:u64,cc:u64,cmin:u64)
+  extent:usize = buffer.len(co)
+  available:u64 = int.cast(extent) {"mode":"wrap"}
+  fits:bool = compare.ge(available,cmin)
+  branch fits retained(co,cn,cb,coc,ccc,cs,ct,ccomplete,cd,cg,cc) short_success()
+block short_success()
+  tiny:u32 = const() {"value":102}
+  ret(tiny)
+block failed(fo:mutbuf,ford:u64,fcl:u64,fseq:u64,ftotal:u64,fdenied:u64,ftag:u64,fcode:u64)
+  f0:u64 = const() {"value":0}
+  f1:u64 = const() {"value":1}
+  f13:u64 = const() {"value":13}
+  fstatus:u32 = const() {"value":13}
+  max:u64 = const() {"value":18446744073709551615}
+  has_first:bool = compare.ne(ftag,f0)
+  at_top:bool = compare.eq(fdenied,max)
+  increment:u64 = int.add.wrap(fdenied,f1)
+  d_next:u64 = select(at_top,max,increment)
+  first_tag:u64 = select(has_first,ftag,f1)
+  first_code:u64 = select(has_first,fcode,f13)
+  jump emit(fo,ford,fcl,fseq,ftotal,f0,d_next,first_tag,first_code,f0,fstatus)
+block retained(ro:mutbuf,rnormal:bool,rbytes:u64,rord:u64,rcl:u64,rseq:u64,rtotal:u64,rcomplete:u64,rdenied:u64,rtag:u64,rcode:u64)
+  r0:u64 = const() {"value":0}
+  r1:u64 = const() {"value":1}
+  rend:u32 = const() {"value":0}
+  do_o:u64 = select(rnormal,r1,r0)
+  do_c:u64 = select(rnormal,r0,r1)
+  no:u64 = int.add.wrap(rord,do_o)
+  nc:u64 = int.add.wrap(rcl,do_c)
+  ns:u64 = int.add.wrap(rseq,r1)
+  nt:u64 = int.add.wrap(rtotal,rbytes)
+  jump emit(ro,no,nc,ns,nt,rcomplete,rdenied,rtag,rcode,r1,rend)
+block emit(eo:mutbuf,eo_count:u64,ec_count:u64,eseq:u64,etotal:u64,ecomplete:u64,edenied:u64,etag:u64,ecode:u64,erow:u64,status:u32)
+  x0:u64 = const() {"value":0}
+  x8:u64 = const() {"value":8}
+  x16:u64 = const() {"value":16}
+  x24:u64 = const() {"value":24}
+  x32:u64 = const() {"value":32}
+  x40:u64 = const() {"value":40}
+  x48:u64 = const() {"value":48}
+  x56:u64 = const() {"value":56}
+  x64:u64 = const() {"value":64}
+  po:u64 = call(eo,x0,eo_count) {"function":"tr_put"}
+  pc:u64 = call(eo,x8,ec_count) {"function":"tr_put"}
+  ps:u64 = call(eo,x16,eseq) {"function":"tr_put"}
+  pt:u64 = call(eo,x24,etotal) {"function":"tr_put"}
+  pw:u64 = call(eo,x32,ecomplete) {"function":"tr_put"}
+  pd:u64 = call(eo,x40,edenied) {"function":"tr_put"}
+  pg:u64 = call(eo,x48,etag) {"function":"tr_put"}
+  pq:u64 = call(eo,x56,ecode) {"function":"tr_put"}
+  pr:u64 = call(eo,x64,erow) {"function":"tr_put"}
+  ret(status)
+block malformed()
+  unusable:u32 = const() {"value":100}
+  ret(unusable)
+end
+
+fn evidence_first_valid(tag:u64,code:u64) -> (bool) effects() entry(entry)
+block entry(tag:u64,code:u64)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  full:u64 = const() {"value":13}
+  code_max:u64 = const() {"value":2147483647}
+  none:bool = compare.eq(tag,zero)
+  empty:bool = compare.eq(code,zero)
+  unknown:bool = compare.eq(tag,two)
+  positive:bool = compare.gt(code,zero)
+  code_fit:bool = compare.le(code,code_max)
+  record:bool = compare.eq(tag,one)
+  rec_code:bool = compare.eq(code,full)
+  pair_a:bool = bool.and(none,empty)
+  pair_b:bool = bool.and(record,rec_code)
+  code_ok:bool = bool.and(positive,code_fit)
+  pair_c:bool = bool.and(unknown,code_ok)
+  ab:bool = bool.or(pair_a,pair_b)
+  yes:bool = bool.or(ab,pair_c)
+  ret(yes)
+end

@@ -1,0 +1,65 @@
+"""Actual original pending/actual handle mutation and global collection even when recording fails."""
+from pathlib import Path
+import struct
+import tempfile
+import unittest
+
+from hia.tests.native_support import NativeModule
+from hia.tests.test_settlement_schema_read import execute
+from hia.tests.test_sqlite_reservation_replay import original_adapter
+
+ROOT = Path(__file__).resolve().parents[2]
+SOURCE = ROOT / "hia/src/sqlite_io_boundary/mutation_record_replay.hepta"
+ADAPTER = ROOT / "hia/tests/rust_sqlite_mutation_record_replay_reference.rs"
+
+
+class SqliteMutationRecordReplayTests(unittest.TestCase):
+    def test_original_mutation_and_refund_when_evidence_is_full(self):
+        with tempfile.TemporaryDirectory(prefix="trnm-m15-mutation-record-") as directory:
+            data = execute([original_adapter(Path(directory), ADAPTER)]).stdout
+        cases = []
+        while data:
+            family, extent = struct.unpack_from("<2Q", data)
+            body = data[16:16+extent]
+            outer, *after = struct.unpack_from("<17Q", data, 16+extent)
+            end = 152+extent
+            written = struct.pack("<16Q", *after)
+            if after[14] == 0:
+                size, = struct.unpack_from("<Q", data, end)
+                self.assertLessEqual(size, 512)
+                written += data[end:end+8+size]
+                end += 8+size
+            cases.append((family, body, outer, after, written))
+            data = data[end:]
+        self.assertEqual(len(cases), 30)
+        for i in (0, 15):
+            rows = cases[i:i+15]
+            self.assertEqual([case[0] for case in rows], list(range(15)))
+            self.assertEqual([row[2] for row in rows[:4]], [13, 13, 0, 0])
+            self.assertEqual([row[3][14] for row in rows], [13]*4+[0]*8+[13]*3)
+            self.assertEqual([row[3][12] for row in rows[12:]], [2, 2, 2])
+            self.assertEqual(rows[0][3][9:11], [2, 0])
+            self.assertEqual(rows[1][3][6:8], [2, 14])
+            self.assertEqual(rows[1][3][11], 32)
+            self.assertEqual(rows[3][3][15], 1)
+            self.assertEqual({struct.unpack_from("<Q", row[1])[0] for row in rows}, set(range(6, 13)))
+        fixture = cases[4][1]
+        def replace(i, v):
+            return fixture[:i*8] + struct.pack("<Q", v) + fixture[i*8+8:]
+        malformed = [fixture[:391], fixture[:392]+b"x"*513, fixture[:392]+b"\xc0\x80"]
+        malformed += [replace(i, v) for i,v in ((0,1),(1,0),(2,0),(3,8),(4,0),(5,0),
+                    (6,1),(7,2),(8,2),(9,0),(10,0),(11,2),(12,7),(20,3),(21,1),(24,0),(25,32))]
+        for backend in ("direct", "selfhost"):
+            with self.subTest(backend=backend), NativeModule(SOURCE, byte_exports=("f0",), backend=backend) as n:
+                positive = [([raw, b"\x82"*(len(written)+pad), b"\x77"*9], outer, written)
+                    for _, raw, outer, _, written in cases for pad in (0, 519)]
+                results = n.call_many([("f0", args) for args, _, _ in positive])
+                for (args, outer, written), result in zip(positive, results, strict=True):
+                    self.assertEqual((result.require_returned().value, result.arguments),
+                        (outer, [args[0],written+args[1][len(written):],args[2]]))
+                invalid = [(raw,800,100) for raw in malformed] + [
+                    (raw,len(written)-1,102) for _,raw,_,_,written in cases]
+                results = n.call_many([("f0",[raw,b"\x54"*size,b"\x13"*11]) for raw,size,_ in invalid])
+                for (raw,size,status),result in zip(invalid,results,strict=True):
+                    self.assertEqual((result.require_returned().value, result.arguments),
+                        (status,[raw,b"\x54"*size,b"\x13"*11]))

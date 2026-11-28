@@ -1,0 +1,211 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_consensus_work_schedule_profile_v1
+fn f0(input:readbuf,output:mutbuf,arena:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,arena:mutbuf)
+  ilen:usize = buffer.len(input)
+  fixed_len:usize = const() {"value":202}
+  anchored_len:usize = const() {"value":218}
+  fixed_size:bool = compare.eq(ilen,fixed_len)
+  anchored_size:bool = compare.eq(ilen,anchored_len)
+  known_size:bool = bool.or(fixed_size,anchored_size)
+  branch known_size format(input,output,arena,anchored_size) bad_frame()
+block format(fi:readbuf,fo:mutbuf,fa:mutbuf,anchored:bool)
+  zero:usize = const() {"value":0}
+  marker:u64 = call(fi,zero) {"function":"cw_read64"}
+  expected:u64 = const() {"value":3544385890804782926}
+  marker_ok:bool = compare.eq(marker,expected)
+  wire_offset:usize = const() {"value":200}
+  wire:u8 = buffer.load(fi,wire_offset)
+  w1:u8 = const() {"value":1}
+  w2:u8 = const() {"value":2}
+  pnh:bool = compare.eq(wire,w1)
+  pgh:bool = compare.eq(wire,w2)
+  known_wire:bool = bool.or(pnh,pgh)
+  policy_offset:usize = const() {"value":201}
+  policy:u8 = buffer.load(fi,policy_offset)
+  fixed_tag:u8 = const() {"value":0}
+  expected_policy:u8 = select(anchored,w1,fixed_tag)
+  known_policy:bool = compare.eq(policy,expected_policy)
+  tags_ok:bool = bool.and(known_wire,known_policy)
+  good_frame:bool = bool.and(marker_ok,tags_ok)
+  branch good_frame scalar(fi,fo,fa,anchored) bad_frame()
+block scalar(si:readbuf,so:mutbuf,sa:mutbuf,anchored_s:bool)
+  ioff:usize = const() {"value":176}
+  interval:u64 = call(si,ioff) {"function":"cw_read64"}
+  imin:u64 = const() {"value":16}
+  imax:u64 = const() {"value":4096}
+  imin_ok:bool = compare.ge(interval,imin)
+  imax_ok:bool = compare.le(interval,imax)
+  interval_ok:bool = bool.and(imin_ok,imax_ok)
+  branch interval_ok interval_span(si,so,sa,anchored_s,interval) bad_parameters()
+block interval_span(ii:readbuf,io:mutbuf,ia:mutbuf,anchored_i:bool,interval_i:u64)
+  soff:usize = const() {"value":184}
+  spacing:u64 = call(ii,soff) {"function":"cw_read64"}
+  none:u64 = const() {"value":0}
+  nonzero:bool = compare.ne(spacing,none)
+  one:u64 = const() {"value":1}
+  prior:u64 = int.sub.wrap(interval_i,one)
+  four:u64 = const() {"value":4}
+  windows:u64 = int.mul.wrap(prior,four)
+  max:u64 = const() {"value":18446744073709551615}
+  maximum_spacing:u64 = int.div.checked(max,windows)
+  no_overflow:bool = compare.le(spacing,maximum_spacing)
+  span_ok:bool = bool.and(nonzero,no_overflow)
+  branch span_ok policy_limits(ii,io,ia,anchored_i) bad_parameters()
+block policy_limits(pi:readbuf,po:mutbuf,pa:mutbuf,is_anchored:bool)
+  branch is_anchored anchor(pi,po,pa) target_start(pi,po,pa,is_anchored)
+block anchor(ai:readbuf,ao:mutbuf,aa:mutbuf)
+  hoff:usize = const() {"value":202}
+  half_off:usize = const() {"value":210}
+  height:u64 = call(ai,hoff) {"function":"cw_read64"}
+  half_life:u64 = call(ai,half_off) {"function":"cw_read64"}
+  least:u64 = const() {"value":1}
+  horizon:u64 = const() {"value":4096}
+  min_ok:bool = compare.ge(height,least)
+  max_ok:bool = compare.lt(height,horizon)
+  half_ok:bool = compare.ge(half_life,least)
+  height_ok:bool = bool.and(min_ok,max_ok)
+  anchor_ok:bool = bool.and(height_ok,half_ok)
+  yes:bool = const() {"value":true}
+  branch anchor_ok target_start(ai,ao,aa,yes) bad_parameters()
+block target_start(ti:readbuf,to:mutbuf,ta:mutbuf,tanchored:bool)
+  first:usize = const() {"value":0}
+  absent:bool = const() {"value":false}
+  equal:bool = const() {"value":true}
+  jump target(ti,to,ta,tanchored,first,absent,equal)
+block target(ti1:readbuf,to1:mutbuf,ta1:mutbuf,tanchor1:bool,ix:usize,seen:bool,equal1:bool)
+  tlen:usize = const() {"value":32}
+  more:bool = compare.lt(ix,tlen)
+  branch more target_byte(ti1,to1,ta1,tanchor1,ix,seen,equal1) target_done(ti1,to1,ta1,tanchor1,seen)
+block target_byte(tbi:readbuf,tbo:mutbuf,tba:mutbuf,tbanchor:bool,tbix:usize,tbseen:bool,tbequal:bool)
+  initial_at:usize = const() {"value":104}
+  limit_at:usize = const() {"value":136}
+  ipos:usize = int.add.wrap(initial_at,tbix)
+  lpos:usize = int.add.wrap(limit_at,tbix)
+  value:u8 = buffer.load(tbi,ipos)
+  limit:u8 = buffer.load(tbi,lpos)
+  greater:bool = compare.gt(value,limit)
+  reject:bool = bool.and(tbequal,greater)
+  same:bool = compare.eq(value,limit)
+  remain_equal:bool = bool.and(tbequal,same)
+  unused:u8 = const() {"value":0}
+  some:bool = compare.ne(value,unused)
+  seen_next:bool = bool.or(tbseen,some)
+  next_one:usize = const() {"value":1}
+  next_index:usize = int.add.wrap(tbix,next_one)
+  branch reject bad_parameters() target(tbi,tbo,tba,tbanchor,next_index,seen_next,remain_equal)
+block target_done(di:readbuf,dout:mutbuf,da:mutbuf,danchor:bool,dseen:bool)
+  branch dseen output_space(di,dout,da,danchor) bad_parameters()
+block output_space(spi:readbuf,spo:mutbuf,spa:mutbuf,spanchor:bool)
+  out_bytes:usize = buffer.len(spo)
+  digest_bytes:usize = const() {"value":32}
+  output_ok:bool = compare.ge(out_bytes,digest_bytes)
+  branch output_ok scratch_space(spi,spo,spa,spanchor) bad_output()
+block scratch_space(sci:readbuf,sco:mutbuf,sca:mutbuf,scanchor:bool)
+  alen:usize = buffer.len(sca)
+  amin:usize = const() {"value":132256}
+  has_arena:bool = compare.ge(alen,amin)
+  branch has_arena prefix(sci,sco,sca,scanchor) bad_scratch()
+block prefix(hi:readbuf,ho:mutbuf,ha:mutbuf,hanchor:bool)
+  key0:usize = const() {"value":0}
+  data0:u64 = const() {"value":5642817013619249748}
+  ignore0:u32 = call(ha,key0,data0) {"function":"cw_store64"}
+  key8:usize = const() {"value":8}
+  data8:u64 = const() {"value":3273676505974308913}
+  ignore8:u32 = call(ha,key8,data8) {"function":"cw_store64"}
+  key16:usize = const() {"value":16}
+  data16:u64 = const() {"value":8587634840728334946}
+  ignore16:u32 = call(ha,key16,data16) {"function":"cw_store64"}
+  key24:usize = const() {"value":24}
+  data24:u64 = const() {"value":7307199741743034991}
+  ignore24:u32 = call(ha,key24,data24) {"function":"cw_store64"}
+  key32:usize = const() {"value":32}
+  data32:u64 = const() {"value":8315177826310190436}
+  ignore32:u32 = call(ha,key32,data32) {"function":"cw_store64"}
+  key40:usize = const() {"value":40}
+  data40:u64 = const() {"value":3564086081478615397}
+  ignore40:u32 = call(ha,key40,data40) {"function":"cw_store64"}
+  part_at:usize = const() {"value":48}
+  fixed_n:u8 = const() {"value":202}
+  anchored_n:u8 = const() {"value":218}
+  part_bytes:u8 = select(hanchor,anchored_n,fixed_n)
+  _ = buffer.store(ha,part_at,part_bytes)
+  z:u8 = const() {"value":0}
+  z1:usize = const() {"value":49}
+  z2:usize = const() {"value":50}
+  z3:usize = const() {"value":51}
+  _ = buffer.store(ha,z1,z)
+  _ = buffer.store(ha,z2,z)
+  _ = buffer.store(ha,z3,z)
+  hzero:usize = const() {"value":0}
+  jump copy_payload(hi,ho,ha,hzero)
+block copy_payload(ci:readbuf,co:mutbuf,ca:mutbuf,idx:usize)
+  common:usize = const() {"value":192}
+  more_common:bool = compare.lt(idx,common)
+  branch more_common payload_byte(ci,co,ca,idx) horizon(ci,co,ca)
+block payload_byte(pbi:readbuf,pbo:mutbuf,pba:mutbuf,ix_b:usize)
+  src_base:usize = const() {"value":8}
+  dst_base:usize = const() {"value":52}
+  src:usize = int.add.wrap(src_base,ix_b)
+  dst:usize = int.add.wrap(dst_base,ix_b)
+  data_b:u8 = buffer.load(pbi,src)
+  _ = buffer.store(pba,dst,data_b)
+  step:usize = const() {"value":1}
+  advanced:usize = int.add.wrap(ix_b,step)
+  jump copy_payload(pbi,pbo,pba,advanced)
+block horizon(hori:readbuf,horo:mutbuf,hora:mutbuf)
+  pos:usize = const() {"value":244}
+  horizon_value:u64 = const() {"value":4096}
+  horizon_store:u32 = call(hora,pos,horizon_value) {"function":"cw_store64"}
+  tags:usize = const() {"value":200}
+  last:usize = buffer.len(hori)
+  jump copy_tail(hori,horo,hora,tags,last)
+block copy_tail(taili:readbuf,tailo:mutbuf,taila:mutbuf,ti_pos:usize,ti_end:usize)
+  tail_more:bool = compare.lt(ti_pos,ti_end)
+  branch tail_more tail_byte(taili,tailo,taila,ti_pos,ti_end) hash(tailo,taila,ti_end)
+block tail_byte(tailbi:readbuf,tailbo:mutbuf,tailba:mutbuf,tailb_pos:usize,tailb_end:usize)
+  tail_base:usize = const() {"value":52}
+  tail_dst:usize = int.add.wrap(tail_base,tailb_pos)
+  tail_data:u8 = buffer.load(tailbi,tailb_pos)
+  _ = buffer.store(tailba,tail_dst,tail_data)
+  tail_step:usize = const() {"value":1}
+  tail_next:usize = int.add.wrap(tailb_pos,tail_step)
+  jump copy_tail(tailbi,tailbo,tailba,tail_next,tailb_end)
+block hash(hash_o:mutbuf,hash_a:mutbuf,hash_in:usize)
+  prefix_len:usize = const() {"value":52}
+  hash_len:usize = int.add.wrap(hash_in,prefix_len)
+  result_size:u32 = call(hash_a,hash_len) {"function":"sha256_arena"}
+  want_size:u32 = const() {"value":32}
+  available:bool = compare.eq(result_size,want_size)
+  digest_start:usize = const() {"value":0}
+  branch available copy_id(hash_o,hash_a,digest_start) internal()
+block copy_id(id_o:mutbuf,id_a:mutbuf,id_pos:usize)
+  digest_end:usize = const() {"value":32}
+  id_more:bool = compare.lt(id_pos,digest_end)
+  branch id_more id_byte(id_o,id_a,id_pos) done()
+block id_byte(ido_b:mutbuf,ida_b:mutbuf,idpos_b:usize)
+  digest_base:usize = const() {"value":131136}
+  digest_index:usize = int.add.wrap(digest_base,idpos_b)
+  digest_value:u8 = buffer.load(ida_b,digest_index)
+  _ = buffer.store(ido_b,idpos_b,digest_value)
+  digest_step:usize = const() {"value":1}
+  id_next:usize = int.add.wrap(idpos_b,digest_step)
+  jump copy_id(ido_b,ida_b,id_next)
+block done()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block bad_frame()
+  bad_f:u32 = const() {"value":1}
+  ret(bad_f)
+block bad_output()
+  bad_o:u32 = const() {"value":2}
+  ret(bad_o)
+block bad_scratch()
+  bad_s:u32 = const() {"value":3}
+  ret(bad_s)
+block bad_parameters()
+  bad_p:u32 = const() {"value":32}
+  ret(bad_p)
+block internal()
+  bad_i:u32 = const() {"value":255}
+  ret(bad_i)
+end

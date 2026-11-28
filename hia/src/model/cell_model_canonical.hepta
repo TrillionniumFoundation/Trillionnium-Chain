@@ -1,0 +1,175 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_model_canonical_value_v1
+fn f0(i:readbuf,o:mutbuf,a:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,a:mutbuf)
+  input_len:usize = buffer.len(i)
+  exact_input:usize = const() {"value":30848}
+  input_shape:bool = compare.eq(input_len,exact_input)
+  branch input_shape frame(i,o) bad()
+block frame(fi:readbuf,fo:mutbuf)
+  magic_off:usize = const() {"value":0}
+  actual:u64 = call(fi,magic_off) {"function":"cw_read64"}
+  magic:u64 = const() {"value":3544385890904395075}
+  scan_first:usize = const() {"value":8}
+  fixed_json:u64 = const() {"value":3975}
+  valid_magic:bool = compare.eq(actual,magic)
+  branch valid_magic scan(fi,fo,scan_first,fixed_json) bad()
+block scan(si:readbuf,so:mutbuf,sp:usize,ss:u64)
+  bits:u64 = call(si,sp) {"function":"cw_read64"}
+  coefficient:i64 = int.cast(bits) {"mode":"wrap"}
+  min:i64 = const() {"value":-32767}
+  max:i64 = const() {"value":32767}
+  fits_lo:bool = compare.le(min,coefficient)
+  fits_hi:bool = compare.le(coefficient,max)
+  in_range:bool = bool.and(fits_lo,fits_hi)
+  branch in_range measure(si,so,sp,ss,bits) bad()
+block measure(mi:readbuf,mo:mutbuf,mp:usize,ms:u64,mv:u64)
+  is_signed:u64 = const() {"value":1}
+  digits:u64 = call(mv,is_signed) {"function":"value_integer_size"}
+  total:u64 = int.add.wrap(ms,digits)
+  scan_next_offset:usize = const() {"value":8}
+  scan_next:usize = int.add.wrap(mp,scan_next_offset)
+  read_end:usize = const() {"value":30848}
+  scan_end:bool = compare.eq(scan_next,read_end)
+  branch scan_end capacity(mi,mo,total) scan(mi,mo,scan_next,total)
+block capacity(ci:readbuf,co:mutbuf,cs:u64)
+  available_size:usize = buffer.len(co)
+  available:u64 = int.cast(available_size) {"mode":"wrap"}
+  enough:bool = compare.le(cs,available)
+  branch enough prefix(ci,co,cs) short()
+block prefix(pi:readbuf,po:mutbuf,ps:u64)
+  start_json:u64 = const() {"value":0}
+  base_word0:u64 = const() {"value":4189022149637448315}
+  base_n0:u64 = const() {"value":8}
+  base_len0:u64 = call(po,start_json,base_n0,base_word0) {"function":"value_word"}
+  base_pos0:u64 = int.add.wrap(start_json,base_n0)
+  first_coef:usize = const() {"value":8}
+  matrix0:u64 = const() {"value":0}
+  jump matrix(pi,po,ps,first_coef,base_pos0,matrix0)
+block matrix(ki:readbuf,ko:mutbuf,ks:u64,kp:usize,kout:u64,km:u64)
+  matrix_open_word0:u64 = const() {"value":91}
+  matrix_open_n0:u64 = const() {"value":1}
+  matrix_open_len0:u64 = call(ko,kout,matrix_open_n0,matrix_open_word0) {"function":"value_word"}
+  matrix_open_pos0:u64 = int.add.wrap(kout,matrix_open_n0)
+  start_row:u64 = const() {"value":0}
+  jump row(ki,ko,ks,kp,matrix_open_pos0,km,start_row)
+block row(ri:readbuf,ro:mutbuf,rs:u64,rp:usize,rout:u64,rm:u64,rr:u64)
+  row_open_word0:u64 = const() {"value":91}
+  row_open_n0:u64 = const() {"value":1}
+  row_open_len0:u64 = call(ro,rout,row_open_n0,row_open_word0) {"function":"value_word"}
+  row_open_pos0:u64 = int.add.wrap(rout,row_open_n0)
+  start_coords:u64 = const() {"value":0}
+  jump coord(ri,ro,rs,rp,row_open_pos0,rm,rr,start_coords)
+block coord(wi:readbuf,wo:mutbuf,ws:u64,wp:usize,wout:u64,wm:u64,wr:u64,wc:u64)
+  weight:u64 = call(wi,wp) {"function":"cw_read64"}
+  signed_one:u64 = const() {"value":1}
+  wrote:u64 = call(wo,wout,weight,signed_one) {"function":"value_integer_write"}
+  word_end:u64 = int.add.wrap(wout,wrote)
+  coord_next_in_offset:usize = const() {"value":8}
+  coord_next_in:usize = int.add.wrap(wp,coord_next_in_offset)
+  coord_next:u64 = int.add.wrap(wc,signed_one)
+  dimension:u64 = const() {"value":257}
+  last_coord:bool = compare.eq(coord_next,dimension)
+  branch last_coord end_row(wi,wo,ws,coord_next_in,word_end,wm,wr) comma(wi,wo,ws,coord_next_in,word_end,wm,wr,coord_next)
+block comma(ai:readbuf,ao:mutbuf,as_:u64,ap:usize,aout:u64,am:u64,ar:u64,ac:u64)
+  comma_cell_word0:u64 = const() {"value":44}
+  comma_cell_n0:u64 = const() {"value":1}
+  comma_cell_len0:u64 = call(ao,aout,comma_cell_n0,comma_cell_word0) {"function":"value_word"}
+  comma_cell_pos0:u64 = int.add.wrap(aout,comma_cell_n0)
+  jump coord(ai,ao,as_,ap,comma_cell_pos0,am,ar,ac)
+block end_row(ji:readbuf,jo:mutbuf,js:u64,jp:usize,jout:u64,jm:u64,jr:u64)
+  row_close_word0:u64 = const() {"value":93}
+  row_close_n0:u64 = const() {"value":1}
+  row_close_len0:u64 = call(jo,jout,row_close_n0,row_close_word0) {"function":"value_word"}
+  row_close_pos0:u64 = int.add.wrap(jout,row_close_n0)
+  row_step:u64 = const() {"value":1}
+  next_row_index:u64 = int.add.wrap(jr,row_step)
+  matrix_rows:u64 = const() {"value":3}
+  last_row:bool = compare.eq(next_row_index,matrix_rows)
+  branch last_row end_matrix(ji,jo,js,jp,row_close_pos0,jm) row_comma(ji,jo,js,jp,row_close_pos0,jm,next_row_index)
+block row_comma(ri2:readbuf,ro2:mutbuf,rs2:u64,rp2:usize,rt2:u64,rm2:u64,rr2:u64)
+  comma_row_word0:u64 = const() {"value":44}
+  comma_row_n0:u64 = const() {"value":1}
+  comma_row_len0:u64 = call(ro2,rt2,comma_row_n0,comma_row_word0) {"function":"value_word"}
+  comma_row_pos0:u64 = int.add.wrap(rt2,comma_row_n0)
+  jump row(ri2,ro2,rs2,rp2,comma_row_pos0,rm2,rr2)
+block end_matrix(bi:readbuf,bo:mutbuf,bs:u64,bp:usize,bout:u64,bm:u64)
+  matrix_close_word0:u64 = const() {"value":93}
+  matrix_close_n0:u64 = const() {"value":1}
+  matrix_close_len0:u64 = call(bo,bout,matrix_close_n0,matrix_close_word0) {"function":"value_word"}
+  matrix_close_pos0:u64 = int.add.wrap(bout,matrix_close_n0)
+  matrix_one:u64 = const() {"value":1}
+  next_matrix_idx:u64 = int.add.wrap(bm,matrix_one)
+  just_base:bool = compare.eq(next_matrix_idx,matrix_one)
+  branch just_base deltas(bi,bo,bs,bp,matrix_close_pos0,next_matrix_idx) matrix_kind(bi,bo,bs,bp,matrix_close_pos0,next_matrix_idx)
+block deltas(di:readbuf,do:mutbuf,ds:u64,dp:usize,dt:u64,dm:u64)
+  delta_field_word0:u64 = const() {"value":8314054396008997420}
+  delta_field_n0:u64 = const() {"value":8}
+  delta_field_len0:u64 = call(do,dt,delta_field_n0,delta_field_word0) {"function":"value_word"}
+  delta_field_pos0:u64 = int.add.wrap(dt,delta_field_n0)
+  delta_field_word8:u64 = const() {"value":5978658}
+  delta_field_n8:u64 = const() {"value":3}
+  delta_field_len8:u64 = call(do,delta_field_pos0,delta_field_n8,delta_field_word8) {"function":"value_word"}
+  delta_field_pos8:u64 = int.add.wrap(delta_field_pos0,delta_field_n8)
+  jump matrix(di,do,ds,dp,delta_field_pos8,dm)
+block matrix_kind(ni:readbuf,no:mutbuf,ns:u64,np:usize,nt:u64,nm:u64)
+  route_idx:u64 = const() {"value":4}
+  at_router:bool = compare.eq(nm,route_idx)
+  branch at_router router(ni,no,ns,np,nt,nm) maybe_end(ni,no,ns,np,nt,nm)
+block maybe_end(ei:readbuf,eo:mutbuf,es:u64,ep:usize,et:u64,em:u64)
+  five:u64 = const() {"value":5}
+  end_matrices:bool = compare.eq(em,five)
+  branch end_matrices suffix(eo,es,et) between(ei,eo,es,ep,et,em)
+block between(gi:readbuf,go:mutbuf,gs:u64,gp:usize,gt:u64,gm:u64)
+  comma_delta_word0:u64 = const() {"value":44}
+  comma_delta_n0:u64 = const() {"value":1}
+  comma_delta_len0:u64 = call(go,gt,comma_delta_n0,comma_delta_word0) {"function":"value_word"}
+  comma_delta_pos0:u64 = int.add.wrap(gt,comma_delta_n0)
+  jump matrix(gi,go,gs,gp,comma_delta_pos0,gm)
+block router(ui:readbuf,uo:mutbuf,us:u64,up:usize,ut:u64,um:u64)
+  router_field_word0:u64 = const() {"value":7310597216645819485}
+  router_field_n0:u64 = const() {"value":8}
+  router_field_len0:u64 = call(uo,ut,router_field_n0,router_field_word0) {"function":"value_word"}
+  router_field_pos0:u64 = int.add.wrap(ut,router_field_n0)
+  router_field_word8:u64 = const() {"value":3809906}
+  router_field_n8:u64 = const() {"value":3}
+  router_field_len8:u64 = call(uo,router_field_pos0,router_field_n8,router_field_word8) {"function":"value_word"}
+  router_field_pos8:u64 = int.add.wrap(router_field_pos0,router_field_n8)
+  jump matrix(ui,uo,us,up,router_field_pos8,um)
+block suffix(to:mutbuf,ts:u64,tt:u64)
+  schema_word0:u64 = const() {"value":7020378893159965228}
+  schema_n0:u64 = const() {"value":8}
+  schema_len0:u64 = call(to,tt,schema_n0,schema_word0) {"function":"value_word"}
+  schema_pos0:u64 = int.add.wrap(tt,schema_n0)
+  schema_word8:u64 = const() {"value":7146489608608561698}
+  schema_n8:u64 = const() {"value":8}
+  schema_len8:u64 = call(to,schema_pos0,schema_n8,schema_word8) {"function":"value_word"}
+  schema_pos8:u64 = int.add.wrap(schema_pos0,schema_n8)
+  schema_word16:u64 = const() {"value":8386112019172715621}
+  schema_n16:u64 = const() {"value":8}
+  schema_len16:u64 = call(to,schema_pos8,schema_n16,schema_word16) {"function":"value_word"}
+  schema_pos16:u64 = int.add.wrap(schema_pos8,schema_n16)
+  schema_word24:u64 = const() {"value":8386105122512791141}
+  schema_n24:u64 = const() {"value":8}
+  schema_len24:u64 = call(to,schema_pos16,schema_n24,schema_word24) {"function":"value_word"}
+  schema_pos24:u64 = int.add.wrap(schema_pos16,schema_n24)
+  schema_word32:u64 = const() {"value":3635652197207078505}
+  schema_n32:u64 = const() {"value":8}
+  schema_len32:u64 = call(to,schema_pos24,schema_n32,schema_word32) {"function":"value_word"}
+  schema_pos32:u64 = int.add.wrap(schema_pos24,schema_n32)
+  schema_word40:u64 = const() {"value":8029125600154040117}
+  schema_n40:u64 = const() {"value":8}
+  schema_len40:u64 = call(to,schema_pos32,schema_n40,schema_word40) {"function":"value_word"}
+  schema_pos40:u64 = int.add.wrap(schema_pos32,schema_n40)
+  schema_word48:u64 = const() {"value":537448441188}
+  schema_n48:u64 = const() {"value":5}
+  schema_len48:u64 = call(to,schema_pos40,schema_n48,schema_word48) {"function":"value_word"}
+  schema_pos48:u64 = int.add.wrap(schema_pos40,schema_n48)
+  written:u32 = int.cast(ts) {"mode":"wrap"}
+  ret(written)
+block bad()
+  status_bad:u32 = const() {"value":1}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":102}
+  ret(status_short)
+end

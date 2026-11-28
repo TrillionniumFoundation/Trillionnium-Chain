@@ -1,0 +1,162 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_journal_audit_export_wqx2
+fn f0(snapshot:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(snapshot:readbuf,output:mutbuf,scratch:mutbuf)
+  raw_native:usize = buffer.len(snapshot)
+  raw:u64 = int.cast(raw_native) {"mode":"wrap"}
+  input_cap:u64 = const() {"value":65536}
+  within:bool = compare.le(raw,input_cap)
+  available:usize = buffer.len(scratch)
+  scratch_required:usize = const() {"value":102400}
+  scratch_fits:bool = compare.ge(available,scratch_required)
+  probe:bool = bool.and(within,scratch_fits)
+  branch probe validate(snapshot,output,scratch,raw) capacity()
+block validate(vi:readbuf,vo:mutbuf,vs:mutbuf,vn:u64)
+  zero:u64 = const() {"value":0}
+  empty:bool = compare.eq(vn,zero)
+  branch empty framing(vi,vo,vs,vn) eof(vi,vo,vs,vn)
+block eof(ei:readbuf,eo:mutbuf,es:mutbuf,en:u64)
+  one:u64 = const() {"value":1}
+  last:u64 = int.sub.wrap(en,one)
+  at:usize = int.cast(last) {"mode":"wrap"}
+  marker:u8 = buffer.load(ei,at)
+  lf:u8 = const() {"value":10}
+  ok:bool = compare.eq(marker,lf)
+  branch ok utf8(ei,eo,es,en) malformed()
+block utf8(ui:readbuf,uo:mutbuf,us:mutbuf,un:u64)
+  start:u64 = const() {"value":0}
+  one_scalar:u64 = const() {"value":1}
+  checked:u64 = call(ui,start,un) {"function":"value_utf8"}
+  valid:bool = compare.eq(checked,one_scalar)
+  branch valid framing(ui,uo,us,un) malformed()
+block framing(fi:readbuf,fo:mutbuf,fs:mutbuf,fn:u64)
+  no:bool = const() {"value":false}
+  count:u64 = call(fi,fs,fn,no) {"function":"wjf_scan"}
+  max_lines:u64 = const() {"value":64}
+  fits:bool = compare.le(count,max_lines)
+  branch fits manifest(fi,fo,fs,fn,count) capacity()
+block manifest(mi:readbuf,mo:mutbuf,ms:mutbuf,mn:u64,mc:u64)
+  yes:bool = const() {"value":true}
+  captured:u64 = call(mi,ms,mn,yes) {"function":"wjf_scan"}
+  table_at:usize = const() {"value":30000}
+  captured_at:usize = const() {"value":8}
+  span_size:u64 = const() {"value":12}
+  extent:u64 = int.mul.wrap(captured,span_size)
+  span_extent:usize = int.cast(extent) {"mode":"wrap"}
+  _ = buffer.move_within(ms,table_at,captured_at,span_extent)
+  sizes:u64,selected:u64,chosen:u64 = call(mi,mo,ms,mc) {"function":"wq_measure"}
+  insufficient:u64 = const() {"value":18446744073709551615}
+  exceed:bool = compare.eq(sizes,insufficient)
+  branch exceed capacity() admitted(mi,mo,ms,mc,sizes,selected,chosen)
+block admitted(ai:readbuf,ao:mutbuf,as:mutbuf,ac:u64,az:u64,ab:u64,ar:u64)
+  zero2:u64 = const() {"value":0}
+  good:bool = compare.ne(az,zero2)
+  branch good index(ai,ao,as,ac,az,ab,ar) malformed()
+block index(ii:readbuf,io:mutbuf,is:mutbuf,ic:u64,iz:u64,ib:u64,ir:u64)
+  table_at2:usize = const() {"value":32768}
+  all_slots:usize = const() {"value":69632}
+  blank:u8 = const() {"value":0}
+  _ = buffer.fill_range(is,table_at2,all_slots,blank)
+  _ = call(ii,is,ic,ib) {"function":"wq_keys"}
+  wire_extent:u64 = call(is,ir) {"function":"wg_stage"}
+  staged:readbuf = borrow.read(is)
+  dry:bool = const() {"value":false}
+  index_size:u64 = call(staged,io,wire_extent,ir,dry) {"function":"wx_index"}
+  _ = loan.end(staged)
+  zero3:u64 = const() {"value":0}
+  ready_index:bool = compare.ne(index_size,zero3)
+  branch ready_index fit(ii,io,is,ic,iz,ib,ir,wire_extent,index_size) malformed()
+block fit(ci:readbuf,co:mutbuf,cs:mutbuf,cc:u64,cz:u64,cb:u64,cr:u64,cw:u64,cx:u64)
+  word_mask:u64 = const() {"value":4294967295}
+  shift:u64 = const() {"value":32}
+  json_size:u64 = int.shr.checked(cz,shift)
+  md_size:u64 = bit.and(cz,word_mask)
+  header:u64 = const() {"value":16}
+  artifacts_1:u64 = int.add.wrap(header,json_size)
+  artifacts_2:u64 = int.add.wrap(artifacts_1,md_size)
+  exact:u64 = int.add.wrap(artifacts_2,cx)
+  ceiling:u64 = const() {"value":1048576}
+  fits_abi:bool = compare.le(exact,ceiling)
+  capacity_native:usize = buffer.len(co)
+  available_out:u64 = int.cast(capacity_native) {"mode":"wrap"}
+  allowed:bool = compare.le(exact,available_out)
+  ready:bool = bool.and(fits_abi,allowed)
+  branch ready publish(ci,co,cs,cc,cb,cr,cw,json_size,md_size,cx,exact) capacity()
+block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pc:u64,pb:u64,pr:u64,pw:u64,pj:u64,pm:u64,px:u64,pn:u64)
+  _ = call(pi,po,ps,pc,pb,pr,pw,pj,pm,px) {"function":"wq_publish"}
+  size:u32 = int.cast(pn) {"mode":"wrap"}
+  ret(size)
+block malformed()
+  invalid:u32 = const() {"value":4294967295}
+  ret(invalid)
+block capacity()
+  limited:u32 = const() {"value":4294967294}
+  ret(limited)
+end
+fn wq_measure(input:readbuf,out:mutbuf,scratch:mutbuf,count:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,scratch:mutbuf,count:u64)
+  zero:u64 = const() {"value":0}
+  header:u64 = const() {"value":8}
+  markdown_header:u64 = const() {"value":446}
+  jump rows(input,out,scratch,count,zero,zero,zero,header,zero,markdown_header)
+block rows(ri:readbuf,ro:mutbuf,rs:mutbuf,rc:u64,row:u64,selected:u64,bits:u64,typed:u64,j:u64,m:u64)
+  more:bool = compare.lt(row,rc)
+  branch more one_row(ri,ro,rs,rc,row,selected,bits,typed,j,m) success(j,m,bits,selected)
+block one_row(oi:readbuf,oo:mutbuf,os:mutbuf,oc:u64,orow:u64,ocount:u64,ob:u64,ot:u64,oj:u64,om:u64)
+  json_end:u64,md_end:u64,frame_size:u64 = call(oi,oo,os,orow,oj,om) {"function":"wq_measure_one"}
+  none:u64 = const() {"value":0}
+  valid:bool = compare.ne(frame_size,none)
+  branch valid bound(oi,oo,os,oc,orow,ocount,ob,ot,om,json_end,md_end,frame_size) malformed()
+block bound(bi:readbuf,bo:mutbuf,bs:mutbuf,bc:u64,br:u64,bcount:u64,bb:u64,bt:u64,old_md:u64,bj:u64,bm:u64,bf:u64)
+  four:u64 = const() {"value":4}
+  with_length:u64 = int.add.wrap(bf,four)
+  next_typed:u64 = int.add.wrap(bt,with_length)
+  limit:u64 = const() {"value":65536}
+  fits:bool = compare.le(next_typed,limit)
+  branch fits remember(bi,bo,bs,bc,br,bcount,bb,next_typed,old_md,bj,bm) capacity()
+block remember(mi:readbuf,mo:mutbuf,ms:mutbuf,mc:u64,mr:u64,mcount:u64,mb:u64,mt:u64,previous_md:u64,mj:u64,mm:u64)
+  step:u64 = const() {"value":1}
+  empty_bit:u64 = const() {"value":0}
+  included:bool = compare.gt(mm,previous_md)
+  offset:u64 = int.shl.checked(step,mr)
+  mask:u64 = select(included,offset,empty_bit)
+  next_bits:u64 = bit.or(mb,mask)
+  increment:u64 = select(included,step,empty_bit)
+  next_count:u64 = int.add.wrap(mcount,increment)
+  next_row:u64 = int.add.wrap(mr,step)
+  jump rows(mi,mo,ms,mc,next_row,next_count,next_bits,mt,mj,mm)
+block success(json_bytes:u64,md_bytes:u64,out_bits:u64,out_count:u64)
+  shift:u64 = const() {"value":32}
+  high:u64 = int.shl.checked(json_bytes,shift)
+  sizes:u64 = bit.or(high,md_bytes)
+  ret(sizes,out_bits,out_count)
+block malformed()
+  invalid:u64 = const() {"value":0}
+  ret(invalid,invalid,invalid)
+block capacity()
+  ceiling:u64 = const() {"value":18446744073709551615}
+  zero_else:u64 = const() {"value":0}
+  ret(ceiling,zero_else,zero_else)
+end
+fn wq_measure_one(input:readbuf,out:mutbuf,scratch:mutbuf,row:u64,json_at:u64,md_at:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,scratch:mutbuf,row:u64,json_at:u64,md_at:u64)
+  start:u64,end_at:u64 = call(scratch,row) {"function":"wq_span"}
+  task:u64,request:u64,status:u64 = call(input,out,start,end_at) {"function":"wd2_record_at"}
+  zero:u64 = const() {"value":0}
+  valid:bool = compare.ne(request,zero)
+  branch valid materialize(input,out,scratch,row,json_at,md_at,end_at,task,request,status) malformed()
+block materialize(mi:readbuf,mo:mutbuf,ms:mutbuf,mrow:u64,mj:u64,mm:u64,me:u64,mt:u64,mr:u64,mst:u64)
+  _ = call(ms,mrow,mt,mr,mst) {"function":"wq_save"}
+  row_bounds:u64 = call(mi,ms,me,mt,mr,mst) {"function":"wq_materialize"}
+  row_size:u64 = call(mr,mst) {"function":"wq_length"}
+  typed:readbuf = borrow.read(ms)
+  j_new:u64,m_new:u64 = call(typed,mo,row_bounds,mj,mm) {"function":"wq_select_and_measure"}
+  _ = loan.end(typed)
+  bad:u64 = const() {"value":0}
+  complete:bool = compare.ne(m_new,bad)
+  branch complete success(j_new,m_new,row_size) malformed()
+block success(j:u64,m:u64,n:u64)
+  ret(j,m,n)
+block malformed()
+  invalid:u64 = const() {"value":0}
+  ret(invalid,invalid,invalid)
+end

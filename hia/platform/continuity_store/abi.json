@@ -1,0 +1,140 @@
+{
+  "schema": "trnm.hia.continuity-staging-abi.v1",
+  "platform": "linux-x86_64",
+  "product": "one native ELF, no interpreter or Rust fallback",
+  "bootstrap": {
+    "prefix": {
+      "bytes": 32,
+      "magic": "TCSTG001",
+      "fields": [
+        {
+          "offset": 8,
+          "type": "u64le",
+          "name": "installed_variant",
+          "accepted": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "offset": 16,
+          "type": "u64le",
+          "name": "height"
+        },
+        {
+          "offset": 24,
+          "type": "u64le",
+          "name": "reserved",
+          "value": 0
+        }
+      ]
+    },
+    "following": {
+      "bytes": 96,
+      "magic": "TSTAGE01",
+      "contract": "unchanged typed_store ABI",
+      "profile": "variant >> 1",
+      "growth_root": "refused before progress/mutation"
+    }
+  },
+  "native_private_dispatch": {
+    "4096": "classical root",
+    "4097": "complete staged State continuity",
+    "4098": "installed context construction",
+    "authorization": "scheduler states only; no COMMIT or caller-provided success"
+  },
+  "result": {
+    "bytes": 512,
+    "prefix": {
+      "offset": 0,
+      "bytes": 128,
+      "magic": "TCRESULT",
+      "authority": "private staging observation only"
+    },
+    "continuity": {
+      "offset": 128,
+      "bytes": 384,
+      "magic": "CCHECK01",
+      "authority": "private diagnostic, no publication capability"
+    }
+  },
+  "context_f0": {
+    "arguments": [
+      "readbuf input",
+      "mutbuf output",
+      "mutbuf scratch"
+    ],
+    "minimum_bytes": [
+      136,
+      16384,
+      1048576
+    ],
+    "variant_u64le_offset": 128,
+    "return_codes": {
+      "0": "complete context",
+      "69": "outside finite installed variants",
+      "100": "insufficient borrowed extent"
+    },
+    "header": {
+      "offset": 128,
+      "bytes": 64,
+      "magic": "CCFG0001"
+    },
+    "hashes": {
+      "network": 192,
+      "parameters": 224,
+      "policy": 256,
+      "task": 288,
+      "model": 320,
+      "input": 352,
+      "registry": 384,
+      "growth": 416,
+      "evaluation": 448
+    },
+    "maintenance_offset": 480,
+    "params_offset": 8192,
+    "external_config_success_flag": false
+  },
+  "continuity_codes": {
+    "90": "private context invalid",
+    "91": "maintenance mismatch",
+    "92": "State liability malformed",
+    "93": "reward queue inconsistent",
+    "94": "checked arithmetic range",
+    "95": "capacity limit"
+  },
+  "state_limits": {
+    "classic_rows": 65536,
+    "growth_rows": 1065536,
+    "permanent_accounts": 1000000,
+    "working_keys": 65536,
+    "key_bytes": 160,
+    "stored_value_bytes": 4096,
+    "total_state_byte_cap_added": false
+  },
+  "memory": {
+    "stage_arena_bytes": 4587520,
+    "continuity_scratch_bytes": 83886080,
+    "total_mapping_bytes": 88604672,
+    "recipient_offset": 132256,
+    "recipient_stride": 64,
+    "row_index_offset": 68400000,
+    "row_index_stride": 8,
+    "metadata_offset": 77000000
+  },
+  "scope": {
+    "finite_installed_configurations": 4,
+    "all_original_non_pq_configurations": false,
+    "pq_config_and_anchor": false,
+    "public_capacity_with_progress": false,
+    "account_point_access_callback": false,
+    "monetary_certificate_view": false,
+    "namespace_commit_ack": false,
+    "gsc2_root": false,
+    "complete_node": false,
+    "physical_power_loss": false,
+    "continuous_same_uid_attacker": false
+  }
+}

@@ -1,0 +1,36 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_owned_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  input_size:usize = buffer.len(input)
+  output_size:usize = buffer.len(output)
+  limit:usize = const() {"value":1048576}
+  small_input:bool = compare.le(input_size,limit)
+  small_output:bool = compare.le(output_size,limit)
+  bounded:bool = bool.and(small_input,small_output)
+  branch bounded reserved(input,output,input_size,scratch) capacity()
+block reserved(ri0:readbuf,ro0:mutbuf,rn:usize,rs:mutbuf)
+  reserved_extent:usize = buffer.len(rs)
+  none:usize = const() {"value":0}
+  unused:bool = compare.eq(reserved_extent,none)
+  branch unused header(ri0,ro0,rn) invalid()
+block header(hi:readbuf,ho:mutbuf,hn:usize)
+  header_size:usize = const() {"value":8}
+  present:bool = compare.ge(hn,header_size)
+  branch present version(hi,ho) invalid()
+block version(vi:readbuf,vo:mutbuf)
+  start:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  observed:u64 = call(vi,start,four) {"function":"wa_read"}
+  wjb3:u64 = const() {"value":859982423}
+  known:bool = compare.eq(observed,wjb3)
+  branch known render(vi,vo) invalid()
+block render(ri:readbuf,ro:mutbuf)
+  result:u32 = call(ri,ro) {"function":"wb_dispatch"}
+  ret(result)
+block invalid()
+  malformed:u32 = const() {"value":4294967295}
+  ret(malformed)
+block capacity()
+  out_of_bounds:u32 = const() {"value":4294967294}
+  ret(out_of_bounds)
+end

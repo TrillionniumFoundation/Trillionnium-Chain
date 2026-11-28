@@ -1,0 +1,1728 @@
+{
+  "0": {
+    "count": 0,
+    "data": 0,
+    "fields": [],
+    "kind": 0,
+    "name": "()"
+  },
+  "1": {
+    "count": 1,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "u8"
+  },
+  "2": {
+    "count": 2,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "u16"
+  },
+  "3": {
+    "count": 4,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "u32"
+  },
+  "4": {
+    "count": 8,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "u64"
+  },
+  "5": {
+    "count": 16,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "u128"
+  },
+  "6": {
+    "count": 1,
+    "data": 0,
+    "fields": [],
+    "kind": 2,
+    "name": "bool"
+  },
+  "7": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "[u8; 32]"
+  },
+  "8": {
+    "count": 0,
+    "data": 0,
+    "fields": [],
+    "kind": 3,
+    "name": "String"
+  },
+  "9": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "Hash32V1"
+  },
+  "10": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "AgentIdV1"
+  },
+  "11": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "AgentKeyIdV1"
+  },
+  "12": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "CapabilityIdV1"
+  },
+  "13": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "SessionKeyGrantIdV1"
+  },
+  "14": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "NonceLaneIdV1"
+  },
+  "15": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "TaskIdV1"
+  },
+  "16": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "BidIdV1"
+  },
+  "17": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "LeaseIdV1"
+  },
+  "18": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "EscrowIdV1"
+  },
+  "19": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "AccountIdV1"
+  },
+  "20": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "BondIdV1"
+  },
+  "21": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "ArtifactIdV1"
+  },
+  "22": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "SettlementIdV1"
+  },
+  "23": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "CheckpointIdV1"
+  },
+  "24": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 1,
+    "name": "KernelOperationIdV1"
+  },
+  "25": {
+    "count": 4,
+    "data": 12288,
+    "field_types": [
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1"
+    ],
+    "fields": [
+      9,
+      8,
+      3,
+      9
+    ],
+    "kind": 6,
+    "name": "ProtocolContextV1"
+  },
+  "26": {
+    "count": 5,
+    "data": 12320,
+    "field_types": [
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "[u8; 32]",
+      "AgentKeyIdV1",
+      "[u8; 32]"
+    ],
+    "fields": [
+      10,
+      11,
+      7,
+      11,
+      7
+    ],
+    "kind": 6,
+    "name": "BootstrapAgentV1"
+  },
+  "27": {
+    "count": 13,
+    "data": 12360,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "u64",
+      "Hash32V1",
+      "BootstrapAgentV1",
+      "BootstrapAgentV1",
+      "AccountBodyV1",
+      "AccountIdV1",
+      "u128",
+      "BondBodyV1",
+      "BondIdV1",
+      "u128",
+      "u128"
+    ],
+    "fields": [
+      2,
+      25,
+      4,
+      9,
+      26,
+      26,
+      43,
+      19,
+      5,
+      45,
+      20,
+      5,
+      5
+    ],
+    "kind": 6,
+    "name": "AgentMarketFreshGenesisTrustBundleV1"
+  },
+  "28": {
+    "count": 6,
+    "data": 12464,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "u64",
+      "Hash32V1",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      25,
+      4,
+      9,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "CommittedExecutionContextV1"
+  },
+  "29": {
+    "count": 3,
+    "data": 12512,
+    "field_types": [
+      "Vec<u8>",
+      "u32",
+      "Hash32V1"
+    ],
+    "fields": [
+      74,
+      3,
+      9
+    ],
+    "kind": 6,
+    "name": "VerificationProfileRefV1"
+  },
+  "30": {
+    "count": 9,
+    "data": 12536,
+    "field_types": [
+      "u16",
+      "Option<TaskIdV1>",
+      "Option<Hash32V1>",
+      "Option<Hash32V1>",
+      "Option<Hash32V1>",
+      "Option<Hash32V1>",
+      "Option<VerificationProfileRefV1>",
+      "Option<u8>",
+      "Option<u128>"
+    ],
+    "fields": [
+      2,
+      75,
+      76,
+      76,
+      76,
+      76,
+      77,
+      78,
+      79
+    ],
+    "kind": 6,
+    "name": "OperationScopeV1"
+  },
+  "31": {
+    "count": 4,
+    "data": 12608,
+    "field_types": [
+      "u16",
+      "u8",
+      "Vec<Hash32V1>",
+      "Option<Hash32V1>"
+    ],
+    "fields": [
+      2,
+      1,
+      80,
+      76
+    ],
+    "kind": 6,
+    "name": "ResourceScopeV1"
+  },
+  "32": {
+    "count": 2,
+    "data": 12640,
+    "field_types": [
+      "Hash32V1",
+      "u128"
+    ],
+    "fields": [
+      9,
+      5
+    ],
+    "kind": 6,
+    "name": "AssetLimitV1"
+  },
+  "33": {
+    "count": 27,
+    "data": 12656,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "AgentIdV1",
+      "Option<AgentKeyIdV1>",
+      "Option<CapabilityIdV1>",
+      "Hash32V1",
+      "Vec<OperationScopeV1>",
+      "Vec<ResourceScopeV1>",
+      "Vec<AssetLimitV1>",
+      "u128",
+      "u64",
+      "u64",
+      "u64",
+      "Vec<u16>",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u8",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      8,
+      3,
+      9,
+      10,
+      11,
+      10,
+      81,
+      82,
+      9,
+      83,
+      84,
+      85,
+      5,
+      4,
+      4,
+      4,
+      86,
+      4,
+      4,
+      4,
+      4,
+      4,
+      1,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "CapabilityGrantBodyV1"
+  },
+  "34": {
+    "count": 4,
+    "data": 12872,
+    "field_types": [
+      "Hash32V1",
+      "u128",
+      "u128",
+      "u128"
+    ],
+    "fields": [
+      9,
+      5,
+      5,
+      5
+    ],
+    "kind": 6,
+    "name": "AssetBudgetCounterV1"
+  },
+  "35": {
+    "count": 23,
+    "data": 12904,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "CapabilityIdV1",
+      "u64",
+      "u64",
+      "Vec<AssetBudgetCounterV1>",
+      "u128",
+      "u128",
+      "u128",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64"
+    ],
+    "fields": [
+      2,
+      25,
+      12,
+      4,
+      4,
+      87,
+      5,
+      5,
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    "kind": 6,
+    "name": "CapabilityBudgetStateV1"
+  },
+  "36": {
+    "count": 10,
+    "data": 13088,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "CapabilityIdV1",
+      "u64",
+      "u8",
+      "u64",
+      "u64",
+      "u64",
+      "Option<u64>",
+      "CapabilityBudgetStateV1"
+    ],
+    "fields": [
+      2,
+      25,
+      12,
+      4,
+      1,
+      4,
+      4,
+      4,
+      88,
+      35
+    ],
+    "kind": 6,
+    "name": "CapabilityStateV1"
+  },
+  "37": {
+    "count": 14,
+    "data": 13168,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "CapabilityIdV1",
+      "Vec<u16>",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      8,
+      3,
+      9,
+      10,
+      11,
+      12,
+      86,
+      4,
+      4,
+      4,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "SessionKeyGrantBodyV1"
+  },
+  "38": {
+    "count": 11,
+    "data": 13280,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "SessionKeyGrantIdV1",
+      "u64",
+      "u8",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "Option<u64>"
+    ],
+    "fields": [
+      2,
+      25,
+      13,
+      4,
+      1,
+      4,
+      4,
+      4,
+      4,
+      4,
+      88
+    ],
+    "kind": 6,
+    "name": "SessionKeyGrantStateV1"
+  },
+  "39": {
+    "count": 7,
+    "data": 13368,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "Option<CapabilityIdV1>",
+      "u64",
+      "u16"
+    ],
+    "fields": [
+      2,
+      25,
+      10,
+      11,
+      82,
+      4,
+      2
+    ],
+    "kind": 6,
+    "name": "NonceLaneKeyBodyV1"
+  },
+  "40": {
+    "count": 12,
+    "data": 13424,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "NonceLaneIdV1",
+      "u64",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "Option<CapabilityIdV1>",
+      "u64",
+      "u16",
+      "u64",
+      "Option<Hash32V1>",
+      "u8"
+    ],
+    "fields": [
+      2,
+      25,
+      14,
+      4,
+      10,
+      11,
+      82,
+      4,
+      2,
+      4,
+      76,
+      1
+    ],
+    "kind": 6,
+    "name": "NonceLaneStateV1"
+  },
+  "41": {
+    "count": 2,
+    "data": 13520,
+    "field_types": [
+      "Hash32V1",
+      "u128"
+    ],
+    "fields": [
+      9,
+      5
+    ],
+    "kind": 6,
+    "name": "AssetChargeV1"
+  },
+  "42": {
+    "count": 6,
+    "data": 13536,
+    "field_types": [
+      "Vec<AssetChargeV1>",
+      "u128",
+      "u64",
+      "u64",
+      "u64",
+      "u64"
+    ],
+    "fields": [
+      89,
+      5,
+      4,
+      4,
+      4,
+      4
+    ],
+    "kind": 6,
+    "name": "KernelResourceChargeV1"
+  },
+  "43": {
+    "count": 5,
+    "data": 13584,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "AgentIdV1",
+      "Hash32V1",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      25,
+      10,
+      9,
+      9
+    ],
+    "kind": 6,
+    "name": "AccountBodyV1"
+  },
+  "44": {
+    "count": 8,
+    "data": 13624,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "AccountIdV1",
+      "u64",
+      "u128",
+      "u128",
+      "u128",
+      "bool"
+    ],
+    "fields": [
+      2,
+      25,
+      19,
+      4,
+      5,
+      5,
+      5,
+      6
+    ],
+    "kind": 6,
+    "name": "AccountStateV1"
+  },
+  "45": {
+    "count": 8,
+    "data": 13688,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "AgentIdV1",
+      "Hash32V1",
+      "u16",
+      "u16",
+      "Hash32V1",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      25,
+      10,
+      9,
+      2,
+      2,
+      9,
+      9
+    ],
+    "kind": 6,
+    "name": "BondBodyV1"
+  },
+  "46": {
+    "count": 9,
+    "data": 13752,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "BondIdV1",
+      "u64",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "bool"
+    ],
+    "fields": [
+      2,
+      25,
+      20,
+      4,
+      5,
+      5,
+      5,
+      5,
+      6
+    ],
+    "kind": 6,
+    "name": "BondStateV1"
+  },
+  "47": {
+    "count": 11,
+    "data": 13824,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "AgentIdV1",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      9
+    ],
+    "kind": 6,
+    "name": "EscrowTermsV1"
+  },
+  "48": {
+    "count": 32,
+    "data": 13912,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "Option<CapabilityIdV1>",
+      "u64",
+      "u16",
+      "u64",
+      "Vec<u8>",
+      "Hash32V1",
+      "Vec<ArtifactIdV1>",
+      "Hash32V1",
+      "Hash32V1",
+      "Vec<u8>",
+      "u32",
+      "Hash32V1",
+      "u8",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "u64",
+      "u64",
+      "u64",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      8,
+      3,
+      9,
+      10,
+      11,
+      82,
+      4,
+      2,
+      4,
+      74,
+      9,
+      90,
+      9,
+      9,
+      74,
+      3,
+      9,
+      1,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      4,
+      4,
+      4,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "TaskOfferBodyV1"
+  },
+  "49": {
+    "count": 5,
+    "data": 14168,
+    "field_types": [
+      "TaskOfferBodyV1",
+      "EscrowTermsV1",
+      "AccountIdV1",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      48,
+      47,
+      19,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "TaskCreationOperationBodyV1"
+  },
+  "50": {
+    "count": 12,
+    "data": 14208,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "TaskIdV1",
+      "u64",
+      "u32",
+      "u8",
+      "Option<LeaseIdV1>",
+      "Option<CheckpointIdV1>",
+      "Option<Hash32V1>",
+      "EscrowIdV1",
+      "u8",
+      "u64"
+    ],
+    "fields": [
+      2,
+      25,
+      15,
+      4,
+      3,
+      1,
+      91,
+      92,
+      76,
+      18,
+      1,
+      4
+    ],
+    "kind": 6,
+    "name": "TaskStateV1"
+  },
+  "51": {
+    "count": 18,
+    "data": 14304,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1",
+      "TaskIdV1",
+      "AgentIdV1",
+      "Hash32V1",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "AgentIdV1",
+      "Hash32V1",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      8,
+      3,
+      9,
+      15,
+      10,
+      9,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      10,
+      9,
+      9
+    ],
+    "kind": 6,
+    "name": "EscrowBodyV1"
+  },
+  "52": {
+    "count": 7,
+    "data": 14448,
+    "field_types": [
+      "u16",
+      "u16",
+      "Hash32V1",
+      "Hash32V1",
+      "u128",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      2,
+      9,
+      9,
+      5,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "EscrowReservationEntryV1"
+  },
+  "53": {
+    "count": 13,
+    "data": 14504,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "EscrowIdV1",
+      "u64",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "u128",
+      "Vec<EscrowReservationEntryV1>",
+      "Hash32V1",
+      "Option<SettlementIdV1>",
+      "bool"
+    ],
+    "fields": [
+      2,
+      25,
+      18,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      93,
+      9,
+      94,
+      6
+    ],
+    "kind": 6,
+    "name": "EscrowStateV1"
+  },
+  "54": {
+    "count": 23,
+    "data": 14608,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1",
+      "TaskIdV1",
+      "u64",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "Option<CapabilityIdV1>",
+      "u64",
+      "u16",
+      "u64",
+      "Hash32V1",
+      "u128",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "BondIdV1",
+      "Hash32V1",
+      "Hash32V1",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      8,
+      3,
+      9,
+      15,
+      4,
+      10,
+      11,
+      82,
+      4,
+      2,
+      4,
+      9,
+      5,
+      9,
+      9,
+      9,
+      20,
+      9,
+      9,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "BidBodyV1"
+  },
+  "55": {
+    "count": 8,
+    "data": 14792,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "BidIdV1",
+      "u64",
+      "u8",
+      "Option<LeaseIdV1>",
+      "Option<u64>",
+      "Option<u64>"
+    ],
+    "fields": [
+      2,
+      25,
+      16,
+      4,
+      1,
+      91,
+      88,
+      88
+    ],
+    "kind": 6,
+    "name": "BidStateV1"
+  },
+  "56": {
+    "count": 25,
+    "data": 14856,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "String",
+      "u32",
+      "Hash32V1",
+      "TaskIdV1",
+      "u64",
+      "u32",
+      "BidIdV1",
+      "AgentIdV1",
+      "AgentIdV1",
+      "EscrowIdV1",
+      "BondIdV1",
+      "Option<CheckpointIdV1>",
+      "Hash32V1",
+      "Vec<u8>",
+      "u32",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "u64",
+      "u64",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      8,
+      3,
+      9,
+      15,
+      4,
+      3,
+      16,
+      10,
+      10,
+      18,
+      20,
+      92,
+      9,
+      74,
+      3,
+      9,
+      9,
+      9,
+      9,
+      4,
+      4,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "TaskLeaseBodyV1"
+  },
+  "57": {
+    "count": 10,
+    "data": 15056,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "LeaseIdV1",
+      "u64",
+      "u32",
+      "u8",
+      "Option<u64>",
+      "Option<u64>",
+      "Option<u64>",
+      "Option<CheckpointIdV1>"
+    ],
+    "fields": [
+      2,
+      25,
+      17,
+      4,
+      3,
+      1,
+      88,
+      88,
+      88,
+      92
+    ],
+    "kind": 6,
+    "name": "TaskLeaseStateV1"
+  },
+  "58": {
+    "count": 6,
+    "data": 15136,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "LeaseIdV1",
+      "AgentIdV1",
+      "u64",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      25,
+      17,
+      10,
+      4,
+      9
+    ],
+    "kind": 6,
+    "name": "LeaseProviderAcceptanceBodyV1"
+  },
+  "59": {
+    "count": 15,
+    "data": 15184,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "u16",
+      "Hash32V1",
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "Option<CapabilityIdV1>",
+      "u64",
+      "Option<SessionKeyGrantIdV1>",
+      "u64",
+      "u16",
+      "u64",
+      "u64",
+      "u64",
+      "u64"
+    ],
+    "fields": [
+      2,
+      25,
+      2,
+      9,
+      10,
+      11,
+      82,
+      4,
+      95,
+      4,
+      2,
+      4,
+      4,
+      4,
+      4
+    ],
+    "kind": 6,
+    "name": "KernelAuthorizationStatementV1"
+  },
+  "60": {
+    "count": 3,
+    "data": 15304,
+    "field_types": [
+      "KernelAuthorizationStatementV1",
+      "AgentKeyIdV1",
+      "Vec<u8>"
+    ],
+    "fields": [
+      59,
+      11,
+      74
+    ],
+    "kind": 6,
+    "name": "KernelAuthorizationV1"
+  },
+  "61": {
+    "count": 9,
+    "data": 15328,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "u64",
+      "KernelOperationIdV1",
+      "u16",
+      "Hash32V1",
+      "u64",
+      "Hash32V1",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      9,
+      4,
+      24,
+      2,
+      9,
+      4,
+      9,
+      9
+    ],
+    "kind": 6,
+    "name": "KernelTransitionReceiptV1"
+  },
+  "62": {
+    "count": 8,
+    "data": 15400,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "u64",
+      "u32",
+      "u64",
+      "u32",
+      "u64",
+      "u64"
+    ],
+    "fields": [
+      2,
+      25,
+      4,
+      3,
+      4,
+      3,
+      4,
+      4
+    ],
+    "kind": 6,
+    "name": "TaskArchivePolicyV1"
+  },
+  "63": {
+    "count": 11,
+    "data": 15464,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "TaskIdV1",
+      "u64",
+      "u64",
+      "Hash32V1",
+      "Hash32V1",
+      "Hash32V1",
+      "u64",
+      "u64",
+      "u128"
+    ],
+    "fields": [
+      2,
+      25,
+      15,
+      4,
+      4,
+      9,
+      9,
+      9,
+      4,
+      4,
+      5
+    ],
+    "kind": 6,
+    "name": "TerminalTaskArchiveRecordV1"
+  },
+  "64": {
+    "count": 14,
+    "data": 15552,
+    "field_types": [
+      "u16",
+      "ProtocolContextV1",
+      "Hash32V1",
+      "u64",
+      "u64",
+      "Hash32V1",
+      "u64",
+      "u64",
+      "TaskIdV1",
+      "TaskIdV1",
+      "u32",
+      "u64",
+      "u128",
+      "Hash32V1"
+    ],
+    "fields": [
+      2,
+      25,
+      9,
+      4,
+      4,
+      9,
+      4,
+      4,
+      15,
+      15,
+      3,
+      4,
+      5,
+      9
+    ],
+    "kind": 6,
+    "name": "TaskArchiveSealV1"
+  },
+  "65": {
+    "count": 2,
+    "data": 15664,
+    "field_types": [
+      "TaskArchiveSealV1",
+      "Vec<TerminalTaskArchiveRecordV1>"
+    ],
+    "fields": [
+      64,
+      96
+    ],
+    "kind": 6,
+    "name": "TaskArchiveBatchV1"
+  },
+  "66": {
+    "count": 4,
+    "data": 15680,
+    "field_types": [
+      "u16",
+      "Hash32V1",
+      "u32",
+      "Vec<Hash32V1>"
+    ],
+    "fields": [
+      2,
+      9,
+      3,
+      80
+    ],
+    "kind": 6,
+    "name": "TaskArchiveInclusionProofV1"
+  },
+  "67": {
+    "count": 6,
+    "data": 15712,
+    "fields": [
+      68,
+      69,
+      70,
+      71,
+      72,
+      73
+    ],
+    "kind": 7,
+    "name": "KernelCommandV1"
+  },
+  "68": {
+    "count": 2,
+    "data": 15760,
+    "field_types": [
+      "CapabilityGrantBodyV1",
+      "KernelAuthorizationV1"
+    ],
+    "fields": [
+      33,
+      60
+    ],
+    "kind": 6,
+    "name": "KernelCommandV1::CapabilityGrant"
+  },
+  "69": {
+    "count": 2,
+    "data": 15776,
+    "field_types": [
+      "SessionKeyGrantBodyV1",
+      "KernelAuthorizationV1"
+    ],
+    "fields": [
+      37,
+      60
+    ],
+    "kind": 6,
+    "name": "KernelCommandV1::SessionGrant"
+  },
+  "70": {
+    "count": 3,
+    "data": 15792,
+    "field_types": [
+      "TaskCreationOperationBodyV1",
+      "KernelResourceChargeV1",
+      "KernelAuthorizationV1"
+    ],
+    "fields": [
+      49,
+      42,
+      60
+    ],
+    "kind": 6,
+    "name": "KernelCommandV1::TaskCreate"
+  },
+  "71": {
+    "count": 3,
+    "data": 15816,
+    "field_types": [
+      "BidBodyV1",
+      "KernelResourceChargeV1",
+      "KernelAuthorizationV1"
+    ],
+    "fields": [
+      54,
+      42,
+      60
+    ],
+    "kind": 6,
+    "name": "KernelCommandV1::Bid"
+  },
+  "72": {
+    "count": 6,
+    "data": 15840,
+    "field_types": [
+      "TaskLeaseBodyV1",
+      "u64",
+      "u64",
+      "u64",
+      "KernelResourceChargeV1",
+      "KernelAuthorizationV1"
+    ],
+    "fields": [
+      56,
+      4,
+      4,
+      4,
+      42,
+      60
+    ],
+    "kind": 6,
+    "name": "KernelCommandV1::LeaseAccept"
+  },
+  "73": {
+    "count": 4,
+    "data": 15888,
+    "field_types": [
+      "LeaseProviderAcceptanceBodyV1",
+      "u64",
+      "KernelResourceChargeV1",
+      "KernelAuthorizationV1"
+    ],
+    "fields": [
+      58,
+      4,
+      42,
+      60
+    ],
+    "kind": 6,
+    "name": "KernelCommandV1::ProviderAccept"
+  },
+  "74": {
+    "count": 1,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<u8>"
+  },
+  "75": {
+    "count": 15,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<TaskIdV1>"
+  },
+  "76": {
+    "count": 9,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<Hash32V1>"
+  },
+  "77": {
+    "count": 29,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<VerificationProfileRefV1>"
+  },
+  "78": {
+    "count": 1,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<u8>"
+  },
+  "79": {
+    "count": 5,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<u128>"
+  },
+  "80": {
+    "count": 9,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<Hash32V1>"
+  },
+  "81": {
+    "count": 11,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<AgentKeyIdV1>"
+  },
+  "82": {
+    "count": 12,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<CapabilityIdV1>"
+  },
+  "83": {
+    "count": 30,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<OperationScopeV1>"
+  },
+  "84": {
+    "count": 31,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<ResourceScopeV1>"
+  },
+  "85": {
+    "count": 32,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<AssetLimitV1>"
+  },
+  "86": {
+    "count": 2,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<u16>"
+  },
+  "87": {
+    "count": 34,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<AssetBudgetCounterV1>"
+  },
+  "88": {
+    "count": 4,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<u64>"
+  },
+  "89": {
+    "count": 41,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<AssetChargeV1>"
+  },
+  "90": {
+    "count": 21,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<ArtifactIdV1>"
+  },
+  "91": {
+    "count": 17,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<LeaseIdV1>"
+  },
+  "92": {
+    "count": 23,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<CheckpointIdV1>"
+  },
+  "93": {
+    "count": 52,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<EscrowReservationEntryV1>"
+  },
+  "94": {
+    "count": 22,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<SettlementIdV1>"
+  },
+  "95": {
+    "count": 13,
+    "data": 0,
+    "fields": [],
+    "kind": 5,
+    "name": "Option<SessionKeyGrantIdV1>"
+  },
+  "96": {
+    "count": 63,
+    "data": 0,
+    "fields": [],
+    "kind": 4,
+    "name": "Vec<TerminalTaskArchiveRecordV1>"
+  }
+}

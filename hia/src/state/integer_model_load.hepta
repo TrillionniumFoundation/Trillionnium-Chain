@@ -1,0 +1,71 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_integer_model_snapshot_load_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  magic:u64 = const() {"value":843337033}
+  extra:u64 = const() {"value":32}
+  status:u32,count:u64,tail:u64 = call(input,magic,extra) {"function":"imd_preflight"}
+  zero:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,zero)
+  branch valid workspace(input,output,scratch,count,tail) failed(status)
+block workspace(wi:readbuf,wo:mutbuf,ws:mutbuf,wn:u64,wt:u64)
+  avail:usize = buffer.len(ws)
+  need:usize = const() {"value":9014}
+  room:bool = compare.ge(avail,need)
+  branch room prepare(wi,wo,ws,wn,wt) capacity()
+block prepare(pi:readbuf,po:mutbuf,ps:mutbuf,pn:u64,pt:u64)
+  init:u64 = call(ps) {"function":"tr_sha_init"}
+  zero_i:u64 = const() {"value":0}
+  initialized:bool = compare.eq(init,zero_i)
+  branch initialized staged(pi,po,ps,pn,pt) internal()
+block staged(si:readbuf,so:mutbuf,ss:mutbuf,sn:u64,st:u64)
+  v3_tail:u64 = const() {"value":590}
+  v3:bool = compare.eq(st,v3_tail)
+  origin:u64 = call(ss,v3) {"function":"im_prefix"}
+  raw_end:u64 = call(si,ss,sn,st,origin) {"function":"imd_emit_at"}
+  loan:readbuf = borrow.read(ss)
+  family_at:u64 = const() {"value":8}
+  decoded:u32 = call(loan,origin,si,family_at,v3) {"function":"im_decode_at"}
+  _ = loan.end(loan)
+  zero_s:u32 = const() {"value":0}
+  valid_raw:bool = compare.eq(decoded,zero_s)
+  expected_id_at:u64 = call(sn) {"function":"imd_row"}
+  content_extent:u64 = int.sub.wrap(raw_end,origin)
+  branch valid_raw hash(si,so,ss,raw_end,expected_id_at,content_extent) map_decode_error(decoded)
+block hash(hi:readbuf,ho:mutbuf,hs:mutbuf,he:u64,hid:u64,hn:u64)
+  status_h:u64 = call(hs,he) {"function":"im_hash_staged"}
+  zero_h:u64 = const() {"value":0}
+  hash_ok:bool = compare.eq(status_h,zero_h)
+  branch hash_ok bind_id(hi,ho,hs,hid,hn) internal()
+block bind_id(bi:readbuf,bo:mutbuf,bs:mutbuf,bid:u64,bn:u64)
+  digest_at:u64 = const() {"value":1168}
+  digest_view:readbuf = borrow.read(bs)
+  matches:bool = call(digest_view,digest_at,bi,bid) {"function":"im_same_digest"}
+  _ = loan.end(digest_view)
+  branch matches room(bo,bs,bn) wrong_id()
+block room(ro:mutbuf,rs:mutbuf,rn:u64)
+  digest_size:u64 = const() {"value":32}
+  total:u64 = int.add.wrap(rn,digest_size)
+  needed:usize = int.cast(total) {"mode":"wrap"}
+  output_n:usize = buffer.len(ro)
+  enough:bool = compare.ge(output_n,needed)
+  branch enough publish(ro,rs,rn) capacity()
+block publish(oo:mutbuf,ow:mutbuf,on:u64)
+  _bytes:u64 = call(oo,ow,on) {"function":"im_publish"}
+  good:u32 = const() {"value":0}
+  ret(good)
+block map_decode_error(ec:u32)
+  bias:u32 = const() {"value":4}
+  model_error:u32 = int.add.wrap(ec,bias)
+  ret(model_error)
+block wrong_id()
+  wrong:u32 = const() {"value":10}
+  ret(wrong)
+block capacity()
+  cap:u32 = const() {"value":102}
+  ret(cap)
+block internal()
+  error:u32 = const() {"value":103}
+  ret(error)
+block failed(code:u32)
+  ret(code)
+end

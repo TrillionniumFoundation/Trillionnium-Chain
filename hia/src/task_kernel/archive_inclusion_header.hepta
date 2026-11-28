@@ -1,0 +1,293 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_archive_inclusion_header_v1
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  status:u32 = call(raw,w) {"function":"archive_header_verify"}
+  ret(status)
+end
+
+fn archive_header_verify(raw:readbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf)
+  n:usize = buffer.len(raw)
+  len:u64 = int.cast(n) {"mode":"wrap"}
+  min:u64 = const() {"value":602}
+  basic:bool = compare.ge(len,min)
+  branch basic extents(raw,w,len) malformed()
+block extents(er:readbuf,ew:mutbuf,en:u64)
+  z:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  p:u64 = const() {"value":16}
+  sl:u64 = call(er,z) {"function":"tr_read"}
+  rl:u64 = call(er,eight) {"function":"tr_read"}
+  smin:u64 = const() {"value":294}
+  smax:u64 = const() {"value":806}
+  rmin:u64 = const() {"value":250}
+  rmax:u64 = const() {"value":762}
+  s_low:bool = compare.ge(sl,smin)
+  s_high:bool = compare.le(sl,smax)
+  r_low:bool = compare.ge(rl,rmin)
+  r_high:bool = compare.le(rl,rmax)
+  s_ok:bool = bool.and(s_low,s_high)
+  r_ok:bool = bool.and(r_low,r_high)
+  ok:bool = bool.and(s_ok,r_ok)
+  record:u64 = int.add.wrap(p,sl)
+  proof:u64 = int.add.wrap(record,rl)
+  ext:u64 = const() {"value":42}
+  first_end:u64 = int.add.wrap(proof,ext)
+  enough:bool = compare.le(first_end,en)
+  ready:bool = bool.and(ok,enough)
+  branch ready typed(er,ew,en,sl,rl,record,proof) malformed()
+block typed(tr:readbuf,tw:mutbuf,tn:u64,tsl:u64,trl:u64,trec:u64,tproof:u64)
+  chain_len:u64 = const() {"value":34}
+  seal_chain_at:u64 = const() {"value":50}
+  rec_chain_at:u64 = int.add.wrap(trec,chain_len)
+  seal_raw:u64 = call(tr,seal_chain_at) {"function":"tr_read"}
+  rec_raw:u64 = call(tr,rec_chain_at) {"function":"tr_read"}
+  mask:u64 = const() {"value":4294967295}
+  slen:u64 = bit.and(seal_raw,mask)
+  rlen:u64 = bit.and(rec_raw,mask)
+  seal_base:u64 = const() {"value":294}
+  record_base:u64 = const() {"value":250}
+  seal_want:u64 = int.add.wrap(seal_base,slen)
+  rec_want:u64 = int.add.wrap(record_base,rlen)
+  seal_shape:bool = compare.eq(seal_want,tsl)
+  rec_shape:bool = compare.eq(rec_want,trl)
+  shapes:bool = bool.and(seal_shape,rec_shape)
+  proof_depth_at:u64 = const() {"value":38}
+  proof_len_at:u64 = int.add.wrap(tproof,proof_depth_at)
+  proof_count:u64 = call(tr,proof_len_at) {"function":"archive_u32"}
+  proof_base:u64 = const() {"value":42}
+  sib_size:u64 = const() {"value":32}
+  sibs:u64 = int.mul.wrap(proof_count,sib_size)
+  proof_len:u64 = int.add.wrap(proof_base,sibs)
+  got_len:u64 = int.sub.wrap(tn,tproof)
+  proof_shape:bool = compare.eq(proof_len,got_len)
+  typed_ok:bool = bool.and(shapes,proof_shape)
+  branch typed_ok utf_valid(tr,tw,tsl,trl,trec,tproof,slen,rlen,proof_count) malformed()
+block utf_valid(ur:readbuf,uw:mutbuf,usl:u64,url:u64,urec:u64,uproof:u64,usn:u64,urn:u64,ud:u64)
+  start_seal:u64 = const() {"value":54}
+  relative:u64 = const() {"value":38}
+  start_record:u64 = int.add.wrap(urec,relative)
+  sgood:u64 = call(ur,start_seal,usn) {"function":"value_utf8"}
+  rgood:u64 = call(ur,start_record,urn) {"function":"value_utf8"}
+  flag:u64 = bit.and(sgood,rgood)
+  yes:u64 = const() {"value":1}
+  both:bool = compare.eq(flag,yes)
+  branch both retention(ur,uw,usl,url,urec,uproof,usn,urn,ud) malformed()
+block retention(rr:readbuf,rw:mutbuf,rsl:u64,rrl:u64,rrec:u64,rproof:u64,rsn:u64,rrn:u64,rd:u64)
+  paid_back:u64 = const() {"value":24}
+  paid_at:u64 = int.sub.wrap(rproof,paid_back)
+  paid:u64 = call(rr,paid_at) {"function":"tr_read"}
+  max:u64 = const() {"value":18446744073709551615}
+  overflowed:bool = compare.eq(paid,max)
+  branch overflowed overflow() elapsed(rr,rw,rsl,rrl,rrec,rproof,rsn,rrn,rd,paid)
+block elapsed(lr:readbuf,lw:mutbuf,lsl:u64,lrl:u64,lrec:u64,lproof:u64,lsn:u64,lrn:u64,ld:u64,paiduntil:u64)
+  height_back:u64 = const() {"value":188}
+  height_at:u64 = int.sub.wrap(lrec,height_back)
+  height:u64 = call(lr,height_at) {"function":"tr_read"}
+  later:bool = compare.gt(height,paiduntil)
+  branch later schema(lr,lw,lsl,lrl,lrec,lproof,lsn,lrn,ld) invalid()
+block schema(kr:readbuf,kw:mutbuf,ksl:u64,krl:u64,krec:u64,kproof:u64,ksn:u64,krn:u64,kd:u64)
+  sat:u64 = const() {"value":16}
+  two_mask:u64 = const() {"value":65535}
+  one:u64 = const() {"value":1}
+  st:u64 = call(kr,sat) {"function":"tr_read"}
+  pt:u64 = call(kr,kproof) {"function":"tr_read"}
+  sv:u64 = bit.and(st,two_mask)
+  pv:u64 = bit.and(pt,two_mask)
+  version_s_ok:bool = compare.eq(sv,one)
+  p_ok:bool = compare.eq(pv,one)
+  versions:bool = bool.and(version_s_ok,p_ok)
+  branch versions seal_count(kr,kw,ksl,krl,krec,kproof,ksn,krn,kd) invalid()
+block seal_count(cr:readbuf,cw:mutbuf,csl:u64,crl:u64,crec:u64,cproof:u64,csn:u64,crn:u64,cd:u64)
+  back:u64 = const() {"value":60}
+  count_at:u64 = int.sub.wrap(crec,back)
+  count:u64 = call(cr,count_at) {"function":"archive_u32"}
+  zero:u64 = const() {"value":0}
+  sz:bool = compare.eq(count,zero)
+  branch sz schema_bad() capacity(cr,cw,csl,crl,crec,cproof,csn,crn,cd,count)
+block capacity(ar:readbuf,aw:mutbuf,asl:u64,arl:u64,arec:u64,aproof:u64,asn:u64,arn:u64,ad:u64,ac:u64)
+  cap:usize = buffer.len(aw)
+  need:usize = const() {"value":1264}
+  has:bool = compare.ge(cap,need)
+  branch has seal_hash(ar,aw,asl,arl,arec,aproof,asn,arn,ad,ac) short()
+block seal_hash(hr:readbuf,hw:mutbuf,hsl:u64,hrl:u64,hrec:u64,hproof:u64,hsn:u64,hrn:u64,hd:u64,hc:u64)
+  hashed:bool = call(hr,hw,hsl) {"function":"archive_seal_hash"}
+  branch hashed seal_compare(hr,hw,hrl,hrec,hproof,hsn,hrn,hd,hc) internal()
+block seal_compare(vr:readbuf,vw:mutbuf,vrl:u64,vrec:u64,vproof:u64,vsn:u64,vrn:u64,vd:u64,vc:u64)
+  two:u64 = const() {"value":2}
+  expected_at:u64 = int.add.wrap(vproof,two)
+  seal_ok:bool = call(vr,vw,expected_at) {"function":"archive_digest_match"}
+  branch seal_ok context(vr,vrl,vrec,vproof,vsn,vrn,vd,vc) invalid()
+block context(xr:readbuf,xrl:u64,xrec:u64,xproof:u64,xsn:u64,xrn:u64,xd:u64,xc:u64)
+  same_len:bool = compare.eq(xsn,xrn)
+  branch same_len compare_context(xr,xrl,xrec,xproof,xsn,xd,xc) invalid()
+block compare_context(qr:readbuf,qrl:u64,qrec:u64,qproof:u64,qsn:u64,qd:u64,qc:u64)
+  left:u64 = const() {"value":18}
+  skip:u64 = const() {"value":2}
+  right:u64 = int.add.wrap(qrec,skip)
+  ctx_fixed:u64 = const() {"value":72}
+  context_size:u64 = int.add.wrap(ctx_fixed,qsn)
+  same_context:bool = call(qr,left,right,context_size) {"function":"archive_equal"}
+  branch same_context index(qr,qrl,qproof,qd,qc) invalid()
+block index(jr:readbuf,jrl:u64,jproof:u64,jd:u64,jc:u64)
+  ioff:u64 = const() {"value":34}
+  iat:u64 = int.add.wrap(jproof,ioff)
+  i:u64 = call(jr,iat) {"function":"archive_u32"}
+  legal:bool = compare.lt(i,jc)
+  branch legal count_check(jr,jrl,jproof,jd,jc) invalid()
+block count_check(nr:readbuf,nrl:u64,nproof:u64,nd:u64,nc:u64)
+  limit:u64 = const() {"value":4096}
+  bound:bool = compare.le(nc,limit)
+  nz:u64 = const() {"value":0}
+  branch bound depth(nr,nrl,nproof,nd,nc,nz) bounds()
+block depth(dr:readbuf,drl:u64,dproof:u64,ds:u64,width:u64,dd:u64)
+  unit:u64 = const() {"value":1}
+  running:bool = compare.gt(width,unit)
+  plus:u64 = int.add.wrap(width,unit)
+  next_width:u64 = int.shr.checked(plus,unit)
+  next_depth:u64 = int.add.wrap(dd,unit)
+  branch running depth(dr,drl,dproof,ds,next_width,next_depth) depth_check(dr,drl,dproof,ds,dd)
+block depth_check(fr:readbuf,frl:u64,fproof:u64,fs:u64,fd:u64)
+  matches:bool = compare.eq(fd,fs)
+  branch matches record_schema(fr,frl,fproof) invalid()
+block record_schema(gr:readbuf,grl:u64,gproof:u64)
+  base:u64 = int.sub.wrap(gproof,grl)
+  rs:u64 = call(gr,base) {"function":"tr_read"}
+  rmask:u64 = const() {"value":65535}
+  vals:u64 = bit.and(rs,rmask)
+  verone:u64 = const() {"value":1}
+  valid_r:bool = compare.eq(vals,verone)
+  branch valid_r accepted() schema_bad()
+block malformed()
+  status100:u32 = const() {"value":100}
+  ret(status100)
+block bounds()
+  status1:u32 = const() {"value":1}
+  ret(status1)
+block invalid()
+  status13:u32 = const() {"value":13}
+  ret(status13)
+block overflow()
+  status20:u32 = const() {"value":20}
+  ret(status20)
+block schema_bad()
+  status22:u32 = const() {"value":22}
+  ret(status22)
+block short()
+  status102:u32 = const() {"value":102}
+  ret(status102)
+block internal()
+  status103:u32 = const() {"value":103}
+  ret(status103)
+block accepted()
+  status0:u32 = const() {"value":0}
+  ret(status0)
+end
+
+fn archive_u32(raw:readbuf,offset:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,offset:u64)
+  next:u64 = const() {"value":0}
+  result:u64 = const() {"value":0}
+  jump loop(raw,offset,next,result)
+block loop(r:readbuf,p:u64,count:u64,acc:u64)
+  i:u64 = int.add.wrap(p,count)
+  at:usize = int.cast(i) {"mode":"wrap"}
+  b:u8 = buffer.load(r,at)
+  bb:u64 = int.cast(b) {"mode":"wrap"}
+  eight8:u64 = const() {"value":8}
+  shift:u64 = int.mul.wrap(count,eight8)
+  word:u64 = int.shl.checked(bb,shift)
+  accum:u64 = bit.or(acc,word)
+  one_one:u64 = const() {"value":1}
+  again:u64 = int.add.wrap(count,one_one)
+  four:u64 = const() {"value":4}
+  more:bool = compare.lt(again,four)
+  branch more loop(r,p,again,accum) done(accum)
+block done(answer:u64)
+  ret(answer)
+end
+
+fn archive_equal(input:readbuf,left:u64,right:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64,n:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(input,left,right,n,zero)
+block loop(r:readbuf,l:u64,a:u64,limit:u64,index:u64)
+  remaining:bool = compare.lt(index,limit)
+  branch remaining check(r,l,a,limit,index) yes()
+block check(cr:readbuf,cl:u64,ca:u64,cn:u64,ci:u64)
+  aa:u64 = int.add.wrap(cl,ci)
+  bb:u64 = int.add.wrap(ca,ci)
+  ax:usize = int.cast(aa) {"mode":"wrap"}
+  bx:usize = int.cast(bb) {"mode":"wrap"}
+  x:u8 = buffer.load(cr,ax)
+  y:u8 = buffer.load(cr,bx)
+  same:bool = compare.eq(x,y)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(ci,one)
+  branch same loop(cr,cl,ca,cn,next) no()
+block yes()
+  pass:bool = const() {"value":true}
+  ret(pass)
+block no()
+  fail:bool = const() {"value":false}
+  ret(fail)
+end
+
+fn archive_seal_hash(raw:readbuf,w:mutbuf,length:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,w:mutbuf,length:u64)
+  init:u64 = call(w) {"function":"tr_sha_init"}
+  off0:u64 = const() {"value":1208}
+  word0:u64 = const() {"value":7885365840114090031}
+  _write0:u64 = call(w,off0,word0) {"function":"tr_put"}
+  off8:u64 = const() {"value":1216}
+  word8:u64 = const() {"value":7809911856577867822}
+  _write8:u64 = call(w,off8,word8) {"function":"tr_put"}
+  off16:u64 = const() {"value":1224}
+  word16:u64 = const() {"value":8314054128866569829}
+  _write16:u64 = call(w,off16,word16) {"function":"tr_put"}
+  off24:u64 = const() {"value":1232}
+  word24:u64 = const() {"value":8532465745360137579}
+  _write24:u64 = call(w,off24,word24) {"function":"tr_put"}
+  off32:u64 = const() {"value":1240}
+  word32:u64 = const() {"value":7146768824253230437}
+  _write32:u64 = call(w,off32,word32) {"function":"tr_put"}
+  off40:u64 = const() {"value":1248}
+  word40:u64 = const() {"value":7310575179021971041}
+  _write40:u64 = call(w,off40,word40) {"function":"tr_put"}
+  off48:u64 = const() {"value":1256}
+  word48:u64 = const() {"value":3241518}
+  _write48:u64 = call(w,off48,word48) {"function":"tr_put"}
+  n:u64 = const() {"value":51}
+  dom:u64 = call(w,off0,n) {"function":"tr_sha_update_work"}
+  off:u64 = const() {"value":16}
+  payload:u64 = call(raw,off,length,w) {"function":"tr_sha_update"}
+  hashed:u64 = call(w) {"function":"tr_sha_final"}
+  a:u64 = bit.or(init,dom)
+  b:u64 = bit.or(payload,hashed)
+  status:u64 = bit.or(a,b)
+  z:u64 = const() {"value":0}
+  success:bool = compare.eq(status,z)
+  ret(success)
+end
+
+fn archive_digest_match(input:readbuf,work:mutbuf,input_at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,input_at:u64)
+  digest_at:u64 = const() {"value":1168}
+  end:u64 = const() {"value":1200}
+  zero:u64 = const() {"value":0}
+  jump compare_words(input,work,input_at,digest_at,end,zero)
+block compare_words(raw:readbuf,scratch:mutbuf,raw_at:u64,hash_at:u64,boundary:u64,diff:u64)
+  expected:u64 = call(raw,raw_at) {"function":"tr_read"}
+  observed:u64 = call(scratch,hash_at) {"function":"tr_get"}
+  difference:u64 = bit.xor(expected,observed)
+  combined:u64 = bit.or(diff,difference)
+  eight:u64 = const() {"value":8}
+  later_raw:u64 = int.add.wrap(raw_at,eight)
+  later_hash:u64 = int.add.wrap(hash_at,eight)
+  done:bool = compare.eq(later_hash,boundary)
+  branch done finish(combined) compare_words(raw,scratch,later_raw,later_hash,boundary,combined)
+block finish(final_diff:u64)
+  final_zero:u64 = const() {"value":0}
+  exact:bool = compare.eq(final_diff,final_zero)
+  ret(exact)
+end

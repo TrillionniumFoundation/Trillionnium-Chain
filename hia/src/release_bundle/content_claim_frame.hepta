@@ -1,0 +1,125 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_cch1_frame
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  input_size:u64 = int.cast(extent) {"mode":"wrap"}
+  bare:u64 = const() {"value":152}
+  with_digest:u64 = const() {"value":216}
+  bare_extent:bool = compare.eq(input_size,bare)
+  digest_extent:bool = compare.eq(input_size,with_digest)
+  valid_extent:bool = bool.or(bare_extent,digest_extent)
+  branch valid_extent frame(input,output,bare_extent) invalid()
+block frame(frame_input:readbuf,frame_output:mutbuf,frame_bare:bool)
+  offset:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  frame_id:u64 = call(frame_input,offset,four) {"function":"rac_read_le"}
+  expected_id:u64 = const() {"value":826688323}
+  mode_offset:usize = const() {"value":4}
+  kind_offset:usize = const() {"value":5}
+  mode:u8 = buffer.load(frame_input,mode_offset)
+  kind:u8 = buffer.load(frame_input,kind_offset)
+  zero:u8 = const() {"value":0}
+  one:u8 = const() {"value":1}
+  release:u8 = const() {"value":2}
+  expected_mode:u8 = select(frame_bare,zero,one)
+  magic_ok:bool = compare.eq(frame_id,expected_id)
+  mode_ok:bool = compare.eq(mode,expected_mode)
+  kind_ok:bool = compare.eq(kind,release)
+  id_mode_ok:bool = bool.and(magic_ok,mode_ok)
+  envelope_ok:bool = bool.and(id_mode_ok,kind_ok)
+  branch envelope_ok limits(frame_input,frame_output,frame_bare) invalid()
+block limits(lim_input:readbuf,lim_output:mutbuf,lim_bare:bool)
+  n_size:u64 = const() {"value":8}
+  n_header:u64 = const() {"value":2}
+  size_offset:u64 = const() {"value":142}
+  header_offset:u64 = const() {"value":150}
+  raw_size:u64 = call(lim_input,size_offset,n_size) {"function":"rac_read_le"}
+  header_size:u64 = call(lim_input,header_offset,n_header) {"function":"rac_read_le"}
+  min_artifact:u64 = const() {"value":1}
+  max_artifact:u64 = const() {"value":137438953472}
+  min_header:u64 = const() {"value":127}
+  max_header:u64 = const() {"value":893}
+  low_artifact:bool = compare.ge(raw_size,min_artifact)
+  high_artifact:bool = compare.le(raw_size,max_artifact)
+  low_header:bool = compare.ge(header_size,min_header)
+  high_header:bool = compare.le(header_size,max_header)
+  artifact_ok:bool = bool.and(low_artifact,high_artifact)
+  header_ok:bool = bool.and(low_header,high_header)
+  sizes_ok:bool = bool.and(artifact_ok,header_ok)
+  branch sizes_ok context(lim_input,lim_output,lim_bare,raw_size,header_size) invalid()
+block context(ctx_input:readbuf,ctx_output:mutbuf,ctx_bare:bool,ctx_raw:u64,ctx_header:u64)
+  profile_offset:u64 = const() {"value":6}
+  instance_offset:u64 = const() {"value":70}
+  profile_ok:bool = call(ctx_input,profile_offset) {"function":"cch_nonzero64"}
+  instance_ok:bool = call(ctx_input,instance_offset) {"function":"cch_nonzero64"}
+  identity_ok:bool = bool.and(profile_ok,instance_ok)
+  branch identity_ok capacity(ctx_input,ctx_output,ctx_bare,ctx_raw,ctx_header) invalid()
+block capacity(cap_input:readbuf,cap_output:mutbuf,cap_bare:bool,cap_raw:u64,cap_header:u64)
+  output_extent:usize = buffer.len(cap_output)
+  output_size:u64 = int.cast(output_extent) {"mode":"wrap"}
+  prefix_size:u64 = const() {"value":149}
+  claim_size:u64 = const() {"value":213}
+  required:u64 = select(cap_bare,prefix_size,claim_size)
+  fit:bool = compare.ge(output_size,required)
+  branch fit write(cap_input,cap_output,cap_bare,cap_raw,cap_header) short()
+block write(write_input:readbuf,write_output:mutbuf,write_bare:bool,write_raw:u64,write_header:u64)
+  committed_size:u64 = int.add.checked(write_raw,write_header)
+  write_zero:u64 = const() {"value":0}
+  magic:u64 = const() {"value":1128482865}
+  write_four:u64 = const() {"value":4}
+  context_start:u64 = call(write_output,write_zero,magic,write_four) {"function":"rac_write_be"}
+  write_profile:u64 = const() {"value":6}
+  write_id_bytes:u64 = const() {"value":64}
+  kind_position:u64 = call(write_input,write_output,write_profile,context_start,write_id_bytes) {"function":"rac_copy"}
+  kind_index:usize = int.cast(kind_position) {"mode":"wrap"}
+  release_kind:u8 = const() {"value":2}
+  _ = buffer.store(write_output,kind_index,release_kind)
+  write_one:u64 = const() {"value":1}
+  instance_position:u64 = int.add.wrap(kind_position,write_one)
+  write_instance:u64 = const() {"value":70}
+  generation_position:u64 = call(write_input,write_output,write_instance,instance_position,write_id_bytes) {"function":"rac_copy"}
+  write_eight:u64 = const() {"value":8}
+  generation_input:u64 = const() {"value":134}
+  generation:u64 = call(write_input,generation_input,write_eight) {"function":"rac_read_le"}
+  length_position:u64 = call(write_output,generation_position,generation,write_eight) {"function":"rac_write_be"}
+  end_of_prefix:u64 = call(write_output,length_position,committed_size,write_eight) {"function":"rac_write_be"}
+  branch write_bare done(end_of_prefix) digest(write_input,write_output,end_of_prefix)
+block digest(dig_input:readbuf,dig_output:mutbuf,dig_position:u64)
+  digest_offset:u64 = const() {"value":152}
+  digest_bytes:u64 = const() {"value":64}
+  end_of_claim:u64 = call(dig_input,dig_output,digest_offset,dig_position,digest_bytes) {"function":"rac_copy"}
+  jump done(end_of_claim)
+block done(written:u64)
+  status:u32 = int.cast(written) {"mode":"wrap"}
+  ret(status)
+block invalid()
+  invalid_status:u32 = const() {"value":4294967295}
+  ret(invalid_status)
+block short()
+  short_status:u32 = const() {"value":4294967294}
+  ret(short_status)
+end
+
+fn cch_nonzero64(input:readbuf,begin:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,begin:u64)
+  count:u64 = const() {"value":64}
+  end:u64 = int.add.wrap(begin,count)
+  jump scan(input,begin,end)
+block scan(scan_input:readbuf,scan_offset:u64,scan_end:u64)
+  index:usize = int.cast(scan_offset) {"mode":"wrap"}
+  byte:u8 = buffer.load(scan_input,index)
+  zero:u8 = const() {"value":0}
+  has_value:bool = compare.ne(byte,zero)
+  branch has_value present() advance(scan_input,scan_offset,scan_end)
+block advance(adv_input:readbuf,adv_offset:u64,adv_end:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(adv_offset,one)
+  at_end:bool = compare.eq(next,adv_end)
+  branch at_end absent() scan(adv_input,next,adv_end)
+block present()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block absent()
+  no:bool = const() {"value":false}
+  ret(no)
+end

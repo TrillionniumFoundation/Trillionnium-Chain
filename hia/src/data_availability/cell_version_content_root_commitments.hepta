@@ -1,0 +1,161 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_version_content_root_commitments_v3
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  size:usize = buffer.len(i)
+  n:u64 = int.cast(size) {"mode":"wrap"}
+  cap:u64 = const() {"value":1048576}
+  bounded:bool = compare.le(n,cap)
+  branch bounded have_tag(i,o,w,n) total_bound()
+block have_tag(it:readbuf,ot:mutbuf,wt:mutbuf,nt:u64)
+  q4:u64 = const() {"value":4}
+  have:bool = compare.ge(nt,q4)
+  branch have tag(it,ot,wt,nt,q4) truncated()
+block tag(it2:readbuf,ot2:mutbuf,wt2:mutbuf,nt2:u64,q4t:u64)
+  zt:u64 = const() {"value":0}
+  expect:u64 = const() {"value":861291348}
+  observed:u64 = call(it2,zt,q4t) {"function":"rac_read_le"}
+  good:bool = compare.eq(observed,expect)
+  branch good have_counts(it2,ot2,wt2,nt2,q4t) namespace()
+block have_counts(ic:readbuf,oc:mutbuf,wc:mutbuf,nc:u64,q4c:u64)
+  q8:u64 = const() {"value":8}
+  okay:bool = compare.le(q8,nc)
+  branch okay counts(ic,oc,wc,nc,q4c,q8) truncated()
+block counts(iv:readbuf,ov:mutbuf,wv:mutbuf,nv:u64,q4v:u64,q8v:u64)
+  q2v:u64 = const() {"value":2}
+  q6v:u64 = const() {"value":6}
+  q16v:u64 = const() {"value":16}
+  onev:u64 = const() {"value":1}
+  versions:u64 = call(iv,q4v,q2v) {"function":"ca_read_be"}
+  roots:u64 = call(iv,q6v,q2v) {"function":"ca_read_be"}
+  v_ok1:bool = compare.ge(versions,onev)
+  v_ok2:bool = compare.le(versions,q16v)
+  r_ok1:bool = compare.ge(roots,onev)
+  r_ok2:bool = compare.le(roots,versions)
+  vgood:bool = bool.and(v_ok1,v_ok2)
+  rgood:bool = bool.and(r_ok1,r_ok2)
+  goodv:bool = bool.and(vgood,rgood)
+  roots_bytes:u64 = int.mul.wrap(roots,q2v)
+  start:u64 = int.add.wrap(q8v,roots_bytes)
+  branch goodv have_roots(iv,ov,wv,nv,versions,roots,start) declared_counts()
+block have_roots(ih:readbuf,oh:mutbuf,wh:mutbuf,nh:u64,vh:u64,rh:u64,sh:u64)
+  present:bool = compare.le(sh,nh)
+  branch present workspace(ih,oh,wh,nh,vh,rh,sh) truncated()
+block workspace(iw:readbuf,ow:mutbuf,ww:mutbuf,nw:u64,vw:u64,rw:u64,sw:u64)
+  available:usize = buffer.len(ww)
+  required:usize = const() {"value":133280}
+  ready:bool = compare.ge(available,required)
+  slot:u64 = const() {"value":131232}
+  branch ready members(iw,ow,ww,nw,vw,rw,sw,slot,vw) no_room()
+block members(im:readbuf,om:mutbuf,wm:mutbuf,nm:u64,vm:u64,rm:u64,sm:u64,tm:u64,lm:u64)
+  limit:u64 = const() {"value":25165824}
+  retcode:u32,begin:u64,end:u64 = call(im,sm,nm,limit) {"function":"cs_frame"}
+  failcode:u32 = const() {"value":202}
+  no_field:bool = compare.eq(retcode,failcode)
+  branch no_field truncated() member_bound(im,om,wm,nm,vm,rm,tm,lm,retcode,begin,end)
+block member_bound(ib:readbuf,ob:mutbuf,wb:mutbuf,nb:u64,vb:u64,rb:u64,tb:u64,lb:u64,kb:u32,bb:u64,eb:u64)
+  zr:u32 = const() {"value":0}
+  valid_b:bool = compare.eq(kb,zr)
+  branch valid_b member_inner(ib,ob,wb,nb,vb,rb,tb,lb,bb,eb) nested_bound()
+block member_inner(ii:readbuf,oi:mutbuf,wi:mutbuf,ni:u64,vi:u64,ri:u64,ti:u64,li:u64,bi:u64,ei:u64)
+  code_i:u32 = call(ii,wi,bi,ei) {"function":"c3_tcv_content"}
+  zi:u32 = const() {"value":0}
+  okay_i:bool = compare.eq(code_i,zi)
+  branch okay_i retain(ii,oi,wi,ni,vi,ri,ti,li,bi,ei) fail(code_i)
+block retain(ir:readbuf,orr:mutbuf,wr:mutbuf,nr:u64,vr:u64,rr:u64,tr:u64,lr:u64,br:u64,er:u64)
+  eight_r:u64 = const() {"value":8}
+  stride:u64 = const() {"value":128}
+  one_r:u64 = const() {"value":1}
+  end_at:u64 = int.add.wrap(tr,eight_r)
+  saved1:u64 = call(wr,tr,br) {"function":"tr_put"}
+  saved2:u64 = call(wr,end_at,er) {"function":"tr_put"}
+  next_at:u64 = int.add.wrap(tr,stride)
+  remaining:u64 = int.sub.wrap(lr,one_r)
+  last:bool = compare.eq(lr,one_r)
+  branch last suffix(ir,orr,wr,nr,vr,rr,er) members(ir,orr,wr,nr,vr,rr,er,next_at,remaining)
+block suffix(is:readbuf,os:mutbuf,ws:mutbuf,ns:u64,vs:u64,rs:u64,es:u64)
+  exact:bool = compare.eq(ns,es)
+  branch exact root_order(is,os,ws,ns,vs,rs) trailing()
+block root_order(io:readbuf,oo:mutbuf,wo:mutbuf,no:u64,vo:u64,ro:u64)
+  mask:u64 = call(io,vo,ro) {"function":"c3_roots"}
+  z_o:u64 = const() {"value":0}
+  okay_o:bool = compare.gt(mask,z_o)
+  branch okay_o ordered(io,oo,wo,no,vo,ro,mask) canonical_roots()
+block ordered(ip:readbuf,op:mutbuf,wp:mutbuf,np:u64,vp:u64,rp:u64,mp:u64)
+  kp:u32 = call(ip,wp,vp) {"function":"c3_order"}
+  zp:u32 = const() {"value":0}
+  okp:bool = compare.eq(kp,zp)
+  branch okp semantic_edges(ip,op,wp,np,vp,rp,mp) fail(kp)
+block semantic_edges(ij:readbuf,oj:mutbuf,wj:mutbuf,nj:u64,vj:u64,rj:u64,mj:u64)
+  kj:u32 = call(ij,wj,vj) {"function":"c3_edges"}
+  zj:u32 = const() {"value":0}
+  okj:bool = compare.eq(kj,zj)
+  branch okj reach(ij,oj,wj,nj,vj,rj,mj) fail(kj)
+block reach(ig:readbuf,og:mutbuf,wg:mutbuf,ng:u64,vg:u64,rg:u64,mg:u64)
+  all:bool = call(wg,vg,mg) {"function":"c3_reach"}
+  branch all room(ig,og,wg,ng,vg,rg) unreachable_node()
+block room(iq:readbuf,oq:mutbuf,wq:mutbuf,nq:u64,vq:u64,rq:u64)
+  available_q:usize = buffer.len(oq)
+  q64:u64 = const() {"value":64}
+  q4_root_out:u64 = const() {"value":4}
+  digests_q:u64 = int.mul.wrap(rq,q64)
+  required_q:u64 = int.add.wrap(digests_q,q4_root_out)
+  available_n:u64 = int.cast(available_q) {"mode":"wrap"}
+  enough:bool = compare.ge(available_n,required_q)
+  branch enough publish_count(iq,oq,wq,rq,q4_root_out) no_room()
+block publish_count(ic0:readbuf,oc0:mutbuf,wc0:mutbuf,rc0:u64,q4c0:u64)
+  zero_c0:u64 = const() {"value":0}
+  first_root:u64 = const() {"value":8}
+  written:u64 = call(oc0,rc0,zero_c0,q4c0) {"function":"td_count"}
+  jump publish_root(ic0,oc0,wc0,rc0,first_root,q4c0)
+block publish_root(ir0:readbuf,or0:mutbuf,wr0:mutbuf,rr0:u64,rp0:u64,out_at:u64)
+  two_r0:u64 = const() {"value":2}
+  inc_one:u64 = const() {"value":1}
+  stride_r0:u64 = const() {"value":128}
+  first_stored:u64 = const() {"value":131280}
+  q32r0:u64 = const() {"value":32}
+  q64r0:u64 = const() {"value":64}
+  idx_r0:u64 = call(ir0,rp0,two_r0) {"function":"ca_read_be"}
+  displacement:u64 = int.mul.wrap(idx_r0,stride_r0)
+  digest_in:u64 = int.add.wrap(first_stored,displacement)
+  tail_in:u64 = int.add.wrap(digest_in,q32r0)
+  tail_out:u64 = int.add.wrap(out_at,q32r0)
+  copied0:u64 = call(wr0,or0,digest_in,out_at) {"function":"td_copy"}
+  copied1:u64 = call(wr0,or0,tail_in,tail_out) {"function":"td_copy"}
+  done_r0:bool = compare.eq(rr0,inc_one)
+  rem_r0:u64 = int.sub.wrap(rr0,inc_one)
+  next_r0:u64 = int.add.wrap(rp0,two_r0)
+  next_out:u64 = int.add.wrap(out_at,q64r0)
+  branch done_r0 accepted() publish_root(ir0,or0,wr0,rem_r0,next_r0,next_out)
+block accepted()
+  ok_selected:u32 = const() {"value":0}
+  ret(ok_selected)
+block fail(code:u32)
+  ret(code)
+block total_bound()
+  ctb:u32 = const() {"value":220}
+  ret(ctb)
+block truncated()
+  ct:u32 = const() {"value":221}
+  ret(ct)
+block namespace()
+  cn:u32 = const() {"value":222}
+  ret(cn)
+block declared_counts()
+  cdc:u32 = const() {"value":223}
+  ret(cdc)
+block nested_bound()
+  cnb:u32 = const() {"value":224}
+  ret(cnb)
+block trailing()
+  ctl:u32 = const() {"value":225}
+  ret(ctl)
+block canonical_roots()
+  ccr:u32 = const() {"value":226}
+  ret(ccr)
+block unreachable_node()
+  cun:u32 = const() {"value":231}
+  ret(cun)
+block no_room()
+  cnr:u32 = const() {"value":102}
+  ret(cnr)
+end

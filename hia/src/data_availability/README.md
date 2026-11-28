@@ -1,0 +1,672 @@
+# Native Cell RS(6,4) byte codec
+
+`rs46.hepta` implements the Cell RS(6,4) encode and recovery operations from
+[`cell/erasure.rs`](../../../trillionnium/crates/trnm-data-availability/src/cell/erasure.rs).
+The HIA source compiles directly to native machine code through the pinned
+self-hosted compiler. One source implements the full original chunk extent of
+**1 through 4,194,304 bytes** and every permitted four, five or six shard input.
+
+The codec uses GF(256) with polynomial `0x11d`. Its first four generator rows
+are systematic; the two parity rows are `[27,28,18,20]` and `[28,27,20,18]`.
+Recovery performs Gaussian elimination over the field and table-based row
+application. All supplied shards must have distinct, strictly ascending indices.
+It decodes the first four, verifies zero padding and the original source SHA-256,
+and verifies consistency of every supplied shard, including extras. Corrupted
+input is refused; recovery never searches for a favorable alternate subset.
+
+The implementation reuses the canonical SHA-256 initialization and compression
+functions from `crypto/sha256_stream.hepta`. Its block and padding driver covers
+the original four MiB chunk limit. The existing transport stream helper retains
+its own size contract. No host-language hash or erasure implementation runs in
+the native codec.
+
+## Selected chunk pins and ownership
+
+The entry consumes the selected manifest identifier, chunk index, source length
+and source SHA-256. These values represent the result of the original
+`CellRs46ChunkBindingV1` selection. A caller integrating this component must obtain
+them from its validated, retained TCM1 and context owner. Shard headers are always
+compared with those separate selected pins.
+
+This component returns byte-validation and recovery results. The separate
+[read-only TCM1 codecs](CELL_MANIFEST.md) verify manifest bytes and expose
+indexed metadata without supplying owner pins. Live TCM1/context
+authorization, provider authentication, durable shard storage, retention,
+network serving and the Node's adoption transaction remain separate owners.
+The original data-availability package remains required for those behaviors.
+
+## Native entry and exact extents
+
+The borrowed entry is `f0(input:readbuf, output:mutbuf, scratch:mutbuf) -> u32`.
+`HRS1` is an in-process codec request format, with no change to CRS1 wire bytes
+or any existing signed or durable domain. The caller supplies disjoint private
+buffers. A successful call returns zero. Every refusal preserves the entire
+output buffer; scratch may change after the structural input checks.
+
+| Request offset | Bytes | Meaning |
+| --- | ---: | --- |
+| 0 | 4 | ASCII `HRS1` |
+| 4 | 1 | Version `1` |
+| 5 | 1 | Operation: `0` encode, `1` recover |
+| 6 | 1 | Count: `0` for encode, `4..6` for recover |
+| 7 | 1 | Zero reserved byte |
+| 8 | 32 | Selected manifest identifier |
+| 40 | 4 | Selected chunk index, unsigned little endian, `0..16383` |
+| 44 | 4 | Selected source size, unsigned little endian, `1..4194304` |
+| 48 | 32 | Selected original source SHA-256 |
+| 80 | Variable | Original source bytes, or concatenated complete CRS1 shards |
+
+Let `n` be the selected source size and `L = ceil(n/4)`.
+
+| Operation | Exact input bytes | Exact output bytes | Minimum scratch bytes |
+| --- | ---: | ---: | ---: |
+| Encode | `80+n` | `6*(81+L)` | `4096+4*L` |
+| Recover | `80+count*(81+L)` | `n` | `4096+4*L` |
+
+Encode first checks the complete source hash, then writes all six original CRS1
+shards in ascending index order. The first four payloads partition the source
+in order and add at most three zero bytes. Recover publishes its source bytes
+only after every validation succeeds. Maximum encoded output is 6,291,942 bytes;
+maximum recover input is 6,292,022 bytes; maximum scratch is 4,198,400 bytes.
+
+CRS1 remains the original 81-byte header: magic at `0`, manifest at `4`, chunk
+index at `36`, source size at `40`, source hash at `44`, shard index at `76`,
+and shard payload length at `77`. CRS1 integers use big endian. Each shard body
+has exactly `L` bytes. Every complete header, all pins and all payload bytes are
+checked, including input beyond the four rows needed for decoding.
+
+| Return code | Meaning |
+| ---: | --- |
+| 0 | Encode or recovery succeeded |
+| 1 | Invalid HRS1 header or input/output/scratch extent |
+| 2 | Selected source size outside the original range |
+| 3 | Selected chunk index outside the original range |
+| 4 | Invalid operation-specific shard count |
+| 5 | Invalid CRS1 magic, shape, index or payload coverage |
+| 6 | Nonascending or duplicate shard indices |
+| 7 | A shard differs from the separate selected chunk pins |
+| 8 | Reconstructed padding is nonzero |
+| 9 | Original source SHA-256 does not match |
+| 10 | A supplied shard is inconsistent with the reconstructed codeword |
+| 11 | Singular recovery matrix |
+
+Codes `1..4` validate the in-process adapter before typed original operations.
+For recover, order is checked before the per-shard shape/pin scan. The original
+Rust observation adapter decodes serialized CRS1 values before invoking the typed
+recovery method, so multiply-invalid wire errors can have a different first
+diagnostic. Accepted inputs and complete successful outputs are compared exactly.
+
+## Executable checks
+
+Set the pinned `HIA_TOOLCHAIN_ROOT`, `HIA_NATIVE_COMPILER` and
+`HIA_NATIVE_COMPILER_SHA256`, then run:
+
+```sh
+python -B -m unittest -v hia.tests.test_rs46
+```
+
+The suite executes all 65,536 field products against independent polynomial long
+division, all 255 nonzero inverses, exact CRS1 known answers, all fifteen four
+shard subsets, all six five shard subsets and all six shards together. It covers
+short sources, SHA block and padding boundaries, complete four MiB and four MiB
+minus one sources, every byte of a small codeword mutated separately, mismatched
+pins, required/extra corruption, nonzero padding with recomputed consistent parity,
+strict ordering and malformed extents. The full six-shard input is also executed
+at 6,292,022 bytes; corruption of the final byte of its sixth shard is rejected
+before any of the 4 MiB output is published. Every native buffer has guards; rejected
+outputs retain their original bytes. A second direct machine compiler runs the
+same source on exact wire and all recovery combinations.
+
+[`rs46_original.py`](../../tests/oracles/rs46_original.py) additionally builds the
+complete original Rust crate in an isolated workspace. Its observation child
+constructs the selected private chunk value only at the test boundary and calls
+the unchanged original methods. It runs all retained original erasure tests and
+compares actual original and native acceptance and output bytes. Source pins,
+compiler identity, complete raw observations and the independent original
+executable belong to that comparison; missing or failed execution is an error.
+
+With the same HIA variables and the original Rust 1.95.0 toolchain selected:
+
+```sh
+python -B -m hia.tests.oracles.rs46_original --output /absolute/new/rs46-original
+```
+
+The mandatory `native-rs46-original` CI job executes this command independently.
+Its output retains the actual executed original test binary and native library,
+all comparison inputs/outputs, compiler events and unchanged source inventories.
+
+These checks qualify the native byte codec. They do not retire the complete
+data-availability package or complete its integration into a running HIA Node.
+
+## Typed transaction-batch protocol context
+
+The private [constructor](protocol_context.hepta) implements the retained
+`trnm_data_availability::ProtocolContextV1::new` boundary and emits the
+original Borsh value. It takes two opaque 32-byte hashes in genesis/stack order,
+followed by all chain-ID bytes. It accepts exactly 1–128 ASCII bytes, including
+control bytes and NUL, as the original does. Zero hashes are valid here:
+construction establishes only a typed value, not protection or identity.
+
+The successful output is `schema:u16 LE || genesis:32 || chain_len:u32 LE ||
+chain || protocol:u32 LE || stack:32`; both versions are fixed to 1.
+Status 100 means fewer than 64 bytes, 2 means the chain is outside the
+constructor's typed domain, and 102 means insufficient output. All three leave
+output untouched; extra capacity and scratch are untouched on success too.
+No cryptographic, availability, membership or storage authority follows from
+a matching value. Original Rust and both pinned HIA backends are compared by
+[test_da_protocol_context](../../tests/test_da_protocol_context.py).
+
+## Typed data-availability object identity
+
+The [private constructor](typed_object_id.hepta) takes exactly
+`namespace:u8 || kind:u16 LE || digest:32`. It admits the original
+TransactionBatch namespace (0) and the six typed object kinds. It distinguishes
+the original explicit ArtifactEvidence exclusion (status 2) from any unknown
+namespace (3), before checking the private typed kind domain (4). A wrong
+extent (100) or insufficient output (102) cannot publish a partial result.
+Success emits the exact original 35-byte Borsh value. The digest is opaque;
+this does not verify that an object exists, is stored, or is certified.
+
+The [differential](../../tests/test_da_typed_object_id.py) checks all 256
+namespace tags and every original kind against the locked Rust library and both
+native backends. Out-of-domain raw kind codes are private ABI refusals, not
+fabricated calls with a Rust typed kind.
+
+## DA author value construction
+
+The [private author value constructor](author_authority_value.hepta) accepts
+`public_key:32 || first:u64 LE || maximum:u64 LE || byte_quota:u64 LE ||
+outstanding:u32 LE || author_id`. The ID is arbitrary bytes of length 1–256.
+It checks nonzero first sequence, no inverted interval, and nonzero quotas
+before inspecting the public key, as the unchanged Rust constructor does.
+
+The original uses Dalek's permissive public-point decompression followed
+by its small-order rejection; the strict signature or canonical-hex
+predicate is not interchangeable. The native caller uses the existing
+Research public-Y normalizer and shared group decoder. In scratch only,
+it selects the sign-zero representative: negating the point cannot
+change decompression's existence or point order, and sign-one zero
+still denotes the same weak point under Dalek. Both outcomes are checked
+against the original, including unparseable encodings, weak points, and
+both signs of all 19 over-field values. The return keeps the input public
+key bytes exactly as given, not a normalized encoding.
+
+With 140,512 disjoint scratch bytes and sufficient output, success emits
+`id_len:u32 LE || author_id || public_key || first || maximum ||
+byte_quota || outstanding` (the original derived Borsh bytes). Status 3
+means bad fields; 6 and 7 distinguish the original invalid public point
+and weak point messages under the same Rust error code. Private framing
+and capacity statuses are 100 and 102. Refusals leave output untouched;
+the input and spare output are unchanged in all cases. Matching this
+value does not confer author membership, authorization, signature
+verification, storage, or any node policy effect.
+
+[Locked original and both stock HIA backends](../../tests/test_da_author_authority_value.py)
+compare exact status, bytes, and buffer boundaries.
+
+## DA author transcript from an unsigned batch envelope
+
+The [private transcript constructor](batch_author_transcript.hepta) takes
+one exact Borsh `DaBatchEnvelopeV1` loan. It first checks typed framing and
+UTF-8, then performs the original context version and chain checks,
+namespace check and envelope shape checks in that order. The valid
+input's envelope schema and the author statement schema are both 1.
+
+The first SHA-256 computes `BatchIdV1` from the complete original Borsh
+envelope. The second uses the schema/context/namespace/epoch/committee/
+author/sequence prefix of those same bytes, then appends the BatchId
+computed in this call. Both SHA-256 inputs begin with the original
+domain's little-endian `u32` byte length and exact ASCII domain. No
+external digest, pre-checked flag, signature or key is accepted. A
+successful call writes the two actual 32-byte hashes in BatchId,
+author-transcript order. No result is written on refusal, and the
+input and output tail are unchanged.
+
+The private profile admits at most 1 MiB for the complete byte loan and
+requires 1,296 disjoint scratch bytes and at least 64 disjoint result bytes.
+It does not impose the authority constructor's separate 256-byte author
+ID limit; the original envelope method only requires a nonempty ID.
+Statuses 2/3 distinguish unsupported context versions and invalid chains,
+4/5 preserve explicit ArtifactEvidence vs unknown namespace, and 6 is an
+invalid envelope. 100/102/103 are private frame/capacity/internal codes.
+The exact 1 MiB fixture is compared on both stock emitters and the
+unchanged Rust; its one-byte-larger counterpart is only a Rust control.
+
+The [original comparison](../../tests/test_da_batch_author_transcript.py)
+uses real `UnsignedTransactionBatchV1::build` in the unchanged crate
+with generated synthetic item bytes and a public-only fixture key. It
+does not sign or verify signatures, interpret statement hashes as trust,
+validate membership or quota on a supplied envelope, or activate a node
+or storage path.
+
+## DA unsigned batch content projection
+
+The [bounded content kernel](batch_content_root.hepta) reads the exact
+Borsh `Vec<Vec<u8>>` from the unsigned batch. It confirms full framing
+before checking empty or duplicate rows, preserving original order and
+comparing candidate duplicates byte for byte. A digest is not used to
+decide uniqueness.
+
+For each item it hashes the original Borsh byte vector under the item
+domain and combines its index and both original copies of the item
+digest in the content leaf. It reduces ordered pairs using the original
+parent transcript and level, duplicates the last node at each odd
+level, and wraps the final node with the exact leaf count and root
+domain. The output is `content_root:32 || item_count:u32 LE ||
+uncompressed_bytes:u64 LE`, the three observed original envelope fields.
+
+The private profile accepts up to 32 items and 1 MiB total, requires
+3,072 scratch bytes and 44 result bytes, and leaves the complete result
+unchanged on refusal. Status 40 is the original empty count check and
+41 the original empty/duplicate element check; 100/102/103 are private
+frame/capacity/internal codes. The [locked differential](../../tests/test_da_batch_content_root.py)
+calls the unchanged original unsigned builder for genuine envelope
+fields and compares both pinned HIA backends. This checks only the
+content projection, not an envelope's authority, chunk roots or
+membership, policy bounds, signature or production path.
+
+## DA unsigned batch chunk projection
+
+The [private chunk projection](batch_chunk_root.hepta) reads one
+immutable loan: the original Borsh `Vec<Vec<u8>>` content, the original
+Borsh coordinate prefix through author sequence, followed by three
+LE `u32` values (chunk size, maximum chunk count, content extent).
+The prefix must be locally well-formed. Its context and committee ID
+are data for the coordinate, not a proof of policy or authorization.
+
+The kernel checks full content framing and original nonempty,
+byte-distinct transaction semantics before the configured chunk count.
+It computes the original chunking profile itself. It splits the
+canonical contents in order without changing bytes, creates each
+coordinate suffix from its concrete index and actual tail size, and
+hashes both the original coordinate and the Borsh chunk byte vector.
+It then reduces the original chunk leaves at their original levels,
+duplicates the last leaf at each odd level, and hashes the original
+root wrapper. No caller supplies a profile, leaf, expected root or
+per-chunk digest.
+
+The output is `chunking_profile_id:32 || chunk_root:32 ||
+chunk_count:u32 LE`. The private profile allows up to 32 items and 32
+chunks in a 1 MiB loan with 3,264 scratch and 68 result bytes.
+Status 40 is empty content count, 41 empty or duplicate transaction,
+and 42 the original configured chunk-count check. 100/102/103 are
+private frame/capacity/internal statuses. Refusal does not change
+the result. [The original differential](../../tests/test_da_batch_chunk_root.py)
+calls actual original unsigned construction, observes the original
+chunk bytes/order and serialized coordinates, compares its profile,
+count and root to both pinned HIA backends, and reconstructs them
+independently. This is not admission, policy/committee coherence,
+signature, erasure coding, or production authority.
+
+## DA one-call unsigned transaction batch
+
+The [bounded unsigned builder](unsigned_batch_build.hepta) reads the
+original Borsh committee, typed policy, author byte vector and LE
+`u64` sequence, and typed transaction vector from one immutable loan.
+Three LE `u32` values at the end give the committee, policy and
+transaction-vector extents. Native code revalidates the committee,
+derives its ID, binds the policy's schema, context, epoch, ID and
+batch bounds, then checks policy limits and the whole author set before
+resolving the requested author and sequence.
+
+The call derives both roots, codec ID, profile, concrete ordered
+chunk bytes and coordinates, and the retention end. It outputs
+`Vec<u8>(Borsh envelope) || BatchId || Vec<u8>(contents) || Vec<DaChunkV1>`.
+A private native buffer contains canonical content and the coordinate
+prefix the builder derives; the caller cannot supply a prefix,
+digest, commitment, envelope or prevalidation verdict. All output
+is staged before publishing, so failures leave the output unchanged.
+
+The private profile allows a 256 KiB complete loan, at most 32
+members, authors, items and chunks, and uses 757,760 scratch bytes.
+The stable committee digest and metadata are stored above the
+reused lower SHA, curve and Merkle scratch. The staged result
+starts at byte 160,000 and cannot exceed 544,999 bytes in this
+profile. Statuses 40–44 distinguish original count, noncanonical
+row, chunk count, byte limit and retention checks; 219/220 distinguish
+a missing author from sequence conflict. Private framing, bounds
+and capacity are not failures claimed for the original typed API.
+
+The [locked comparison](../../tests/test_da_unsigned_batch_build.py)
+calls the original public Rust unsigned constructor and compares
+each real serialized byte against both pinned HIA backends. An
+independent verification also checks the canonical envelope,
+hashes, order and full chunk bytes. This is an offline unsigned
+constructor, not live policy adoption, signatures, storage,
+erasure parity or production activation.
+
+## DA chunk coordinate and byte commitments
+
+The [private chunk commitment](chunk_commitments.hepta) accepts an
+original Borsh `DaChunkCoordinateV1` followed immediately by the
+Borsh byte vector (`u32` little-endian length and its exact bytes).
+Both length-prefixed fields in the coordinate and the trailing vector
+must fit the loan exactly. The chain text must be well-formed UTF-8
+for typed Borsh decoding; no context, namespace, policy or membership
+validation is inferred from these bytes. Chunk bytes must be nonempty,
+and the coordinate's actual `u64` byte-length claim must equal the
+vector payload length.
+
+The native call computes SHA-256 with the original Borsh string
+domain prefix for each digest. For ChunkId it hashes the exact coordinate
+under `trnm.portable.v2.da-chunk-id.v1`; for bytes it hashes the vector,
+including the vector's length, under
+`trnm.portable.v2.da-chunk-bytes.v1`. It writes the two 32-byte
+commitments in that order only once both are computed. No externally
+checked digest is used. The fixed profile permits a complete loan of
+at most 1 MiB, requires 1,296 scratch bytes and 64 result bytes, and
+leaves the immutable input and spare result bytes untouched. Status
+6 is the length/empty-chunk refusal; 100/102/103 are private frame,
+capacity and hash failure. Refusal makes no result write.
+
+[Independent original comparisons](../../tests/test_da_chunk_commitments.py)
+build real unsigned batches in the frozen Rust crate, obtain each chunk
+from its public accessor, and compare native ChunkId to the public Rust
+value and native byte digest to Rust's original serialized field. The
+private original constructor is not exposed to the test caller; malformed
+and capacity probes are explicitly native-only controls. Exact 1 MiB
+is compared under both fixed emitters; 1 MiB plus one is an original-only
+control. This surface does not validate any Merkle path, certificate,
+signature, storage, retrieval, repair right, or node-accepted authority.
+
+## DA chunk inclusion path comparison
+
+The [private path comparator](chunk_inclusion_path.hepta) takes the
+same three values as the original pure `verify_merkle_path_v1`:
+a supplied leaf hash32, a supplied expected root hash32, and one
+complete Borsh `DaChunkInclusionProofV1`. The proof consists of
+little-endian `u32` index, item count and path count, followed by
+`level:u32 LE || sibling_side:u8 || sibling_hash:32` per step.
+Neither external hash is trusted or checked against a certificate.
+
+The comparator preserves the original index/count, truncation,
+level and side, duplicate-final, trailing-step, then root ordering.
+It hashes each parent with the exact Borsh leaf-domain string,
+little-endian level and ordered siblings under the original
+parent domain. Its final root hashes the same leaf-domain string,
+original item count and running hash under the separate root domain.
+A canonical count fits `u32`, so at most 32 sibling steps are visited.
+The private framing cap is 1 MiB total; 1,472 scratch bytes are needed.
+No byte result is produced, and the input, output and scratch canary
+beyond the declared extent are untouched.
+
+Statuses 50–55 respectively preserve the original coordinate,
+truncation, level/side, duplicate-final, trailing-step and root
+mismatch observations. 100/102/103 are private frame, capacity and
+internal errors, not Rust protocol results. An otherwise matching
+proof only establishes equality to the supplied root, not admission,
+membership, authorization, proof of availability or repair right.
+
+[The differential](../../tests/test_da_chunk_inclusion_path.py)
+runs the actual original private generator and comparator on paths
+from frozen Rust unsigned batch construction. It verifies the
+tracked Rust tree, copies it into a fresh test directory and appends
+only one `cfg(test)` module reference whose source is the committed
+fixture. While the fixture is present, it runs only the test build
+and the one exact test selector, rejecting evidence of non-test DA
+compilation at that stage. The original bytes are restored before
+any non-test rebuild. It compares the two clean non-test libraries
+from the same path byte for byte and checks for marker absence. No
+production Rust file is modified and the offline witness does not
+sign, open a database, access a network or obtain certified state.
+
+## DA chunk-bound inclusion comparison
+
+The [private composition](chunk_bound_inclusion.hepta) has no supplied
+leaf, ChunkId, byte digest or prior result. One immutable loan contains
+`HCD1` followed by 28 zero bytes, the supplied expected root hash32,
+the exact Borsh proof above, then the exact Borsh coordinate and byte vector.
+The proof vector count determines its only boundary; both typed chunk
+sections must consume the remainder exactly. The native comparison
+requires that the proof and actual chunk use the same index (status 56,
+a composition guard). It also checks nonempty bytes and exact coordinate
+length (status 6). It checks typed UTF-8 but derives no context, namespace
+or policy authority from the coordinate.
+
+The composition calls the existing pinned chunk digest helper over each
+same-loan subspan, uses both resulting commitments and the original
+little-endian chunk index to compute the actual `chunk_leaf_v1` domain
+hash, then continues into the unchanged Merkle scan. Status values 50–55
+retain the original path observations. The complete loan is capped at
+1 MiB, needs 1,472 disjoint scratch bytes and produces no byte output.
+The HIA call never modifies input or the caller result buffer.
+
+[Original comparisons](../../tests/test_da_chunk_bound_inclusion.py)
+run the actual private Rust chunk constructor, leaf, generator and
+verification in the same isolated test-only mechanism as the standalone
+comparator. They include a real same-coordinate chunk-byte change that
+alters the root comparison, exact 1 MiB through both stock emitters,
+and the one-byte-larger original-only contrast. The unchanged ordinary
+Rust library is independently rebuilt and compared before and after
+the test-only fixture is installed and removed. This comparison is not
+a signed message, trusted certificate root, retrieval authority, or
+a storage/repair approval.
+
+## DA member value and definition commitment
+
+The [private constructor](member_definition.hepta) mirrors the public
+`DaMemberV1::new` value operation. Its immutable loan is the raw
+public key (32 bytes), weight (LE `u128`), Borsh optional validator
+bytes, and the two opaque 32-byte storage and bond references, in
+that order. Accepted framing distinguishes `None` from
+`Some(empty)`; arbitrary validator bytes are allowed. The original
+checks a nonzero full-width weight before attempting public-key
+decompression and its weak-point test. The existing shared public
+point helpers use the sign-zero representative only internally to
+preserve Dalek membership and point-order behavior. The exact raw
+key stays in the serialized value, including its sign/encoding.
+
+After checking those fields, the HIA call emits the original
+Borsh body (fixed scheme 0 prepended to the loan), followed by the
+member definition hash. This SHA-256 uses the original
+`trnm.portable.v2.da-member.v1` ASCII domain, its LE `u32` byte
+length, and the complete Borsh body. It does not treat the weight,
+storage or bond reference as authorized or checked. No private key,
+signature, committee membership or quorum operation is involved.
+
+The shared profile reserves a 34-byte result overhead in the
+existing 1 MiB borrowed-result cap: maximum input is 1,048,542 bytes,
+with 140,512 scratch bytes and sufficient result space. Status
+201/202/203 distinguish original weight, invalid point and weak
+point refusals; 100/102/103 are private frame/capacity/internal
+statuses. A refusal never publishes output. The input, spare
+result and scratch tail are unchanged.
+
+[The original and two-backend differential](../../tests/test_da_member_definition.py)
+uses the actual frozen DA constructor and Borsh library with public-only
+fixture keys, `None` and `Some(empty)`, upper-half and maximum weights,
+over-field encodings, and the exact shared 1 MiB result. The one-byte-larger
+Rust result is not a native-capability claim.
+
+## DA transaction-batch committee descriptor value
+
+The [bounded constructor](committee_definition.hepta) mirrors the public
+`DaCommitteeDescriptorV1::new_transaction_batch` on an immutable private loan.
+The loan is the original Borsh `ProtocolContextV1`, LE `u64` epoch, Borsh
+`Vec<DaMemberV1>`, and the original five bounds (`u32,u64,u64,u32,u32`).
+The descriptor's schema 1, transaction namespace 0 and `u128` threshold
+are supplied by the native constructor, never taken from the caller.
+
+For each member the native code validates the scheme and nonzero weight,
+recomputes the exact Borsh body hash, then checks the actual compressed
+Ed25519 point and weak-point predicate. Only then does it compare the
+computed-and-matched definition hash to the preceding hash in byte order,
+check key uniqueness by the complete raw public key, and checked-add the
+member's weight. It never sorts the input. After all rows it separately
+checks doubling, then computes `floor(2W/3)+1` from the full-width total.
+An immutable frame makes the original repeat validation deterministic;
+context version, context chain ID, then nonzero descriptor bounds are
+checked in original order after the member pass and doubling check.
+
+The profile accepts up to 32 members and 1,048,557 input bytes;
+the original Borsh descriptor is 19 bytes longer, within the shared
+1 MiB result loan. The call reserves 141,536 bytes of scratch (the
+existing point/hash work followed by the raw-key uniqueness table). In
+this private scope, 100/102/103 are framing, capacity and internal
+failures; 201–210 distinguish original invalid definition, invalid
+point, weak point, empty committee, order/duplicate, sum overflow,
+doubling overflow, context version, chain ID, and descriptor bounds.
+Failure never publishes result bytes. Input, spare output and scratch
+tail remain unchanged.
+
+[The offline differential](../../tests/test_da_committee_definition.py)
+compares the unchanged locked Rust constructor and Borsh serialization
+and typed results with both stock native emitters, including deterministic
+public-only generated encodings, fault ordering and a saturated 1 MiB
+result. Rust also runs the 33-member and one-byte-larger result controls
+outside this private native profile. This component does not compute
+committee ID, validate an externally supplied threshold, authenticate a
+committee or check votes, signatures, authorization, or production state.
+
+## DA committee descriptor identity
+
+The [bounded ID kernel](committee_id.hepta) reads a full immutable
+Borsh `DaCommitteeDescriptorV1`, not the constructor's parameter loan
+or a supplied digest. It checks the context version and nonempty ASCII
+chain ID first, then distinguishes the two unsupported namespace cases,
+then checks the descriptor schema and five nonzero bounds before any
+member semantics. It runs the original check order for member definition
+hashes, usable point encoding, raw key uniqueness, strict input order
+and the checked `u128` total. It subsequently checks the independent
+doubling limit and the supplied threshold against the computed
+`floor(2W/3)+1`. With a positive nonempty total that expression never
+exceeds the total. The member scan and imported checks reuse the frozen
+constructor's semantics; constructor and ID deliberately differ in when
+they validate context and bounds.
+
+On success it hashes the LE `u32` domain length, ASCII
+`trnm.portable.v2.da-committee.v1`, and the whole original Borsh
+descriptor on the same read-only loan. The SHA engine writes only into
+scratch until the final 32-byte digest is copied to the output. No
+output is reborrowed as input; an error leaves the output unchanged.
+The 32-member, 141,536-byte scratch and 1 MiB input limits are private
+qualification bounds, not restrictions on the Rust API. Codes 201–206,
+208–210 retain the original constructor distinctions where applicable;
+211 is multiplication/quorum arithmetic overflow in the ID validator,
+212 a threshold mismatch, and 213/214 the original unsupported
+namespace distinctions. Codes 100/102/103 are private framing,
+capacity and internal errors.
+
+[The original differential](../../tests/test_da_committee_id.py)
+round-trips each typed descriptor with locked Borsh, calls the real
+Rust `committee_id()`, and checks exact digest bytes and refusals
+across both pinned emitters. It includes a canonical 1 MiB descriptor
+and Rust acceptance of 33 members and of a one-byte-larger descriptor.
+Both native kernels refuse 33 rows; the stock selfhost diagnostic also
+passes the larger loan to the unchanged native cap and confirms
+refusal. The direct ordinary test runner does not provision a read
+loan above 1 MiB. This is a value commitment only: a valid ID does not
+authorize a committee, policy, signature, or vote.
+
+## DA policy value
+
+The [private policy constructor](policy_value.hepta) takes one immutable
+loan: canonical Borsh committee, canonical Borsh author vector, proposed
+`u32,u32,u32,u64,u64,u64` limits in little-endian order, then the
+committee byte extent as LE `u32`. It validates and hashes the committee
+from that same loan before policy checks. It then checks the six proposed
+limits and the chunk-to-batch relation before each author's original typed
+predicate, strict raw ID order, raw key uniqueness and committee bounds.
+It does not sort, trust a caller-supplied hash or infer authorization.
+
+The private profile has a 1 MiB total input limit, at most 32 committee
+members and 32 authors. The widest body requires 152,104 scratch bytes. It stages the
+whole original Borsh policy in scratch, then hashes the staged bytes
+under the original policy domain. On success it writes the policy and
+its following 32-byte digest to the output; errors leave output unchanged.
+Status 3/6/7 reports the original author predicate, 201–214 retain the
+committee-ID distinctions (207 is unused), and 215–218 distinguish policy
+limits, chunk bounds, the author set rule and an empty author set.
+100/102/103 denote private framing, capacity and internal failures.
+
+The [locked original differential](../../tests/test_da_policy_value.py)
+uses the original Rust constructor and actual `policy_hash()` and checks
+exact Borsh bytes against both pinned HIA backends. This ports a bounded
+value constructor, not vote handling, signing, authorization, network
+admission or production activation.
+
+
+### Attestation conflict coordinate
+
+`attestation_coordinate.hepta` reproduces the original public
+`DaAttestationBodyV1::conflict_coordinate` over a single canonical Borsh body.
+The original hash identity is the context, namespace, epoch, attestor,
+author and author sequence. Batch, storage and attestation-sequence fields
+are intentionally outside the conflict coordinate. This computation neither
+qualifies an attestation nor grants signing or voting authority.
+
+The private byte profile admits bodies up to 1 MiB, a 32-byte output and
+1,280 bytes of independent scratch. It verifies full framing and chain string
+UTF-8 before hashing the two exact immutable field ranges, rejects malformed
+or short loans without publishing a result, and leaves the output suffix
+unchanged. The pinned original Rust library is the public method oracle;
+Direct and Selfhost also exercise the exact extent and atomicity controls.
+
+
+### Attestation body context binding
+
+The private `attestation_context_binding.hepta` profile takes one immutable
+loan as canonical Borsh committee bytes, canonical attestation-body bytes and
+a trailing little-endian u32 committee extent. It preserves the original
+body context and namespace checks before committee identity, then checks
+the body committee ID, author ID and sequences and retention. It shares the
+verified native committee validator and limits the frame to 1 MiB, the
+committee profile to 32 members, and independent scratch to 141,536 bytes.
+The original source comparison enters the public attestation constructor
+with a known nonmember and observes only the body-validation prefix. No
+signature path is reached; success of this private stage does not admit
+an attestation, grant membership, or authorize a vote.
+
+
+### Strict qualification-only DA attestation verifier
+
+`attestation_verify.hepta` takes the original canonical committee and signed
+attestation Borsh on one immutable loan, with the trailing LE32 committee
+extent. It runs the shared original body binding, recomputes the exact
+attestation ID and checks the signature scheme, looks up the actual member
+definition and key, derives the original signing root, and applies the
+existing strict Ed25519 verifier. The native profile returns a status
+without modifying the output loan. It accepts at most 1 MiB, with the
+already fixed 32-member committee and 262,784 scratch-byte limits.
+
+The pinned original Rust qualification creates deterministic isolated toy
+signatures, checks actual valid and invalid typed cases, and compares both
+stock HIA producers. It does not sign in HIA or admit a production vote,
+certificate, live identity, or attestation into the network.
+
+## DA standard signed batch author
+
+The [private author verifier](batch_author_verify.hepta) accepts one immutable
+loan: canonical Borsh envelope, canonical schema-1 Borsh signed author, then
+the envelope extent as LE `u32`. It validates the standard envelope, binds the
+author statement and native-derived BatchId, derives the original standard
+signing transcript, and verifies the supplied signature strictly against its
+supplied public key. The original Rust byte comparison and both pinned native
+backends use disposable fixture identities only.
+
+The complete loan is at most 1 MiB, with 262,784 scratch bytes. The result is a
+status only: 0 for success, 2–6 for original envelope errors, 201 for original
+invalid-signature class, and 100/101/102/103 for private framing, unsupported
+author schema, capacity, or internal errors. Neither the input nor result
+buffer is modified. Non-schema-1 statements are outside this private contract.
+Verification does not provide policy authorization, certificate verification,
+voting authority, custody, or a signing interface.
+
+## DA standard offline availability verification
+
+The [private verifier](availability_certificate_verify.hepta) admits one
+immutable loan: canonical Borsh committee, standard schema-1 Borsh
+availability certificate, then the committee extent as LE `u32`. It checks
+the exact committee and envelope, verifies a standard signed author, then
+individually verifies each attestation before matching its original envelope
+commitments and validating strictly increasing distinct attestors. Actual
+committee member weights are accumulated with checked two-limb arithmetic
+and compared to the committee's native-validated threshold. A successful
+result then requires exact outer round-trip fields and the original
+recomputed Borsh certificate ID.
+
+The private profile uses at most 64 KiB of input, 32 members and 32
+attestations, 262,912 scratch bytes, and one bounded native-owned copy of an
+existing exact verification frame at a time. Output is a status only, never
+a signing interface, node admission, deployment, or live voting authority.
+Only the standard schema-1 signed author is admitted.

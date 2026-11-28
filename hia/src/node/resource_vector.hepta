@@ -1,0 +1,116 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_local_resource_vector_value_v1
+fn f0(input:readbuf,output:mutbuf,arena:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,arena:mutbuf)
+  n:usize = buffer.len(input)
+  exact:usize = const() {"value":48}
+  ok:bool = compare.eq(n,exact)
+  branch ok frame(input,output) bad()
+block frame(i:readbuf,o:mutbuf)
+  zero:usize = const() {"value":0}
+  op_at:usize = const() {"value":8}
+  m:u64 = call(i,zero) {"function":"cw_read64"}
+  expected:u64 = const() {"value":3544385890872087118}
+  op:u64 = call(i,op_at) {"function":"cw_read64"}
+  max_op:u64 = const() {"value":3}
+  tag:bool = compare.eq(m,expected)
+  opcode:bool = compare.le(op,max_op)
+  admissible:bool = bool.and(tag,opcode)
+  branch admissible read_values(i,o,op) bad()
+block read_values(ri:readbuf,ro:mutbuf,rop:u64)
+  a_at:usize = const() {"value":16}
+  b_at:usize = const() {"value":24}
+  c_at:usize = const() {"value":32}
+  d_at:usize = const() {"value":40}
+  a:u64 = call(ri,a_at) {"function":"cw_read64"}
+  b:u64 = call(ri,b_at) {"function":"cw_read64"}
+  c:u64 = call(ri,c_at) {"function":"cw_read64"}
+  d:u64 = call(ri,d_at) {"function":"cw_read64"}
+  add_op:u64 = const() {"value":0}
+  is_add:bool = compare.eq(rop,add_op)
+  branch is_add add(ro,a,b,c,d) others(ro,rop,a,b,c,d)
+block add(ao:mutbuf,aa:u64,ab:u64,ac:u64,ad:u64)
+  sa:u64 = int.add.wrap(aa,ac)
+  sb:u64 = int.add.wrap(ab,ad)
+  ca:bool = compare.le(aa,sa)
+  cb:bool = compare.le(ab,sb)
+  valid_add:bool = bool.and(ca,cb)
+  branch valid_add pair(ao,sa,sb) overflow()
+block others(oo:mutbuf,opx:u64,oa:u64,ob:u64,oc:u64,od:u64)
+  within_op:u64 = const() {"value":1}
+  is_within:bool = compare.eq(opx,within_op)
+  branch is_within within(oo,oa,ob,oc,od) sub_or_validate(oo,opx,oa,ob,oc,od)
+block within(wo:mutbuf,wa:u64,wb:u64,wc:u64,wd:u64)
+  wl:bool = compare.le(wa,wc)
+  wr:bool = compare.le(wb,wd)
+  both_w:bool = bool.and(wl,wr)
+  wn:usize = buffer.len(wo)
+  we:usize = const() {"value":8}
+  wg:bool = compare.le(we,wn)
+  branch wg truth(wo,both_w) short()
+block truth(to:mutbuf,tv:bool)
+  branch tv yes(to) no(to)
+block yes(yo:mutbuf)
+  ya:usize = const() {"value":0}
+  yv:u64 = const() {"value":1}
+  _yes:u32 = call(yo,ya,yv) {"function":"cw_store64"}
+  jump success()
+block no(noo:mutbuf)
+  na:usize = const() {"value":0}
+  nv:u64 = const() {"value":0}
+  _no:u32 = call(noo,na,nv) {"function":"cw_store64"}
+  jump success()
+block sub_or_validate(so:mutbuf,sop:u64,sla:u64,slb:u64,sra:u64,srb:u64)
+  sub_op:u64 = const() {"value":2}
+  is_sub:bool = compare.eq(sop,sub_op)
+  branch is_sub sub(so,sla,slb,sra,srb) validate(sla,slb,sra,srb)
+block sub(sbo:mutbuf,sba:u64,sbb:u64,sbc:u64,sbd:u64)
+  ca_sub:bool = compare.le(sbc,sba)
+  cb_sub:bool = compare.le(sbd,sbb)
+  checked_sub:bool = bool.and(ca_sub,cb_sub)
+  branch checked_sub diff(sbo,sba,sbb,sbc,sbd) none()
+block diff(do:mutbuf,da:u64,db:u64,dc:u64,dd:u64)
+  va:u64 = int.sub.wrap(da,dc)
+  vb:u64 = int.sub.wrap(db,dd)
+  jump pair(do,va,vb)
+block validate(la:u64,lb:u64,lc:u64,ld:u64)
+  z:u64 = const() {"value":0}
+  lz:bool = compare.eq(lc,z)
+  rz:bool = compare.eq(ld,z)
+  empty:bool = bool.and(lz,rz)
+  branch empty limit(la,lb) bad()
+block limit(lima:u64,limb:u64)
+  max:u64 = const() {"value":1152921504606846976}
+  la_ok:bool = compare.le(lima,max)
+  lb_ok:bool = compare.le(limb,max)
+  ok_lim:bool = bool.and(la_ok,lb_ok)
+  branch ok_lim success() units()
+block pair(po:mutbuf,pa:u64,pb:u64)
+  pn:usize = buffer.len(po)
+  need:usize = const() {"value":16}
+  pair_fits:bool = compare.le(need,pn)
+  branch pair_fits write(po,pa,pb) short()
+block write(pwo:mutbuf,pwa:u64,pwb:u64)
+  fa:usize = const() {"value":0}
+  fb:usize = const() {"value":8}
+  _first:u32 = call(pwo,fa,pwa) {"function":"cw_store64"}
+  _second:u32 = call(pwo,fb,pwb) {"function":"cw_store64"}
+  jump success()
+block success()
+  status_success:u32 = const() {"value":0}
+  ret(status_success)
+block bad()
+  status_bad:u32 = const() {"value":1}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":2}
+  ret(status_short)
+block overflow()
+  status_overflow:u32 = const() {"value":32}
+  ret(status_overflow)
+block units()
+  status_units:u32 = const() {"value":33}
+  ret(status_units)
+block none()
+  status_none:u32 = const() {"value":34}
+  ret(status_none)
+end

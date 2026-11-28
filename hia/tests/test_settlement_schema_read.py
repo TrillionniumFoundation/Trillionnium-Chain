@@ -1,0 +1,245 @@
+"""Original/native M12 schema gate on disposable SQLite rollback snapshots."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import sqlite3
+import subprocess
+import sys
+import tempfile
+import tomllib
+import unittest
+
+from hia.platform.task_kernel.build_provider import ProviderBuild
+from hia.platform.task_kernel.readback_provider import Reader, check_provider
+from hia.tests.native_support import NativeModule, unlinked_path
+from hia.tests.locked_cargo_target import locked_cargo_build
+
+ROOT = Path(__file__).resolve().parents[2]
+OWNER = ROOT / "hia/platform/service_settlement"
+STORE = ROOT / "trillionnium/crates/trnm-service-settlement"
+
+
+def execute(argv, *, timeout=30, **kwargs):
+    answer = subprocess.run(argv, capture_output=True, timeout=timeout, **kwargs)
+    if answer.returncode:
+        raise ValueError(answer.stderr.decode(errors="replace"))
+    return answer
+
+
+def original_adapter(out, *, metadata=False, operation=False, marker=False, same_block=False):
+    source = (STORE / "src/store.rs").read_bytes()
+    pieces = []
+    for name in (b"META_SQL", b"OP_SQL", b"COMMITTED_BLOCKS_SQL"):
+        [piece] = re.findall(rb"^const " + name + rb': &str = ".*";\n', source, re.M)
+        pieces.append(piece)
+    for name in (b"open_read_snapshot", b"read_only_store_uri", b"reject_sidecars",
+                 b"require_existing_regular_store", b"verify_schema"):
+        [piece] = re.findall(rb"(?ms)^fn " + name + rb"\(.*?^\}\n", source)
+        pieces.append(piece)
+    raw = b"\n".join(pieces)
+    if hashlib.sha256(raw).hexdigest() != "44c38e08d2865eeba458315a4ad462af475582a073ed04519a1759fb1fc6b388":
+        raise ValueError("Original Settlement schema/open source differs")
+    section = out / "original.rs"
+    section.write_bytes(raw)
+    rustc = os.environ.get("TRNM_HIA_RUSTC", "rustc")
+    cargo = os.environ.get("TRNM_HIA_CARGO", "cargo")
+    pin = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
+    if execute([rustc, "--version"]).stdout.decode().split()[1] != pin:
+        raise ValueError("Original Settlement schema requires the pinned Rust toolchain")
+    _, events = locked_cargo_build(ROOT, rustc=rustc, cargo=cargo,
+                                   package="trnm-service-settlement", execute=execute)
+    [settlement] = [e for e in events if e.get("reason") == "compiler-artifact"
+                    and e["target"]["name"] == "trnm_service_settlement"]
+    if Path(settlement["target"]["src_path"]) != STORE / "src/lib.rs" or settlement["features"] != ["default"]:
+        raise ValueError("Expected exact original Settlement source and profile")
+    [rusqlite] = [e for e in events if e.get("reason") == "compiler-artifact"
+                  and e["target"]["name"] == "rusqlite" and e["package_id"].endswith("rusqlite@0.41.1")]
+    [rust] = [unlinked_path(p) for p in rusqlite["filenames"] if p.endswith(".rlib")]
+    [sqlite] = [e for e in events if e.get("reason") == "build-script-executed"
+                and e["package_id"].endswith("libsqlite3-sys@0.39.1")]
+    [provider_source] = [e for e in events if e.get("reason") == "compiler-artifact"
+                         and e["package_id"] == sqlite["package_id"]
+                         and e["target"]["name"] == "libsqlite3_sys"]
+    [native] = sqlite["linked_paths"]
+    if not native.startswith("native=") or sqlite["linked_libs"] != ["static=sqlite3"]:
+        raise ValueError("Original must link the locked bundled SQLite")
+    binary = out / "original"
+    extra = []
+    adapter = "rust_settlement_schema_reference.rs"
+    if metadata or operation or marker:
+        [owner] = [unlinked_path(p) for p in settlement["filenames"] if p.endswith(".rlib")]
+        [borsh_event] = [e for e in events if e.get("reason") == "compiler-artifact"
+                         and e["target"]["name"] == "borsh"]
+        [borsh] = [unlinked_path(p) for p in borsh_event["filenames"] if p.endswith(".rlib")]
+        extra = ["--extern", f"trnm_service_settlement={owner}", "--extern", f"borsh={borsh}"]
+        adapter = "rust_settlement_metadata_reference.rs"
+    if operation or marker:
+        for dependency in ("sha2", "trnm_task_kernel"):
+            [event] = [e for e in events if e.get("reason") == "compiler-artifact"
+                       and e["target"]["name"] == dependency
+                       and (dependency != "sha2" or e["package_id"].endswith("sha2@0.10.9"))]
+            [artifact] = [unlinked_path(p) for p in event["filenames"] if p.endswith(".rlib")]
+            extra.extend(["--extern", f"{dependency}={artifact}"])
+        parts = []
+        for name in (b"load_operation", b"operation_checksum", b"from_sqlite"):
+            [part] = re.findall(rb"(?ms)^fn " + name + rb"\(.*?^\}\n", source)
+            parts.append(part)
+        engine = (STORE / "src/engine.rs").read_bytes()
+        [identity] = re.findall(rb"(?ms)^pub\(crate\) fn operation_id\(.*?^\}\n", engine)
+        parts.append(identity)
+        (out / "command_identity.rs").write_bytes(identity)
+        lookup = b"\n".join(parts)
+        if hashlib.sha256(lookup).hexdigest() != "396a5426b2ca2ae6c52090eb4e5dcae8f89d85e845a5961054b6dd5f23d8635f":
+            raise ValueError("Exact retained M12 operation lookup source differs")
+        (out / "operation.rs").write_bytes(lookup)
+        adapter = "rust_settlement_operation_reference.rs"
+    if marker:
+        parts = []
+        for name in (b"JOURNAL_SCHEMA_VERSION_V1", b"MAX_OPERATION_ROWS_V1", b"MAX_COMMITTED_BLOCK_ROWS_V1",
+                     b"MAX_OPERATION_FIELD_BYTES_V1", b"MAX_OPERATION_JOURNAL_BYTES_V1"):
+            [part] = re.findall(rb"(?m)^const " + name + rb": [^\n]*;\n", source)
+            parts.append(part)
+        [record] = re.findall(rb"(?ms)^struct CommittedBlockMarkerV1 \{.*?^\}\n", source)
+        parts.append(record)
+        for name in (b"load_committed_block_markers", b"load_committed_block_markers_with_limit",
+                     b"committed_block_marker_checksum", b"config_bytes", b"from_sqlite", b"array32",
+                     b"metadata_checksum", b"operation_journal_root_through", b"checked_operation_field_len_v1",
+                     b"account_operation_bytes_v1", b"to_sqlite", b"operation_checksum"):
+            [part] = re.findall(rb"(?ms)^fn " + name + rb"\(.*?^\}\n", source)
+            parts.append(part)
+        marker_src = b"\n".join(parts)
+        if hashlib.sha256(marker_src).hexdigest() != "a481ceb50fd0a575621dd3b11226c558ec65467b52b701432c35cbafcadaa780":
+            raise ValueError("Exact retained M12 committed-block marker source differs")
+        (out / "markers.rs").write_bytes(marker_src)
+        [anchor_checksum] = re.findall(rb"(?ms)^fn marker_predecessor_checksum\(.*?^\}\n", source)
+        if hashlib.sha256(anchor_checksum).hexdigest() != "e84aefda05782e7b607537e9a41548e2c897862d7ccc4ea19d04709fbd40e1bf":
+            raise ValueError("Exact retained M12 committed-block anchor source differs")
+        (out / "marker_anchor.rs").write_bytes(anchor_checksum)
+        [execution_static] = re.findall(
+            rb"(?ms)^pub\(crate\) fn validate_execution_static\(.*?^\}\n", engine)
+        if hashlib.sha256(execution_static).hexdigest() != "e4ebe15ca1b9b60280aabbc886dac4bf1cf1dbb9e917429eae37406db643e6fb":
+            raise ValueError("Exact retained M12 static execution validator source differs")
+        (out / "execution_static.rs").write_bytes(execution_static)
+        [state_root] = re.findall(
+            rb"(?ms)^pub\(crate\) fn state_root\(.*?^\}\n", engine)
+        if hashlib.sha256(state_root).hexdigest() != "4adf8d84e7e47138b2e30970c1b412e1e81f6032707d2f17a503abc8b847608e":
+            raise ValueError("Exact retained M12 state-root source differs")
+        (out / "state_root.rs").write_bytes(state_root)
+        adapter = "rust_settlement_marker_reference.rs"
+    execute([rustc, "--edition=2024", "-Dwarnings", "--extern", f"rusqlite={rust}", *extra,
+             "-L", f"dependency={rust.parent}", "-L", f"native={native[7:]}",
+             Path(__file__).with_name(adapter), "-o", binary],
+            timeout=60, env={**os.environ, "TRNM_SETTLEMENT_SCHEMA_SOURCE": str(section),
+                             "TRNM_SETTLEMENT_SCHEMA_ERROR": str(STORE / "src/error.rs"),
+                             "TRNM_SETTLEMENT_OPERATION_SELECTED": str(out / "operation.rs"),
+                             "TRNM_SETTLEMENT_COMMAND_IDENTITY": str(out / "command_identity.rs"),
+                             "TRNM_SETTLEMENT_MARKERS_SELECTED": str(out / "markers.rs"),
+                             "TRNM_SETTLEMENT_MARKER_ANCHOR": str(out / "marker_anchor.rs"),
+                             "TRNM_SETTLEMENT_EXECUTION_VALIDATE": str(out / "execution_static.rs"),
+                             "TRNM_SETTLEMENT_STATE_ROOT_SELECTED": str(out / "state_root.rs"),
+                             "TRNM_SETTLEMENT_OPERATION_CODEC": str(STORE / "src/codec.rs")})
+    if same_block:
+        fixture_source = OWNER / "qualification/reference.rs"
+        recorded = {
+            fixture_source: "3ca09c00c6f061a09417e44a33ad68748322f6bc75301c460deb64938cab7182",
+            OWNER / "qualification/errors.json": "633574e4874b7c736290eac3ba1ddb2e8dd2b8f6fef6fbd9d74ef6ab448fcfcb",
+            STORE / "src/types.rs": "002c1fd3fdc7f04e63d30cde86bd3ca60c87d30c1b0f616e3f64a1fd886a6992",
+            STORE / "src/engine.rs": "bbec1ec6d64e7eb5d4806634a43656e2510b34cd4ee278aef179a84ed6d666f6",
+            STORE / "src/codec.rs": "4b275a3d30792c12983036df46ef2320eaa4ce23dd30e5eaa11037847e7f01db",
+            STORE / "src/error.rs": "342c4fc091387732c8bdd1fee6b7a46c19d62c2173f40499c45c39654fac842f",
+        }
+        seen = {file: file.read_bytes() for file in recorded}
+        if not marker or any(hashlib.sha256(seen[file]).hexdigest() != digest for file, digest in recorded.items()):
+            raise ValueError("Exact original same-block harness inputs differ")
+        origin_rust = out / "same_block_fixture.rs"
+        source_bytes = seen[fixture_source]
+        if source_bytes.count(b"fn main(){") != 1:
+            raise ValueError("Unexpected original harness entry")
+        origin_rust.write_bytes(source_bytes.replace(b"fn main(){", b"fn original_corpus_entry(){")
+                               + Path(__file__).with_name("rust_settlement_same_block_fixture.rs").read_bytes())
+        origin_extern = []
+        for libname in ("borsh", "ed25519_dalek", "serde_json", "sha2", "trnm_task_kernel"):
+            [event] = [entry for entry in events if entry.get("reason") == "compiler-artifact"
+                       and entry["target"]["name"] == libname
+                       and (libname != "sha2" or entry["package_id"].endswith("sha2@0.10.9"))]
+            [library] = [unlinked_path(path) for path in event["filenames"] if path.endswith(".rlib")]
+            origin_extern.extend(["--extern", f"{libname}={library}"])
+        execute([rustc, "--edition=2024", "-A", "dead_code", "-O", *origin_extern,
+                 "--extern", f"rusqlite={rust}", "-L", f"dependency={rust.parent}",
+                 "-L", f"native={native[7:]}", origin_rust, "-o", out / "same-block-fixture"],
+                timeout=60, env={**os.environ, "CARGO_MANIFEST_DIR": str(STORE),
+                                 "TRNM_SETTLEMENT_ORIGINAL": str(STORE / "src"),
+                                 "TRNM_SETTLEMENT_ERROR_TABLE": str(OWNER / "qualification/errors.json")})
+    return binary, unlinked_path(provider_source["manifest_path"]).parent
+
+
+class SettlementSchemaReadTests(unittest.TestCase):
+    def test_read_only_closed_schema_and_held_rollback_snapshot(self):
+        with tempfile.TemporaryDirectory(prefix="trnm-m12-schema-") as tmp, NativeModule(
+                OWNER / "schema_read.hepta", byte_exports=("f0",), backend="selfhost") as reader, NativeModule(
+                ROOT / "hia/src/service_settlement/read_only_store_uri.hepta",
+                byte_exports=("f0",), backend="selfhost") as uri:
+            directory = Path(tmp)
+            original, dependency = original_adapter(directory)
+            provider = ProviderBuild(dependency, directory / "provider").run()
+            proof = Reader()
+            check_provider(proof.read, provider.parent, ROOT)
+            provider_sha = proof.checked[str(provider)]["sha256"]
+            files = directory / "owned"
+            files.mkdir(mode=0o700)
+
+            def invoke(db, *, hold=False):
+                request = {"uri": [str(uri.library), uri.artifact_sha256],
+                           "reader": [str(reader.library), reader.artifact_sha256],
+                           "provider": [str(provider), provider_sha], "directory": str(files),
+                           "database": str(db), "writer": str(original) if hold else None}
+                response = execute([sys.executable, "-I", "-S", "-B", OWNER / "schema_fixture_host.py"],
+                                   timeout=45, input=json.dumps(request).encode())
+                self.assertEqual(response.stderr, b"")
+                return json.loads(response.stdout)
+
+            def reference(db):
+                result = execute([original, "verify", db])
+                self.assertEqual(result.stderr, b"")
+                return result.stdout.strip()
+
+            def seed(name):
+                db = files / name
+                execute([original, "seed", db])
+                return db
+
+            db = seed("owned schema ?#+%.db")
+            before = db.read_bytes()
+            self.assertEqual(reference(db), b"VALID")
+            answer = invoke(db, hold=True)
+            self.assertEqual((answer["status"], answer["held"], answer["released"]), (0, True, 0), answer)
+            self.assertEqual(answer["transcript"][-1], [15, 3, 24])
+            self.assertEqual(db.read_bytes(), before)
+            self.assertEqual(sorted(p.name for p in files.iterdir()), [db.name])
+            for i, sql in enumerate(("CREATE TABLE extra(x)", "DROP TABLE operations",
+                                     "ALTER TABLE metadata ADD COLUMN changed INTEGER",
+                                     "CREATE TRIGGER insertion AFTER INSERT ON metadata BEGIN SELECT 1; END;")):
+                with self.subTest(sql=sql):
+                    case = seed(f"drift-{i}.db")
+                    edit = sqlite3.connect(case)
+                    try:
+                        edit.executescript(sql)
+                    finally:
+                        edit.close()
+                    before = case.read_bytes()
+                    self.assertEqual(reference(case), b"SchemaMismatch")
+                    refused = invoke(case)
+                    self.assertEqual((refused["status"], refused["held"]), (100, False), refused)
+                    self.assertGreater(refused["released"], 0)
+                    self.assertEqual(case.read_bytes(), before)
+            wal = seed("wal.db")
+            conn = sqlite3.connect(wal)
+            try:
+                self.assertEqual(conn.execute("PRAGMA journal_mode=WAL").fetchone(), ("wal",))
+            finally:
+                conn.close()
+            self.assertFalse(wal.with_name("wal.db-wal").exists())
+            self.assertEqual(reference(wal), b"SchemaMismatch")
+            self.assertEqual(invoke(wal), {"status": 100, "held": False, "released": 0, "transcript": []})

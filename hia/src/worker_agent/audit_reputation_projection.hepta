@@ -1,0 +1,232 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_reputation_project_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  request_size:usize = buffer.len(input)
+  expected_size:usize = const() {"value":9}
+  sized:bool = compare.eq(request_size,expected_size)
+  branch sized frame(input,output) malformed()
+block frame(fi:readbuf,fo:mutbuf)
+  start:u64 = const() {"value":0}
+  width:u64 = const() {"value":4}
+  signature:u64 = call(fi,start,width) {"function":"wa_read"}
+  magic:u64 = const() {"value":827476567}
+  known:bool = compare.eq(signature,magic)
+  branch known tag(fi,fo) malformed()
+block tag(ti:readbuf,to:mutbuf)
+  tag_at:usize = const() {"value":4}
+  presence:u8 = buffer.load(ti,tag_at)
+  tag_end:u8 = const() {"value":1}
+  tag_fits:bool = compare.le(presence,tag_end)
+  branch tag_fits inspect(ti,to,presence) malformed()
+block inspect(ii:readbuf,io:mutbuf,ip:u8)
+  delta_at:u64 = const() {"value":5}
+  delta_width:u64 = const() {"value":4}
+  delta:u64 = call(ii,delta_at,delta_width) {"function":"wa_read"}
+  present_tag:u8 = const() {"value":1}
+  present:bool = compare.eq(ip,present_tag)
+  branch present choose(io,delta) absent_shape(io,delta)
+block absent_shape(ao:mutbuf,av:u64)
+  no_value:u64 = const() {"value":0}
+  canonical_absence:bool = compare.eq(av,no_value)
+  branch canonical_absence not_projected(ao) malformed()
+block choose(co:mutbuf,cv:u64)
+  meta:u64,score:u64,gap:u64 = call(cv) {"function":"wr_values"}
+  label_size:u64,tier:u64,weight:u64 = call(meta) {"function":"wr_metadata"}
+  rank:u64 = call(meta) {"function":"wr_rank"}
+  label0:u64,label1:u64,label2:u64 = call(rank) {"function":"wr_label"}
+  no_label:u64 = const() {"value":0}
+  projected:bool = compare.ne(label_size,no_label)
+  branch projected complete(co,cv,label_size,label0,label1,label2,tier,weight,score,rank,gap) not_projected(co)
+block not_projected(po:mutbuf)
+  empty_cap:usize = buffer.len(po)
+  empty_width:usize = const() {"value":1}
+  empty_fits:bool = compare.ge(empty_cap,empty_width)
+  branch empty_fits emit_empty(po) insufficient()
+block emit_empty(eo:mutbuf)
+  empty_at:usize = const() {"value":0}
+  absent:u8 = const() {"value":0}
+  _ = buffer.store(eo,empty_at,absent)
+  empty_return:u32 = const() {"value":1}
+  ret(empty_return)
+block malformed()
+  invalid:u32 = const() {"value":4294967295}
+  ret(invalid)
+block insufficient()
+  capacity:u32 = const() {"value":4294967294}
+  ret(capacity)
+block complete(out:mutbuf,raw_delta:u64,size:u64,l0:u64,l1:u64,l2:u64,tv:u64,wv:u64,sv:u64,rv:u64,gv:u64)
+  result:u32 = call(out,raw_delta,size,l0,l1,l2,tv,wv,sv,rv,gv) {"function":"wr_emit"}
+  ret(result)
+end
+fn wr_values(delta:u64) -> (u64,u64,u64) effects(trap) entry(accepted)
+block accepted(delta:u64)
+  accepted_word:u64 = const() {"value":3}
+  accepted_match:bool = compare.eq(delta,accepted_word)
+  branch accepted_match accepted_axes() retry(delta)
+block retry(retry_delta:u64)
+  retry_word:u64 = const() {"value":4294967295}
+  retry_match:bool = compare.eq(retry_delta,retry_word)
+  branch retry_match retry_axes() rejected(retry_delta)
+block rejected(rejected_delta:u64)
+  rejected_word:u64 = const() {"value":4294967294}
+  rejected_match:bool = compare.eq(rejected_delta,rejected_word)
+  branch rejected_match rejected_axes() non_retry(rejected_delta)
+block non_retry(non_retry_delta:u64)
+  non_retry_word:u64 = const() {"value":4294967293}
+  non_retry_match:bool = compare.eq(non_retry_delta,non_retry_word)
+  branch non_retry_match non_retry_axes() unknown()
+block accepted_axes()
+  accepted_magnitude:u64 = const() {"value":3}
+  accepted_tier:u64 = const() {"value":3}
+  accepted_rank:u64 = const() {"value":0}
+  accepted_size:u64 = const() {"value":8}
+  accepted_negative:bool = const() {"value":false}
+  jump project(accepted_size,accepted_magnitude,accepted_tier,accepted_rank,accepted_negative)
+block retry_axes()
+  retry_magnitude:u64 = const() {"value":1}
+  retry_tier:u64 = const() {"value":2}
+  retry_rank:u64 = const() {"value":1}
+  retry_size:u64 = const() {"value":23}
+  retry_negative:bool = const() {"value":true}
+  jump project(retry_size,retry_magnitude,retry_tier,retry_rank,retry_negative)
+block rejected_axes()
+  rejected_magnitude:u64 = const() {"value":2}
+  rejected_tier:u64 = const() {"value":1}
+  rejected_rank:u64 = const() {"value":2}
+  rejected_size:u64 = const() {"value":17}
+  rejected_negative:bool = const() {"value":true}
+  jump project(rejected_size,rejected_magnitude,rejected_tier,rejected_rank,rejected_negative)
+block non_retry_axes()
+  non_retry_magnitude:u64 = const() {"value":3}
+  non_retry_tier:u64 = const() {"value":0}
+  non_retry_rank:u64 = const() {"value":3}
+  non_retry_size:u64 = const() {"value":21}
+  non_retry_negative:bool = const() {"value":true}
+  jump project(non_retry_size,non_retry_magnitude,non_retry_tier,non_retry_rank,non_retry_negative)
+block project(size:u64,magnitude:u64,tier_value:u64,rank_value:u64,negative:bool)
+  basis:u64 = const() {"value":10000}
+  divisor:u64 = const() {"value":3}
+  scaled_magnitude:u64 = int.mul.wrap(magnitude,basis)
+  magnitude_bps:u64 = int.div.checked(scaled_magnitude,divisor)
+  zero:u64 = const() {"value":0}
+  negative_bps:u64 = int.sub.wrap(zero,magnitude_bps)
+  score_bps:u64 = select(negative,negative_bps,magnitude_bps)
+  gap_bps:u64 = int.sub.wrap(basis,score_bps)
+  scaled_tier:u64 = int.mul.wrap(tier_value,basis)
+  weight_bps:u64 = int.div.checked(scaled_tier,divisor)
+  tier_shift:u64 = const() {"value":5}
+  rank_shift:u64 = const() {"value":7}
+  weight_shift:u64 = const() {"value":9}
+  packed_tier:u64 = int.shl.checked(tier_value,tier_shift)
+  packed_rank:u64 = int.shl.checked(rank_value,rank_shift)
+  packed_weight:u64 = int.shl.checked(weight_bps,weight_shift)
+  with_tier:u64 = bit.or(size,packed_tier)
+  with_rank:u64 = bit.or(with_tier,packed_rank)
+  meta:u64 = bit.or(with_rank,packed_weight)
+  ret(meta,score_bps,gap_bps)
+block unknown()
+  null:u64 = const() {"value":0}
+  ret(null,null,null)
+end
+fn wr_metadata(meta:u64) -> (u64,u64,u64) effects(trap) entry(entry)
+block entry(meta:u64)
+  size_mask:u64 = const() {"value":31}
+  tier_shift:u64 = const() {"value":5}
+  lane_mask:u64 = const() {"value":3}
+  weight_shift:u64 = const() {"value":9}
+  label_size:u64 = bit.and(meta,size_mask)
+  tier_lane:u64 = int.shr.checked(meta,tier_shift)
+  tier:u64 = bit.and(tier_lane,lane_mask)
+  weight:u64 = int.shr.checked(meta,weight_shift)
+  ret(label_size,tier,weight)
+end
+fn wr_rank(meta:u64) -> (u64) effects(trap) entry(entry)
+block entry(meta:u64)
+  rank_shift:u64 = const() {"value":7}
+  lane_mask:u64 = const() {"value":3}
+  rank_lane:u64 = int.shr.checked(meta,rank_shift)
+  rank:u64 = bit.and(rank_lane,lane_mask)
+  ret(rank)
+end
+fn wr_label(rank:u64) -> (u64,u64,u64) effects() entry(pick_accepted)
+block pick_accepted(rank:u64)
+  zero:u64 = const() {"value":0}
+  accepted:bool = compare.eq(rank,zero)
+  branch accepted accepted_label() pick_retry(rank)
+block pick_retry(retry_rank:u64)
+  one:u64 = const() {"value":1}
+  retry:bool = compare.eq(retry_rank,one)
+  branch retry retry_label() pick_rejected(retry_rank)
+block pick_rejected(rejected_rank:u64)
+  two:u64 = const() {"value":2}
+  rejected:bool = compare.eq(rejected_rank,two)
+  branch rejected rejected_label() non_retry_label()
+block accepted_label()
+  accepted_word0:u64 = const() {"value":7234316402526741345}
+  accepted_word1:u64 = const() {"value":0}
+  accepted_word2:u64 = const() {"value":0}
+  ret(accepted_word0,accepted_word1,accepted_word2)
+block retry_label()
+  retry_word0:u64 = const() {"value":6877671131724211297}
+  retry_word1:u64 = const() {"value":8675445232415040882}
+  retry_word2:u64 = const() {"value":28259048498749800}
+  ret(retry_word0,retry_word1,retry_word2)
+block rejected_label()
+  rejected_word0:u64 = const() {"value":8243110581548246390}
+  rejected_word1:u64 = const() {"value":7310577382357037663}
+  rejected_word2:u64 = const() {"value":100}
+  ret(rejected_word0,rejected_word1,rejected_word2)
+block non_retry_label()
+  non_retry_word0:u64 = const() {"value":6877671131724211297}
+  non_retry_word1:u64 = const() {"value":8247328359523970926}
+  non_retry_word2:u64 = const() {"value":435610083689}
+  ret(non_retry_word0,non_retry_word1,non_retry_word2)
+end
+fn wr_emit(output:mutbuf,delta_word:u64,text_size:u64,text0:u64,text1:u64,text2:u64,tier_value:u64,weight_bps:u64,score_bps:u64,rank_value:u64,gap_bps:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(output:mutbuf,delta_word:u64,text_size:u64,text0:u64,text1:u64,text2:u64,tier_value:u64,weight_bps:u64,score_bps:u64,rank_value:u64,gap_bps:u64)
+  framing:u64 = const() {"value":18}
+  wanted:u64 = int.add.wrap(framing,text_size)
+  actual_capacity:usize = buffer.len(output)
+  cap:u64 = int.cast(actual_capacity) {"mode":"wrap"}
+  fits:bool = compare.ge(cap,wanted)
+  branch fits encode(output,delta_word,text_size,text0,text1,text2,tier_value,weight_bps,score_bps,rank_value,gap_bps) insufficient()
+block encode(eo:mutbuf,ed:u64,es:u64,el0:u64,el1:u64,el2:u64,et:u64,weight:u64,score:u64,er:u64,gap:u64)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  write:bool = const() {"value":true}
+  w1:u64 = call(eo,zero,one,one,write) {"function":"wa_word"}
+  w2:u64 = call(eo,w1,ed,four,write) {"function":"wa_word"}
+  w3:u64 = call(eo,w2,et,one,write) {"function":"wa_word"}
+  w4:u64 = call(eo,w3,weight,two,write) {"function":"wa_word"}
+  w5:u64 = call(eo,w4,score,four,write) {"function":"wa_word"}
+  w6:u64 = call(eo,w5,er,one,write) {"function":"wa_word"}
+  w7:u64 = call(eo,w6,gap,four,write) {"function":"wa_word"}
+  w8:u64 = call(eo,w7,es,one,write) {"function":"wa_word"}
+  end0:u64 = call(eo,w8,el0,eight,write) {"function":"wa_word"}
+  rest:u64 = int.sub.wrap(es,eight)
+  jump more_text(eo,end0,rest,el1,el2,write)
+block more_text(mo:mutbuf,ma:u64,mn:u64,mv1:u64,mv2:u64,mw:bool)
+  nothing:u64 = const() {"value":0}
+  done:bool = compare.eq(mn,nothing)
+  branch done finish(ma) write_tail(mo,ma,mn,mv1,mv2,mw)
+block write_tail(to:mutbuf,ta:u64,tn:u64,tv1:u64,tv2:u64,tw:bool)
+  tail_word:u64 = const() {"value":8}
+  fits_word:bool = compare.le(tn,tail_word)
+  chunk:u64 = select(fits_word,tn,tail_word)
+  end1:u64 = call(to,ta,tv1,chunk,tw) {"function":"wa_word"}
+  branch fits_word finish(end1) last_text(to,end1,tn,tv2,tw)
+block last_text(lo:mutbuf,la:u64,ln:u64,lv:u64,lw:bool)
+  last_word:u64 = const() {"value":8}
+  last_count:u64 = int.sub.wrap(ln,last_word)
+  end2:u64 = call(lo,la,lv,last_count,lw) {"function":"wa_word"}
+  jump finish(end2)
+block finish(at:u64)
+  emitted:u32 = int.cast(at) {"mode":"wrap"}
+  ret(emitted)
+block insufficient()
+  capacity:u32 = const() {"value":4294967294}
+  ret(capacity)
+end

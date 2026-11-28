@@ -1,0 +1,227 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_export_pre_finality_header
+fn f0(input:readbuf,unused:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,unused:mutbuf,work:mutbuf)
+  size:usize = buffer.len(input)
+  extent:usize = const() {"value":248}
+  right_size:bool = compare.eq(size,extent)
+  branch right_size inspect(input,work) malformed()
+block inspect(raw:readbuf,scratch:mutbuf)
+  valid:bool = call(raw) {"function":"ha_shape"}
+  branch valid capacity(raw,scratch) invalid()
+block capacity(cap_raw:readbuf,cap_work:mutbuf)
+  work_size:usize = buffer.len(cap_work)
+  required:usize = const() {"value":1529}
+  room:bool = compare.ge(work_size,required)
+  branch room digest(cap_raw,cap_work) short()
+block digest(hash_raw:readbuf,hash_work:mutbuf)
+  ok:bool = call(hash_raw,hash_work) {"function":"ha_hash"}
+  branch ok compare(hash_raw,hash_work) internal()
+block compare(cmp_raw:readbuf,cmp_work:mutbuf)
+  matches:bool = call(cmp_raw,cmp_work) {"function":"ha_matches"}
+  branch matches success() invalid()
+block success()
+  code_ok:u32 = const() {"value":0}
+  ret(code_ok)
+block malformed()
+  code_extent:u32 = const() {"value":100}
+  ret(code_extent)
+block short()
+  code_capacity:u32 = const() {"value":102}
+  ret(code_capacity)
+block internal()
+  code_internal:u32 = const() {"value":103}
+  ret(code_internal)
+block invalid()
+  code_invalid:u32 = const() {"value":107}
+  ret(code_invalid)
+end
+
+fn ha_shape(raw:readbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf)
+  declared_at:u64 = const() {"value":168}
+  actual_at:u64 = const() {"value":240}
+  declared:u64 = call(raw,declared_at) {"function":"tr_read"}
+  actual:u64 = call(raw,actual_at) {"function":"tr_read"}
+  equal:bool = compare.eq(declared,actual)
+  branch equal enforce_count(raw) refuse()
+block enforce_count(bound_raw:readbuf)
+  at:usize = const() {"value":168}
+  len:usize = const() {"value":8}
+  n:u64 = call(bound_raw,at,len) {"function":"ha_read_be"}
+  low:u64 = const() {"value":0}
+  high:u64 = const() {"value":100000000}
+  nonzero:bool = compare.gt(n,low)
+  in_bound:bool = compare.le(n,high)
+  count_valid:bool = bool.and(nonzero,in_bound)
+  branch count_valid inspect_fields(bound_raw) refuse()
+block inspect_fields(data:readbuf)
+  height_at:u64 = const() {"value":64}
+  height:u64 = call(data,height_at) {"function":"tr_read"}
+  zero_height:u64 = const() {"value":0}
+  has_height:bool = compare.gt(height,zero_height)
+  off0:u64 = const() {"value":0}
+  present0:bool = call(data,off0) {"function":"ha_nonzero_digest"}
+  seen0:bool = bool.and(has_height,present0)
+  off1:u64 = const() {"value":32}
+  present1:bool = call(data,off1) {"function":"ha_nonzero_digest"}
+  seen1:bool = bool.and(seen0,present1)
+  off2:u64 = const() {"value":72}
+  present2:bool = call(data,off2) {"function":"ha_nonzero_digest"}
+  seen2:bool = bool.and(seen1,present2)
+  off3:u64 = const() {"value":104}
+  present3:bool = call(data,off3) {"function":"ha_nonzero_digest"}
+  seen3:bool = bool.and(seen2,present3)
+  off4:u64 = const() {"value":136}
+  present4:bool = call(data,off4) {"function":"ha_nonzero_digest"}
+  seen4:bool = bool.and(seen3,present4)
+  off5:u64 = const() {"value":176}
+  present5:bool = call(data,off5) {"function":"ha_nonzero_digest"}
+  seen5:bool = bool.and(seen4,present5)
+  off6:u64 = const() {"value":208}
+  present6:bool = call(data,off6) {"function":"ha_nonzero_digest"}
+  seen6:bool = bool.and(seen5,present6)
+  ret(seen6)
+block refuse()
+  none:bool = const() {"value":false}
+  ret(none)
+end
+
+fn ha_nonzero_digest(raw:readbuf,at:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,at:u64)
+  zero:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  jump read(raw,at,zero,four)
+block read(source:readbuf,pos:u64,total:u64,remaining:u64)
+  part:u64 = call(source,pos) {"function":"tr_read"}
+  updated:u64 = bit.or(total,part)
+  eight:u64 = const() {"value":8}
+  next:u64 = int.add.wrap(pos,eight)
+  one:u64 = const() {"value":1}
+  rest:u64 = int.sub.wrap(remaining,one)
+  none:u64 = const() {"value":0}
+  done:bool = compare.eq(rest,none)
+  branch done finish(updated) read(source,next,updated,rest)
+block finish(seen:u64)
+  z:u64 = const() {"value":0}
+  has:bool = compare.gt(seen,z)
+  ret(has)
+end
+
+fn ha_read_be(raw:readbuf,at:usize,left:usize) -> (u64) effects(read,trap) entry(entry)
+block entry(raw:readbuf,at:usize,left:usize)
+  initial:u64 = const() {"value":0}
+  jump read(raw,at,left,initial)
+block read(source:readbuf,pos:usize,remaining:usize,prev:u64)
+  byte:u8 = buffer.load(source,pos)
+  wide:u64 = int.cast(byte) {"mode":"wrap"}
+  bits:u64 = const() {"value":8}
+  high:u64 = int.shl.checked(prev,bits)
+  next_value:u64 = bit.or(high,wide)
+  one:usize = const() {"value":1}
+  next_pos:usize = int.add.wrap(pos,one)
+  later:usize = int.sub.wrap(remaining,one)
+  none:usize = const() {"value":0}
+  done:bool = compare.eq(later,none)
+  branch done finish(next_value) read(source,next_pos,later,next_value)
+block finish(result:u64)
+  ret(result)
+end
+
+fn ha_hash(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  started:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(started,zero)
+  branch ready populate(raw,work) refuse()
+block populate(data:readbuf,transcript:mutbuf)
+  pos0:u64 = const() {"value":1208}
+  word0:u64 = const() {"value":2954361355555045376}
+  _word0:u64 = call(transcript,pos0,word0) {"function":"tr_put"}
+  pos1:u64 = const() {"value":1216}
+  word1:u64 = const() {"value":7451607104633074292}
+  _word1:u64 = call(transcript,pos1,word1) {"function":"tr_put"}
+  pos2:u64 = const() {"value":1224}
+  word2:u64 = const() {"value":7362943865586999666}
+  _word2:u64 = call(transcript,pos2,word2) {"function":"tr_put"}
+  pos3:u64 = const() {"value":1232}
+  word3:u64 = const() {"value":7234322969649049193}
+  _word3:u64 = call(transcript,pos3,word3) {"function":"tr_put"}
+  pos4:u64 = const() {"value":1240}
+  word4:u64 = const() {"value":3275368651959067949}
+  _word4:u64 = call(transcript,pos4,word4) {"function":"tr_put"}
+  pos5:u64 = const() {"value":1248}
+  word5:u64 = const() {"value":8515869725205554536}
+  _word5:u64 = call(transcript,pos5,word5) {"function":"tr_put"}
+  pos6:u64 = const() {"value":1256}
+  word6:u64 = const() {"value":48}
+  _word6:u64 = call(transcript,pos6,word6) {"function":"tr_put"}
+  from0:u64 = const() {"value":0}
+  to0:u64 = const() {"value":1257}
+  size0:u64 = const() {"value":32}
+  _part0:u64 = call(data,transcript,from0,to0,size0) {"function":"append"}
+  from1:u64 = const() {"value":32}
+  to1:u64 = const() {"value":1297}
+  size1:u64 = const() {"value":32}
+  _part1:u64 = call(data,transcript,from1,to1,size1) {"function":"append"}
+  from2:u64 = const() {"value":64}
+  to2:u64 = const() {"value":1337}
+  size2:u64 = const() {"value":8}
+  _part2:u64 = call(data,transcript,from2,to2,size2) {"function":"append"}
+  from3:u64 = const() {"value":72}
+  to3:u64 = const() {"value":1353}
+  size3:u64 = const() {"value":32}
+  _part3:u64 = call(data,transcript,from3,to3,size3) {"function":"append"}
+  from4:u64 = const() {"value":104}
+  to4:u64 = const() {"value":1393}
+  size4:u64 = const() {"value":32}
+  _part4:u64 = call(data,transcript,from4,to4,size4) {"function":"append"}
+  from5:u64 = const() {"value":136}
+  to5:u64 = const() {"value":1433}
+  size5:u64 = const() {"value":32}
+  _part5:u64 = call(data,transcript,from5,to5,size5) {"function":"append"}
+  from6:u64 = const() {"value":168}
+  to6:u64 = const() {"value":1473}
+  size6:u64 = const() {"value":8}
+  _part6:u64 = call(data,transcript,from6,to6,size6) {"function":"append"}
+  from7:u64 = const() {"value":176}
+  to7:u64 = const() {"value":1489}
+  size7:u64 = const() {"value":32}
+  _part7:u64 = call(data,transcript,from7,to7,size7) {"function":"append"}
+  start:u64 = const() {"value":1208}
+  payload_bytes:u64 = const() {"value":321}
+  update:u64 = call(transcript,start,payload_bytes) {"function":"tr_sha_update_work"}
+  zero_update:u64 = const() {"value":0}
+  updated:bool = compare.eq(update,zero_update)
+  branch updated finish(transcript) refuse()
+block finish(final_work:mutbuf)
+  status:u64 = call(final_work) {"function":"tr_sha_final"}
+  no_error:u64 = const() {"value":0}
+  ok:bool = compare.eq(status,no_error)
+  ret(ok)
+block refuse()
+  failed:bool = const() {"value":false}
+  ret(failed)
+end
+
+fn ha_matches(raw:readbuf,work:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,work:mutbuf)
+  source:u64 = const() {"value":208}
+  digest:u64 = const() {"value":1168}
+  zero:u64 = const() {"value":0}
+  jump compare(raw,work,source,digest,zero)
+block compare(input:readbuf,arena:mutbuf,src:u64,computed:u64,diff:u64)
+  expected:u64 = call(input,src) {"function":"tr_read"}
+  observed:u64 = call(arena,computed) {"function":"tr_get"}
+  mismatch:u64 = bit.xor(expected,observed)
+  joined:u64 = bit.or(diff,mismatch)
+  step:u64 = const() {"value":8}
+  src_next:u64 = int.add.wrap(src,step)
+  hash_next:u64 = int.add.wrap(computed,step)
+  end:u64 = const() {"value":1200}
+  done:bool = compare.eq(hash_next,end)
+  branch done finish(joined) compare(input,arena,src_next,hash_next,joined)
+block finish(left:u64)
+  none:u64 = const() {"value":0}
+  exact:bool = compare.eq(left,none)
+  ret(exact)
+end

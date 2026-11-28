@@ -1,0 +1,82 @@
+{
+  "artifact": {
+    "all_raw_objects_reopened_and_verified": true,
+    "bytes": 158540,
+    "logical_members": 43,
+    "operator_transfer_metadata_excluded": 1,
+    "path": "hia/qualification/execution-ci-development.tar.xz",
+    "sha256": "b9c2e0c52b8069d816bcaa6960bf174fc0bfb0feb37b497f024742104077571d",
+    "unique_objects": 34
+  },
+  "controller_observations": {
+    "current_validation": {
+      "bootstrap_groups": 4,
+      "integrated_boundary_groups": 46,
+      "native_bootstrap_gates": 25,
+      "python_heredocs": 37,
+      "shell_fragments": 189,
+      "staged_source_whitespace_exit": 0,
+      "workflow_jobs": 29,
+      "yaml_structure": "PASS"
+    },
+    "failed_preexecution_writer_attempts": [
+      {
+        "effect": "No nested tool called",
+        "error": "SyntaxError: Unexpected token '.' in unescaped GitHub expression template",
+        "kind": "code-orchestration-parser"
+      },
+      {
+        "effect": "No nested tool called",
+        "error": "ReferenceError: structuredClone is not defined",
+        "kind": "code-orchestration-runtime"
+      },
+      {
+        "exit_code": 1,
+        "job": "1a1e58de71d-392-395d",
+        "kind": "workflow-proposal-guard",
+        "reason": "Job roster regex counted the YAML push trigger as a job; no proposal file had been written.",
+        "resolution": "Restrict roster parsing to the jobs mapping; subsequently parse complete YAML with unique-key loader.",
+        "resolved_by_job": "1a1e58e786f-392-3960"
+      }
+    ],
+    "original_rust_retirements": 0,
+    "schema": "trnm.execution-integration-controller-observations.v1",
+    "scope": "Controller/development observations only; not new native execution or CI qualification.",
+    "unknown_launches": [
+      {
+        "automatically_replayed": false,
+        "job": "1a1e57dbd58-392-393c",
+        "kind": "disk-space-duplicate-cleanup",
+        "observed": "launch_unknown; remote job directory absent and no matching process in read-only recovery probe"
+      },
+      {
+        "kind": "execution-helper-v3-writer",
+        "observed": "outcome unknown during ENOSPC; later read-only probe found destination absent",
+        "recovery": "Separate create-only file publication after absence observation; job1a1e586d0a3-392-3947 terminal0",
+        "session": "dpty-373f12a4bd4eafa0793f7191b27cd9f29e87886ac756d51f747fd61eba05d9b1"
+      }
+    ],
+    "whole_migration_complete": false
+  },
+  "documentation_controller_observation": {
+    "actual_runtime_execution_performed": false,
+    "exit_code": 1,
+    "failed_job": "1a1e5aba2e2-392-399e",
+    "final_source_transition_observed": "All 58/33/47 native inputs unchanged; only migration inventory and sole-plan-pin metadata differ in each original source set.",
+    "phase": "Python script parsing before any edit or native execution",
+    "resolved_exit_code": 0,
+    "resolved_job": "1a1e5acc48c-392-39a1",
+    "schema": "trnm.execution-final-documentation-controller-observation.v1",
+    "stderr": "  File \"<string>\", line 73\n    print(json.dumps({\"status\":\"PASS\" if check.returncode==0 else \"FAIL\",\"documentation\":len(written),\"evidence\":len(evidence),\"plan_blob\":plan_blob,\"source_transitions\":{k:{\"native_unchanged\":v[\"native_source_inputs_unchanged\"],\"changed_original_inputs\":[i[\"path\"] for i in v[\"changed_original_inputs\"]]} for k,v in transitions.items()}),flush=True)\n                                                                                                                                                                                                                                                                                                                                                 ^\nSyntaxError: closing parenthesis ')' does not match opening parenthesis '{'\n"
+  },
+  "final_integrated_source_transition_record": {
+    "bytes": 7594,
+    "sha256": "72294d95ef3964760cfda1560c40314f0126c7a05096d5cded415a46dcff2c67"
+  },
+  "original_service_budget_qualified": false,
+  "retirement_accepted": false,
+  "same_committed_head_hosted_ci": "PENDING",
+  "schema": "trnm.hia.execution-ci-development-record.v1",
+  "status": "PASS_WITH_PRESERVED_PREVIOUS_FAILURES_AND_UNKNOWN_LAUNCHES",
+  "whole_node_qualified": false
+}

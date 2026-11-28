@@ -1,0 +1,587 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_composed
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  named_only:bool = const() {"value":false}
+  status:u32 = call(r,o,w,named_only,named_only) {"function":"tac_run"}
+  ret(status)
+end
+
+fn tac_run(r:readbuf,o:mutbuf,w:mutbuf,sequence:bool,rootseq:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,sequence:bool,rootseq:bool)
+  size:usize = buffer.len(r)
+  n:u64 = int.cast(size) {"mode":"wrap"}
+  min:u64 = const() {"value":72}
+  max:u64 = const() {"value":1048576}
+  a:bool = compare.le(min,n)
+  b:bool = compare.le(n,max)
+  good:bool = bool.and(a,b)
+  branch good parse(r,o,w,n,sequence,rootseq) wire()
+block parse(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64,ps:bool,prs:bool)
+  suffix:u64 = const() {"value":32}
+  raw_end:u64 = int.sub.wrap(pn,suffix)
+  status:u32,extent:u64 = call(pr,pw,raw_end,ps,prs) {"function":"tat_parse_private"}
+  z:u32 = const() {"value":0}
+  pass:bool = compare.eq(status,z)
+  branch pass directory(pr,po,pw,raw_end,extent) refusal(status)
+block directory(dr:readbuf,do_:mutbuf,dw:mutbuf,dp:u64,de:u64)
+  indexed:bool = call(dw,de) {"function":"tac_index"}
+  branch indexed semantic(dr,do_,dw,dp) wire()
+block semantic(sr:readbuf,so:mutbuf,sw:mutbuf,sp:u64)
+  result:u32,tokens:u64,hidden:u64 = call(sr,sw,sp) {"function":"tac_semantics"}
+  ok:u32 = const() {"value":0}
+  accept:bool = compare.eq(result,ok)
+  branch accept space(so,sw,tokens,hidden) refusal(result)
+block space(ko:mutbuf,kw:mutbuf,kt:u64,kh:u64)
+  bytes:usize = buffer.len(ko)
+  available:u64 = int.cast(bytes) {"mode":"wrap"}
+  scale:u64 = const() {"value":2304}
+  raw:u64 = int.mul.wrap(kt,scale)
+  head:u64 = const() {"value":8}
+  total:u64 = int.add.wrap(head,raw)
+  enough:bool = compare.le(total,available)
+  branch enough publish(ko,kw,kt,kh,raw) short()
+block publish(bo:mutbuf,bw:mutbuf,bt:u64,bh:u64,bn:u64)
+  zpos:u64 = const() {"value":0}
+  wrote:u64 = call(bo,zpos,bt) {"function":"tr_put"}
+  dest:u64 = const() {"value":8}
+  copied:u64 = call(bw,bh,bo,dest,bn) {"function":"cs_wcopy"}
+  accepted:u32 = const() {"value":0}
+  ret(accepted)
+block short()
+  bad_space:u32 = const() {"value":102}
+  ret(bad_space)
+block wire()
+  bad_wire:u32 = const() {"value":100}
+  ret(bad_wire)
+block refusal(code:u32)
+  ret(code)
+end
+
+fn tac_index(w:mutbuf,e:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,e:u64)
+  start:u64 = const() {"value":12000}
+  zero:u64 = const() {"value":0}
+  jump loop(w,e,start,zero)
+block loop(lw:mutbuf,le:u64,lp:u64,li:u64)
+  fields:u64 = const() {"value":29}
+  end:bool = compare.eq(li,fields)
+  branch end verify(le,lp) entry_field(lw,le,lp,li)
+block entry_field(rw:mutbuf,re:u64,rp:u64,ri:u64)
+  fixed:u64 = const() {"value":8}
+  directory:u64 = const() {"value":11616}
+  rel:u64 = int.mul.wrap(ri,fixed)
+  at:u64 = int.add.wrap(directory,rel)
+  written:u64 = call(rw,at,rp) {"function":"tr_put"}
+  table:u64 = const() {"value":10448}
+  stride:u64 = const() {"value":40}
+  toff:u64 = int.mul.wrap(ri,stride)
+  type_p:u64 = int.add.wrap(table,toff)
+  encoding:u64 = call(rw,type_p) {"function":"tr_get"}
+  kind:u64 = int.shr.checked(encoding,fixed)
+  six:u64 = const() {"value":6}
+  is_object:bool = compare.eq(kind,six)
+  branch is_object step(rw,re,rp,ri) extent(rw,re,rp,ri,kind)
+block extent(xw:mutbuf,xe:u64,xp:u64,xi:u64,xk:u64)
+  next_word:u64 = const() {"value":8}
+  next:u64 = int.add.wrap(xp,next_word)
+  inside:bool = compare.le(next,xe)
+  branch inside field(xw,xe,xp,xi,xk,next) bad()
+block field(fw:mutbuf,fe:u64,fp:u64,fi:u64,fk:u64,fn_:u64)
+  text:u64 = const() {"value":1}
+  hidden:u64 = const() {"value":7}
+  strings:bool = compare.eq(fk,text)
+  hidden_s:bool = compare.eq(fk,hidden)
+  str_value:bool = bool.or(strings,hidden_s)
+  arr:u64 = const() {"value":4}
+  shape:u64 = const() {"value":5}
+  vector:bool = compare.eq(fk,arr)
+  tuple:bool = compare.eq(fk,shape)
+  arr_value:bool = bool.or(vector,tuple)
+  count:u64 = call(fw,fp) {"function":"tr_get"}
+  eight:u64 = const() {"value":8}
+  zero_f:u64 = const() {"value":0}
+  lanes:u64 = int.mul.wrap(count,eight)
+  ns:u64 = select(str_value,count,zero_f)
+  size:u64 = select(arr_value,lanes,ns)
+  left:u64 = int.sub.wrap(fe,fn_)
+  fits:bool = compare.le(size,left)
+  end_field:u64 = int.add.wrap(fn_,size)
+  branch fits step(fw,fe,end_field,fi) bad()
+block step(sw:mutbuf,se:u64,sp:u64,si:u64)
+  one:u64 = const() {"value":1}
+  index:u64 = int.add.wrap(si,one)
+  jump loop(sw,se,sp,index)
+block verify(ve:u64,vp:u64)
+  exact:bool = compare.eq(ve,vp)
+  ret(exact)
+block bad()
+  failure:bool = const() {"value":false}
+  ret(failure)
+end
+
+fn tac_at(w:mutbuf,i:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,i:u64)
+  start:u64 = const() {"value":11616}
+  stride:u64 = const() {"value":8}
+  rel:u64 = int.mul.wrap(i,stride)
+  at:u64 = int.add.wrap(start,rel)
+  off:u64 = call(w,at) {"function":"tr_get"}
+  ret(off)
+end
+
+fn tac_word(w:mutbuf,i:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,i:u64)
+  at:u64 = call(w,i) {"function":"tac_at"}
+  value:u64 = call(w,at) {"function":"tr_get"}
+  ret(value)
+end
+
+fn tac_literal(w:mutbuf,i:u64,r:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,i:u64,r:u64,n:u64)
+  at:u64 = call(w,i) {"function":"tac_at"}
+  actual:u64 = call(w,at) {"function":"tr_get"}
+  exact:bool = compare.eq(n,actual)
+  branch exact compare(w,at,r,n) fail()
+block compare(cw:mutbuf,cp:u64,cr:u64,cn:u64)
+  eight:u64 = const() {"value":8}
+  start:u64 = int.add.wrap(cp,eight)
+  same:bool = call(cw,start,cr,cn) {"function":"tar_equal"}
+  ret(same)
+block fail()
+  diff:bool = const() {"value":false}
+  ret(diff)
+end
+
+fn tac_literals(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  p0:u64 = const() {"value":313500}
+  v0:u64 = const() {"value":7597414702928717923}
+  out0:u64 = call(w,p0,v0) {"function":"tr_put"}
+  p1:u64 = const() {"value":313508}
+  v1:u64 = const() {"value":7669474517695951982}
+  out1:u64 = call(w,p1,v1) {"function":"tr_put"}
+  p2:u64 = const() {"value":313516}
+  v2:u64 = const() {"value":8245930889170612269}
+  out2:u64 = call(w,p2,v2) {"function":"tr_put"}
+  p3:u64 = const() {"value":313524}
+  v3:u64 = const() {"value":7022916617535303021}
+  out3:u64 = call(w,p3,v3) {"function":"tr_put"}
+  p4:u64 = const() {"value":313532}
+  v4:u64 = const() {"value":13922211357223284}
+  out4:u64 = call(w,p4,v4) {"function":"tr_put"}
+  p5:u64 = const() {"value":313540}
+  v5:u64 = const() {"value":297631101766}
+  out5:u64 = call(w,p5,v5) {"function":"tr_put"}
+  p6:u64 = const() {"value":313548}
+  v6:u64 = const() {"value":7795005695886386017}
+  out6:u64 = call(w,p6,v6) {"function":"tr_put"}
+  p7:u64 = const() {"value":313556}
+  v7:u64 = const() {"value":6877327792072391009}
+  out7:u64 = call(w,p7,v7) {"function":"tr_put"}
+  p8:u64 = const() {"value":313564}
+  v8:u64 = const() {"value":7310028485537264240}
+  out8:u64 = call(w,p8,v8) {"function":"tr_put"}
+  p9:u64 = const() {"value":313572}
+  v9:u64 = const() {"value":8317990377154899816}
+  out9:u64 = call(w,p9,v9) {"function":"tr_put"}
+  p10:u64 = const() {"value":313580}
+  v10:u64 = const() {"value":8245895562425150836}
+  out10:u64 = call(w,p10,v10) {"function":"tr_put"}
+  p11:u64 = const() {"value":313588}
+  v11:u64 = const() {"value":109}
+  out11:u64 = call(w,p11,v11) {"function":"tr_put"}
+  p12:u64 = const() {"value":313596}
+  v12:u64 = const() {"value":7234318610140979823}
+  out12:u64 = call(w,p12,v12) {"function":"tr_put"}
+  p13:u64 = const() {"value":313604}
+  v13:u64 = const() {"value":8314034278112445216}
+  out13:u64 = call(w,p13,v13) {"function":"tr_put"}
+  p14:u64 = const() {"value":313612}
+  v14:u64 = const() {"value":2336353788739005797}
+  out14:u64 = call(w,p14,v14) {"function":"tr_put"}
+  p15:u64 = const() {"value":313620}
+  v15:u64 = const() {"value":8029390625225797480}
+  out15:u64 = call(w,p15,v15) {"function":"tr_put"}
+  p16:u64 = const() {"value":313628}
+  v16:u64 = const() {"value":7954887897598814496}
+  out16:u64 = call(w,p16,v16) {"function":"tr_put"}
+  p17:u64 = const() {"value":313636}
+  v17:u64 = const() {"value":7815265017949742436}
+  out17:u64 = call(w,p17,v17) {"function":"tr_put"}
+  p18:u64 = const() {"value":313644}
+  v18:u64 = const() {"value":8242000126443662700}
+  out18:u64 = call(w,p18,v18) {"function":"tr_put"}
+  p19:u64 = const() {"value":313652}
+  v19:u64 = const() {"value":2334675981290184804}
+  out19:u64 = call(w,p19,v19) {"function":"tr_put"}
+  p20:u64 = const() {"value":313660}
+  v20:u64 = const() {"value":7165919078633206383}
+  out20:u64 = call(w,p20,v20) {"function":"tr_put"}
+  p21:u64 = const() {"value":313668}
+  v21:u64 = const() {"value":8245924292133462117}
+  out21:u64 = call(w,p21,v21) {"function":"tr_put"}
+  p22:u64 = const() {"value":313676}
+  v22:u64 = const() {"value":7959657}
+  out22:u64 = call(w,p22,v22) {"function":"tr_put"}
+  p23:u64 = const() {"value":313684}
+  v23:u64 = const() {"value":7696483}
+  out23:u64 = call(w,p23,v23) {"function":"tr_put"}
+  p24:u64 = const() {"value":313692}
+  v24:u64 = const() {"value":14130323779447910}
+  out24:u64 = call(w,p24,v24) {"function":"tr_put"}
+  success:u64 = const() {"value":0}
+  ret(success)
+end
+
+fn tac_semantics(r:readbuf,w:mutbuf,expected:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,expected:u64)
+  boot:u64 = call(w) {"function":"tac_literals"}
+  schema:u64 = const() {"value":0}
+  schema_at:u64 = const() {"value":313500}
+  schema_len:u64 = const() {"value":39}
+  schema_ok:bool = call(w,schema,schema_at,schema_len) {"function":"tac_literal"}
+  branch schema_ok grammar(r,w,expected) profile()
+block grammar(gr:readbuf,gw:mutbuf,ge:u64)
+  checkpoint:u64 = const() {"value":1}
+  digest:bool = call(gw,checkpoint) {"function":"tac_digest"}
+  branch digest bind(gr,gw,ge) hashes()
+block bind(br:readbuf,bw:mutbuf,be:u64)
+  pin:u64 = const() {"value":1}
+  pin_slot:u64 = call(bw,pin) {"function":"tac_at"}
+  eight:u64 = const() {"value":8}
+  bytes:u64 = int.add.wrap(pin_slot,eight)
+  bound:bool = call(br,bw,be,bytes) {"function":"tac_match_pin"}
+  branch bound literals(bw) profile()
+block literals(lw:mutbuf)
+  dtype:u64 = const() {"value":2}
+  dtype_at:u64 = const() {"value":313540}
+  dtype_len:u64 = const() {"value":5}
+  origin:u64 = const() {"value":11}
+  origin_at:u64 = const() {"value":313548}
+  origin_len:u64 = const() {"value":41}
+  scope_id:u64 = const() {"value":12}
+  scope_at:u64 = const() {"value":313596}
+  scope_len:u64 = const() {"value":83}
+  a:bool = call(lw,dtype,dtype_at,dtype_len) {"function":"tac_literal"}
+  b:bool = call(lw,origin,origin_at,origin_len) {"function":"tac_literal"}
+  c:bool = call(lw,scope_id,scope_at,scope_len) {"function":"tac_literal"}
+  partial:bool = bool.and(a,b)
+  okay:bool = bool.and(partial,c)
+  branch okay shape(lw) profile()
+block shape(sw:mutbuf)
+  shape_id:u64 = const() {"value":3}
+  shape_at:u64 = call(sw,shape_id) {"function":"tac_at"}
+  i8:u64 = const() {"value":8}
+  i16:u64 = const() {"value":16}
+  i24:u64 = const() {"value":24}
+  p0:u64 = int.add.wrap(shape_at,i8)
+  p1:u64 = int.add.wrap(shape_at,i16)
+  p2:u64 = int.add.wrap(shape_at,i24)
+  batch:u64 = call(sw,p0) {"function":"tr_get"}
+  tokens:u64 = call(sw,p1) {"function":"tr_get"}
+  width:u64 = call(sw,p2) {"function":"tr_get"}
+  one:u64 = const() {"value":1}
+  expected_width:u64 = const() {"value":576}
+  max_tokens:u64 = const() {"value":64}
+  single:bool = compare.eq(batch,one)
+  matching:bool = compare.eq(width,expected_width)
+  min_count:bool = compare.le(one,tokens)
+  max_count:bool = compare.le(tokens,max_tokens)
+  edges:bool = bool.and(single,matching)
+  count_ok:bool = bool.and(min_count,max_count)
+  shape_ok:bool = bool.and(edges,count_ok)
+  branch shape_ok token_fields(sw,tokens) bad_shape()
+block token_fields(tw:mutbuf,tt:u64)
+  accepted:bool = call(tw,tt) {"function":"tac_tokens"}
+  branch accepted static_hashes(tw,tt) bad_tokens()
+block static_hashes(hw:mutbuf,ht:u64)
+  producer:u64 = const() {"value":8}
+  prompt:u64 = const() {"value":9}
+  manifest:u64 = const() {"value":28}
+  good_producer:bool = call(hw,producer) {"function":"tac_digest"}
+  good_prompt:bool = call(hw,prompt) {"function":"tac_digest"}
+  good_manifest:bool = call(hw,manifest) {"function":"tac_digest"}
+  front:bool = bool.and(good_producer,good_prompt)
+  all:bool = bool.and(front,good_manifest)
+  branch all statics(hw,ht) hashes()
+block statics(aw:mutbuf,at:u64)
+  static_ok:bool = call(aw) {"function":"tac_static"}
+  branch static_ok hidden(aw,at) bad_static()
+block hidden(zw:mutbuf,zt:u64)
+  hidden_id:u64 = const() {"value":7}
+  start:u64 = call(zw,hidden_id) {"function":"tac_at"}
+  len:u64 = call(zw,start) {"function":"tr_get"}
+  scale:u64 = const() {"value":4608}
+  expected_len:u64 = int.mul.wrap(zt,scale)
+  equal:bool = compare.eq(len,expected_len)
+  eight_z:u64 = const() {"value":8}
+  data:u64 = int.add.wrap(start,eight_z)
+  branch equal decode(zw,zt,data,len) bad_hidden()
+block decode(dw:mutbuf,dt:u64,dp:u64,dn:u64)
+  legal:bool = call(dw,dp,dn) {"function":"tac_hex"}
+  branch legal good(dt,dp) bad_hidden()
+block good(gt:u64,gp:u64)
+  status:u32 = const() {"value":0}
+  ret(status,gt,gp)
+block profile()
+  code_p:u32 = const() {"value":4}
+  jump rejection(code_p)
+block hashes()
+  code_h:u32 = const() {"value":5}
+  jump rejection(code_h)
+block bad_shape()
+  code_s:u32 = const() {"value":6}
+  jump rejection(code_s)
+block bad_tokens()
+  code_t:u32 = const() {"value":7}
+  jump rejection(code_t)
+block bad_static()
+  code_st:u32 = const() {"value":8}
+  jump rejection(code_st)
+block bad_hidden()
+  code_r:u32 = const() {"value":9}
+  jump rejection(code_r)
+block rejection(code:u32)
+  none:u64 = const() {"value":0}
+  ret(code,none,none)
+end
+
+fn tac_tokens(w:mutbuf,t:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,t:u64)
+  a_id:u64 = const() {"value":4}
+  b_id:u64 = const() {"value":5}
+  c_id:u64 = const() {"value":6}
+  a_at:u64 = call(w,a_id) {"function":"tac_at"}
+  b_at:u64 = call(w,b_id) {"function":"tac_at"}
+  c_at:u64 = call(w,c_id) {"function":"tac_at"}
+  na:u64 = call(w,a_at) {"function":"tr_get"}
+  nb:u64 = call(w,b_at) {"function":"tr_get"}
+  nc:u64 = call(w,c_at) {"function":"tr_get"}
+  ma:bool = compare.eq(na,t)
+  mb:bool = compare.eq(nb,t)
+  mc:bool = compare.eq(nc,t)
+  allab:bool = bool.and(ma,mb)
+  all:bool = bool.and(allab,mc)
+  eight:u64 = const() {"value":8}
+  ap:u64 = int.add.wrap(a_at,eight)
+  bp:u64 = int.add.wrap(b_at,eight)
+  cp:u64 = int.add.wrap(c_at,eight)
+  zero:u64 = const() {"value":0}
+  branch all loop(w,t,ap,bp,cp,zero) no()
+block loop(lw:mutbuf,lt:u64,la:u64,lb:u64,lc:u64,li:u64)
+  done:bool = compare.eq(li,lt)
+  branch done yes() item(lw,lt,la,lb,lc,li)
+block item(iw:mutbuf,it:u64,ia:u64,ib:u64,ic:u64,ii:u64)
+  a:u64 = call(iw,ia) {"function":"tr_get"}
+  b:u64 = call(iw,ib) {"function":"tr_get"}
+  c:u64 = call(iw,ic) {"function":"tr_get"}
+  max:u64 = const() {"value":49152}
+  one:u64 = const() {"value":1}
+  a_ok:bool = compare.lt(a,max)
+  b_ok:bool = compare.eq(b,one)
+  c_ok:bool = compare.eq(c,ii)
+  front:bool = bool.and(a_ok,b_ok)
+  okay:bool = bool.and(front,c_ok)
+  eight_i:u64 = const() {"value":8}
+  next_a:u64 = int.add.wrap(ia,eight_i)
+  next_b:u64 = int.add.wrap(ib,eight_i)
+  next_c:u64 = int.add.wrap(ic,eight_i)
+  next_i:u64 = int.add.wrap(ii,one)
+  branch okay loop(iw,it,next_a,next_b,next_c,next_i) no()
+block yes()
+  t_yes:bool = const() {"value":true}
+  ret(t_yes)
+block no()
+  t_no:bool = const() {"value":false}
+  ret(t_no)
+end
+
+fn tac_static(w:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  key13:u64 = const() {"value":13}
+  at13:u64 = const() {"value":313684}
+  len13:u64 = const() {"value":3}
+  check13:bool = call(w,key13,at13,len13) {"function":"tac_literal"}
+  key27:u64 = const() {"value":27}
+  at27:u64 = const() {"value":313692}
+  len27:u64 = const() {"value":7}
+  check27:bool = call(w,key27,at27,len27) {"function":"tac_literal"}
+  key19:u64 = const() {"value":19}
+  actual19:u64 = call(w,key19) {"function":"tac_word"}
+  need19:u64 = const() {"value":2}
+  check19:bool = compare.eq(actual19,need19)
+  key20:u64 = const() {"value":20}
+  actual20:u64 = call(w,key20) {"function":"tac_word"}
+  need20:u64 = const() {"value":1}
+  check20:bool = compare.eq(actual20,need20)
+  key21:u64 = const() {"value":21}
+  actual21:u64 = call(w,key21) {"function":"tac_word"}
+  need21:u64 = const() {"value":0}
+  check21:bool = compare.eq(actual21,need21)
+  key22:u64 = const() {"value":22}
+  actual22:u64 = call(w,key22) {"function":"tac_word"}
+  need22:u64 = const() {"value":1}
+  check22:bool = compare.eq(actual22,need22)
+  key23:u64 = const() {"value":23}
+  actual23:u64 = call(w,key23) {"function":"tac_word"}
+  need23:u64 = const() {"value":0}
+  check23:bool = compare.eq(actual23,need23)
+  key24:u64 = const() {"value":24}
+  actual24:u64 = call(w,key24) {"function":"tac_word"}
+  need24:u64 = const() {"value":1}
+  check24:bool = compare.eq(actual24,need24)
+  key25:u64 = const() {"value":25}
+  actual25:u64 = call(w,key25) {"function":"tac_word"}
+  need25:u64 = const() {"value":1}
+  check25:bool = compare.eq(actual25,need25)
+  key26:u64 = const() {"value":26}
+  actual26:u64 = call(w,key26) {"function":"tac_word"}
+  need26:u64 = const() {"value":134515008}
+  check26:bool = compare.eq(actual26,need26)
+  one:u64 = const() {"value":1}
+  max:u64 = const() {"value":128}
+  key14:u64 = const() {"value":14}
+  actual14:u64 = call(w,key14) {"function":"tac_word"}
+  min14:bool = compare.le(one,actual14)
+  max14:bool = compare.le(actual14,max)
+  check14:bool = bool.and(min14,max14)
+  key15:u64 = const() {"value":15}
+  actual15:u64 = call(w,key15) {"function":"tac_word"}
+  min15:bool = compare.le(one,actual15)
+  max15:bool = compare.le(actual15,max)
+  check15:bool = bool.and(min15,max15)
+  key16:u64 = const() {"value":16}
+  actual16:u64 = call(w,key16) {"function":"tac_word"}
+  min16:bool = compare.le(one,actual16)
+  max16:bool = compare.le(actual16,max)
+  check16:bool = bool.and(min16,max16)
+  key17:u64 = const() {"value":17}
+  actual17:u64 = call(w,key17) {"function":"tac_word"}
+  min17:bool = compare.le(one,actual17)
+  max17:bool = compare.le(actual17,max)
+  check17:bool = bool.and(min17,max17)
+  key18:u64 = const() {"value":18}
+  actual18:u64 = call(w,key18) {"function":"tac_word"}
+  min18:bool = compare.le(one,actual18)
+  max18:bool = compare.le(actual18,max)
+  check18:bool = bool.and(min18,max18)
+  joined0:bool = bool.and(check13,check27)
+  joined1:bool = bool.and(joined0,check19)
+  joined2:bool = bool.and(joined1,check20)
+  joined3:bool = bool.and(joined2,check21)
+  joined4:bool = bool.and(joined3,check22)
+  joined5:bool = bool.and(joined4,check23)
+  joined6:bool = bool.and(joined5,check24)
+  joined7:bool = bool.and(joined6,check25)
+  joined8:bool = bool.and(joined7,check26)
+  joined9:bool = bool.and(joined8,check14)
+  joined10:bool = bool.and(joined9,check15)
+  joined11:bool = bool.and(joined10,check16)
+  joined12:bool = bool.and(joined11,check17)
+  joined13:bool = bool.and(joined12,check18)
+  ret(joined13)
+end
+
+fn tac_digest(w:mutbuf,i:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,i:u64)
+  p:u64 = call(w,i) {"function":"tac_at"}
+  n:u64 = call(w,p) {"function":"tr_get"}
+  sixty_four:u64 = const() {"value":64}
+  exact:bool = compare.eq(n,sixty_four)
+  eight:u64 = const() {"value":8}
+  start:u64 = int.add.wrap(p,eight)
+  branch exact decode(w,start,n) no()
+block decode(dw:mutbuf,dp:u64,dn:u64)
+  ok:bool = call(dw,dp,dn) {"function":"tac_hex"}
+  ret(ok)
+block no()
+  result:bool = const() {"value":false}
+  ret(result)
+end
+
+fn tac_match_pin(r:readbuf,w:mutbuf,p:u64,q:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,q:u64)
+  count:u64 = const() {"value":4}
+  diff:u64 = const() {"value":0}
+  jump loop(r,w,p,q,count,diff)
+block loop(lr:readbuf,lw:mutbuf,lp:u64,lq:u64,lc:u64,ld:u64)
+  a:u64 = call(lr,lp) {"function":"tr_read"}
+  b:u64 = call(lw,lq) {"function":"tr_get"}
+  mismatch:u64 = bit.xor(a,b)
+  accumulated:u64 = bit.or(ld,mismatch)
+  stride:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  np:u64 = int.add.wrap(lp,stride)
+  nq:u64 = int.add.wrap(lq,stride)
+  rem:u64 = int.sub.wrap(lc,one)
+  done:bool = compare.eq(rem,zero)
+  branch done exact(accumulated) loop(lr,lw,np,nq,rem,accumulated)
+block exact(value:u64)
+  no_diff:u64 = const() {"value":0}
+  eq:bool = compare.eq(value,no_diff)
+  ret(eq)
+end
+
+fn tac_hex(w:mutbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,n:u64)
+  past:u64 = int.add.wrap(p,n)
+  jump loop(w,p,past,p)
+block loop(lw:mutbuf,lp:u64,le:u64,ld:u64)
+  done:bool = compare.eq(lp,le)
+  branch done yes() pair(lw,lp,le,ld)
+block pair(pw:mutbuf,pp:u64,pe:u64,pd:u64)
+  one:u64 = const() {"value":1}
+  later:u64 = int.add.wrap(pp,one)
+  ip:usize = int.cast(pp) {"mode":"wrap"}
+  iq:usize = int.cast(later) {"mode":"wrap"}
+  p0:u8 = buffer.load(pw,ip)
+  p1:u8 = buffer.load(pw,iq)
+  v0:u64 = call(p0) {"function":"tac_nibble"}
+  v1:u64 = call(p1) {"function":"tac_nibble"}
+  top:u64 = const() {"value":16}
+  a:bool = compare.lt(v0,top)
+  b:bool = compare.lt(v1,top)
+  good:bool = bool.and(a,b)
+  branch good emit(pw,pp,pe,pd,v0,v1) no()
+block emit(ew:mutbuf,ep:u64,ee:u64,ed:u64,ea:u64,eb:u64)
+  shift:u64 = const() {"value":4}
+  hi:u64 = int.shl.checked(ea,shift)
+  packed:u64 = bit.or(hi,eb)
+  byte:u8 = int.cast(packed) {"mode":"wrap"}
+  pos:usize = int.cast(ed) {"mode":"wrap"}
+  _ = buffer.store(ew,pos,byte)
+  step:u64 = const() {"value":2}
+  inc:u64 = const() {"value":1}
+  next_p:u64 = int.add.wrap(ep,step)
+  next_d:u64 = int.add.wrap(ed,inc)
+  jump loop(ew,next_p,ee,next_d)
+block yes()
+  ok:bool = const() {"value":true}
+  ret(ok)
+block no()
+  refuse:bool = const() {"value":false}
+  ret(refuse)
+end
+
+fn tac_nibble(b:u8) -> (u64) effects(trap) entry(entry)
+block entry(b:u8)
+  x:u64 = int.cast(b) {"mode":"wrap"}
+  d0:u64 = const() {"value":48}
+  d9:u64 = const() {"value":57}
+  a:u64 = const() {"value":97}
+  f:u64 = const() {"value":102}
+  dl:bool = compare.le(d0,x)
+  dh:bool = compare.le(x,d9)
+  al:bool = compare.le(a,x)
+  ah:bool = compare.le(x,f)
+  digit:bool = bool.and(dl,dh)
+  letter:bool = bool.and(al,ah)
+  numeric:u64 = int.sub.wrap(x,d0)
+  delta:u64 = const() {"value":87}
+  alpha:u64 = int.sub.wrap(x,delta)
+  invalid:u64 = const() {"value":16}
+  fallback:u64 = select(letter,alpha,invalid)
+  value:u64 = select(digit,numeric,fallback)
+  ret(value)
+end

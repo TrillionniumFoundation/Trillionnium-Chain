@@ -1,0 +1,166 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_incremental_delta_base_witness
+fn f0(input:readbuf,unused:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,unused:mutbuf,work:mutbuf)
+  input_bytes:usize = buffer.len(input)
+  extent:u64 = int.cast(input_bytes) {"mode":"wrap"}
+  start:u64 = const() {"value":1008}
+  cap:u64 = const() {"value":1048576}
+  minimum_ok:bool = compare.ge(extent,start)
+  maximum_ok:bool = compare.le(extent,cap)
+  frame:bool = bool.and(minimum_ok,maximum_ok)
+  branch frame capacity(input,work,extent,start) malformed()
+block capacity(raw0:readbuf,w0:mutbuf,extent0:u64,start0:u64)
+  work_len:usize = buffer.len(w0)
+  floor:usize = const() {"value":1656}
+  can_work:bool = compare.ge(work_len,floor)
+  count_at:u64 = const() {"value":1000}
+  observed:u64 = call(raw0,count_at) {"function":"dh_be"}
+  count_cap:u64 = const() {"value":8}
+  count_fits:bool = compare.le(observed,count_cap)
+  fit:bool = bool.and(can_work,count_fits)
+  branch fit contexts(raw0,w0,extent0,start0,observed) short()
+block contexts(raw1:readbuf,w1:mutbuf,extent1:u64,start1:u64,count1:u64)
+  s_declared:u64 = const() {"value":0}
+  t_declared:u64 = const() {"value":240}
+  s_supplied:u64 = const() {"value":480}
+  t_supplied:u64 = const() {"value":720}
+  words:u64 = const() {"value":30}
+  source_ok:bool = call(raw1,s_declared,s_supplied,words) {"function":"mhc_equal_pack"}
+  target_ok:bool = call(raw1,t_declared,t_supplied,words) {"function":"mhc_equal_pack"}
+  equal:bool = bool.and(source_ok,target_ok)
+  branch equal dispatch(raw1,w1,extent1,start1,count1) context_mismatch()
+block dispatch(raw2:readbuf,w2:mutbuf,extent2:u64,start2:u64,count2:u64)
+  zero2:u64 = const() {"value":0}
+  nonempty:bool = compare.ne(count2,zero2)
+  branch nonempty row(raw2,w2,extent2,start2,count2,count2,zero2,zero2,zero2) finished(raw2,w2,extent2,start2,count2)
+block row(raw3:readbuf,w3:mutbuf,extent3:u64,at3:u64,count3:u64,left3:u64,previous3:u64,pn3:u64,pk3:u64)
+  end3:u64,n3:u64,k3:u64 = call(raw3,at3,extent3) {"function":"bw_row_extent"}
+  z3:u64 = const() {"value":0}
+  complete3:bool = compare.ne(end3,z3)
+  branch complete3 shape(raw3,w3,extent3,at3,count3,left3,previous3,pn3,pk3,end3,n3,k3) malformed()
+block shape(raw4:readbuf,w4:mutbuf,extent4:u64,at4:u64,count4:u64,left4:u64,previous4:u64,pn4:u64,pk4:u64,end4:u64,n4:u64,k4:u64)
+  z4:u64 = const() {"value":0}
+  max_ns:u64 = const() {"value":128}
+  max_key:u64 = const() {"value":65536}
+  n0:bool = compare.gt(n4,z4)
+  n1:bool = compare.le(n4,max_ns)
+  k0:bool = compare.gt(k4,z4)
+  k1:bool = compare.le(k4,max_key)
+  nk0:bool = bool.and(n0,n1)
+  nk1:bool = bool.and(k0,k1)
+  shape_ok:bool = bool.and(nk0,nk1)
+  branch shape_ok policy(raw4,w4,extent4,at4,count4,left4,previous4,pn4,pk4,end4,n4,k4) invalid_row()
+block policy(raw5:readbuf,w5:mutbuf,extent5:u64,at5:u64,count5:u64,left5:u64,previous5:u64,pn5:u64,pk5:u64,end5:u64,n5:u64,k5:u64)
+  bias5:u64 = const() {"value":16}
+  data5:u64 = int.add.wrap(at5,bias5)
+  reserved:bool = call(raw5,data5,n5) {"function":"batch_reserved"}
+  branch reserved invalid_row() ordered(raw5,w5,extent5,count5,left5,previous5,pn5,pk5,end5,n5,k5,data5)
+block ordered(raw6:readbuf,w6:mutbuf,extent6:u64,count6:u64,left6:u64,previous6:u64,pn6:u64,pk6:u64,end6:u64,n6:u64,k6:u64,data6:u64)
+  first6:bool = compare.eq(left6,count6)
+  branch first6 advance(raw6,w6,extent6,count6,left6,end6,n6,k6,data6) compare_tuple(raw6,w6,extent6,count6,left6,previous6,pn6,pk6,end6,n6,k6,data6)
+block compare_tuple(raw7:readbuf,w7:mutbuf,extent7:u64,count7:u64,left7:u64,previous7:u64,pn7:u64,pk7:u64,end7:u64,n7:u64,k7:u64,data7:u64)
+  lex:bool = call(raw7,previous7,pn7,pk7,data7,n7,k7) {"function":"batch_strict_before"}
+  branch lex advance(raw7,w7,extent7,count7,left7,end7,n7,k7,data7) ordering()
+block advance(raw8:readbuf,w8:mutbuf,extent8:u64,count8:u64,left8:u64,end8:u64,n8:u64,k8:u64,data8:u64)
+  one8:u64 = const() {"value":1}
+  remaining8:u64 = int.sub.wrap(left8,one8)
+  last8:bool = compare.eq(left8,one8)
+  branch last8 finished(raw8,w8,extent8,end8,count8) row(raw8,w8,extent8,end8,count8,remaining8,data8,n8,k8)
+block finished(raw9:readbuf,w9:mutbuf,extent9:u64,cursor9:u64,count9:u64)
+  exact_tail:bool = compare.eq(extent9,cursor9)
+  branch exact_tail final_count(raw9,w9,extent9,count9) malformed()
+block final_count(raw10:readbuf,w10:mutbuf,extent10:u64,count10:u64)
+  declared_at:u64 = const() {"value":960}
+  declared:u64 = call(raw10,declared_at) {"function":"dh_be"}
+  count_matches:bool = compare.eq(declared,count10)
+  branch count_matches hash_start(raw10,w10,extent10,count10) base_mismatch()
+block hash_start(raw11:readbuf,w11:mutbuf,extent11:u64,count11:u64)
+  start11:u64 = const() {"value":1008}
+  leafstart:u64 = const() {"value":1400}
+  z11:u64 = const() {"value":0}
+  has_any:bool = compare.ne(count11,z11)
+  branch has_any hash_row(raw11,w11,extent11,start11,count11,leafstart) fold(raw11,w11,leafstart)
+block hash_row(raw12:readbuf,w12:mutbuf,extent12:u64,at12:u64,left12:u64,leaf12:u64)
+  end12:u64,n12:u64,k12:u64 = call(raw12,at12,extent12) {"function":"bw_row_extent"}
+  bias12:u64 = const() {"value":16}
+  raw_data:u64 = int.add.wrap(at12,bias12)
+  span12:u64 = int.sub.wrap(end12,raw_data)
+  after_ns12:u64 = int.sub.wrap(span12,n12)
+  value12:u64 = int.sub.wrap(after_ns12,k12)
+  hashed:bool = call(raw12,w12,raw_data,n12,k12,value12) {"function":"bf_row_hash"}
+  branch hashed save(raw12,w12,extent12,end12,left12,leaf12) internal()
+block save(raw13:readbuf,w13:mutbuf,extent13:u64,end13:u64,left13:u64,leaf13:u64)
+  sum_at:u64 = const() {"value":1168}
+  _copy:u64 = call(w13,sum_at,leaf13) {"function":"dc_copy"}
+  width13:u64 = const() {"value":32}
+  next_leaf:u64 = int.add.wrap(leaf13,width13)
+  one13:u64 = const() {"value":1}
+  less13:u64 = int.sub.wrap(left13,one13)
+  tail13:bool = compare.eq(left13,one13)
+  branch tail13 fold(raw13,w13,next_leaf) hash_row(raw13,w13,extent13,end13,less13,next_leaf)
+block fold(raw14:readbuf,w14:mutbuf,leaf_end:u64)
+  from14:u64 = const() {"value":1400}
+  length14:u64 = int.sub.wrap(leaf_end,from14)
+  digest14:bool = call(w14,from14,length14) {"function":"snap_target_hash"}
+  branch digest14 compare_digest(raw14,w14) internal()
+block compare_digest(raw15:readbuf,w15:mutbuf)
+  expected15:u64 = const() {"value":968}
+  equal15:bool = call(raw15,w15,expected15) {"function":"r_digest_match"}
+  branch equal15 success() base_mismatch()
+block malformed()
+  format_status:u32 = const() {"value":100}
+  ret(format_status)
+block short()
+  extent_status:u32 = const() {"value":102}
+  ret(extent_status)
+block internal()
+  hash_status:u32 = const() {"value":103}
+  ret(hash_status)
+block invalid_row()
+  row_status:u32 = const() {"value":118}
+  ret(row_status)
+block ordering()
+  order_status:u32 = const() {"value":109}
+  ret(order_status)
+block context_mismatch()
+  context_status:u32 = const() {"value":117}
+  ret(context_status)
+block base_mismatch()
+  base_status:u32 = const() {"value":115}
+  ret(base_status)
+block success()
+  ok_status:u32 = const() {"value":0}
+  ret(ok_status)
+end
+
+fn bw_row_extent(raw:readbuf,at:u64,extent:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,at:u64,extent:u64)
+  width:u64 = const() {"value":16}
+  data:u64 = int.add.wrap(at,width)
+  fits:bool = compare.le(data,extent)
+  branch fits decode(raw,at,data,extent) invalid()
+block decode(source:readbuf,row_at:u64,field_start:u64,limit:u64)
+  lengths:u64 = call(source,row_at) {"function":"tr_read"}
+  eight:u64 = const() {"value":8}
+  tail_at:u64 = int.add.wrap(row_at,eight)
+  tail:u64 = call(source,tail_at) {"function":"tr_read"}
+  low:u64 = const() {"value":4294967295}
+  high:u64 = const() {"value":32}
+  ns:u64 = bit.and(lengths,low)
+  key:u64 = int.shr.checked(lengths,high)
+  value:u64 = bit.and(tail,low)
+  spare:u64 = int.shr.checked(tail,high)
+  zero:u64 = const() {"value":0}
+  reserved_zero:bool = compare.eq(spare,zero)
+  after_ns:u64 = int.add.wrap(field_start,ns)
+  after_key:u64 = int.add.wrap(after_ns,key)
+  next:u64 = int.add.wrap(after_key,value)
+  bounded:bool = compare.le(next,limit)
+  valid:bool = bool.and(bounded,reserved_zero)
+  branch valid success(next,ns,key) invalid()
+block success(next1:u64,n1:u64,k1:u64)
+  ret(next1,n1,k1)
+block invalid()
+  refusal:u64 = const() {"value":0}
+  ret(refusal,refusal,refusal)
+end

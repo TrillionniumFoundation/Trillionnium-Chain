@@ -1,0 +1,785 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_journal_audit_dto_wjd1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  native:usize = buffer.len(input)
+  bytes:u64 = int.cast(native) {"mode":"wrap"}
+  limit:u64 = const() {"value":65536}
+  bounded:bool = compare.le(bytes,limit)
+  branch bounded record(input,output,bytes) capacity()
+block record(ri:readbuf,ro:mutbuf,rn:u64)
+  zero:u64 = const() {"value":0}
+  task:u64,request:u64,status:u64 = call(ri,ro,zero,rn) {"function":"wd_record_at"}
+  accepted:bool = compare.ne(request,zero)
+  branch accepted fit(ri,ro,rn,task,request,status) malformed()
+block fit(fi:readbuf,fo:mutbuf,fn:u64,ft:u64,fr:u64,fs:u64)
+  low:u64 = const() {"value":4294967295}
+  request_size:u64 = bit.and(fr,low)
+  status_size:u64 = bit.and(fs,low)
+  payload_size:u64 = int.add.wrap(request_size,status_size)
+  header_size:u64 = const() {"value":108}
+  needed:u64 = int.add.wrap(header_size,payload_size)
+  cap_native:usize = buffer.len(fo)
+  cap:u64 = int.cast(cap_native) {"mode":"wrap"}
+  ready:bool = compare.le(needed,cap)
+  branch ready emit(fi,fo,fn,ft,fr,fs,request_size,status_size,header_size,needed) capacity()
+block emit(ei:readbuf,eo:mutbuf,en:u64,et:u64,er:u64,es:u64,ern:u64,esn:u64,eh:u64,el:u64)
+  row_at:u64 = const() {"value":0}
+  _ = call(ei,eo,row_at,en,et,er,es) {"function":"wd_emit_at"}
+  total:u32 = int.cast(el) {"mode":"wrap"}
+  ret(total)
+block malformed()
+  invalid:u32 = const() {"value":4294967295}
+  ret(invalid)
+block capacity()
+  insufficient:u32 = const() {"value":4294967294}
+  ret(insufficient)
+end
+fn wd_emit_at(input:readbuf,out:mutbuf,at:u64,extent:u64,task:u64,request:u64,status:u64) -> () effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,at:u64,extent:u64,task:u64,request:u64,status:u64)
+  begin:usize = int.cast(at) {"mode":"wrap"}
+  fixed_size:usize = const() {"value":108}
+  empty:u8 = const() {"value":0}
+  _ = buffer.fill_range(out,begin,fixed_size,empty)
+  magic:u64 = const() {"value":827083351}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  req_desc:u64 = const() {"value":64}
+  header_size:u64 = const() {"value":108}
+  yes:bool = const() {"value":true}
+  ignored_magic:u64 = call(out,at,magic,four,yes) {"function":"wa_word"}
+  task_at:u64 = int.add.wrap(at,eight)
+  ignored_task:u64 = call(out,task_at,task,eight,yes) {"function":"wa_word"}
+  request_slot:u64 = int.add.wrap(at,req_desc)
+  low:u64 = const() {"value":4294967295}
+  req_len:u64 = bit.and(request,low)
+  status_len:u64 = bit.and(status,low)
+  status_slot:u64 = call(out,request_slot,req_len,four,yes) {"function":"wa_word"}
+  ignored_lengths:u64 = call(out,status_slot,status_len,four,yes) {"function":"wa_word"}
+  shift:u64 = const() {"value":32}
+  req_at:u64 = int.shr.checked(request,shift)
+  status_at:u64 = int.shr.checked(status,shift)
+  req_dest:u64 = int.add.wrap(at,header_size)
+  status_dest:u64 = int.add.wrap(req_dest,req_len)
+  r_end:u64,r_size:u64 = call(input,out,req_at,extent,req_dest,yes) {"function":"wd_string"}
+  s_end:u64,s_size:u64 = call(input,out,status_at,extent,status_dest,yes) {"function":"wd_string"}
+  ret()
+end
+fn wd_record_at(input:readbuf,output:mutbuf,origin:u64,extent:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,origin:u64,extent:u64)
+  start:u64 = const() {"value":0}
+  first_token:u64 = call(input,origin,extent) {"function":"wd_space"}
+  open:u64 = const() {"value":123}
+  width:u64 = const() {"value":1}
+  next:u64 = call(input,first_token,extent,open,width) {"function":"wd_expect"}
+  present:bool = compare.ne(next,start)
+  branch present field(input,output,extent,next,start,start,start,start) failure()
+block field(fi:readbuf,fo:mutbuf,fe:u64,fa:u64,index:u64,task:u64,request:u64,status:u64)
+  key_at:u64 = call(fi,fa,fe) {"function":"wd_space"}
+  after_key:u64 = call(fi,key_at,fe,index) {"function":"wd_key"}
+  none:u64 = const() {"value":0}
+  matched:bool = compare.ne(after_key,none)
+  branch matched colon(fi,fo,fe,after_key,index,task,request,status) failure()
+block colon(ci:readbuf,co:mutbuf,ce:u64,ca:u64,cx:u64,ct:u64,cr:u64,cs:u64)
+  colon_at:u64 = call(ci,ca,ce) {"function":"wd_space"}
+  sep:u64 = const() {"value":58}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  after_colon:u64 = call(ci,colon_at,ce,sep,one) {"function":"wd_expect"}
+  intact:bool = compare.ne(after_colon,zero)
+  branch intact value(ci,co,ce,after_colon,cx,ct,cr,cs) failure()
+block value(vi:readbuf,vo:mutbuf,ve:u64,va:u64,vx:u64,vt:u64,vr:u64,vs:u64)
+  val_at:u64 = call(vi,va,ve) {"function":"wd_space"}
+  first_optional:u64 = const() {"value":9}
+  optional:bool = compare.ge(vx,first_optional)
+  branch optional null_value(vi,vo,ve,val_at,vx,vt,vr,vs) classify(vi,vo,ve,val_at,vx,vt,vr,vs)
+block null_value(ni:readbuf,no:mutbuf,ne:u64,na:u64,nx:u64,nt:u64,nr:u64,ns:u64)
+  null_word:u64 = const() {"value":1819047278}
+  four:u64 = const() {"value":4}
+  past_null:u64 = call(ni,na,ne,null_word,four) {"function":"wd_expect"}
+  jump value_done(ni,no,ne,past_null,nx,nt,nr,ns)
+block classify(di:readbuf,do:mutbuf,de:u64,da:u64,dx:u64,dt:u64,dr:u64,ds:u64)
+  task_index:u64 = const() {"value":1}
+  time_index:u64 = const() {"value":8}
+  is_task:bool = compare.eq(dx,task_index)
+  is_time:bool = compare.eq(dx,time_index)
+  number:bool = bool.or(is_task,is_time)
+  branch number numeric(di,do,de,da,dx,dt,dr,ds,is_task) text(di,do,de,da,dx,dt,dr,ds)
+block numeric(mi:readbuf,mo:mutbuf,me:u64,ma:u64,mx:u64,mt:u64,mr:u64,ms:u64,task_field:bool)
+  next_at:u64,number_value:u64 = call(mi,ma,me,task_field) {"function":"wd_number"}
+  task_value:u64 = select(task_field,number_value,mt)
+  jump value_done(mi,mo,me,next_at,mx,task_value,mr,ms)
+block text(ti:readbuf,to:mutbuf,te:u64,ta:u64,tx:u64,tt:u64,tr:u64,ts:u64)
+  dry_string:bool = const() {"value":false}
+  out_at:u64 = const() {"value":0}
+  after_text:u64,decoded:u64 = call(ti,to,ta,te,out_at,dry_string) {"function":"wd_string"}
+  shift:u64 = const() {"value":32}
+  start_word:u64 = int.shl.checked(ta,shift)
+  geometry:u64 = bit.or(start_word,decoded)
+  status_index:u64 = const() {"value":7}
+  is_request:bool = compare.eq(tx,out_at)
+  is_status:bool = compare.eq(tx,status_index)
+  stored_request:u64 = select(is_request,geometry,tr)
+  stored_status:u64 = select(is_status,geometry,ts)
+  jump value_done(ti,to,te,after_text,tx,tt,stored_request,stored_status)
+block value_done(wi:readbuf,wo:mutbuf,we:u64,wa:u64,wx:u64,wt:u64,wr:u64,ws:u64)
+  nil:u64 = const() {"value":0}
+  valid:bool = compare.ne(wa,nil)
+  branch valid delimiter(wi,wo,we,wa,wx,wt,wr,ws) failure()
+block delimiter(li:readbuf,lo:mutbuf,le:u64,la:u64,lx:u64,lt:u64,lr:u64,ls:u64)
+  token_at:u64 = call(li,la,le) {"function":"wd_space"}
+  token:u64 = call(li,token_at,le) {"function":"wd_octet"}
+  close:u64 = const() {"value":125}
+  is_close:bool = compare.eq(token,close)
+  branch is_close finish_record(li,le,token_at,lx,lt,lr,ls) comma(li,lo,le,token_at,lx,lt,lr,ls,token)
+block comma(ai:readbuf,ao:mutbuf,ae:u64,aa:u64,ax:u64,at:u64,ar:u64,as:u64,ab:u64)
+  comma_value:u64 = const() {"value":44}
+  has_comma:bool = compare.eq(ab,comma_value)
+  last_field:u64 = const() {"value":21}
+  remaining:bool = compare.lt(ax,last_field)
+  continue:bool = bool.and(has_comma,remaining)
+  step:u64 = const() {"value":1}
+  next_key:u64 = int.add.wrap(aa,step)
+  next_field:u64 = int.add.wrap(ax,step)
+  branch continue field(ai,ao,ae,next_key,next_field,at,ar,as) failure()
+block finish_record(bi:readbuf,be:u64,ba:u64,bx:u64,bt:u64,br:u64,bs:u64)
+  only_required:u64 = const() {"value":8}
+  all_fields:u64 = const() {"value":21}
+  short:bool = compare.eq(bx,only_required)
+  long:bool = compare.eq(bx,all_fields)
+  complete:bool = bool.or(short,long)
+  one2:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(ba,one2)
+  end_at:u64 = call(bi,after,be) {"function":"wd_space"}
+  aligned:bool = compare.eq(end_at,be)
+  finished:bool = bool.and(complete,aligned)
+  branch finished success(bt,br,bs) failure()
+block success(task_id:u64,request_span:u64,status_span:u64)
+  ret(task_id,request_span,status_span)
+block failure()
+  invalid:u64 = const() {"value":0}
+  ret(invalid,invalid,invalid)
+end
+fn wd_octet(input:readbuf,at:u64,extent:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,at:u64,extent:u64)
+  in_bounds:bool = compare.lt(at,extent)
+  branch in_bounds get(input,at) absent()
+block get(gi:readbuf,ga:u64)
+  index:usize = int.cast(ga) {"mode":"wrap"}
+  byte:u8 = buffer.load(gi,index)
+  scalar:u64 = int.cast(byte) {"mode":"wrap"}
+  ret(scalar)
+block absent()
+  sentinel:u64 = const() {"value":256}
+  ret(sentinel)
+end
+fn wd_space(input:readbuf,at:u64,extent:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,at:u64,extent:u64)
+  jump scan(input,at,extent)
+block scan(si:readbuf,sa:u64,se:u64)
+  byte:u64 = call(si,sa,se) {"function":"wd_octet"}
+  tab:u64 = const() {"value":9}
+  cr:u64 = const() {"value":13}
+  ascii_space:u64 = const() {"value":32}
+  is_tab:bool = compare.eq(byte,tab)
+  is_cr:bool = compare.eq(byte,cr)
+  is_space:bool = compare.eq(byte,ascii_space)
+  controls:bool = bool.or(is_tab,is_cr)
+  skip:bool = bool.or(controls,is_space)
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(sa,step)
+  branch skip scan(si,next,se) done(sa)
+block done(value:u64)
+  ret(value)
+end
+fn wd_expect(input:readbuf,at:u64,extent:u64,word:u64,count:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,at:u64,extent:u64,word:u64,count:u64)
+  stop:u64 = int.add.wrap(at,count)
+  fits:bool = compare.le(stop,extent)
+  branch fits compare_word(input,at,word,count,stop) invalid()
+block compare_word(ci:readbuf,ca:u64,cw:u64,cn:u64,ce:u64)
+  found:u64 = call(ci,ca,cn) {"function":"wa_read"}
+  matches:bool = compare.eq(found,cw)
+  branch matches success(ce) invalid()
+block success(value:u64)
+  ret(value)
+block invalid()
+  zero:u64 = const() {"value":0}
+  ret(zero)
+end
+fn wd_string(input:readbuf,out:mutbuf,start:u64,extent:u64,dest:u64,emit:bool) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,start:u64,extent:u64,dest:u64,emit:bool)
+  quote:u64 = const() {"value":34}
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  body:u64 = call(input,start,extent,quote,one) {"function":"wd_expect"}
+  opened:bool = compare.ne(body,zero)
+  branch opened scalar(input,out,body,extent,dest,emit,dest) failure()
+block scalar(si:readbuf,so:mutbuf,sa:u64,se:u64,sd:u64,sw:bool,op:u64)
+  byte:u64 = call(si,sa,se) {"function":"wd_octet"}
+  close:u64 = const() {"value":34}
+  ended:bool = compare.eq(byte,close)
+  branch ended done(sa,sd,op) decode(si,so,sa,se,sd,sw,op)
+block decode(di:readbuf,do:mutbuf,da:u64,de:u64,dd:u64,dw:bool,dp:u64)
+  packed:u64 = call(di,da,de) {"function":"jv_scalar"}
+  invalid:u64 = const() {"value":18446744073709551615}
+  accepted:bool = compare.ne(packed,invalid)
+  branch accepted step(di,do,de,dd,dw,dp,packed) failure()
+block step(ti:readbuf,to:mutbuf,te:u64,td:u64,tw:bool,tp:u64,tpacked:u64)
+  scalar_mask:u64 = const() {"value":2097151}
+  shift:u64 = const() {"value":21}
+  codepoint:u64 = bit.and(tpacked,scalar_mask)
+  next:u64 = int.shr.checked(tpacked,shift)
+  branch tw write(ti,to,te,td,tw,tp,next,codepoint) measure(ti,to,te,td,tw,tp,next,codepoint)
+block write(wi:readbuf,wo:mutbuf,we:u64,wd:u64,ww:bool,wp:u64,wn:u64,wcp:u64)
+  written:u64 = call(wo,wp,wcp) {"function":"oj_utf8"}
+  jump scalar(wi,wo,wn,we,wd,ww,written)
+block measure(mi:readbuf,mo:mutbuf,me:u64,md:u64,mw:bool,mp:u64,mn:u64,mcp:u64)
+  ascii:u64 = const() {"value":128}
+  two_byte:u64 = const() {"value":2048}
+  three_byte:u64 = const() {"value":65536}
+  one_size:u64 = const() {"value":1}
+  two_size:u64 = const() {"value":2}
+  three_size:u64 = const() {"value":3}
+  four_size:u64 = const() {"value":4}
+  is_ascii:bool = compare.lt(mcp,ascii)
+  at_most_two:bool = compare.lt(mcp,two_byte)
+  at_most_three:bool = compare.lt(mcp,three_byte)
+  long_size:u64 = select(at_most_three,three_size,four_size)
+  other_size:u64 = select(at_most_two,two_size,long_size)
+  width:u64 = select(is_ascii,one_size,other_size)
+  measured:u64 = int.add.wrap(mp,width)
+  jump scalar(mi,mo,mn,me,md,mw,measured)
+block done(end_quote:u64,base:u64,end_output:u64)
+  step_byte:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(end_quote,step_byte)
+  length:u64 = int.sub.wrap(end_output,base)
+  ret(after,length)
+block failure()
+  none:u64 = const() {"value":0}
+  ret(none,none)
+end
+fn wd_number(input:readbuf,at:u64,extent:u64,task:bool) -> (u64,u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,at:u64,extent:u64,task:bool)
+  first:u64 = call(input,at,extent) {"function":"wd_octet"}
+  ascii_zero:u64 = const() {"value":48}
+  leading_zero:bool = compare.eq(first,ascii_zero)
+  branch leading_zero just_zero(at) first_digit(input,at,extent,task,first)
+block just_zero(za:u64)
+  one:u64 = const() {"value":1}
+  zero:u64 = const() {"value":0}
+  end_at:u64 = int.add.wrap(za,one)
+  ret(end_at,zero)
+block first_digit(fi:readbuf,fa:u64,fe:u64,ft:bool,fb:u64)
+  lo:u64 = const() {"value":49}
+  hi:u64 = const() {"value":57}
+  above:bool = compare.ge(fb,lo)
+  below:bool = compare.le(fb,hi)
+  decimal:bool = bool.and(above,below)
+  initial:u64 = const() {"value":0}
+  branch decimal digits(fi,fa,fe,ft,initial,initial,initial) bad()
+block digits(di:readbuf,da:u64,de:u64,dt:bool,dc:u64,dv:u64,dr:u64)
+  byte:u64 = call(di,da,de) {"function":"wd_octet"}
+  start:u64 = const() {"value":48}
+  stop:u64 = const() {"value":57}
+  at_least:bool = compare.ge(byte,start)
+  at_most:bool = compare.le(byte,stop)
+  in_decimal:bool = bool.and(at_least,at_most)
+  branch in_decimal accumulate(di,da,de,dt,dc,dv,dr,byte) done(da,dt,dc,dv,dr)
+block accumulate(ai:readbuf,aa:u64,ae:u64,atask:bool,ac:u64,av:u64,ar:u64,ab:u64)
+  branch atask uint64(ai,aa,ae,atask,ac,av,ar,ab) timestamp(ai,aa,ae,atask,ac,av,ar,ab)
+block uint64(ui:readbuf,ua:u64,ue:u64,ut:bool,uc:u64,uv:u64,ur:u64,ub:u64)
+  max_prefix:u64 = const() {"value":1844674407370955161}
+  max_last:u64 = const() {"value":53}
+  lower:bool = compare.lt(uv,max_prefix)
+  ceiling:bool = compare.eq(uv,max_prefix)
+  bounded_last:bool = compare.le(ub,max_last)
+  still_fits:bool = bool.and(ceiling,bounded_last)
+  fits:bool = bool.or(lower,still_fits)
+  branch fits uint_sum(ui,ua,ue,ut,uc,uv,ur,ub) bad()
+block uint_sum(si:readbuf,sa:u64,se:u64,st:bool,sc:u64,sv:u64,sr:u64,sb:u64)
+  ten:u64 = const() {"value":10}
+  decimal_zero:u64 = const() {"value":48}
+  digit:u64 = int.sub.wrap(sb,decimal_zero)
+  scaled:u64 = int.mul.wrap(sv,ten)
+  value:u64 = int.add.wrap(scaled,digit)
+  jump advance(si,sa,se,st,sc,value,sr)
+block timestamp(ti:readbuf,ta:u64,te:u64,tt:bool,tc:u64,tv:u64,tr:u64,tb:u64)
+  decimal_limit:u64 = const() {"value":39}
+  room:bool = compare.lt(tc,decimal_limit)
+  branch room timestamp_digit(ti,ta,te,tt,tc,tv,tr,tb) bad()
+block timestamp_digit(pi:readbuf,pa:u64,pe:u64,pt:bool,pc:u64,pv:u64,pr:u64,pb:u64)
+  maximum:u64 = call(pc) {"function":"wd_u128_digit"}
+  none:u64 = const() {"value":0}
+  less:u64 = const() {"value":1}
+  greater:u64 = const() {"value":2}
+  same:bool = compare.eq(pb,maximum)
+  earlier:bool = compare.lt(pb,maximum)
+  unequal:u64 = select(earlier,less,greater)
+  relation:u64 = select(same,none,unequal)
+  was_equal:bool = compare.eq(pr,none)
+  updated:u64 = select(was_equal,relation,pr)
+  jump advance(pi,pa,pe,pt,pc,pv,updated)
+block advance(vi:readbuf,va:u64,ve:u64,vt:bool,vc:u64,vv:u64,vr:u64)
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(va,step)
+  count:u64 = int.add.wrap(vc,step)
+  jump digits(vi,next,ve,vt,count,vv,vr)
+block done(fa2:u64,ft2:bool,fc2:u64,fv2:u64,fr2:u64)
+  decimal_max:u64 = const() {"value":39}
+  exceeds:u64 = const() {"value":2}
+  short:bool = compare.lt(fc2,decimal_max)
+  within:bool = compare.ne(fr2,exceeds)
+  allowed:bool = bool.or(short,within)
+  valid:bool = bool.or(ft2,allowed)
+  branch valid good(fa2,fv2) bad()
+block good(end_number:u64,parsed:u64)
+  ret(end_number,parsed)
+block bad()
+  invalid:u64 = const() {"value":0}
+  ret(invalid,invalid)
+end
+fn wd_u128_digit(index:u64) -> (u64) effects(trap) entry(entry)
+block entry(index:u64)
+  eight:u64 = const() {"value":8}
+  mask:u64 = const() {"value":255}
+  zero_word:u64 = const() {"value":0}
+  word:u64 = int.div.checked(index,eight)
+  within:u64 = int.rem.checked(index,eight)
+  shift:u64 = int.mul.wrap(within,eight)
+  chunk_0:u64 = const() {"value":3905520518801929267}
+  word_0:u64 = const() {"value":0}
+  is_word_0:bool = compare.eq(word,word_0)
+  selected_0:u64 = select(is_word_0,chunk_0,zero_word)
+  chunk_1:u64 = const() {"value":3762813809382799670}
+  word_1:u64 = const() {"value":1}
+  is_word_1:bool = compare.eq(word,word_1)
+  selected_1:u64 = select(is_word_1,chunk_1,selected_0)
+  chunk_2:u64 = const() {"value":3762532308737078070}
+  word_2:u64 = const() {"value":2}
+  is_word_2:bool = compare.eq(word,word_2)
+  selected_2:u64 = select(is_word_2,chunk_2,selected_1)
+  chunk_3:u64 = const() {"value":3906645297756319798}
+  word_3:u64 = const() {"value":3}
+  is_word_3:bool = compare.eq(word,word_3)
+  selected_3:u64 = select(is_word_3,chunk_3,selected_2)
+  chunk_4:u64 = const() {"value":14976672045543992}
+  word_4:u64 = const() {"value":4}
+  is_word_4:bool = compare.eq(word,word_4)
+  selected_4:u64 = select(is_word_4,chunk_4,selected_3)
+  shifted:u64 = int.shr.checked(selected_4,shift)
+  byte:u64 = bit.and(shifted,mask)
+  ret(byte)
+end
+fn wd_key(input:readbuf,at:u64,extent:u64,selector:u64) -> (u64) effects(read,write,trap) entry(test_request_id)
+block test_request_id(input:readbuf,at:u64,extent:u64,selector:u64)
+  request_id_index:u64 = const() {"value":0}
+  choose_request_id:bool = compare.eq(selector,request_id_index)
+  branch choose_request_id key_request_id(input,at,extent) test_task_id(input,at,extent,selector)
+block test_task_id(k1_input:readbuf,k1_at:u64,k1_extent:u64,k1_selector:u64)
+  task_id_index:u64 = const() {"value":1}
+  choose_task_id:bool = compare.eq(k1_selector,task_id_index)
+  branch choose_task_id key_task_id(k1_input,k1_at,k1_extent) test_channel(k1_input,k1_at,k1_extent,k1_selector)
+block test_channel(k2_input:readbuf,k2_at:u64,k2_extent:u64,k2_selector:u64)
+  channel_index:u64 = const() {"value":2}
+  choose_channel:bool = compare.eq(k2_selector,channel_index)
+  branch choose_channel key_channel(k2_input,k2_at,k2_extent) test_user_id(k2_input,k2_at,k2_extent,k2_selector)
+block test_user_id(k3_input:readbuf,k3_at:u64,k3_extent:u64,k3_selector:u64)
+  user_id_index:u64 = const() {"value":3}
+  choose_user_id:bool = compare.eq(k3_selector,user_id_index)
+  branch choose_user_id key_user_id(k3_input,k3_at,k3_extent) test_session_id(k3_input,k3_at,k3_extent,k3_selector)
+block test_session_id(k4_input:readbuf,k4_at:u64,k4_extent:u64,k4_selector:u64)
+  session_id_index:u64 = const() {"value":4}
+  choose_session_id:bool = compare.eq(k4_selector,session_id_index)
+  branch choose_session_id key_session_id(k4_input,k4_at,k4_extent) test_text(k4_input,k4_at,k4_extent,k4_selector)
+block test_text(k5_input:readbuf,k5_at:u64,k5_extent:u64,k5_selector:u64)
+  text_index:u64 = const() {"value":5}
+  choose_text:bool = compare.eq(k5_selector,text_index)
+  branch choose_text key_text(k5_input,k5_at,k5_extent) test_idempotency_key(k5_input,k5_at,k5_extent,k5_selector)
+block test_idempotency_key(k6_input:readbuf,k6_at:u64,k6_extent:u64,k6_selector:u64)
+  idempotency_key_index:u64 = const() {"value":6}
+  choose_idempotency_key:bool = compare.eq(k6_selector,idempotency_key_index)
+  branch choose_idempotency_key key_idempotency_key(k6_input,k6_at,k6_extent) test_status(k6_input,k6_at,k6_extent,k6_selector)
+block test_status(k7_input:readbuf,k7_at:u64,k7_extent:u64,k7_selector:u64)
+  status_index:u64 = const() {"value":7}
+  choose_status:bool = compare.eq(k7_selector,status_index)
+  branch choose_status key_status(k7_input,k7_at,k7_extent) test_created_at_unix_ms(k7_input,k7_at,k7_extent,k7_selector)
+block test_created_at_unix_ms(k8_input:readbuf,k8_at:u64,k8_extent:u64,k8_selector:u64)
+  created_at_unix_ms_index:u64 = const() {"value":8}
+  choose_created_at_unix_ms:bool = compare.eq(k8_selector,created_at_unix_ms_index)
+  branch choose_created_at_unix_ms key_created_at_unix_ms(k8_input,k8_at,k8_extent) test_assigned_worker(k8_input,k8_at,k8_extent,k8_selector)
+block test_assigned_worker(k9_input:readbuf,k9_at:u64,k9_extent:u64,k9_selector:u64)
+  assigned_worker_index:u64 = const() {"value":9}
+  choose_assigned_worker:bool = compare.eq(k9_selector,assigned_worker_index)
+  branch choose_assigned_worker key_assigned_worker(k9_input,k9_at,k9_extent) test_assigned_at_unix_ms(k9_input,k9_at,k9_extent,k9_selector)
+block test_assigned_at_unix_ms(k10_input:readbuf,k10_at:u64,k10_extent:u64,k10_selector:u64)
+  assigned_at_unix_ms_index:u64 = const() {"value":10}
+  choose_assigned_at_unix_ms:bool = compare.eq(k10_selector,assigned_at_unix_ms_index)
+  branch choose_assigned_at_unix_ms key_assigned_at_unix_ms(k10_input,k10_at,k10_extent) test_model_output(k10_input,k10_at,k10_extent,k10_selector)
+block test_model_output(k11_input:readbuf,k11_at:u64,k11_extent:u64,k11_selector:u64)
+  model_output_index:u64 = const() {"value":11}
+  choose_model_output:bool = compare.eq(k11_selector,model_output_index)
+  branch choose_model_output key_model_output(k11_input,k11_at,k11_extent) test_provider_request_id(k11_input,k11_at,k11_extent,k11_selector)
+block test_provider_request_id(k12_input:readbuf,k12_at:u64,k12_extent:u64,k12_selector:u64)
+  provider_request_id_index:u64 = const() {"value":12}
+  choose_provider_request_id:bool = compare.eq(k12_selector,provider_request_id_index)
+  branch choose_provider_request_id key_provider_request_id(k12_input,k12_at,k12_extent) test_provenance_schema_version(k12_input,k12_at,k12_extent,k12_selector)
+block test_provenance_schema_version(k13_input:readbuf,k13_at:u64,k13_extent:u64,k13_selector:u64)
+  provenance_schema_version_index:u64 = const() {"value":13}
+  choose_provenance_schema_version:bool = compare.eq(k13_selector,provenance_schema_version_index)
+  branch choose_provenance_schema_version key_provenance_schema_version(k13_input,k13_at,k13_extent) test_llm_provenance(k13_input,k13_at,k13_extent,k13_selector)
+block test_llm_provenance(k14_input:readbuf,k14_at:u64,k14_extent:u64,k14_selector:u64)
+  llm_provenance_index:u64 = const() {"value":14}
+  choose_llm_provenance:bool = compare.eq(k14_selector,llm_provenance_index)
+  branch choose_llm_provenance key_llm_provenance(k14_input,k14_at,k14_extent) test_result_hash(k14_input,k14_at,k14_extent,k14_selector)
+block test_result_hash(k15_input:readbuf,k15_at:u64,k15_extent:u64,k15_selector:u64)
+  result_hash_index:u64 = const() {"value":15}
+  choose_result_hash:bool = compare.eq(k15_selector,result_hash_index)
+  branch choose_result_hash key_result_hash(k15_input,k15_at,k15_extent) test_verifier_status(k15_input,k15_at,k15_extent,k15_selector)
+block test_verifier_status(k16_input:readbuf,k16_at:u64,k16_extent:u64,k16_selector:u64)
+  verifier_status_index:u64 = const() {"value":16}
+  choose_verifier_status:bool = compare.eq(k16_selector,verifier_status_index)
+  branch choose_verifier_status key_verifier_status(k16_input,k16_at,k16_extent) test_resolution_code(k16_input,k16_at,k16_extent,k16_selector)
+block test_resolution_code(k17_input:readbuf,k17_at:u64,k17_extent:u64,k17_selector:u64)
+  resolution_code_index:u64 = const() {"value":17}
+  choose_resolution_code:bool = compare.eq(k17_selector,resolution_code_index)
+  branch choose_resolution_code key_resolution_code(k17_input,k17_at,k17_extent) test_commit_tx_hash(k17_input,k17_at,k17_extent,k17_selector)
+block test_commit_tx_hash(k18_input:readbuf,k18_at:u64,k18_extent:u64,k18_selector:u64)
+  commit_tx_hash_index:u64 = const() {"value":18}
+  choose_commit_tx_hash:bool = compare.eq(k18_selector,commit_tx_hash_index)
+  branch choose_commit_tx_hash key_commit_tx_hash(k18_input,k18_at,k18_extent) test_reveal_tx_hash(k18_input,k18_at,k18_extent,k18_selector)
+block test_reveal_tx_hash(k19_input:readbuf,k19_at:u64,k19_extent:u64,k19_selector:u64)
+  reveal_tx_hash_index:u64 = const() {"value":19}
+  choose_reveal_tx_hash:bool = compare.eq(k19_selector,reveal_tx_hash_index)
+  branch choose_reveal_tx_hash key_reveal_tx_hash(k19_input,k19_at,k19_extent) test_adapter_error(k19_input,k19_at,k19_extent,k19_selector)
+block test_adapter_error(k20_input:readbuf,k20_at:u64,k20_extent:u64,k20_selector:u64)
+  adapter_error_index:u64 = const() {"value":20}
+  choose_adapter_error:bool = compare.eq(k20_selector,adapter_error_index)
+  branch choose_adapter_error key_adapter_error(k20_input,k20_at,k20_extent) test_reputation_delta(k20_input,k20_at,k20_extent,k20_selector)
+block test_reputation_delta(k21_input:readbuf,k21_at:u64,k21_extent:u64,k21_selector:u64)
+  reputation_delta_index:u64 = const() {"value":21}
+  choose_reputation_delta:bool = compare.eq(k21_selector,reputation_delta_index)
+  branch choose_reputation_delta key_reputation_delta(k21_input,k21_at,k21_extent) key_failure()
+block key_request_id(request_id_0_in:readbuf,request_id_0_at:u64,request_id_0_end:u64)
+  request_id_0_word:u64 = const() {"value":8391162085809418786}
+  request_id_0_size:u64 = const() {"value":8}
+  request_id_0_after:u64 = call(request_id_0_in,request_id_0_at,request_id_0_end,request_id_0_word,request_id_0_size) {"function":"wd_expect"}
+  request_id_0_invalid:u64 = const() {"value":0}
+  request_id_0_matched:bool = compare.ne(request_id_0_after,request_id_0_invalid)
+  branch request_id_0_matched key_request_id_1(request_id_0_in,request_id_0_after,request_id_0_end) key_failure()
+block key_request_id_1(request_id_1_in:readbuf,request_id_1_at:u64,request_id_1_end:u64)
+  request_id_1_word:u64 = const() {"value":577005919}
+  request_id_1_size:u64 = const() {"value":4}
+  request_id_1_after:u64 = call(request_id_1_in,request_id_1_at,request_id_1_end,request_id_1_word,request_id_1_size) {"function":"wd_expect"}
+  ret(request_id_1_after)
+block key_task_id(task_id_0_in:readbuf,task_id_0_at:u64,task_id_0_end:u64)
+  task_id_0_word:u64 = const() {"value":7235419191449318434}
+  task_id_0_size:u64 = const() {"value":8}
+  task_id_0_after:u64 = call(task_id_0_in,task_id_0_at,task_id_0_end,task_id_0_word,task_id_0_size) {"function":"wd_expect"}
+  task_id_0_invalid:u64 = const() {"value":0}
+  task_id_0_matched:bool = compare.ne(task_id_0_after,task_id_0_invalid)
+  branch task_id_0_matched key_task_id_1(task_id_0_in,task_id_0_after,task_id_0_end) key_failure()
+block key_task_id_1(task_id_1_in:readbuf,task_id_1_at:u64,task_id_1_end:u64)
+  task_id_1_word:u64 = const() {"value":34}
+  task_id_1_size:u64 = const() {"value":1}
+  task_id_1_after:u64 = call(task_id_1_in,task_id_1_at,task_id_1_end,task_id_1_word,task_id_1_size) {"function":"wd_expect"}
+  ret(task_id_1_after)
+block key_channel(channel_0_in:readbuf,channel_0_at:u64,channel_0_end:u64)
+  channel_0_word:u64 = const() {"value":7810770549103682338}
+  channel_0_size:u64 = const() {"value":8}
+  channel_0_after:u64 = call(channel_0_in,channel_0_at,channel_0_end,channel_0_word,channel_0_size) {"function":"wd_expect"}
+  channel_0_invalid:u64 = const() {"value":0}
+  channel_0_matched:bool = compare.ne(channel_0_after,channel_0_invalid)
+  branch channel_0_matched key_channel_1(channel_0_in,channel_0_after,channel_0_end) key_failure()
+block key_channel_1(channel_1_in:readbuf,channel_1_at:u64,channel_1_end:u64)
+  channel_1_word:u64 = const() {"value":34}
+  channel_1_size:u64 = const() {"value":1}
+  channel_1_after:u64 = call(channel_1_in,channel_1_at,channel_1_end,channel_1_word,channel_1_size) {"function":"wd_expect"}
+  ret(channel_1_after)
+block key_user_id(user_id_0_in:readbuf,user_id_0_at:u64,user_id_0_end:u64)
+  user_id_0_word:u64 = const() {"value":7235419221280388386}
+  user_id_0_size:u64 = const() {"value":8}
+  user_id_0_after:u64 = call(user_id_0_in,user_id_0_at,user_id_0_end,user_id_0_word,user_id_0_size) {"function":"wd_expect"}
+  user_id_0_invalid:u64 = const() {"value":0}
+  user_id_0_matched:bool = compare.ne(user_id_0_after,user_id_0_invalid)
+  branch user_id_0_matched key_user_id_1(user_id_0_in,user_id_0_after,user_id_0_end) key_failure()
+block key_user_id_1(user_id_1_in:readbuf,user_id_1_at:u64,user_id_1_end:u64)
+  user_id_1_word:u64 = const() {"value":34}
+  user_id_1_size:u64 = const() {"value":1}
+  user_id_1_after:u64 = call(user_id_1_in,user_id_1_at,user_id_1_end,user_id_1_word,user_id_1_size) {"function":"wd_expect"}
+  ret(user_id_1_after)
+block key_session_id(session_id_0_in:readbuf,session_id_0_at:u64,session_id_0_end:u64)
+  session_id_0_word:u64 = const() {"value":7957695011165139746}
+  session_id_0_size:u64 = const() {"value":8}
+  session_id_0_after:u64 = call(session_id_0_in,session_id_0_at,session_id_0_end,session_id_0_word,session_id_0_size) {"function":"wd_expect"}
+  session_id_0_invalid:u64 = const() {"value":0}
+  session_id_0_matched:bool = compare.ne(session_id_0_after,session_id_0_invalid)
+  branch session_id_0_matched key_session_id_1(session_id_0_in,session_id_0_after,session_id_0_end) key_failure()
+block key_session_id_1(session_id_1_in:readbuf,session_id_1_at:u64,session_id_1_end:u64)
+  session_id_1_word:u64 = const() {"value":577005919}
+  session_id_1_size:u64 = const() {"value":4}
+  session_id_1_after:u64 = call(session_id_1_in,session_id_1_at,session_id_1_end,session_id_1_word,session_id_1_size) {"function":"wd_expect"}
+  ret(session_id_1_after)
+block key_text(text_0_in:readbuf,text_0_at:u64,text_0_end:u64)
+  text_0_word:u64 = const() {"value":37883631465506}
+  text_0_size:u64 = const() {"value":6}
+  text_0_after:u64 = call(text_0_in,text_0_at,text_0_end,text_0_word,text_0_size) {"function":"wd_expect"}
+  ret(text_0_after)
+block key_idempotency_key(idempotency_key_0_in:readbuf,idempotency_key_0_at:u64,idempotency_key_0_end:u64)
+  idempotency_key_0_word:u64 = const() {"value":8390048245969348898}
+  idempotency_key_0_size:u64 = const() {"value":8}
+  idempotency_key_0_after:u64 = call(idempotency_key_0_in,idempotency_key_0_at,idempotency_key_0_end,idempotency_key_0_word,idempotency_key_0_size) {"function":"wd_expect"}
+  idempotency_key_0_invalid:u64 = const() {"value":0}
+  idempotency_key_0_matched:bool = compare.ne(idempotency_key_0_after,idempotency_key_0_invalid)
+  branch idempotency_key_0_matched key_idempotency_key_1(idempotency_key_0_in,idempotency_key_0_after,idempotency_key_0_end) key_failure()
+block key_idempotency_key_1(idempotency_key_1_in:readbuf,idempotency_key_1_at:u64,idempotency_key_1_end:u64)
+  idempotency_key_1_word:u64 = const() {"value":8747515909039681125}
+  idempotency_key_1_size:u64 = const() {"value":8}
+  idempotency_key_1_after:u64 = call(idempotency_key_1_in,idempotency_key_1_at,idempotency_key_1_end,idempotency_key_1_word,idempotency_key_1_size) {"function":"wd_expect"}
+  idempotency_key_1_invalid:u64 = const() {"value":0}
+  idempotency_key_1_matched:bool = compare.ne(idempotency_key_1_after,idempotency_key_1_invalid)
+  branch idempotency_key_1_matched key_idempotency_key_2(idempotency_key_1_in,idempotency_key_1_after,idempotency_key_1_end) key_failure()
+block key_idempotency_key_2(idempotency_key_2_in:readbuf,idempotency_key_2_at:u64,idempotency_key_2_end:u64)
+  idempotency_key_2_word:u64 = const() {"value":34}
+  idempotency_key_2_size:u64 = const() {"value":1}
+  idempotency_key_2_after:u64 = call(idempotency_key_2_in,idempotency_key_2_at,idempotency_key_2_end,idempotency_key_2_word,idempotency_key_2_size) {"function":"wd_expect"}
+  ret(idempotency_key_2_after)
+block key_status(status_0_in:readbuf,status_0_at:u64,status_0_end:u64)
+  status_0_word:u64 = const() {"value":2482456962322952994}
+  status_0_size:u64 = const() {"value":8}
+  status_0_after:u64 = call(status_0_in,status_0_at,status_0_end,status_0_word,status_0_size) {"function":"wd_expect"}
+  ret(status_0_after)
+block key_created_at_unix_ms(created_at_unix_ms_0_in:readbuf,created_at_unix_ms_0_at:u64,created_at_unix_ms_0_end:u64)
+  created_at_unix_ms_0_word:u64 = const() {"value":7234316338103214882}
+  created_at_unix_ms_0_size:u64 = const() {"value":8}
+  created_at_unix_ms_0_after:u64 = call(created_at_unix_ms_0_in,created_at_unix_ms_0_at,created_at_unix_ms_0_end,created_at_unix_ms_0_word,created_at_unix_ms_0_size) {"function":"wd_expect"}
+  created_at_unix_ms_0_invalid:u64 = const() {"value":0}
+  created_at_unix_ms_0_matched:bool = compare.ne(created_at_unix_ms_0_after,created_at_unix_ms_0_invalid)
+  branch created_at_unix_ms_0_matched key_created_at_unix_ms_1(created_at_unix_ms_0_in,created_at_unix_ms_0_after,created_at_unix_ms_0_end) key_failure()
+block key_created_at_unix_ms_1(created_at_unix_ms_1_in:readbuf,created_at_unix_ms_1_at:u64,created_at_unix_ms_1_end:u64)
+  created_at_unix_ms_1_word:u64 = const() {"value":8676587607497662815}
+  created_at_unix_ms_1_size:u64 = const() {"value":8}
+  created_at_unix_ms_1_after:u64 = call(created_at_unix_ms_1_in,created_at_unix_ms_1_at,created_at_unix_ms_1_end,created_at_unix_ms_1_word,created_at_unix_ms_1_size) {"function":"wd_expect"}
+  created_at_unix_ms_1_invalid:u64 = const() {"value":0}
+  created_at_unix_ms_1_matched:bool = compare.ne(created_at_unix_ms_1_after,created_at_unix_ms_1_invalid)
+  branch created_at_unix_ms_1_matched key_created_at_unix_ms_2(created_at_unix_ms_1_in,created_at_unix_ms_1_after,created_at_unix_ms_1_end) key_failure()
+block key_created_at_unix_ms_2(created_at_unix_ms_2_in:readbuf,created_at_unix_ms_2_at:u64,created_at_unix_ms_2_end:u64)
+  created_at_unix_ms_2_word:u64 = const() {"value":577989983}
+  created_at_unix_ms_2_size:u64 = const() {"value":4}
+  created_at_unix_ms_2_after:u64 = call(created_at_unix_ms_2_in,created_at_unix_ms_2_at,created_at_unix_ms_2_end,created_at_unix_ms_2_word,created_at_unix_ms_2_size) {"function":"wd_expect"}
+  ret(created_at_unix_ms_2_after)
+block key_assigned_worker(assigned_worker_0_in:readbuf,assigned_worker_0_at:u64,assigned_worker_0_end:u64)
+  assigned_worker_0_word:u64 = const() {"value":7308892947875062050}
+  assigned_worker_0_size:u64 = const() {"value":8}
+  assigned_worker_0_after:u64 = call(assigned_worker_0_in,assigned_worker_0_at,assigned_worker_0_end,assigned_worker_0_word,assigned_worker_0_size) {"function":"wd_expect"}
+  assigned_worker_0_invalid:u64 = const() {"value":0}
+  assigned_worker_0_matched:bool = compare.ne(assigned_worker_0_after,assigned_worker_0_invalid)
+  branch assigned_worker_0_matched key_assigned_worker_1(assigned_worker_0_in,assigned_worker_0_after,assigned_worker_0_end) key_failure()
+block key_assigned_worker_1(assigned_worker_1_in:readbuf,assigned_worker_1_at:u64,assigned_worker_1_end:u64)
+  assigned_worker_1_word:u64 = const() {"value":8243112832212098916}
+  assigned_worker_1_size:u64 = const() {"value":8}
+  assigned_worker_1_after:u64 = call(assigned_worker_1_in,assigned_worker_1_at,assigned_worker_1_end,assigned_worker_1_word,assigned_worker_1_size) {"function":"wd_expect"}
+  assigned_worker_1_invalid:u64 = const() {"value":0}
+  assigned_worker_1_matched:bool = compare.ne(assigned_worker_1_after,assigned_worker_1_invalid)
+  branch assigned_worker_1_matched key_assigned_worker_2(assigned_worker_1_in,assigned_worker_1_after,assigned_worker_1_end) key_failure()
+block key_assigned_worker_2(assigned_worker_2_in:readbuf,assigned_worker_2_at:u64,assigned_worker_2_end:u64)
+  assigned_worker_2_word:u64 = const() {"value":34}
+  assigned_worker_2_size:u64 = const() {"value":1}
+  assigned_worker_2_after:u64 = call(assigned_worker_2_in,assigned_worker_2_at,assigned_worker_2_end,assigned_worker_2_word,assigned_worker_2_size) {"function":"wd_expect"}
+  ret(assigned_worker_2_after)
+block key_assigned_at_unix_ms(assigned_at_unix_ms_0_in:readbuf,assigned_at_unix_ms_0_at:u64,assigned_at_unix_ms_0_end:u64)
+  assigned_at_unix_ms_0_word:u64 = const() {"value":7308892947875062050}
+  assigned_at_unix_ms_0_size:u64 = const() {"value":8}
+  assigned_at_unix_ms_0_after:u64 = call(assigned_at_unix_ms_0_in,assigned_at_unix_ms_0_at,assigned_at_unix_ms_0_end,assigned_at_unix_ms_0_word,assigned_at_unix_ms_0_size) {"function":"wd_expect"}
+  assigned_at_unix_ms_0_invalid:u64 = const() {"value":0}
+  assigned_at_unix_ms_0_matched:bool = compare.ne(assigned_at_unix_ms_0_after,assigned_at_unix_ms_0_invalid)
+  branch assigned_at_unix_ms_0_matched key_assigned_at_unix_ms_1(assigned_at_unix_ms_0_in,assigned_at_unix_ms_0_after,assigned_at_unix_ms_0_end) key_failure()
+block key_assigned_at_unix_ms_1(assigned_at_unix_ms_1_in:readbuf,assigned_at_unix_ms_1_at:u64,assigned_at_unix_ms_1_end:u64)
+  assigned_at_unix_ms_1_word:u64 = const() {"value":7597138674255486820}
+  assigned_at_unix_ms_1_size:u64 = const() {"value":8}
+  assigned_at_unix_ms_1_after:u64 = call(assigned_at_unix_ms_1_in,assigned_at_unix_ms_1_at,assigned_at_unix_ms_1_end,assigned_at_unix_ms_1_word,assigned_at_unix_ms_1_size) {"function":"wd_expect"}
+  assigned_at_unix_ms_1_invalid:u64 = const() {"value":0}
+  assigned_at_unix_ms_1_matched:bool = compare.ne(assigned_at_unix_ms_1_after,assigned_at_unix_ms_1_invalid)
+  branch assigned_at_unix_ms_1_matched key_assigned_at_unix_ms_2(assigned_at_unix_ms_1_in,assigned_at_unix_ms_1_after,assigned_at_unix_ms_1_end) key_failure()
+block key_assigned_at_unix_ms_2(assigned_at_unix_ms_2_in:readbuf,assigned_at_unix_ms_2_at:u64,assigned_at_unix_ms_2_end:u64)
+  assigned_at_unix_ms_2_word:u64 = const() {"value":147965435768}
+  assigned_at_unix_ms_2_size:u64 = const() {"value":5}
+  assigned_at_unix_ms_2_after:u64 = call(assigned_at_unix_ms_2_in,assigned_at_unix_ms_2_at,assigned_at_unix_ms_2_end,assigned_at_unix_ms_2_word,assigned_at_unix_ms_2_size) {"function":"wd_expect"}
+  ret(assigned_at_unix_ms_2_after)
+block key_model_output(model_output_0_in:readbuf,model_output_0_at:u64,model_output_0_end:u64)
+  model_output_0_word:u64 = const() {"value":8025252243730033954}
+  model_output_0_size:u64 = const() {"value":8}
+  model_output_0_after:u64 = call(model_output_0_in,model_output_0_at,model_output_0_end,model_output_0_word,model_output_0_size) {"function":"wd_expect"}
+  model_output_0_invalid:u64 = const() {"value":0}
+  model_output_0_matched:bool = compare.ne(model_output_0_after,model_output_0_invalid)
+  branch model_output_0_matched key_model_output_1(model_output_0_in,model_output_0_after,model_output_0_end) key_failure()
+block key_model_output_1(model_output_1_in:readbuf,model_output_1_at:u64,model_output_1_end:u64)
+  model_output_1_word:u64 = const() {"value":37883581854837}
+  model_output_1_size:u64 = const() {"value":6}
+  model_output_1_after:u64 = call(model_output_1_in,model_output_1_at,model_output_1_end,model_output_1_word,model_output_1_size) {"function":"wd_expect"}
+  ret(model_output_1_after)
+block key_provider_request_id(provider_request_id_0_in:readbuf,provider_request_id_0_at:u64,provider_request_id_0_end:u64)
+  provider_request_id_0_word:u64 = const() {"value":7306080452898615330}
+  provider_request_id_0_size:u64 = const() {"value":8}
+  provider_request_id_0_after:u64 = call(provider_request_id_0_in,provider_request_id_0_at,provider_request_id_0_end,provider_request_id_0_word,provider_request_id_0_size) {"function":"wd_expect"}
+  provider_request_id_0_invalid:u64 = const() {"value":0}
+  provider_request_id_0_matched:bool = compare.ne(provider_request_id_0_after,provider_request_id_0_invalid)
+  branch provider_request_id_0_matched key_provider_request_id_1(provider_request_id_0_in,provider_request_id_0_after,provider_request_id_0_end) key_failure()
+block key_provider_request_id_1(provider_request_id_1_in:readbuf,provider_request_id_1_at:u64,provider_request_id_1_end:u64)
+  provider_request_id_1_word:u64 = const() {"value":8315181416903237490}
+  provider_request_id_1_size:u64 = const() {"value":8}
+  provider_request_id_1_after:u64 = call(provider_request_id_1_in,provider_request_id_1_at,provider_request_id_1_end,provider_request_id_1_word,provider_request_id_1_size) {"function":"wd_expect"}
+  provider_request_id_1_invalid:u64 = const() {"value":0}
+  provider_request_id_1_matched:bool = compare.ne(provider_request_id_1_after,provider_request_id_1_invalid)
+  branch provider_request_id_1_matched key_provider_request_id_2(provider_request_id_1_in,provider_request_id_1_after,provider_request_id_1_end) key_failure()
+block key_provider_request_id_2(provider_request_id_2_in:readbuf,provider_request_id_2_at:u64,provider_request_id_2_end:u64)
+  provider_request_id_2_word:u64 = const() {"value":147713515380}
+  provider_request_id_2_size:u64 = const() {"value":5}
+  provider_request_id_2_after:u64 = call(provider_request_id_2_in,provider_request_id_2_at,provider_request_id_2_end,provider_request_id_2_word,provider_request_id_2_size) {"function":"wd_expect"}
+  ret(provider_request_id_2_after)
+block key_provenance_schema_version(provenance_schema_version_0_in:readbuf,provenance_schema_version_0_at:u64,provenance_schema_version_0_end:u64)
+  provenance_schema_version_0_word:u64 = const() {"value":7020660428467499042}
+  provenance_schema_version_0_size:u64 = const() {"value":8}
+  provenance_schema_version_0_after:u64 = call(provenance_schema_version_0_in,provenance_schema_version_0_at,provenance_schema_version_0_end,provenance_schema_version_0_word,provenance_schema_version_0_size) {"function":"wd_expect"}
+  provenance_schema_version_0_invalid:u64 = const() {"value":0}
+  provenance_schema_version_0_matched:bool = compare.ne(provenance_schema_version_0_after,provenance_schema_version_0_invalid)
+  branch provenance_schema_version_0_matched key_provenance_schema_version_1(provenance_schema_version_0_in,provenance_schema_version_0_after,provenance_schema_version_0_end) key_failure()
+block key_provenance_schema_version_1(provenance_schema_version_1_in:readbuf,provenance_schema_version_1_at:u64,provenance_schema_version_1_end:u64)
+  provenance_schema_version_1_word:u64 = const() {"value":7307199742581498734}
+  provenance_schema_version_1_size:u64 = const() {"value":8}
+  provenance_schema_version_1_after:u64 = call(provenance_schema_version_1_in,provenance_schema_version_1_at,provenance_schema_version_1_end,provenance_schema_version_1_word,provenance_schema_version_1_size) {"function":"wd_expect"}
+  provenance_schema_version_1_invalid:u64 = const() {"value":0}
+  provenance_schema_version_1_matched:bool = compare.ne(provenance_schema_version_1_after,provenance_schema_version_1_invalid)
+  branch provenance_schema_version_1_matched key_provenance_schema_version_2(provenance_schema_version_1_in,provenance_schema_version_1_after,provenance_schema_version_1_end) key_failure()
+block key_provenance_schema_version_2(provenance_schema_version_2_in:readbuf,provenance_schema_version_2_at:u64,provenance_schema_version_2_end:u64)
+  provenance_schema_version_2_word:u64 = const() {"value":7598542776407384429}
+  provenance_schema_version_2_size:u64 = const() {"value":8}
+  provenance_schema_version_2_after:u64 = call(provenance_schema_version_2_in,provenance_schema_version_2_at,provenance_schema_version_2_end,provenance_schema_version_2_word,provenance_schema_version_2_size) {"function":"wd_expect"}
+  provenance_schema_version_2_invalid:u64 = const() {"value":0}
+  provenance_schema_version_2_matched:bool = compare.ne(provenance_schema_version_2_after,provenance_schema_version_2_invalid)
+  branch provenance_schema_version_2_matched key_provenance_schema_version_3(provenance_schema_version_2_in,provenance_schema_version_2_after,provenance_schema_version_2_end) key_failure()
+block key_provenance_schema_version_3(provenance_schema_version_3_in:readbuf,provenance_schema_version_3_at:u64,provenance_schema_version_3_end:u64)
+  provenance_schema_version_3_word:u64 = const() {"value":2256495}
+  provenance_schema_version_3_size:u64 = const() {"value":3}
+  provenance_schema_version_3_after:u64 = call(provenance_schema_version_3_in,provenance_schema_version_3_at,provenance_schema_version_3_end,provenance_schema_version_3_word,provenance_schema_version_3_size) {"function":"wd_expect"}
+  ret(provenance_schema_version_3_after)
+block key_llm_provenance(llm_provenance_0_in:readbuf,llm_provenance_0_at:u64,llm_provenance_0_end:u64)
+  llm_provenance_0_word:u64 = const() {"value":8030604640715041826}
+  llm_provenance_0_size:u64 = const() {"value":8}
+  llm_provenance_0_after:u64 = call(llm_provenance_0_in,llm_provenance_0_at,llm_provenance_0_end,llm_provenance_0_word,llm_provenance_0_size) {"function":"wd_expect"}
+  llm_provenance_0_invalid:u64 = const() {"value":0}
+  llm_provenance_0_matched:bool = compare.ne(llm_provenance_0_after,llm_provenance_0_invalid)
+  branch llm_provenance_0_matched key_llm_provenance_1(llm_provenance_0_in,llm_provenance_0_after,llm_provenance_0_end) key_failure()
+block key_llm_provenance_1(llm_provenance_1_in:readbuf,llm_provenance_1_at:u64,llm_provenance_1_end:u64)
+  llm_provenance_1_word:u64 = const() {"value":2478496495669503350}
+  llm_provenance_1_size:u64 = const() {"value":8}
+  llm_provenance_1_after:u64 = call(llm_provenance_1_in,llm_provenance_1_at,llm_provenance_1_end,llm_provenance_1_word,llm_provenance_1_size) {"function":"wd_expect"}
+  ret(llm_provenance_1_after)
+block key_result_hash(result_hash_0_in:readbuf,result_hash_0_at:u64,result_hash_0_end:u64)
+  result_hash_0_word:u64 = const() {"value":6878241782604591650}
+  result_hash_0_size:u64 = const() {"value":8}
+  result_hash_0_after:u64 = call(result_hash_0_in,result_hash_0_at,result_hash_0_end,result_hash_0_word,result_hash_0_size) {"function":"wd_expect"}
+  result_hash_0_invalid:u64 = const() {"value":0}
+  result_hash_0_matched:bool = compare.ne(result_hash_0_after,result_hash_0_invalid)
+  branch result_hash_0_matched key_result_hash_1(result_hash_0_in,result_hash_0_after,result_hash_0_end) key_failure()
+block key_result_hash_1(result_hash_1_in:readbuf,result_hash_1_at:u64,result_hash_1_end:u64)
+  result_hash_1_word:u64 = const() {"value":147781280104}
+  result_hash_1_size:u64 = const() {"value":5}
+  result_hash_1_after:u64 = call(result_hash_1_in,result_hash_1_at,result_hash_1_end,result_hash_1_word,result_hash_1_size) {"function":"wd_expect"}
+  ret(result_hash_1_after)
+block key_verifier_status(verifier_status_0_in:readbuf,verifier_status_0_at:u64,verifier_status_0_end:u64)
+  verifier_status_0_word:u64 = const() {"value":7307484473462191650}
+  verifier_status_0_size:u64 = const() {"value":8}
+  verifier_status_0_after:u64 = call(verifier_status_0_in,verifier_status_0_at,verifier_status_0_end,verifier_status_0_word,verifier_status_0_size) {"function":"wd_expect"}
+  verifier_status_0_invalid:u64 = const() {"value":0}
+  verifier_status_0_matched:bool = compare.ne(verifier_status_0_after,verifier_status_0_invalid)
+  branch verifier_status_0_matched key_verifier_status_1(verifier_status_0_in,verifier_status_0_after,verifier_status_0_end) key_failure()
+block key_verifier_status_1(verifier_status_1_in:readbuf,verifier_status_1_at:u64,verifier_status_1_end:u64)
+  verifier_status_1_word:u64 = const() {"value":8319683848551227250}
+  verifier_status_1_size:u64 = const() {"value":8}
+  verifier_status_1_after:u64 = call(verifier_status_1_in,verifier_status_1_at,verifier_status_1_end,verifier_status_1_word,verifier_status_1_size) {"function":"wd_expect"}
+  verifier_status_1_invalid:u64 = const() {"value":0}
+  verifier_status_1_matched:bool = compare.ne(verifier_status_1_after,verifier_status_1_invalid)
+  branch verifier_status_1_matched key_verifier_status_2(verifier_status_1_in,verifier_status_1_after,verifier_status_1_end) key_failure()
+block key_verifier_status_2(verifier_status_2_in:readbuf,verifier_status_2_at:u64,verifier_status_2_end:u64)
+  verifier_status_2_word:u64 = const() {"value":34}
+  verifier_status_2_size:u64 = const() {"value":1}
+  verifier_status_2_after:u64 = call(verifier_status_2_in,verifier_status_2_at,verifier_status_2_end,verifier_status_2_word,verifier_status_2_size) {"function":"wd_expect"}
+  ret(verifier_status_2_after)
+block key_resolution_code(resolution_code_0_in:readbuf,resolution_code_0_at:u64,resolution_code_0_end:u64)
+  resolution_code_0_word:u64 = const() {"value":8391732706607985186}
+  resolution_code_0_size:u64 = const() {"value":8}
+  resolution_code_0_after:u64 = call(resolution_code_0_in,resolution_code_0_at,resolution_code_0_end,resolution_code_0_word,resolution_code_0_size) {"function":"wd_expect"}
+  resolution_code_0_invalid:u64 = const() {"value":0}
+  resolution_code_0_matched:bool = compare.ne(resolution_code_0_after,resolution_code_0_invalid)
+  branch resolution_code_0_matched key_resolution_code_1(resolution_code_0_in,resolution_code_0_after,resolution_code_0_end) key_failure()
+block key_resolution_code_1(resolution_code_1_in:readbuf,resolution_code_1_at:u64,resolution_code_1_end:u64)
+  resolution_code_1_word:u64 = const() {"value":7306086968095305577}
+  resolution_code_1_size:u64 = const() {"value":8}
+  resolution_code_1_after:u64 = call(resolution_code_1_in,resolution_code_1_at,resolution_code_1_end,resolution_code_1_word,resolution_code_1_size) {"function":"wd_expect"}
+  resolution_code_1_invalid:u64 = const() {"value":0}
+  resolution_code_1_matched:bool = compare.ne(resolution_code_1_after,resolution_code_1_invalid)
+  branch resolution_code_1_matched key_resolution_code_2(resolution_code_1_in,resolution_code_1_after,resolution_code_1_end) key_failure()
+block key_resolution_code_2(resolution_code_2_in:readbuf,resolution_code_2_at:u64,resolution_code_2_end:u64)
+  resolution_code_2_word:u64 = const() {"value":34}
+  resolution_code_2_size:u64 = const() {"value":1}
+  resolution_code_2_after:u64 = call(resolution_code_2_in,resolution_code_2_at,resolution_code_2_end,resolution_code_2_word,resolution_code_2_size) {"function":"wd_expect"}
+  ret(resolution_code_2_after)
+block key_commit_tx_hash(commit_tx_hash_0_in:readbuf,commit_tx_hash_0_at:u64,commit_tx_hash_0_end:u64)
+  commit_tx_hash_0_word:u64 = const() {"value":6878238449609958178}
+  commit_tx_hash_0_size:u64 = const() {"value":8}
+  commit_tx_hash_0_after:u64 = call(commit_tx_hash_0_in,commit_tx_hash_0_at,commit_tx_hash_0_end,commit_tx_hash_0_word,commit_tx_hash_0_size) {"function":"wd_expect"}
+  commit_tx_hash_0_invalid:u64 = const() {"value":0}
+  commit_tx_hash_0_matched:bool = compare.ne(commit_tx_hash_0_after,commit_tx_hash_0_invalid)
+  branch commit_tx_hash_0_matched key_commit_tx_hash_1(commit_tx_hash_0_in,commit_tx_hash_0_after,commit_tx_hash_0_end) key_failure()
+block key_commit_tx_hash_1(commit_tx_hash_1_in:readbuf,commit_tx_hash_1_at:u64,commit_tx_hash_1_end:u64)
+  commit_tx_hash_1_word:u64 = const() {"value":2479358457067567220}
+  commit_tx_hash_1_size:u64 = const() {"value":8}
+  commit_tx_hash_1_after:u64 = call(commit_tx_hash_1_in,commit_tx_hash_1_at,commit_tx_hash_1_end,commit_tx_hash_1_word,commit_tx_hash_1_size) {"function":"wd_expect"}
+  ret(commit_tx_hash_1_after)
+block key_reveal_tx_hash(reveal_tx_hash_0_in:readbuf,reveal_tx_hash_0_at:u64,reveal_tx_hash_0_end:u64)
+  reveal_tx_hash_0_word:u64 = const() {"value":6875977819493855778}
+  reveal_tx_hash_0_size:u64 = const() {"value":8}
+  reveal_tx_hash_0_after:u64 = call(reveal_tx_hash_0_in,reveal_tx_hash_0_at,reveal_tx_hash_0_end,reveal_tx_hash_0_word,reveal_tx_hash_0_size) {"function":"wd_expect"}
+  reveal_tx_hash_0_invalid:u64 = const() {"value":0}
+  reveal_tx_hash_0_matched:bool = compare.ne(reveal_tx_hash_0_after,reveal_tx_hash_0_invalid)
+  branch reveal_tx_hash_0_matched key_reveal_tx_hash_1(reveal_tx_hash_0_in,reveal_tx_hash_0_after,reveal_tx_hash_0_end) key_failure()
+block key_reveal_tx_hash_1(reveal_tx_hash_1_in:readbuf,reveal_tx_hash_1_at:u64,reveal_tx_hash_1_end:u64)
+  reveal_tx_hash_1_word:u64 = const() {"value":2479358457067567220}
+  reveal_tx_hash_1_size:u64 = const() {"value":8}
+  reveal_tx_hash_1_after:u64 = call(reveal_tx_hash_1_in,reveal_tx_hash_1_at,reveal_tx_hash_1_end,reveal_tx_hash_1_word,reveal_tx_hash_1_size) {"function":"wd_expect"}
+  ret(reveal_tx_hash_1_after)
+block key_adapter_error(adapter_error_0_in:readbuf,adapter_error_0_at:u64,adapter_error_0_end:u64)
+  adapter_error_0_word:u64 = const() {"value":8243122718990688546}
+  adapter_error_0_size:u64 = const() {"value":8}
+  adapter_error_0_after:u64 = call(adapter_error_0_in,adapter_error_0_at,adapter_error_0_end,adapter_error_0_word,adapter_error_0_size) {"function":"wd_expect"}
+  adapter_error_0_invalid:u64 = const() {"value":0}
+  adapter_error_0_matched:bool = compare.ne(adapter_error_0_after,adapter_error_0_invalid)
+  branch adapter_error_0_matched key_adapter_error_1(adapter_error_0_in,adapter_error_0_after,adapter_error_0_end) key_failure()
+block key_adapter_error_1(adapter_error_1_in:readbuf,adapter_error_1_at:u64,adapter_error_1_end:u64)
+  adapter_error_1_word:u64 = const() {"value":9695972195198303}
+  adapter_error_1_size:u64 = const() {"value":7}
+  adapter_error_1_after:u64 = call(adapter_error_1_in,adapter_error_1_at,adapter_error_1_end,adapter_error_1_word,adapter_error_1_size) {"function":"wd_expect"}
+  ret(adapter_error_1_after)
+block key_reputation_delta(reputation_delta_0_in:readbuf,reputation_delta_0_at:u64,reputation_delta_0_end:u64)
+  reputation_delta_0_word:u64 = const() {"value":8386112028886266402}
+  reputation_delta_0_size:u64 = const() {"value":8}
+  reputation_delta_0_after:u64 = call(reputation_delta_0_in,reputation_delta_0_at,reputation_delta_0_end,reputation_delta_0_word,reputation_delta_0_size) {"function":"wd_expect"}
+  reputation_delta_0_invalid:u64 = const() {"value":0}
+  reputation_delta_0_matched:bool = compare.ne(reputation_delta_0_after,reputation_delta_0_invalid)
+  branch reputation_delta_0_matched key_reputation_delta_1(reputation_delta_0_in,reputation_delta_0_after,reputation_delta_0_end) key_failure()
+block key_reputation_delta_1(reputation_delta_1_in:readbuf,reputation_delta_1_at:u64,reputation_delta_1_end:u64)
+  reputation_delta_1_word:u64 = const() {"value":8389191687656599401}
+  reputation_delta_1_size:u64 = const() {"value":8}
+  reputation_delta_1_after:u64 = call(reputation_delta_1_in,reputation_delta_1_at,reputation_delta_1_end,reputation_delta_1_word,reputation_delta_1_size) {"function":"wd_expect"}
+  reputation_delta_1_invalid:u64 = const() {"value":0}
+  reputation_delta_1_matched:bool = compare.ne(reputation_delta_1_after,reputation_delta_1_invalid)
+  branch reputation_delta_1_matched key_reputation_delta_2(reputation_delta_1_in,reputation_delta_1_after,reputation_delta_1_end) key_failure()
+block key_reputation_delta_2(reputation_delta_2_in:readbuf,reputation_delta_2_at:u64,reputation_delta_2_end:u64)
+  reputation_delta_2_word:u64 = const() {"value":8801}
+  reputation_delta_2_size:u64 = const() {"value":2}
+  reputation_delta_2_after:u64 = call(reputation_delta_2_in,reputation_delta_2_at,reputation_delta_2_end,reputation_delta_2_word,reputation_delta_2_size) {"function":"wd_expect"}
+  ret(reputation_delta_2_after)
+block key_failure()
+  missing_key:u64 = const() {"value":0}
+  ret(missing_key)
+end

@@ -1,0 +1,218 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_content_closure_value
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  n:usize = buffer.len(r)
+  total:u64 = int.cast(n) {"mode":"wrap"}
+  start:u64 = const() {"value":0}
+  status:u32,ignored:u64 = call(r,start,total) {"function":"tcc_decode"}
+  z:u32 = const() {"value":0}
+  ok:bool = compare.eq(status,z)
+  branch ok capacity(r,o,n) fail(status)
+block capacity(r6:readbuf,o6:mutbuf,n6:usize)
+  available6:usize = buffer.len(o6)
+  ok6:bool = compare.ge(available6,n6)
+  branch ok6 publish(r6,o6,n6) short()
+block publish(r7:readbuf,o7:mutbuf,n7:usize)
+  zero7:usize = const() {"value":0}
+  _n7:u64 = call(r7,o7,zero7,zero7,n7) {"function":"daav_copy"}
+  s7:u32 = const() {"value":0}
+  ret(s7)
+block short()
+  s102:u32 = const() {"value":102}
+  ret(s102)
+block fail(s:u32)
+  ret(s)
+end
+
+fn tcc_decode(r:readbuf,base:u64,len:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,base:u64,len:u64)
+  min0:u64 = const() {"value":1457}
+  max0:u64 = const() {"value":1520}
+  lo0:bool = compare.ge(len,min0)
+  hi0:bool = compare.le(len,max0)
+  ok0:bool = bool.and(lo0,hi0)
+  branch ok0 magic(r,base,len) bad_length()
+block magic(r1:readbuf,b1:u64,len1:u64)
+  word1:u64 = call(r1,b1) {"function":"daav_u32"}
+  expected1:u64 = const() {"value":843268948}
+  ok1:bool = compare.eq(word1,expected1)
+  branch ok1 extent(r1,b1,len1) bad_magic()
+block extent(r2:readbuf,b2:u64,len2:u64)
+  m2:u64 = call(r2,b2) {"function":"tcc_be32"}
+  lower2:u64 = const() {"value":379}
+  higher2:u64 = const() {"value":442}
+  outer2:u64 = const() {"value":1078}
+  total2:u64 = int.add.wrap(m2,outer2)
+  lo2:bool = compare.ge(m2,lower2)
+  hi2:bool = compare.le(m2,higher2)
+  sized2:bool = bool.and(lo2,hi2)
+  exact2:bool = compare.eq(total2,len2)
+  ok2:bool = bool.and(sized2,exact2)
+  branch ok2 manifest(r2,b2,m2) bad_extent()
+block manifest(r3:readbuf,b3:u64,m3:u64)
+  eight3:u64 = const() {"value":8}
+  start3:u64 = int.add.wrap(b3,eight3)
+  z3:u32 = const() {"value":0}
+  status3:u32,claim3:u64 = call(r3,start3,m3) {"function":"ccm_manifest"}
+  ok3:bool = compare.eq(status3,z3)
+  row3:u64 = int.add.wrap(start3,m3)
+  branch ok3 decode_roles(r3,row3,claim3) fail(status3)
+block decode_roles(r4:readbuf,row4:u64,payload4:u64)
+  s4:u32 = call(r4,row4) {"function":"tcc_claims"}
+  z4:u32 = const() {"value":0}
+  ok4:bool = compare.eq(s4,z4)
+  branch ok4 policies(r4,row4,payload4) fail(s4)
+block policies(r5:readbuf,row5:u64,payload5:u64)
+  s5:u32 = call(r5,row5,payload5) {"function":"tcc_policy"}
+  z5:u32 = const() {"value":0}
+  ok5:bool = compare.eq(s5,z5)
+  branch ok5 done(payload5) fail(s5)
+block done(out_claim:u64)
+  success:u32 = const() {"value":0}
+  ret(success,out_claim)
+block bad_length()
+  s20:u32 = const() {"value":20}
+  jump fail(s20)
+block bad_magic()
+  s21:u32 = const() {"value":21}
+  jump fail(s21)
+block bad_extent()
+  s22:u32 = const() {"value":22}
+  jump fail(s22)
+block fail(s:u32)
+  z_out:u64 = const() {"value":0}
+  ret(s,z_out)
+end
+
+fn tcc_claims(r:readbuf,row:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(r:readbuf,row:u64)
+  first:u8 = const() {"value":1}
+  jump role(r,row,first)
+block role(ra:readbuf,a:u64,role_a:u8)
+  at_a:usize = int.cast(a) {"mode":"wrap"}
+  used_a:u8 = buffer.load(ra,at_a)
+  ok_a:bool = compare.eq(used_a,role_a)
+  branch ok_a claim(ra,a,role_a) bad_role()
+block claim(rb:readbuf,b:u64,role_b:u8)
+  one_b:u64 = const() {"value":1}
+  pos_b:u64 = int.add.wrap(b,one_b)
+  s_b:u32,k_b:u8 = call(rb,pos_b) {"function":"ccm_claim"}
+  z_b:u32 = const() {"value":0}
+  ok_b:bool = compare.eq(s_b,z_b)
+  branch ok_b next(rb,b,role_b) bad_claim(s_b)
+block next(rc:readbuf,c:u64,role_c:u8)
+  five_c:u8 = const() {"value":5}
+  one_c:u8 = const() {"value":1}
+  width_c:u64 = const() {"value":214}
+  rnext_c:u8 = int.add.wrap(role_c,one_c)
+  next_c:u64 = int.add.wrap(c,width_c)
+  more_c:bool = compare.lt(role_c,five_c)
+  branch more_c role(rc,next_c,rnext_c) done()
+block done()
+  out_z:u32 = const() {"value":0}
+  ret(out_z)
+block bad_role()
+  out_role:u32 = const() {"value":23}
+  ret(out_role)
+block bad_claim(s:u32)
+  ret(s)
+end
+
+fn tcc_policy(r:readbuf,row:u64,payload:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,row:u64,payload:u64)
+  z:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  p:u64 = int.add.wrap(payload,four)
+  jump kind(r,row,p,z)
+block kind(ra:readbuf,a:u64,pa:u64,i_a:u64)
+  at_a:u64 = const() {"value":69}
+  off_a:u64 = int.add.wrap(a,at_a)
+  ix_a:usize = int.cast(off_a) {"mode":"wrap"}
+  kind_a:u8 = buffer.load(ra,ix_a)
+  expected_a:u8 = const() {"value":4}
+  ok_a:bool = compare.eq(kind_a,expected_a)
+  branch ok_a profile(ra,a,pa,i_a) bad_purpose()
+block profile(rb:readbuf,b:u64,pb:u64,i_b:u64)
+  rel_b:u64 = const() {"value":5}
+  start_b:u64 = int.add.wrap(b,rel_b)
+  ok_b:bool = call(rb,start_b,pb) {"function":"tcc_profile"}
+  branch ok_b size(rb,b,pb,i_b) bad_profile()
+block size(rc:readbuf,c:u64,pc:u64,i_c:u64)
+  rel_c:u64 = const() {"value":142}
+  at_c:u64 = int.add.wrap(c,rel_c)
+  len_c:u64 = call(rc,at_c) {"function":"root_be64"}
+  lower_c:u64 = const() {"value":1}
+  upper_c:u64 = const() {"value":68719476736}
+  a_c:bool = compare.ge(len_c,lower_c)
+  b_c:bool = compare.le(len_c,upper_c)
+  ok_c:bool = bool.and(a_c,b_c)
+  branch ok_c next(rc,c,pc,i_c) bad_size()
+block next(rd:readbuf,d:u64,pd:u64,i_d:u64)
+  width_d:u64 = const() {"value":214}
+  one_d:u64 = const() {"value":1}
+  max_d:u64 = const() {"value":5}
+  next_d:u64 = int.add.wrap(d,width_d)
+  i2_d:u64 = int.add.wrap(i_d,one_d)
+  more_d:bool = compare.lt(i2_d,max_d)
+  branch more_d kind(rd,next_d,pd,i2_d) done()
+block done()
+  out_z:u32 = const() {"value":0}
+  ret(out_z)
+block bad_purpose()
+  out26:u32 = const() {"value":26}
+  ret(out26)
+block bad_profile()
+  out27:u32 = const() {"value":27}
+  ret(out27)
+block bad_size()
+  out28:u32 = const() {"value":28}
+  ret(out28)
+end
+
+fn tcc_profile(r:readbuf,a:u64,b:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,a:u64,b:u64)
+  z:u64 = const() {"value":0}
+  jump byte(r,a,b,z)
+block byte(ra:readbuf,aa:u64,ba:u64,ia:u64)
+  a_a:u64 = int.add.wrap(aa,ia)
+  b_a:u64 = int.add.wrap(ba,ia)
+  as_a:usize = int.cast(a_a) {"mode":"wrap"}
+  bs_a:usize = int.cast(b_a) {"mode":"wrap"}
+  x_a:u8 = buffer.load(ra,as_a)
+  y_a:u8 = buffer.load(ra,bs_a)
+  same_a:bool = compare.eq(x_a,y_a)
+  branch same_a next(ra,aa,ba,ia) different()
+block next(rb:readbuf,ab:u64,bb:u64,ib:u64)
+  one_b:u64 = const() {"value":1}
+  limit_b:u64 = const() {"value":64}
+  ib_next:u64 = int.add.wrap(ib,one_b)
+  more_b:bool = compare.lt(ib_next,limit_b)
+  branch more_b byte(rb,ab,bb,ib_next) done()
+block done()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block different()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn tcc_be32(r:readbuf,base:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(r:readbuf,base:u64)
+  start:u64 = const() {"value":4}
+  z:u64 = const() {"value":0}
+  jump byte(r,base,start,z)
+block byte(ra:readbuf,ba:u64,i:u64,v:u64)
+  absolute:u64 = int.add.wrap(ba,i)
+  idx:usize = int.cast(absolute) {"mode":"wrap"}
+  c:u8 = buffer.load(ra,idx)
+  raw:u64 = int.cast(c) {"mode":"wrap"}
+  eight:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  shifted:u64 = int.shl.checked(v,eight)
+  sum:u64 = int.add.wrap(shifted,raw)
+  next:u64 = int.add.wrap(i,one)
+  more:bool = compare.lt(next,eight)
+  branch more byte(ra,ba,next,sum) done(sum)
+block done(result:u64)
+  ret(result)
+end

@@ -1,0 +1,592 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_jsonl_row_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  native_input_size:usize = buffer.len(input)
+  input_size:u64 = int.cast(native_input_size) {"mode":"wrap"}
+  header_size:u64 = const() {"value":108}
+  header_present:bool = compare.ge(input_size,header_size)
+  branch header_present frame(input,output,input_size) invalid()
+block frame(frame_input:readbuf,frame_output:mutbuf,frame_size:u64)
+  magic_at:u64 = const() {"value":0}
+  word_width:u64 = const() {"value":4}
+  magic:u64 = call(frame_input,magic_at,word_width) {"function":"wa_read"}
+  expected_magic:u64 = const() {"value":827083351}
+  magic_valid:bool = compare.eq(magic,expected_magic)
+  mask:u64 = call(frame_input,word_width,word_width) {"function":"wa_read"}
+  max_mask:u64 = const() {"value":32767}
+  mask_valid:bool = compare.le(mask,max_mask)
+  frame_valid:bool = bool.and(magic_valid,mask_valid)
+  branch frame_valid bounded(frame_input,frame_output,frame_size,mask) invalid()
+block bounded(bound_input:readbuf,bound_output:mutbuf,bound_size:u64,bound_mask:u64)
+  max_request:u64 = const() {"value":4294967293}
+  request_fits:bool = compare.le(bound_size,max_request)
+  branch request_fits measure(bound_input,bound_output,bound_size,bound_mask) capacity()
+block measure(measure_input:readbuf,measure_output:mutbuf,measure_size:u64,measure_mask:u64)
+  no_emit:bool = const() {"value":false}
+  measure_at:u64 = const() {"value":0}
+  needed:u64 = call(measure_input,measure_output,measure_size,measure_mask,no_emit,measure_at) {"function":"wj_row"}
+  zero:u64 = const() {"value":0}
+  admissible:bool = compare.ne(needed,zero)
+  branch admissible measure_capacity(measure_input,measure_output,measure_size,measure_mask,needed) invalid()
+block measure_capacity(cap_input:readbuf,cap_output:mutbuf,cap_size:u64,cap_mask:u64,cap_needed:u64)
+  native_capacity:usize = buffer.len(cap_output)
+  output_capacity:u64 = int.cast(native_capacity) {"mode":"wrap"}
+  max_return:u64 = const() {"value":4294967293}
+  representable:bool = compare.le(cap_needed,max_return)
+  available:bool = compare.le(cap_needed,output_capacity)
+  fits:bool = bool.and(representable,available)
+  branch fits emit(cap_input,cap_output,cap_size,cap_mask) capacity()
+block emit(emit_input:readbuf,emit_output:mutbuf,emit_size:u64,emit_mask:u64)
+  do_emit:bool = const() {"value":true}
+  emit_at:u64 = const() {"value":0}
+  size:u64 = call(emit_input,emit_output,emit_size,emit_mask,do_emit,emit_at) {"function":"wj_row"}
+  result:u32 = int.cast(size) {"mode":"wrap"}
+  ret(result)
+block invalid()
+  malformed:u32 = const() {"value":4294967295}
+  ret(malformed)
+block capacity()
+  insufficient:u32 = const() {"value":4294967294}
+  ret(insufficient)
+end
+fn wj_row(row_input:readbuf,row_output:mutbuf,row_bounds:u64,row_mask:u64,row_emit:bool,row_out_at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(row_input:readbuf,row_output:mutbuf,row_bounds:u64,row_mask:u64,row_emit:bool,row_out_at:u64)
+  first_field:u64 = const() {"value":0}
+  first_text:u64 = const() {"value":108}
+  bounds_shift:u64 = const() {"value":32}
+  row_start:u64 = int.shr.checked(row_bounds,bounds_shift)
+  text_start:u64 = int.add.wrap(first_text,row_start)
+  jump field(row_input,row_output,row_bounds,row_mask,row_emit,first_field,text_start,row_out_at)
+block field(fi:readbuf,fo:mutbuf,fs:u64,fm:u64,fw:bool,field_index:u64,field_text:u64,field_out:u64)
+  prefix_bit:u64 = const() {"value":32768}
+  prefix_flag:u64 = bit.and(fm,prefix_bit)
+  is_prefix:bool = compare.eq(prefix_flag,prefix_bit)
+  all_fields:u64 = const() {"value":18}
+  prefix_fields:u64 = const() {"value":11}
+  field_count:u64 = select(is_prefix,prefix_fields,all_fields)
+  more:bool = compare.lt(field_index,field_count)
+  branch more dispatch(fi,fo,fs,fm,fw,field_index,field_text,field_out) finish(fo,fs,fw,field_text,field_out,is_prefix)
+block finish(fini_out:mutbuf,fini_size:u64,fini_emit:bool,fini_text:u64,fini_at:u64,fini_prefix:bool)
+  bounds_low:u64 = const() {"value":4294967295}
+  row_end:u64 = bit.and(fini_size,bounds_low)
+  exact:bool = compare.eq(fini_text,row_end)
+  branch exact finish_kind(fini_out,fini_at,fini_emit,fini_prefix) fail()
+block finish_kind(end_out:mutbuf,end_at:u64,end_emit:bool,end_prefix:bool)
+  branch end_prefix prefix_end(end_at) close(end_out,end_at,end_emit)
+block prefix_end(prefix_at:u64)
+  ret(prefix_at)
+block close(close_out:mutbuf,close_at:u64,close_emit:bool)
+  finished:u64 = call(close_out,close_at,close_emit) {"function":"wj_close"}
+  ret(finished)
+block dispatch(di:readbuf,do:mutbuf,ds:u64,dm:u64,dw:bool,dindex:u64,dtext:u64,dout:u64)
+  value_at:u64 = call(do,dout,dindex,dw) {"function":"wj_key"}
+  required_count:u64 = const() {"value":3}
+  required:bool = compare.lt(dindex,required_count)
+  bit_index_base:u64 = select(required,required_count,dindex)
+  bit_index:u64 = int.sub.wrap(bit_index_base,required_count)
+  mask_bits:u64 = int.shr.checked(dm,bit_index)
+  one:u64 = const() {"value":1}
+  mask_bit:u64 = bit.and(mask_bits,one)
+  marked:bool = compare.eq(mask_bit,one)
+  present:bool = bool.or(marked,required)
+  task:bool = compare.eq(dindex,one)
+  last_text:u64 = const() {"value":11}
+  within_text:bool = compare.le(dindex,last_text)
+  not_task:bool = bool.not(task)
+  text:bool = bool.and(within_text,not_task)
+  branch text text_descriptor(di,do,ds,dm,dw,dindex,dtext,value_at,present) numeric_descriptor(di,do,ds,dm,dw,dindex,dtext,value_at,present,task)
+block text_descriptor(ti:readbuf,to:mutbuf,ts:u64,tm:u64,tw:bool,tindex:u64,ttext:u64,tout:u64,tp:bool)
+  text_descriptor_zero:u64 = const() {"value":0}
+  first:bool = compare.eq(tindex,text_descriptor_zero)
+  text_descriptor_one:u64 = const() {"value":1}
+  text_slot_base:u64 = select(first,text_descriptor_one,tindex)
+  text_slot:u64 = int.sub.wrap(text_slot_base,text_descriptor_one)
+  text_width:u64 = const() {"value":4}
+  text_slot_bytes:u64 = int.mul.wrap(text_slot,text_width)
+  descriptor_start:u64 = const() {"value":64}
+  length_at:u64 = int.add.wrap(descriptor_start,text_slot_bytes)
+  length:u64 = call(ti,ts,length_at,text_width) {"function":"wj_read_slot"}
+  text_bounds_low:u64 = const() {"value":4294967295}
+  text_row_end:u64 = bit.and(ts,text_bounds_low)
+  remaining:u64 = int.sub.wrap(text_row_end,ttext)
+  text_fits:bool = compare.le(length,remaining)
+  branch text_fits text_presence(ti,to,ts,tm,tw,tindex,ttext,tout,tp,length) fail()
+block text_presence(tpi:readbuf,tpo:mutbuf,tps:u64,tpm:u64,tpw:bool,tpindex:u64,tptext:u64,tpout:u64,tpp:bool,tplen:u64)
+  branch tpp text_kind(tpi,tpo,tps,tpm,tpw,tpindex,tptext,tpout,tplen) absent(tpi,tpo,tps,tpm,tpw,tpindex,tptext,tpout,tplen)
+block text_kind(ki:readbuf,ko:mutbuf,ks:u64,km:u64,kw:bool,kindex:u64,ktext:u64,kout:u64,klen:u64)
+  display_flag:u64 = const() {"value":65536}
+  flag:u64 = bit.and(km,display_flag)
+  want_raw:bool = compare.eq(flag,display_flag)
+  branch want_raw display_slot(ki,ko,ks,km,kw,kindex,ktext,kout,klen) measure_text(ki,ko,ks,km,kw,kindex,ktext,kout,klen)
+block display_slot(dsi:readbuf,dso:mutbuf,dss:u64,dsm:u64,dsw:bool,dsindex:u64,dstext:u64,dsout:u64,dslen:u64)
+  schema_field:u64 = const() {"value":4}
+  schema:bool = compare.eq(dsindex,schema_field)
+  provider_field:u64 = const() {"value":6}
+  adapter_field:u64 = const() {"value":8}
+  at_least_provider:bool = compare.ge(dsindex,provider_field)
+  at_most_adapter:bool = compare.le(dsindex,adapter_field)
+  display_label:bool = bool.and(at_least_provider,at_most_adapter)
+  projected:bool = bool.or(schema,display_label)
+  branch projected project_text(dsi,dso,dss,dsm,dsw,dsindex,dstext,dsout,dslen,schema) measure_text(dsi,dso,dss,dsm,dsw,dsindex,dstext,dsout,dslen)
+block project_text(pti:readbuf,pto:mutbuf,pts:u64,ptm:u64,ptw:bool,ptindex:u64,pttext:u64,ptout:u64,ptlen:u64,ptschema:bool)
+  kind_base:u64 = const() {"value":5}
+  known_index:u64 = select(ptschema,kind_base,ptindex)
+  kind_word:u64 = int.sub.wrap(known_index,kind_base)
+  kind:u8 = int.cast(kind_word) {"mode":"wrap"}
+  projected_end:u64 = call(pti,pto,pttext,ptlen,kind,ptout,ptw) {"function":"wj_project_text"}
+  project_zero:u64 = const() {"value":0}
+  good:bool = compare.ne(projected_end,project_zero)
+  consumed:u64 = int.add.wrap(pttext,ptlen)
+  branch good advance(pti,pto,pts,ptm,ptw,ptindex,consumed,projected_end) fail()
+block measure_text(mti:readbuf,mto:mutbuf,mts:u64,mtm:u64,mtw:bool,mtindex:u64,mttext:u64,mtout:u64,mtlen:u64)
+  text_size:u64 = call(mti,mttext,mtlen) {"function":"wj_string_size"}
+  measure_text_zero:u64 = const() {"value":0}
+  typed:bool = compare.ne(text_size,measure_text_zero)
+  branch typed write_text(mti,mto,mts,mtm,mtw,mtindex,mttext,mtout,mtlen,text_size) fail()
+block write_text(wti:readbuf,wto:mutbuf,wts:u64,wtm:u64,wtw:bool,wtindex:u64,wttext:u64,wtout:u64,wtlen:u64,wtn:u64)
+  branch wtw emit_text(wti,wto,wts,wtm,wtindex,wttext,wtout,wtlen) text_advance(wti,wto,wts,wtm,wtw,wtindex,wttext,wtout,wtlen,wtn)
+block emit_text(eti:readbuf,eto:mutbuf,ets:u64,etm:u64,etindex:u64,ettext:u64,etout:u64,etlen:u64)
+  actual:u64 = call(eti,ettext,etlen,eto,etout) {"function":"json_ascii_encode"}
+  emitted:bool = const() {"value":true}
+  jump text_advance(eti,eto,ets,etm,emitted,etindex,ettext,etout,etlen,actual)
+block text_advance(tai:readbuf,tao:mutbuf,tas:u64,tam:u64,taw:bool,taindex:u64,tatext:u64,taout:u64,talen:u64,tan:u64)
+  ta_next:u64 = int.add.wrap(tatext,talen)
+  ta_end:u64 = int.add.wrap(taout,tan)
+  jump advance(tai,tao,tas,tam,taw,taindex,ta_next,ta_end)
+block numeric_descriptor(ni:readbuf,no:mutbuf,ns:u64,nm:u64,nw:bool,nindex:u64,ntext:u64,nout:u64,np:bool,ntask:bool)
+  reputation_start:u64 = const() {"value":11}
+  numeric_base:u64 = select(ntask,reputation_start,nindex)
+  numeric_slot:u64 = int.sub.wrap(numeric_base,reputation_start)
+  numeric_width:u64 = const() {"value":8}
+  numeric_offset:u64 = int.mul.wrap(numeric_slot,numeric_width)
+  numeric_at:u64 = int.add.wrap(numeric_width,numeric_offset)
+  raw_number:u64 = call(ni,ns,numeric_at,numeric_width) {"function":"wj_read_slot"}
+  branch np number_type(ni,no,ns,nm,nw,nindex,ntext,nout,raw_number,ntask) absent(ni,no,ns,nm,nw,nindex,ntext,nout,raw_number)
+block number_type(nti:readbuf,nto:mutbuf,nts:u64,ntm:u64,ntw:bool,ntindex:u64,nttext:u64,ntout:u64,ntval:u64,ntt:bool)
+  delta:u64 = const() {"value":12}
+  score:u64 = const() {"value":15}
+  gap:u64 = const() {"value":17}
+  delta_signed:bool = compare.eq(ntindex,delta)
+  score_signed:bool = compare.eq(ntindex,score)
+  gap_signed:bool = compare.eq(ntindex,gap)
+  ds_signed:bool = bool.or(delta_signed,score_signed)
+  signed:bool = bool.or(ds_signed,gap_signed)
+  branch signed signed_number(nti,nto,nts,ntm,ntw,ntindex,nttext,ntout,ntval) unsigned_number(nti,nto,nts,ntm,ntw,ntindex,nttext,ntout,ntval,ntt)
+block signed_number(sni:readbuf,sno:mutbuf,sns:u64,snm:u64,snw:bool,snindex:u64,sntext:u64,snout:u64,snval:u64)
+  signed_limit:u64 = const() {"value":4294967295}
+  signed_fits:bool = compare.le(snval,signed_limit)
+  branch signed_fits sign_extend(sni,sno,sns,snm,snw,snindex,sntext,snout,snval) fail()
+block sign_extend(sei:readbuf,seo:mutbuf,ses:u64,sem:u64,sew:bool,seindex:u64,setext:u64,seout:u64,seval:u64)
+  i32_max:u64 = const() {"value":2147483647}
+  negative:bool = compare.gt(seval,i32_max)
+  high32:u64 = const() {"value":18446744069414584320}
+  extended:u64 = bit.or(seval,high32)
+  signed_value:u64 = select(negative,extended,seval)
+  signed_mode:u64 = const() {"value":1}
+  jump format_number(sei,seo,ses,sem,sew,seindex,setext,seout,signed_value,signed_mode)
+block unsigned_number(uni:readbuf,uno:mutbuf,uns:u64,unm:u64,unw:bool,unindex:u64,untext:u64,unout:u64,unval:u64,unt:bool)
+  weight:u64 = const() {"value":14}
+  is_u16:bool = compare.eq(unindex,weight)
+  u16_max:u64 = const() {"value":65535}
+  u8_max:u64 = const() {"value":255}
+  u64_max:u64 = const() {"value":18446744073709551615}
+  rep_max:u64 = select(is_u16,u16_max,u8_max)
+  max_value:u64 = select(unt,u64_max,rep_max)
+  number_fits:bool = compare.le(unval,max_value)
+  unsigned_mode:u64 = const() {"value":0}
+  branch number_fits format_number(uni,uno,uns,unm,unw,unindex,untext,unout,unval,unsigned_mode) fail()
+block format_number(fni:readbuf,fno:mutbuf,fns:u64,fnm:u64,fnw:bool,fnindex:u64,fntext:u64,fnout:u64,fnval:u64,fnmode:u64)
+  branch fnw emit_number(fni,fno,fns,fnm,fnindex,fntext,fnout,fnval,fnmode) size_number(fni,fno,fns,fnm,fnw,fnindex,fntext,fnout,fnval,fnmode)
+block size_number(szi:readbuf,szo:mutbuf,szs:u64,szm:u64,szw:bool,szindex:u64,sztext:u64,szout:u64,szval:u64,szmode:u64)
+  size_n:u64 = call(szval,szmode) {"function":"value_integer_size"}
+  size_end:u64 = int.add.wrap(szout,size_n)
+  jump advance(szi,szo,szs,szm,szw,szindex,sztext,size_end)
+block emit_number(eni:readbuf,eno:mutbuf,ens:u64,enm:u64,enindex:u64,entext:u64,enout:u64,enval:u64,enmode:u64)
+  emit_n:u64 = call(eno,enout,enval,enmode) {"function":"value_integer_write"}
+  emit_end:u64 = int.add.wrap(enout,emit_n)
+  emit_true:bool = const() {"value":true}
+  jump advance(eni,eno,ens,enm,emit_true,enindex,entext,emit_end)
+block absent(ai:readbuf,ao:mutbuf,as:u64,am:u64,aw:bool,aindex:u64,atext:u64,aout:u64,av:u64)
+  zero_required:u64 = const() {"value":0}
+  is_zero:bool = compare.eq(av,zero_required)
+  branch is_zero emit_null(ai,ao,as,am,aw,aindex,atext,aout) fail()
+block emit_null(li:readbuf,lo:mutbuf,ls:u64,lm:u64,lw:bool,lindex:u64,ltext:u64,lout:u64)
+  null_bytes:u64 = const() {"value":1819047278}
+  null_size:u64 = const() {"value":4}
+  null_end:u64 = call(lo,lout,null_bytes,null_size,lw) {"function":"wa_word"}
+  jump advance(li,lo,ls,lm,lw,lindex,ltext,null_end)
+block advance(axi:readbuf,axo:mutbuf,axs:u64,axm:u64,axw:bool,axindex:u64,axtext:u64,axout:u64)
+  step:u64 = const() {"value":1}
+  following:u64 = int.add.wrap(axindex,step)
+  jump field(axi,axo,axs,axm,axw,following,axtext,axout)
+block fail()
+  bad_row:u64 = const() {"value":0}
+  ret(bad_row)
+end
+fn wj_project_text(input:readbuf,output:mutbuf,start:u64,length:u64,kind:u8,at:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,start:u64,length:u64,kind:u8,at:u64,emit:bool)
+  tag:u64,span_at:u64,span_size:u64 = call(input,start,length,kind) {"function":"wp_view"}
+  invalid_tag:u64 = const() {"value":4}
+  bad:bool = compare.eq(tag,invalid_tag)
+  branch bad invalid() choose(input,output,tag,span_at,span_size,at,emit)
+block choose(ci:readbuf,co:mutbuf,ct:u64,ca:u64,cn:u64,cout:u64,cw:bool)
+  null_tag:u64 = const() {"value":0}
+  missing:bool = compare.eq(ct,null_tag)
+  branch missing missing_value(co,cout,cw) nonempty(ci,co,ct,ca,cn,cout,cw)
+block nonempty(ni:readbuf,no:mutbuf,nt:u64,na:u64,nn:u64,nout:u64,nw:bool)
+  span_tag:u64 = const() {"value":1}
+  span:bool = compare.eq(nt,span_tag)
+  branch span span_value(ni,no,na,nn,nout,nw) schema_word(no,nt,nout,nw)
+block span_value(si:readbuf,so:mutbuf,sa:u64,sn:u64,sout:u64,sw:bool)
+  branch sw span_write(si,so,sa,sn,sout) span_measure(si,sa,sn,sout)
+block span_write(wi:readbuf,wo:mutbuf,wa:u64,wn:u64,wout:u64)
+  bytes:u64 = call(wi,wa,wn,wo,wout) {"function":"json_ascii_encode"}
+  finished:u64 = int.add.wrap(wout,bytes)
+  ret(finished)
+block span_measure(mi:readbuf,ma:u64,mn:u64,mout:u64)
+  needed:u64 = call(mi,ma,mn) {"function":"wj_string_size"}
+  wrapped:u64 = int.add.wrap(mout,needed)
+  ret(wrapped)
+block schema_word(vo:mutbuf,vt:u64,vout:u64,vw:bool)
+  quote:u64 = const() {"value":34}
+  one:u64 = const() {"value":1}
+  six:u64 = const() {"value":6}
+  text:u64 = call(vt) {"function":"wp_schema_word"}
+  after_quote:u64 = call(vo,vout,quote,one,vw) {"function":"wa_word"}
+  after_text:u64 = call(vo,after_quote,text,six,vw) {"function":"wa_word"}
+  after_all:u64 = call(vo,after_text,quote,one,vw) {"function":"wa_word"}
+  ret(after_all)
+block missing_value(mo:mutbuf,missing_out:u64,empty_emit:bool)
+  null_word:u64 = const() {"value":1819047278}
+  size:u64 = const() {"value":4}
+  null_end:u64 = call(mo,missing_out,null_word,size,empty_emit) {"function":"wa_word"}
+  ret(null_end)
+block invalid()
+  invalid_result:u64 = const() {"value":0}
+  ret(invalid_result)
+end
+fn wj_close(output:mutbuf,at:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(output:mutbuf,at:u64,emit:bool)
+  brace_lf:u64 = const() {"value":2685}
+  two_end:u64 = const() {"value":2}
+  finished:u64 = call(output,at,brace_lf,two_end,emit) {"function":"wa_word"}
+  ret(finished)
+end
+fn wj_read_slot(source:readbuf,row_bounds:u64,relative_at:u64,width:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(source:readbuf,row_bounds:u64,relative_at:u64,width:u64)
+  bounds_shift:u64 = const() {"value":32}
+  row_start:u64 = int.shr.checked(row_bounds,bounds_shift)
+  absolute_at:u64 = int.add.wrap(row_start,relative_at)
+  value:u64 = call(source,absolute_at,width) {"function":"wa_read"}
+  ret(value)
+end
+fn wj_string_size(source:readbuf,start:u64,length:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(source:readbuf,start:u64,length:u64)
+  checked:u64 = call(source,start,length) {"function":"value_utf8"}
+  valid_word:u64 = const() {"value":1}
+  utf8:bool = compare.eq(checked,valid_word)
+  quote_bytes:u64 = const() {"value":2}
+  last:u64 = int.add.wrap(start,length)
+  branch utf8 scan(source,start,last,quote_bytes) invalid()
+block scan(si:readbuf,at:u64,end:u64,total:u64)
+  more:bool = compare.lt(at,end)
+  branch more byte(si,at,end,total) sized(total)
+block byte(bi:readbuf,ba:u64,be:u64,bt:u64)
+  pos:usize = int.cast(ba) {"mode":"wrap"}
+  raw:u8 = buffer.load(bi,pos)
+  byte:u64 = int.cast(raw) {"mode":"wrap"}
+  ascii_quote:u64 = const() {"value":34}
+  slash:u64 = const() {"value":92}
+  is_quote:bool = compare.eq(byte,ascii_quote)
+  is_slash:bool = compare.eq(byte,slash)
+  quote_or_slash:bool = bool.or(is_quote,is_slash)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  printable_width:u64 = select(quote_or_slash,two,one)
+  space:u64 = const() {"value":32}
+  control:bool = compare.lt(byte,space)
+  branch control control_size(bi,ba,be,bt,byte) advance(bi,ba,be,bt,printable_width)
+block control_size(ci:readbuf,ca:u64,ce:u64,ct:u64,cb:u64)
+  escape:u64 = call(cb) {"function":"json_short_escape"}
+  no_short:u64 = const() {"value":0}
+  needs_hex:bool = compare.eq(escape,no_short)
+  six:u64 = const() {"value":6}
+  short:u64 = const() {"value":2}
+  control_width:u64 = select(needs_hex,six,short)
+  jump advance(ci,ca,ce,ct,control_width)
+block advance(ai:readbuf,aa:u64,ae:u64,atotal:u64,width:u64)
+  next_total:u64 = int.add.wrap(atotal,width)
+  step:u64 = const() {"value":1}
+  next_at:u64 = int.add.wrap(aa,step)
+  jump scan(ai,next_at,ae,next_total)
+block sized(result:u64)
+  ret(result)
+block invalid()
+  malformed:u64 = const() {"value":0}
+  ret(malformed)
+end
+fn wj_key(s0_out:mutbuf,s0_at:u64,s0_index:u64,s0_emit:bool) -> (u64) effects(read,write,trap) entry(select_request_id)
+block select_request_id(s0_out:mutbuf,s0_at:u64,s0_index:u64,s0_emit:bool)
+  k_request_id:u64 = const() {"value":0}
+  is_request_id:bool = compare.eq(s0_index,k_request_id)
+  branch is_request_id write_request_id(s0_out,s0_at,s0_emit) select_task_id(s0_out,s0_at,s0_index,s0_emit)
+block select_task_id(s1_out:mutbuf,s1_at:u64,s1_index:u64,s1_emit:bool)
+  k_task_id:u64 = const() {"value":1}
+  is_task_id:bool = compare.eq(s1_index,k_task_id)
+  branch is_task_id write_task_id(s1_out,s1_at,s1_emit) select_status(s1_out,s1_at,s1_index,s1_emit)
+block select_status(s2_out:mutbuf,s2_at:u64,s2_index:u64,s2_emit:bool)
+  k_status:u64 = const() {"value":2}
+  is_status:bool = compare.eq(s2_index,k_status)
+  branch is_status write_status(s2_out,s2_at,s2_emit) select_provider_request_id(s2_out,s2_at,s2_index,s2_emit)
+block select_provider_request_id(s3_out:mutbuf,s3_at:u64,s3_index:u64,s3_emit:bool)
+  k_provider_request_id:u64 = const() {"value":3}
+  is_provider_request_id:bool = compare.eq(s3_index,k_provider_request_id)
+  branch is_provider_request_id write_provider_request_id(s3_out,s3_at,s3_emit) select_provenance_schema_version(s3_out,s3_at,s3_index,s3_emit)
+block select_provenance_schema_version(s4_out:mutbuf,s4_at:u64,s4_index:u64,s4_emit:bool)
+  k_provenance_schema_version:u64 = const() {"value":4}
+  is_provenance_schema_version:bool = compare.eq(s4_index,k_provenance_schema_version)
+  branch is_provenance_schema_version write_provenance_schema_version(s4_out,s4_at,s4_emit) select_provenance_fingerprint(s4_out,s4_at,s4_index,s4_emit)
+block select_provenance_fingerprint(s5_out:mutbuf,s5_at:u64,s5_index:u64,s5_emit:bool)
+  k_provenance_fingerprint:u64 = const() {"value":5}
+  is_provenance_fingerprint:bool = compare.eq(s5_index,k_provenance_fingerprint)
+  branch is_provenance_fingerprint write_provenance_fingerprint(s5_out,s5_at,s5_emit) select_provider(s5_out,s5_at,s5_index,s5_emit)
+block select_provider(s6_out:mutbuf,s6_at:u64,s6_index:u64,s6_emit:bool)
+  k_provider:u64 = const() {"value":6}
+  is_provider:bool = compare.eq(s6_index,k_provider)
+  branch is_provider write_provider(s6_out,s6_at,s6_emit) select_model(s6_out,s6_at,s6_index,s6_emit)
+block select_model(s7_out:mutbuf,s7_at:u64,s7_index:u64,s7_emit:bool)
+  k_model:u64 = const() {"value":7}
+  is_model:bool = compare.eq(s7_index,k_model)
+  branch is_model write_model(s7_out,s7_at,s7_emit) select_adapter(s7_out,s7_at,s7_index,s7_emit)
+block select_adapter(s8_out:mutbuf,s8_at:u64,s8_index:u64,s8_emit:bool)
+  k_adapter:u64 = const() {"value":8}
+  is_adapter:bool = compare.eq(s8_index,k_adapter)
+  branch is_adapter write_adapter(s8_out,s8_at,s8_emit) select_agent_protocol(s8_out,s8_at,s8_index,s8_emit)
+block select_agent_protocol(s9_out:mutbuf,s9_at:u64,s9_index:u64,s9_emit:bool)
+  k_agent_protocol:u64 = const() {"value":9}
+  is_agent_protocol:bool = compare.eq(s9_index,k_agent_protocol)
+  branch is_agent_protocol write_agent_protocol(s9_out,s9_at,s9_emit) select_compliance_profile(s9_out,s9_at,s9_index,s9_emit)
+block select_compliance_profile(s10_out:mutbuf,s10_at:u64,s10_index:u64,s10_emit:bool)
+  k_compliance_profile:u64 = const() {"value":10}
+  is_compliance_profile:bool = compare.eq(s10_index,k_compliance_profile)
+  branch is_compliance_profile write_compliance_profile(s10_out,s10_at,s10_emit) select_reputation_label(s10_out,s10_at,s10_index,s10_emit)
+block select_reputation_label(s11_out:mutbuf,s11_at:u64,s11_index:u64,s11_emit:bool)
+  k_reputation_label:u64 = const() {"value":11}
+  is_reputation_label:bool = compare.eq(s11_index,k_reputation_label)
+  branch is_reputation_label write_reputation_label(s11_out,s11_at,s11_emit) select_reputation_delta(s11_out,s11_at,s11_index,s11_emit)
+block select_reputation_delta(s12_out:mutbuf,s12_at:u64,s12_index:u64,s12_emit:bool)
+  k_reputation_delta:u64 = const() {"value":12}
+  is_reputation_delta:bool = compare.eq(s12_index,k_reputation_delta)
+  branch is_reputation_delta write_reputation_delta(s12_out,s12_at,s12_emit) select_reputation_tier(s12_out,s12_at,s12_index,s12_emit)
+block select_reputation_tier(s13_out:mutbuf,s13_at:u64,s13_index:u64,s13_emit:bool)
+  k_reputation_tier:u64 = const() {"value":13}
+  is_reputation_tier:bool = compare.eq(s13_index,k_reputation_tier)
+  branch is_reputation_tier write_reputation_tier(s13_out,s13_at,s13_emit) select_reputation_weight_bps(s13_out,s13_at,s13_index,s13_emit)
+block select_reputation_weight_bps(s14_out:mutbuf,s14_at:u64,s14_index:u64,s14_emit:bool)
+  k_reputation_weight_bps:u64 = const() {"value":14}
+  is_reputation_weight_bps:bool = compare.eq(s14_index,k_reputation_weight_bps)
+  branch is_reputation_weight_bps write_reputation_weight_bps(s14_out,s14_at,s14_emit) select_reputation_score_bps(s14_out,s14_at,s14_index,s14_emit)
+block select_reputation_score_bps(s15_out:mutbuf,s15_at:u64,s15_index:u64,s15_emit:bool)
+  k_reputation_score_bps:u64 = const() {"value":15}
+  is_reputation_score_bps:bool = compare.eq(s15_index,k_reputation_score_bps)
+  branch is_reputation_score_bps write_reputation_score_bps(s15_out,s15_at,s15_emit) select_reputation_rank_ordinal(s15_out,s15_at,s15_index,s15_emit)
+block select_reputation_rank_ordinal(s16_out:mutbuf,s16_at:u64,s16_index:u64,s16_emit:bool)
+  k_reputation_rank_ordinal:u64 = const() {"value":16}
+  is_reputation_rank_ordinal:bool = compare.eq(s16_index,k_reputation_rank_ordinal)
+  branch is_reputation_rank_ordinal write_reputation_rank_ordinal(s16_out,s16_at,s16_emit) write_reputation_gap_bps_from_best(s16_out,s16_at,s16_emit)
+block write_request_id(w0_out:mutbuf,w0_at:u64,w0_emit:bool)
+  request_id_bytes_0:u64 = const() {"value":8315181416903221883}
+  request_id_len_0:u64 = const() {"value":8}
+  w0_0:u64 = call(w0_out,w0_at,request_id_bytes_0,request_id_len_0,w0_emit) {"function":"wa_word"}
+  request_id_bytes_1:u64 = const() {"value":63919387926388}
+  request_id_len_1:u64 = const() {"value":6}
+  w0_1:u64 = call(w0_out,w0_0,request_id_bytes_1,request_id_len_1,w0_emit) {"function":"wa_word"}
+  ret(w0_1)
+block write_task_id(w1_out:mutbuf,w1_at:u64,w1_emit:bool)
+  task_id_bytes_0:u64 = const() {"value":7592905640070357548}
+  task_id_len_0:u64 = const() {"value":8}
+  w1_0:u64 = call(w1_out,w1_at,task_id_bytes_0,task_id_len_0,w1_emit) {"function":"wa_word"}
+  task_id_bytes_1:u64 = const() {"value":3809892}
+  task_id_len_1:u64 = const() {"value":3}
+  w1_1:u64 = call(w1_out,w1_0,task_id_bytes_1,task_id_len_1,w1_emit) {"function":"wa_word"}
+  ret(w1_1)
+block write_status(w2_out:mutbuf,w2_at:u64,w2_emit:bool)
+  status_bytes_0:u64 = const() {"value":8319683848551211564}
+  status_len_0:u64 = const() {"value":8}
+  w2_0:u64 = call(w2_out,w2_at,status_bytes_0,status_len_0,w2_emit) {"function":"wa_word"}
+  status_bytes_1:u64 = const() {"value":14882}
+  status_len_1:u64 = const() {"value":2}
+  w2_1:u64 = call(w2_out,w2_0,status_bytes_1,status_len_1,w2_emit) {"function":"wa_word"}
+  ret(w2_1)
+block write_provider_request_id(w3_out:mutbuf,w3_at:u64,w3_emit:bool)
+  provider_request_id_bytes_0:u64 = const() {"value":7235444497380811308}
+  provider_request_id_len_0:u64 = const() {"value":8}
+  w3_0:u64 = call(w3_out,w3_at,provider_request_id_bytes_0,provider_request_id_len_0,w3_emit) {"function":"wa_word"}
+  provider_request_id_bytes_1:u64 = const() {"value":7310874250630361701}
+  provider_request_id_len_1:u64 = const() {"value":8}
+  w3_1:u64 = call(w3_out,w3_0,provider_request_id_bytes_1,provider_request_id_len_1,w3_emit) {"function":"wa_word"}
+  provider_request_id_bytes_2:u64 = const() {"value":16363363309155443}
+  provider_request_id_len_2:u64 = const() {"value":7}
+  w3_2:u64 = call(w3_out,w3_1,provider_request_id_bytes_2,provider_request_id_len_2,w3_emit) {"function":"wa_word"}
+  ret(w3_2)
+block write_provenance_schema_version(w4_out:mutbuf,w4_at:u64,w4_emit:bool)
+  provenance_schema_version_bytes_0:u64 = const() {"value":7954894537853248044}
+  provenance_schema_version_len_0:u64 = const() {"value":8}
+  w4_0:u64 = call(w4_out,w4_at,provenance_schema_version_bytes_0,provenance_schema_version_len_0,w4_emit) {"function":"wa_word"}
+  provenance_schema_version_bytes_1:u64 = const() {"value":7521982656198962785}
+  provenance_schema_version_len_1:u64 = const() {"value":8}
+  w4_1:u64 = call(w4_out,w4_0,provenance_schema_version_bytes_1,provenance_schema_version_len_1,w4_emit) {"function":"wa_word"}
+  provenance_schema_version_bytes_2:u64 = const() {"value":8318823020787494245}
+  provenance_schema_version_len_2:u64 = const() {"value":8}
+  w4_2:u64 = call(w4_out,w4_1,provenance_schema_version_bytes_2,provenance_schema_version_len_2,w4_emit) {"function":"wa_word"}
+  provenance_schema_version_bytes_3:u64 = const() {"value":249685765993}
+  provenance_schema_version_len_3:u64 = const() {"value":5}
+  w4_3:u64 = call(w4_out,w4_2,provenance_schema_version_bytes_3,provenance_schema_version_len_3,w4_emit) {"function":"wa_word"}
+  ret(w4_3)
+block write_provenance_fingerprint(w5_out:mutbuf,w5_at:u64,w5_emit:bool)
+  provenance_fingerprint_bytes_0:u64 = const() {"value":7954894537853248044}
+  provenance_fingerprint_len_0:u64 = const() {"value":8}
+  w5_0:u64 = call(w5_out,w5_at,provenance_fingerprint_bytes_0,provenance_fingerprint_len_0,w5_emit) {"function":"wa_word"}
+  provenance_fingerprint_bytes_1:u64 = const() {"value":7956002776635633249}
+  provenance_fingerprint_len_1:u64 = const() {"value":8}
+  w5_1:u64 = call(w5_out,w5_0,provenance_fingerprint_bytes_1,provenance_fingerprint_len_1,w5_emit) {"function":"wa_word"}
+  provenance_fingerprint_bytes_2:u64 = const() {"value":8389759096071546215}
+  provenance_fingerprint_len_2:u64 = const() {"value":8}
+  w5_2:u64 = call(w5_out,w5_1,provenance_fingerprint_bytes_2,provenance_fingerprint_len_2,w5_emit) {"function":"wa_word"}
+  provenance_fingerprint_bytes_3:u64 = const() {"value":14882}
+  provenance_fingerprint_len_3:u64 = const() {"value":2}
+  w5_3:u64 = call(w5_out,w5_2,provenance_fingerprint_bytes_3,provenance_fingerprint_len_3,w5_emit) {"function":"wa_word"}
+  ret(w5_3)
+block write_provider(w6_out:mutbuf,w6_at:u64,w6_emit:bool)
+  provider_bytes_0:u64 = const() {"value":7235444497380811308}
+  provider_len_0:u64 = const() {"value":8}
+  w6_0:u64 = call(w6_out,w6_at,provider_bytes_0,provider_len_0,w6_emit) {"function":"wa_word"}
+  provider_bytes_1:u64 = const() {"value":975336037}
+  provider_len_1:u64 = const() {"value":4}
+  w6_1:u64 = call(w6_out,w6_0,provider_bytes_1,provider_len_1,w6_emit) {"function":"wa_word"}
+  ret(w6_1)
+block write_model(w7_out:mutbuf,w7_at:u64,w7_emit:bool)
+  model_bytes_0:u64 = const() {"value":2480468976814858796}
+  model_len_0:u64 = const() {"value":8}
+  w7_0:u64 = call(w7_out,w7_at,model_bytes_0,model_len_0,w7_emit) {"function":"wa_word"}
+  model_bytes_1:u64 = const() {"value":58}
+  model_len_1:u64 = const() {"value":1}
+  w7_1:u64 = call(w7_out,w7_0,model_bytes_1,model_len_1,w7_emit) {"function":"wa_word"}
+  ret(w7_1)
+block write_adapter(w8_out:mutbuf,w8_at:u64,w8_emit:bool)
+  adapter_bytes_0:u64 = const() {"value":7310591658727383596}
+  adapter_len_0:u64 = const() {"value":8}
+  w8_0:u64 = call(w8_out,w8_at,adapter_bytes_0,adapter_len_0,w8_emit) {"function":"wa_word"}
+  adapter_bytes_1:u64 = const() {"value":3809906}
+  adapter_len_1:u64 = const() {"value":3}
+  w8_1:u64 = call(w8_out,w8_0,adapter_bytes_1,adapter_len_1,w8_emit) {"function":"wa_word"}
+  ret(w8_1)
+block write_agent_protocol(w9_out:mutbuf,w9_at:u64,w9_emit:bool)
+  agent_protocol_bytes_0:u64 = const() {"value":6878243912706761260}
+  agent_protocol_len_0:u64 = const() {"value":8}
+  w9_0:u64 = call(w9_out,w9_at,agent_protocol_bytes_0,agent_protocol_len_0,w9_emit) {"function":"wa_word"}
+  agent_protocol_bytes_1:u64 = const() {"value":7813573208857080432}
+  agent_protocol_len_1:u64 = const() {"value":8}
+  w9_1:u64 = call(w9_out,w9_0,agent_protocol_bytes_1,agent_protocol_len_1,w9_emit) {"function":"wa_word"}
+  agent_protocol_bytes_2:u64 = const() {"value":14882}
+  agent_protocol_len_2:u64 = const() {"value":2}
+  w9_2:u64 = call(w9_out,w9_1,agent_protocol_bytes_2,agent_protocol_len_2,w9_emit) {"function":"wa_word"}
+  ret(w9_2)
+block write_compliance_profile(w10_out:mutbuf,w10_at:u64,w10_emit:bool)
+  compliance_profile_bytes_0:u64 = const() {"value":7596570286789698092}
+  compliance_profile_len_0:u64 = const() {"value":8}
+  w10_0:u64 = call(w10_out,w10_at,compliance_profile_bytes_0,compliance_profile_len_0,w10_emit) {"function":"wa_word"}
+  compliance_profile_bytes_1:u64 = const() {"value":8030604640580234849}
+  compliance_profile_len_1:u64 = const() {"value":8}
+  w10_1:u64 = call(w10_out,w10_0,compliance_profile_bytes_1,compliance_profile_len_1,w10_emit) {"function":"wa_word"}
+  compliance_profile_bytes_2:u64 = const() {"value":63919404902758}
+  compliance_profile_len_2:u64 = const() {"value":6}
+  w10_2:u64 = call(w10_out,w10_1,compliance_profile_bytes_2,compliance_profile_len_2,w10_emit) {"function":"wa_word"}
+  ret(w10_2)
+block write_reputation_label(w11_out:mutbuf,w11_at:u64,w11_emit:bool)
+  reputation_label_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_label_len_0:u64 = const() {"value":8}
+  w11_0:u64 = call(w11_out,w11_at,reputation_label_bytes_0,reputation_label_len_0,w11_emit) {"function":"wa_word"}
+  reputation_label_bytes_1:u64 = const() {"value":7089066445588359540}
+  reputation_label_len_1:u64 = const() {"value":8}
+  w11_1:u64 = call(w11_out,w11_0,reputation_label_bytes_1,reputation_label_len_1,w11_emit) {"function":"wa_word"}
+  reputation_label_bytes_2:u64 = const() {"value":975334501}
+  reputation_label_len_2:u64 = const() {"value":4}
+  w11_2:u64 = call(w11_out,w11_1,reputation_label_bytes_2,reputation_label_len_2,w11_emit) {"function":"wa_word"}
+  ret(w11_2)
+block write_reputation_delta(w12_out:mutbuf,w12_at:u64,w12_emit:bool)
+  reputation_delta_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_delta_len_0:u64 = const() {"value":8}
+  w12_0:u64 = call(w12_out,w12_at,reputation_delta_bytes_0,reputation_delta_len_0,w12_emit) {"function":"wa_word"}
+  reputation_delta_bytes_1:u64 = const() {"value":7810759489781459316}
+  reputation_delta_len_1:u64 = const() {"value":8}
+  w12_1:u64 = call(w12_out,w12_0,reputation_delta_bytes_1,reputation_delta_len_1,w12_emit) {"function":"wa_word"}
+  reputation_delta_bytes_2:u64 = const() {"value":975331700}
+  reputation_delta_len_2:u64 = const() {"value":4}
+  w12_2:u64 = call(w12_out,w12_1,reputation_delta_bytes_2,reputation_delta_len_2,w12_emit) {"function":"wa_word"}
+  ret(w12_2)
+block write_reputation_tier(w13_out:mutbuf,w13_at:u64,w13_emit:bool)
+  reputation_tier_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_tier_len_0:u64 = const() {"value":8}
+  w13_0:u64 = call(w13_out,w13_at,reputation_tier_bytes_0,reputation_tier_len_0,w13_emit) {"function":"wa_word"}
+  reputation_tier_bytes_1:u64 = const() {"value":7307499823608850804}
+  reputation_tier_len_1:u64 = const() {"value":8}
+  w13_1:u64 = call(w13_out,w13_0,reputation_tier_bytes_1,reputation_tier_len_1,w13_emit) {"function":"wa_word"}
+  reputation_tier_bytes_2:u64 = const() {"value":3809906}
+  reputation_tier_len_2:u64 = const() {"value":3}
+  w13_2:u64 = call(w13_out,w13_1,reputation_tier_bytes_2,reputation_tier_len_2,w13_emit) {"function":"wa_word"}
+  ret(w13_2)
+block write_reputation_weight_bps(w14_out:mutbuf,w14_at:u64,w14_emit:bool)
+  reputation_weight_bps_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_weight_bps_len_0:u64 = const() {"value":8}
+  w14_0:u64 = call(w14_out,w14_at,reputation_weight_bps_bytes_0,reputation_weight_bps_len_0,w14_emit) {"function":"wa_word"}
+  reputation_weight_bps_bytes_1:u64 = const() {"value":7594607598388603252}
+  reputation_weight_bps_len_1:u64 = const() {"value":8}
+  w14_1:u64 = call(w14_out,w14_0,reputation_weight_bps_bytes_1,reputation_weight_bps_len_1,w14_emit) {"function":"wa_word"}
+  reputation_weight_bps_bytes_2:u64 = const() {"value":2482451387421845607}
+  reputation_weight_bps_len_2:u64 = const() {"value":8}
+  w14_2:u64 = call(w14_out,w14_1,reputation_weight_bps_bytes_2,reputation_weight_bps_len_2,w14_emit) {"function":"wa_word"}
+  reputation_weight_bps_bytes_3:u64 = const() {"value":58}
+  reputation_weight_bps_len_3:u64 = const() {"value":1}
+  w14_3:u64 = call(w14_out,w14_2,reputation_weight_bps_bytes_3,reputation_weight_bps_len_3,w14_emit) {"function":"wa_word"}
+  ret(w14_3)
+block write_reputation_score_bps(w15_out:mutbuf,w15_at:u64,w15_emit:bool)
+  reputation_score_bps_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_score_bps_len_0:u64 = const() {"value":8}
+  w15_0:u64 = call(w15_out,w15_at,reputation_score_bps_bytes_0,reputation_score_bps_len_0,w15_emit) {"function":"wa_word"}
+  reputation_score_bps_bytes_1:u64 = const() {"value":8026385814616238452}
+  reputation_score_bps_len_1:u64 = const() {"value":8}
+  w15_1:u64 = call(w15_out,w15_0,reputation_score_bps_bytes_1,reputation_score_bps_len_1,w15_emit) {"function":"wa_word"}
+  reputation_score_bps_bytes_2:u64 = const() {"value":4189037529931933042}
+  reputation_score_bps_len_2:u64 = const() {"value":8}
+  w15_2:u64 = call(w15_out,w15_1,reputation_score_bps_bytes_2,reputation_score_bps_len_2,w15_emit) {"function":"wa_word"}
+  ret(w15_2)
+block write_reputation_rank_ordinal(w16_out:mutbuf,w16_at:u64,w16_emit:bool)
+  reputation_rank_ordinal_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_rank_ordinal_len_0:u64 = const() {"value":8}
+  w16_0:u64 = call(w16_out,w16_at,reputation_rank_ordinal_bytes_0,reputation_rank_ordinal_len_0,w16_emit) {"function":"wa_word"}
+  reputation_rank_ordinal_bytes_1:u64 = const() {"value":7953764171113261428}
+  reputation_rank_ordinal_len_1:u64 = const() {"value":8}
+  w16_1:u64 = call(w16_out,w16_0,reputation_rank_ordinal_bytes_1,reputation_rank_ordinal_len_1,w16_emit) {"function":"wa_word"}
+  reputation_rank_ordinal_bytes_2:u64 = const() {"value":7020664749254729579}
+  reputation_rank_ordinal_len_2:u64 = const() {"value":8}
+  w16_2:u64 = call(w16_out,w16_1,reputation_rank_ordinal_bytes_2,reputation_rank_ordinal_len_2,w16_emit) {"function":"wa_word"}
+  reputation_rank_ordinal_bytes_3:u64 = const() {"value":3809900}
+  reputation_rank_ordinal_len_3:u64 = const() {"value":3}
+  w16_3:u64 = call(w16_out,w16_2,reputation_rank_ordinal_bytes_3,reputation_rank_ordinal_len_3,w16_emit) {"function":"wa_word"}
+  ret(w16_3)
+block write_reputation_gap_bps_from_best(w17_out:mutbuf,w17_at:u64,w17_emit:bool)
+  reputation_gap_bps_from_best_bytes_0:u64 = const() {"value":7022366844576211500}
+  reputation_gap_bps_from_best_len_0:u64 = const() {"value":8}
+  w17_0:u64 = call(w17_out,w17_at,reputation_gap_bps_from_best_bytes_0,reputation_gap_bps_from_best_len_0,w17_emit) {"function":"wa_word"}
+  reputation_gap_bps_from_best_bytes_1:u64 = const() {"value":8097867264561211764}
+  reputation_gap_bps_from_best_len_1:u64 = const() {"value":8}
+  w17_1:u64 = call(w17_out,w17_0,reputation_gap_bps_from_best_bytes_1,reputation_gap_bps_from_best_len_1,w17_emit) {"function":"wa_word"}
+  reputation_gap_bps_from_best_bytes_2:u64 = const() {"value":8030593645699687007}
+  reputation_gap_bps_from_best_len_2:u64 = const() {"value":8}
+  w17_2:u64 = call(w17_out,w17_1,reputation_gap_bps_from_best_bytes_2,reputation_gap_bps_from_best_len_2,w17_emit) {"function":"wa_word"}
+  reputation_gap_bps_from_best_bytes_3:u64 = const() {"value":4189038642378989421}
+  reputation_gap_bps_from_best_len_3:u64 = const() {"value":8}
+  w17_3:u64 = call(w17_out,w17_2,reputation_gap_bps_from_best_bytes_3,reputation_gap_bps_from_best_len_3,w17_emit) {"function":"wa_word"}
+  ret(w17_3)
+end

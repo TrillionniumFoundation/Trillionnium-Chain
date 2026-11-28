@@ -1,0 +1,284 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_kernel_state_shape
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  size_us:usize = buffer.len(raw)
+  size:u64 = int.cast(size_us) {"mode":"wrap"}
+  minimum:u64 = const() {"value":111}
+  maximum:u64 = const() {"value":65536}
+  lo:bool = compare.ge(size,minimum)
+  hi:bool = compare.le(size,maximum)
+  within:bool = bool.and(lo,hi)
+  branch within capacities(raw,out,w,size) malformed()
+block capacities(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
+  cbase:u64 = const() {"value":4096}
+  cdigest:u64 = const() {"value":32}
+  cend:u64 = int.add.wrap(cbase,cn)
+  cresult:u64 = int.add.wrap(cdigest,cn)
+  cmem_us:usize = buffer.len(cw)
+  cout_us:usize = buffer.len(co)
+  cmem:u64 = int.cast(cmem_us) {"mode":"wrap"}
+  cout:u64 = int.cast(cout_us) {"mode":"wrap"}
+  csafe:bool = compare.ge(cmem,cend)
+  cpresent:bool = compare.ge(cout,cresult)
+  cpass:bool = bool.and(csafe,cpresent)
+  branch cpass stage(cr,co,cw,cn,cbase,cend) short()
+block stage(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sb:u64,se:u64)
+  s0:u64 = const() {"value":0}
+  ss:u64 = call(sr,s0,sw,sb,sn) {"function":"cp_copy"}
+  sp:u64 = call(sw,sb,se) {"function":"sks_state"}
+  sexact:bool = compare.eq(sp,se)
+  branch sexact hash(so,sw,sn,sb) malformed()
+block hash(ho:mutbuf,hw:mutbuf,hn:u64,hb:u64)
+  hashed:bool = call(hw,hb,hn) {"function":"sks_root"}
+  branch hashed publish(ho,hw,hn,hb) internal()
+block publish(po:mutbuf,pw:mutbuf,pn:u64,pb:u64)
+  p0:u64 = const() {"value":0}
+  p32:u64 = const() {"value":32}
+  pd:u64 = const() {"value":1168}
+  written_digest:u64 = call(pw,pd,po,p0,p32) {"function":"cp_wout"}
+  written_state:u64 = call(pw,pb,po,p32,pn) {"function":"cp_wout"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  m:u32 = const() {"value":100}
+  ret(m)
+block short()
+  c:u32 = const() {"value":102}
+  ret(c)
+block internal()
+  i:u32 = const() {"value":103}
+  ret(i)
+end
+
+fn sks_state(w:mutbuf,start:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,start:u64,end:u64)
+  p0:u64 = call(w,start,end) {"function":"sks_receipt_states"}
+  num1:u64 = const() {"value":1}
+  p1:u64 = call(w,p0,end,num1) {"function":"sks_optional"}
+  num2:u64 = const() {"value":2}
+  p2:u64 = call(w,p1,end,num2) {"function":"sks_optional"}
+  num3:u64 = const() {"value":56}
+  p3:u64 = call(p2,end,num3) {"function":"srci_take"}
+  p4:u64 = call(w,p3,end) {"function":"sks_bool"}
+  p5:u64 = call(w,p4,end) {"function":"srci_optional_id"}
+  num6:u64 = const() {"value":42}
+  p6:u64 = call(p5,end,num6) {"function":"srci_take"}
+  p7:u64 = call(w,p6,end) {"function":"srci_optional_id"}
+  num8:u64 = const() {"value":56}
+  p8:u64 = call(w,p7,end,num8) {"function":"sks_fixed_vec"}
+  ret(p8)
+end
+
+fn sks_receipt_state(w:mutbuf,start:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,start:u64,end:u64)
+  p0:u64 = call(w,start,end) {"function":"srci_receipt"}
+  num1:u64 = const() {"value":41}
+  p1:u64 = call(p0,end,num1) {"function":"srci_take"}
+  p2:u64 = call(w,p1,end) {"function":"srci_optional_id"}
+  num3:u64 = const() {"value":8}
+  p3:u64 = call(p2,end,num3) {"function":"srci_take"}
+  ret(p3)
+end
+
+fn sks_rollup_state(w:mutbuf,start:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,start:u64,end:u64)
+  p0:u64 = call(w,start,end) {"function":"srli_inner"}
+  num1:u64 = const() {"value":57}
+  p1:u64 = call(p0,end,num1) {"function":"srci_take"}
+  p2:u64 = call(w,p1,end) {"function":"srci_optional_id"}
+  ret(p2)
+end
+
+fn sks_settlement_state(w:mutbuf,start:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,start:u64,end:u64)
+  num0:u64 = const() {"value":40}
+  p0:u64 = call(start,end,num0) {"function":"srci_take"}
+  p1:u64 = call(w,p0,end) {"function":"sks_settlement_intent"}
+  num2:u64 = const() {"value":1}
+  p2:u64 = call(p1,end,num2) {"function":"srci_take"}
+  p3:u64 = call(w,p2,end) {"function":"sks_settlement_receipt"}
+  num4:u64 = const() {"value":8}
+  p4:u64 = call(p3,end,num4) {"function":"srci_take"}
+  ret(p4)
+end
+
+fn sks_settlement_intent(w:mutbuf,start:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,start:u64,end:u64)
+  num0:u64 = const() {"value":2}
+  p0:u64 = call(start,end,num0) {"function":"srci_take"}
+  p1:u64 = call(w,p0,end) {"function":"srci_context"}
+  num2:u64 = const() {"value":142}
+  p2:u64 = call(p1,end,num2) {"function":"srci_take"}
+  num3:u64 = const() {"value":32}
+  p3:u64 = call(w,p2,end,num3) {"function":"sks_fixed_vec"}
+  num4:u64 = const() {"value":64}
+  p4:u64 = call(p3,end,num4) {"function":"srci_take"}
+  num5:u64 = const() {"value":88}
+  p5:u64 = call(w,p4,end,num5) {"function":"sks_fixed_vec"}
+  num6:u64 = const() {"value":32}
+  p6:u64 = call(p5,end,num6) {"function":"srci_take"}
+  num7:u64 = const() {"value":82}
+  p7:u64 = call(w,p6,end,num7) {"function":"sks_fixed_vec"}
+  num8:u64 = const() {"value":64}
+  p8:u64 = call(p7,end,num8) {"function":"srci_take"}
+  ret(p8)
+end
+
+fn sks_settlement_receipt(w:mutbuf,start:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,start:u64,end:u64)
+  num0:u64 = const() {"value":2}
+  p0:u64 = call(start,end,num0) {"function":"srci_take"}
+  p1:u64 = call(w,p0,end) {"function":"srci_context"}
+  num2:u64 = const() {"value":160}
+  p2:u64 = call(p1,end,num2) {"function":"srci_take"}
+  num3:u64 = const() {"value":82}
+  p3:u64 = call(w,p2,end,num3) {"function":"sks_fixed_vec"}
+  num4:u64 = const() {"value":80}
+  p4:u64 = call(w,p3,end,num4) {"function":"sks_fixed_vec"}
+  num5:u64 = const() {"value":40}
+  p5:u64 = call(p4,end,num5) {"function":"srci_take"}
+  ret(p5)
+end
+
+
+fn sks_optional(w:mutbuf,p:u64,end:u64,arm:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,end:u64,arm:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = call(p,end,one) {"function":"srci_take"}
+  fits:bool = compare.le(next,end)
+  branch fits tag(w,p,next,end,arm) invalid()
+block tag(tw:mutbuf,tp:u64,tn:u64,te:u64,ta:u64)
+  pos:usize = int.cast(tp) {"mode":"wrap"}
+  disc:u8 = buffer.load(tw,pos)
+  zero8:u8 = const() {"value":0}
+  one8:u8 = const() {"value":1}
+  none:bool = compare.eq(disc,zero8)
+  some:bool = compare.eq(disc,one8)
+  branch none done(tn) require_some(tw,tn,te,ta,some)
+block require_some(rw:mutbuf,rn:u64,re:u64,ra:u64,rs:bool)
+  branch rs payload(rw,rn,re,ra) invalid()
+block payload(pw:mutbuf,pn:u64,pe:u64,pa:u64)
+  which:u64 = const() {"value":1}
+  rollup:bool = compare.eq(pa,which)
+  branch rollup r_payload(pw,pn,pe) s_payload(pw,pn,pe)
+block r_payload(aw:mutbuf,an:u64,ae:u64)
+  a:u64 = call(aw,an,ae) {"function":"sks_rollup_state"}
+  ret(a)
+block s_payload(bw:mutbuf,bn:u64,be:u64)
+  b:u64 = call(bw,bn,be) {"function":"sks_settlement_state"}
+  ret(b)
+block done(cn:u64)
+  ret(cn)
+block invalid()
+  sentinel:u64 = const() {"value":18446744073709551615}
+  ret(sentinel)
+end
+
+fn sks_bool(w:mutbuf,p:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,end:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = call(p,end,one) {"function":"srci_take"}
+  fits:bool = compare.le(next,end)
+  branch fits tag(w,p,next) bad()
+block tag(tw:mutbuf,tp:u64,tn:u64)
+  a:usize = int.cast(tp) {"mode":"wrap"}
+  flag:u8 = buffer.load(tw,a)
+  one8:u8 = const() {"value":1}
+  legal:bool = compare.le(flag,one8)
+  branch legal good(tn) bad()
+block good(gn:u64)
+  ret(gn)
+block bad()
+  sentinel:u64 = const() {"value":18446744073709551615}
+  ret(sentinel)
+end
+
+fn sks_fixed_vec(w:mutbuf,p:u64,end:u64,stride:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,end:u64,stride:u64)
+  four:u64 = const() {"value":4}
+  count:u64 = call(w,p,end) {"function":"srci_u32"}
+  cap:u64 = const() {"value":64}
+  bounded:bool = compare.le(count,cap)
+  branch bounded span(p,end,stride,count,four) bad()
+block span(sp:u64,se:u64,ss:u64,sn:u64,sf:u64)
+  first:u64 = call(sp,se,sf) {"function":"srci_take"}
+  total:u64 = int.mul.wrap(ss,sn)
+  next:u64 = call(first,se,total) {"function":"srci_take"}
+  ret(next)
+block bad()
+  sentinel:u64 = const() {"value":18446744073709551615}
+  ret(sentinel)
+end
+
+fn sks_receipt_states(w:mutbuf,p:u64,end:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,end:u64)
+  count:u64 = call(w,p,end) {"function":"srci_u32"}
+  cap:u64 = const() {"value":64}
+  bounded:bool = compare.le(count,cap)
+  branch bounded start(w,p,end,count) bad()
+block start(sw:mutbuf,sp:u64,se:u64,sn:u64)
+  four:u64 = const() {"value":4}
+  first:u64 = call(sp,se,four) {"function":"srci_take"}
+  jump step(sw,first,se,sn)
+block step(tw:mutbuf,tp:u64,te:u64,tn:u64)
+  zero:u64 = const() {"value":0}
+  finished:bool = compare.eq(tn,zero)
+  branch finished done(tp) more(tw,tp,te,tn)
+block more(mw:mutbuf,mp:u64,me:u64,mn:u64)
+  next:u64 = call(mw,mp,me) {"function":"sks_receipt_state"}
+  forward:bool = compare.gt(next,mp)
+  fits:bool = compare.le(next,me)
+  okay:bool = bool.and(forward,fits)
+  one:u64 = const() {"value":1}
+  rem:u64 = int.sub.wrap(mn,one)
+  branch okay step(mw,next,me,rem) bad()
+block done(dp:u64)
+  ret(dp)
+block bad()
+  sentinel:u64 = const() {"value":18446744073709551615}
+  ret(sentinel)
+end
+
+fn sks_root(w:mutbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,n:u64)
+  initial:u64 = call(w) {"function":"tr_sha_init"}
+  at0:u64 = const() {"value":2048}
+  val0:u64 = const() {"value":7885365840114090047}
+  x0:u64 = call(w,at0,val0) {"function":"tr_put"}
+  at8:u64 = const() {"value":2056}
+  val8:u64 = const() {"value":7809911856577867822}
+  x8:u64 = call(w,at8,val8) {"function":"tr_put"}
+  at16:u64 = const() {"value":2064}
+  val16:u64 = const() {"value":7957688116653207141}
+  x16:u64 = call(w,at16,val16) {"function":"tr_put"}
+  at24:u64 = const() {"value":2072}
+  val24:u64 = const() {"value":7957695015410300275}
+  x24:u64 = call(w,at24,val24) {"function":"tr_put"}
+  at32:u64 = const() {"value":2080}
+  val32:u64 = const() {"value":7882825970206733101}
+  x32:u64 = call(w,at32,val32) {"function":"tr_put"}
+  at40:u64 = const() {"value":2088}
+  val40:u64 = const() {"value":8386112019173240421}
+  x40:u64 = call(w,at40,val40) {"function":"tr_put"}
+  at48:u64 = const() {"value":2096}
+  val48:u64 = const() {"value":7146777680643501413}
+  x48:u64 = call(w,at48,val48) {"function":"tr_put"}
+  at56:u64 = const() {"value":2104}
+  val56:u64 = const() {"value":7310575179021971041}
+  x56:u64 = call(w,at56,val56) {"function":"tr_put"}
+  at64:u64 = const() {"value":2112}
+  val64:u64 = const() {"value":3241518}
+  x64:u64 = call(w,at64,val64) {"function":"tr_put"}
+  dstart:u64 = const() {"value":2048}
+  dwidth:u64 = const() {"value":67}
+
+  dsha:u64 = call(w,dstart,dwidth) {"function":"tr_sha_update_work_full"}
+  rsha:u64 = call(w,p,n) {"function":"tr_sha_update_work_full"}
+  final:u64 = call(w) {"function":"tr_sha_final"}
+  lhs:u64 = bit.or(initial,dsha)
+  rhs:u64 = bit.or(rsha,final)
+  both:u64 = bit.or(lhs,rhs)
+  zero:u64 = const() {"value":0}
+  okay:bool = compare.eq(both,zero)
+  ret(okay)
+end

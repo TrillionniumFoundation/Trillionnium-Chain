@@ -1,0 +1,186 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_tensor_view_bytes_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  size:usize = buffer.len(i)
+  n:u64 = int.cast(size) {"mode":"wrap"}
+  header:u64 = const() {"value":40}
+  cap:u64 = const() {"value":1048576}
+  small:bool = compare.le(n,cap)
+  large:bool = compare.gt(n,header)
+  bounded:bool = bool.and(small,large)
+  branch bounded fields(i,o,n,header) bad_frame()
+block fields(fi:readbuf,fo:mutbuf,fn_:u64,fh:u64)
+  zero_f:u64 = const() {"value":0}
+  one_f:u64 = const() {"value":1}
+  two_f:u64 = const() {"value":2}
+  three_f:u64 = const() {"value":3}
+  four_f:u64 = const() {"value":4}
+  five_f:u64 = const() {"value":5}
+  six_f:u64 = const() {"value":6}
+  twenty_f:u64 = const() {"value":20}
+  expected:u64 = const() {"value":826431060}
+  mt:u64 = call(fi,zero_f,four_f) {"function":"rac_read_le"}
+  op:u64 = call(fi,four_f,one_f) {"function":"rac_read_le"}
+  dtype:u64 = call(fi,five_f,one_f) {"function":"rac_read_le"}
+  res0:u64 = call(fi,six_f,two_f) {"function":"rac_read_le"}
+  res1:u64 = call(fi,twenty_f,four_f) {"function":"rac_read_le"}
+  kind:bool = compare.eq(mt,expected)
+  mode:bool = compare.le(op,two_f)
+  dtype_hi:bool = compare.le(dtype,three_f)
+  dtype_low:bool = compare.gt(dtype,zero_f)
+  dtype_ok:bool = bool.and(dtype_hi,dtype_low)
+  reserved:u64 = bit.or(res0,res1)
+  clean:bool = compare.eq(reserved,zero_f)
+  protocol:bool = bool.and(kind,mode)
+  flags:bool = bool.and(clean,dtype_ok)
+  permitted:bool = bool.and(protocol,flags)
+  branch permitted geometry(fi,fo,fn_,fh,op,dtype) bad_frame()
+block geometry(gi:readbuf,go:mutbuf,gn:u64,gh:u64,gop:u64,gdt:u64)
+  a8:u64 = const() {"value":8}
+  a12:u64 = const() {"value":12}
+  a16:u64 = const() {"value":16}
+  q4:u64 = const() {"value":4}
+  g0:u64 = const() {"value":0}
+  width:u64 = call(gi,a8,q4) {"function":"rac_read_le"}
+  start:u64 = call(gi,a12,q4) {"function":"rac_read_le"}
+  length:u64 = call(gi,a16,q4) {"function":"rac_read_le"}
+  extent:u64 = int.sub.wrap(gn,gh)
+  endpoint:u64 = int.add.wrap(start,length)
+  width_nonzero:bool = compare.gt(width,g0)
+  width_fit:bool = compare.le(width,extent)
+  width_ok:bool = bool.and(width_nonzero,width_fit)
+  length_nonzero:bool = compare.gt(length,g0)
+  range:bool = compare.le(endpoint,extent)
+  region:bool = bool.and(length_nonzero,range)
+  valid:bool = bool.and(width_ok,region)
+  branch valid checked_view(gi,go,gh,gop,gdt,width,start,length,endpoint,extent) bad_geometry()
+block checked_view(ci:readbuf,co:mutbuf,ch:u64,cop:u64,cdt:u64,cw:u64,cs:u64,cl:u64,ce:u64,cn:u64)
+  one_cv:u64 = const() {"value":1}
+  zero_cv:u64 = const() {"value":0}
+  q1mask:u64 = const() {"value":1}
+  q3mask:u64 = const() {"value":3}
+  chunk_floor:u64 = const() {"value":16384}
+  f32_cv:bool = compare.eq(cdt,one_cv)
+  shape_bits:u64 = select(f32_cv,q3mask,q1mask)
+  modulus:u64 = bit.and(cl,shape_bits)
+  aligned:bool = compare.eq(modulus,zero_cv)
+  cw_minus:u64 = int.sub.wrap(cw,one_cv)
+  cw_bits:u64 = bit.and(cw,cw_minus)
+  power:bool = compare.eq(cw_bits,zero_cv)
+  chunked:bool = compare.ge(cw,chunk_floor)
+  normal:bool = bool.and(power,chunked)
+  isolated:bool = compare.eq(cw,cn)
+  width_c:bool = bool.or(isolated,normal)
+  valid_cv:bool = bool.and(width_c,aligned)
+  branch valid_cv request(ci,co,ch,cop,f32_cv,cw,cs,cl,ce) bad_geometry()
+block request(ri:readbuf,ro:mutbuf,rh:u64,rop:u64,rf:bool,rw:u64,rs:u64,rl:u64,re:u64)
+  req_at:u64 = const() {"value":24}
+  len_at:u64 = const() {"value":32}
+  num:u64 = const() {"value":8}
+  q0r:u64 = const() {"value":0}
+  q1r:u64 = const() {"value":1}
+  offset:u64 = call(ri,req_at,num) {"function":"rac_read_le"}
+  amount:u64 = call(ri,len_at,num) {"function":"rac_read_le"}
+  is_segments:bool = compare.eq(rop,q0r)
+  is_copy:bool = compare.eq(rop,q1r)
+  branch is_segments segment_args(ri,ro,rh,rw,rs,rl,re,offset,amount) copy_or_read(ri,ro,rh,rf,rs,rl,offset,amount,is_copy)
+block copy_or_read(pi:readbuf,po:mutbuf,ph:u64,pf:bool,ps:u64,pl:u64,pa:u64,pn:u64,pcopy:bool)
+  branch pcopy range_start(pi,po,ph,ps,pl,pa,pn) read_args(pi,po,ph,pf,ps,pl,pa,pn)
+block read_args(ri2:readbuf,ro2:mutbuf,rh2:u64,rf2:bool,rs2:u64,rl2:u64,ra2:u64,rn2:u64)
+  zero_ra:u64 = const() {"value":0}
+  canonical:bool = compare.eq(rn2,zero_ra)
+  branch canonical read_type(ri2,ro2,rh2,rf2,rs2,rl2,ra2) malformed_query()
+block read_type(ti:readbuf,to:mutbuf,th:u64,tf:bool,ts:u64,tl:u64,ta:u64)
+  branch tf element(ti,to,th,ts,tl,ta) f32_dtype()
+block element(ei:readbuf,eo:mutbuf,eh:u64,es:u64,el:u64,ea:u64)
+  max_index:u64 = const() {"value":4611686018427387903}
+  fit_e:bool = compare.le(ea,max_index)
+  branch fit_e element_range(ei,eo,eh,es,el,ea) element_overflow()
+block element_range(xi:readbuf,xo:mutbuf,xh:u64,xs:u64,xl:u64,xa:u64)
+  four_x:u64 = const() {"value":4}
+  offset_x:u64 = int.mul.wrap(xa,four_x)
+  jump range_start(xi,xo,xh,xs,xl,offset_x,four_x)
+block range_start(ai:readbuf,ao:mutbuf,ah:u64,as_:u64,al:u64,aa:u64,an:u64)
+  fit_a:bool = compare.le(aa,al)
+  branch fit_a range_length(ai,ao,ah,as_,al,aa,an) byte_range()
+block range_length(li:readbuf,lo:mutbuf,lh:u64,ls:u64,ll:u64,la:u64,ln:u64)
+  left_l:u64 = int.sub.wrap(ll,la)
+  fit_l:bool = compare.le(ln,left_l)
+  branch fit_l copy_room(li,lo,lh,ls,la,ln) byte_range()
+block copy_room(ki:readbuf,ko:mutbuf,kh:u64,ks:u64,ka:u64,kn:u64)
+  out_size:usize = buffer.len(ko)
+  available:u64 = int.cast(out_size) {"mode":"wrap"}
+  room_k:bool = compare.le(kn,available)
+  empty_k:u64 = const() {"value":0}
+  empty_c:bool = compare.eq(kn,empty_k)
+  branch room_k copy_or_empty(ki,ko,kh,ks,ka,kn,empty_c,empty_k) capacity()
+block copy_or_empty(oi:readbuf,oo:mutbuf,oh:u64,os:u64,oa:u64,on:u64,empty_o:bool,o0:u64)
+  at0:u64 = int.add.wrap(oh,os)
+  at1:u64 = int.add.wrap(at0,oa)
+  branch empty_o pass() copied(oi,oo,at1,o0,on)
+block copied(ji:readbuf,jo:mutbuf,jp:u64,jq:u64,jn:u64)
+  done:u64 = call(ji,jp,jo,jq,jn) {"function":"cs_copy"}
+  jump pass()
+block segment_args(si:readbuf,so:mutbuf,sh:u64,sw:u64,ss:u64,sl:u64,se:u64,sa:u64,sn:u64)
+  z_s:u64 = const() {"value":0}
+  all_q:u64 = bit.or(sa,sn)
+  sane_s:bool = compare.eq(all_q,z_s)
+  branch sane_s segment_shape(si,so,sh,sw,ss,sl,se) malformed_query()
+block segment_shape(yi:readbuf,yo:mutbuf,yh:u64,yw:u64,ys:u64,yl:u64,ye:u64)
+  one_y:u64 = const() {"value":1}
+  four_y:u64 = const() {"value":4}
+  first_y:u64 = int.div.checked(ys,yw)
+  final_y:u64 = int.sub.wrap(ye,one_y)
+  last_y:u64 = int.div.checked(final_y,yw)
+  delta_y:u64 = int.sub.wrap(last_y,first_y)
+  count_y:u64 = int.add.wrap(delta_y,one_y)
+  table_n:u64 = int.mul.wrap(count_y,four_y)
+  bytes_at:u64 = int.add.wrap(table_n,four_y)
+  need_y:u64 = int.add.wrap(bytes_at,yl)
+  room_y_size:usize = buffer.len(yo)
+  room_y:u64 = int.cast(room_y_size) {"mode":"wrap"}
+  enough_y:bool = compare.le(need_y,room_y)
+  branch enough_y segment_commit(yi,yo,yh,yw,ys,yl,ye,count_y,bytes_at,four_y) capacity()
+block segment_commit(vi:readbuf,vo:mutbuf,vh:u64,vw:u64,vs:u64,vl:u64,ve:u64,vc:u64,vt:u64,vfour:u64)
+  at_zero:u64 = const() {"value":0}
+  ct:u64 = call(vo,vc,at_zero,vfour) {"function":"td_count"}
+  at_data:u64 = int.add.wrap(vh,vs)
+  bb:u64 = call(vi,at_data,vo,vt,vl) {"function":"cs_copy"}
+  jump segment_lengths(vo,vw,vs,ve,vfour)
+block segment_lengths(no:mutbuf,nw:u64,ns:u64,ne:u64,np:u64)
+  one_n:u64 = const() {"value":1}
+  four_n:u64 = const() {"value":4}
+  i_n:u64 = int.div.checked(ns,nw)
+  nxt_n:u64 = int.add.wrap(i_n,one_n)
+  end_n:u64 = int.mul.wrap(nxt_n,nw)
+  finished_n:bool = compare.le(ne,end_n)
+  clip_n:u64 = select(finished_n,ne,end_n)
+  extent_n:u64 = int.sub.wrap(clip_n,ns)
+  out_n:u64 = call(no,extent_n,np,four_n) {"function":"td_count"}
+  forward_n:u64 = int.add.wrap(np,four_n)
+  branch finished_n pass() segment_lengths(no,nw,clip_n,ne,forward_n)
+block pass()
+  success:u32 = const() {"value":0}
+  ret(success)
+block bad_frame()
+  frame_code:u32 = const() {"value":240}
+  ret(frame_code)
+block bad_geometry()
+  geometry_code:u32 = const() {"value":242}
+  ret(geometry_code)
+block byte_range()
+  byte_code:u32 = const() {"value":243}
+  ret(byte_code)
+block f32_dtype()
+  dtype_code:u32 = const() {"value":244}
+  ret(dtype_code)
+block element_overflow()
+  element_code:u32 = const() {"value":245}
+  ret(element_code)
+block malformed_query()
+  query_code:u32 = const() {"value":246}
+  ret(query_code)
+block capacity()
+  room_code:u32 = const() {"value":102}
+  ret(room_code)
+end

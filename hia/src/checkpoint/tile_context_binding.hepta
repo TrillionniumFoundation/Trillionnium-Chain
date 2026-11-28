@@ -1,0 +1,77 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_tile_context_binding
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  extent:usize = buffer.len(r)
+  n:u64 = int.cast(extent) {"mode":"wrap"}
+  min:u64 = const() {"value":32984}
+  max:u64 = const() {"value":1048576}
+  a:bool = compare.le(min,n)
+  b:bool = compare.le(n,max)
+  bounds:bool = bool.and(a,b)
+  branch bounds declared(r,o,w,n) frame()
+block declared(dr:readbuf,do_:mutbuf,dw:mutbuf,dn:u64)
+  suffix:u64 = const() {"value":64}
+  end:u64 = int.sub.wrap(dn,suffix)
+  clen_delta:u64 = const() {"value":32848}
+  clen_at:u64 = int.sub.wrap(end,clen_delta)
+  size:u64 = call(dr,clen_at) {"function":"tr_read"}
+  min_d:u64 = const() {"value":10}
+  max_d:u64 = const() {"value":536870912}
+  lo:bool = compare.le(min_d,size)
+  hi:bool = compare.le(size,max_d)
+  valid:bool = bool.and(lo,hi)
+  branch valid pins(dr,do_,dw,end) limit()
+block pins(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
+  stride:u64 = const() {"value":32}
+  params:u64 = int.add.wrap(pn,stride)
+  cp_delta:u64 = const() {"value":32880}
+  cp:u64 = int.sub.wrap(pn,cp_delta)
+  a_pin:u64 = const() {"value":8}
+  mod_delta:u64 = const() {"value":64}
+  model:u64 = int.sub.wrap(pn,mod_delta)
+  input:u64 = int.sub.wrap(pn,stride)
+  nonzero_network:bool = call(pr,pn) {"function":"tcb_nonzero"}
+  nonzero_params:bool = call(pr,params) {"function":"tcb_nonzero"}
+  nonzero_cp:bool = call(pr,cp) {"function":"tcb_nonzero"}
+  nonzero_activation:bool = call(pr,a_pin) {"function":"tcb_nonzero"}
+  nonzero_model:bool = call(pr,model) {"function":"tcb_nonzero"}
+  nonzero_input:bool = call(pr,input) {"function":"tcb_nonzero"}
+  a_p:bool = bool.and(nonzero_network,nonzero_params)
+  b_p:bool = bool.and(nonzero_cp,nonzero_activation)
+  c_p:bool = bool.and(nonzero_model,nonzero_input)
+  ab:bool = bool.and(a_p,b_p)
+  all:bool = bool.and(ab,c_p)
+  branch all proceed(pr,po,pw,pn) empty_pin()
+block proceed(vr:readbuf,vo:mutbuf,vw:mutbuf,vn:u64)
+  result:u32 = call(vr,vo,vw,vn) {"function":"tmb_private"}
+  ret(result)
+block frame()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block limit()
+  bad_limit:u32 = const() {"value":42}
+  ret(bad_limit)
+block empty_pin()
+  bad_pin:u32 = const() {"value":43}
+  ret(bad_pin)
+end
+
+fn tcb_nonzero(r:readbuf,p:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64)
+  eight:u64 = const() {"value":8}
+  sixteen:u64 = const() {"value":16}
+  twentyfour:u64 = const() {"value":24}
+  b:u64 = int.add.wrap(p,eight)
+  c:u64 = int.add.wrap(p,sixteen)
+  d:u64 = int.add.wrap(p,twentyfour)
+  aa:u64 = call(r,p) {"function":"tr_read"}
+  bb:u64 = call(r,b) {"function":"tr_read"}
+  cc:u64 = call(r,c) {"function":"tr_read"}
+  dd:u64 = call(r,d) {"function":"tr_read"}
+  ab:u64 = bit.or(aa,bb)
+  cd:u64 = bit.or(cc,dd)
+  all:u64 = bit.or(ab,cd)
+  z:u64 = const() {"value":0}
+  some:bool = compare.ne(all,z)
+  ret(some)
+end

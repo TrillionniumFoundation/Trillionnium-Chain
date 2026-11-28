@@ -1,0 +1,171 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_protocol_ilf3
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u32 = call(v0,v3) {"function":"validate_ilf3"}
+  ret(v4)
+end
+fn validate_ilf3(span_input:readbuf,payload_len:usize) -> (u32) effects(read,trap) entry(span)
+block span(span_input:readbuf,payload_len:usize)
+  span_capacity:usize = buffer.len(span_input)
+  span_fits:bool = compare.le(payload_len,span_capacity)
+  branch span_fits entry(span_input,payload_len) length()
+block entry(input:readbuf,v0:usize)
+  v1:usize = const() {"value":242}
+  v2:bool = compare.ge(v0,v1)
+  v3:usize = const() {"value":1808}
+  v4:bool = compare.le(v0,v3)
+  v5:bool = bool.and(v2,v4)
+  branch v5 version(input,v0) length()
+block version(version_input:readbuf,version_size:usize)
+  v6:usize = const() {"value":0}
+  v7:u8 = buffer.load(version_input,v6)
+  v8:u8 = const() {"value":73}
+  v9:bool = compare.eq(v7,v8)
+  v10:usize = const() {"value":1}
+  v11:u8 = buffer.load(version_input,v10)
+  v12:u8 = const() {"value":76}
+  v13:bool = compare.eq(v11,v12)
+  v14:usize = const() {"value":2}
+  v15:u8 = buffer.load(version_input,v14)
+  v16:u8 = const() {"value":70}
+  v17:bool = compare.eq(v15,v16)
+  v18:usize = const() {"value":3}
+  v19:u8 = buffer.load(version_input,v18)
+  v20:u8 = const() {"value":51}
+  v21:bool = compare.eq(v19,v20)
+  v22:usize = const() {"value":4}
+  v23:u8 = buffer.load(version_input,v22)
+  v24:u8 = const() {"value":3}
+  v25:bool = compare.eq(v23,v24)
+  v26:usize = const() {"value":5}
+  v27:u8 = buffer.load(version_input,v26)
+  v28:u8 = const() {"value":0}
+  v29:bool = compare.eq(v27,v28)
+  v30:bool = bool.and(v9,v13)
+  v31:bool = bool.and(v30,v17)
+  v32:bool = bool.and(v31,v21)
+  v33:bool = bool.and(v32,v25)
+  v34:bool = bool.and(v33,v29)
+  v35:usize = const() {"value":8}
+  v36:u8 = buffer.load(version_input,v35)
+  v37:u8 = const() {"value":0}
+  v38:bool = compare.eq(v36,v37)
+  v39:usize = const() {"value":9}
+  v40:u8 = buffer.load(version_input,v39)
+  v41:u8 = const() {"value":4}
+  v42:bool = compare.eq(v40,v41)
+  v43:bool = bool.and(v38,v42)
+  v44:bool = bool.and(v34,v43)
+  branch v44 shape(version_input,version_size) bad_version()
+block shape(shape_input:readbuf,shape_size:usize)
+  v45:usize = const() {"value":6}
+  v46:u8 = buffer.load(shape_input,v45)
+  v47:usize = const() {"value":7}
+  v48:u8 = buffer.load(shape_input,v47)
+  v49:u8 = const() {"value":1}
+  v50:bool = compare.ge(v46,v49)
+  v51:u8 = const() {"value":7}
+  v52:bool = compare.le(v46,v51)
+  v53:u8 = const() {"value":3}
+  v54:bool = compare.le(v48,v53)
+  v55:bool = bool.and(v50,v52)
+  v56:bool = bool.and(v55,v54)
+  v57:usize = int.cast(v48) {"mode":"wrap"}
+  v58:usize = const() {"value":0}
+  v59:usize = const() {"value":242}
+  v60:u8 = const() {"value":0}
+  v61:bool = const() {"value":true}
+  branch v56 operation(shape_input,shape_size,v57,v58,v59,v58,v60,v61) limit()
+block operation(op_input:readbuf,op_size:usize,op_count:usize,op_index:usize,op_pos:usize,op_rank_sum:usize,op_previous:u8,op_canonical:bool)
+  v62:bool = compare.lt(op_index,op_count)
+  branch v62 header_extent(op_input,op_size,op_count,op_index,op_pos,op_rank_sum,op_previous,op_canonical) final_extent(op_size,op_pos,op_rank_sum,op_canonical)
+block header_extent(he_input:readbuf,he_size:usize,he_count:usize,he_index:usize,he_pos:usize,he_rank_sum:usize,he_previous:u8,he_canonical:bool)
+  v63:usize = const() {"value":2}
+  v64:usize = int.add.wrap(he_pos,v63)
+  v65:bool = compare.le(v64,he_size)
+  branch v65 header(he_input,he_size,he_count,he_index,he_pos,v64,he_rank_sum,he_previous,he_canonical) length()
+block header(header_input:readbuf,header_size:usize,header_count:usize,header_index:usize,header_pos:usize,header_body:usize,header_rank_sum:usize,header_previous:u8,header_canonical:bool)
+  v66:u8 = buffer.load(header_input,header_pos)
+  v67:usize = const() {"value":1}
+  v68:usize = int.add.wrap(header_pos,v67)
+  v69:u8 = buffer.load(header_input,v68)
+  v70:u8 = const() {"value":5}
+  v71:bool = compare.lt(v66,v70)
+  v72:u8 = const() {"value":1}
+  v73:bool = compare.ge(v69,v72)
+  v74:u8 = const() {"value":2}
+  v75:bool = compare.le(v69,v74)
+  v76:bool = bool.and(v71,v73)
+  v77:bool = bool.and(v76,v75)
+  branch v77 body_extent(header_input,header_size,header_count,header_index,header_body,header_rank_sum,header_previous,header_canonical,v66,v69) limit()
+block body_extent(be_input:readbuf,be_size:usize,be_count:usize,be_index:usize,be_pos:usize,be_rank_sum:usize,be_previous:u8,be_canonical:bool,be_target:u8,be_rank:u8)
+  v78:usize = int.cast(be_rank) {"mode":"wrap"}
+  v79:usize = const() {"value":520}
+  v80:usize = int.mul.wrap(v78,v79)
+  v81:usize = int.add.wrap(be_pos,v80)
+  v82:bool = compare.le(v81,be_size)
+  v83:usize = int.add.wrap(be_rank_sum,v78)
+  branch v82 canonicality(be_input,be_size,be_count,be_index,be_pos,v81,v83,be_previous,be_canonical,be_target) length()
+block canonicality(ca_input:readbuf,ca_size:usize,ca_count:usize,ca_index:usize,ca_pos:usize,ca_end:usize,ca_rank_sum:usize,ca_previous:u8,ca_canonical:bool,ca_target:u8)
+  v84:usize = const() {"value":0}
+  v85:bool = compare.eq(ca_index,v84)
+  v86:bool = compare.lt(ca_previous,ca_target)
+  v87:bool = bool.or(v85,v86)
+  v88:bool = call(ca_input,ca_pos,ca_end) {"function":"ilf3_coefficients"}
+  v89:bool = bool.and(ca_canonical,v87)
+  v90:bool = bool.and(v89,v88)
+  v91:usize = const() {"value":1}
+  v92:usize = int.add.wrap(ca_index,v91)
+  jump operation(ca_input,ca_size,ca_count,v92,ca_end,ca_rank_sum,ca_target,v90)
+block final_extent(fe_size:usize,fe_pos:usize,fe_rank_sum:usize,fe_canonical:bool)
+  v93:bool = compare.eq(fe_size,fe_pos)
+  branch v93 final_canonicality(fe_rank_sum,fe_canonical) length()
+block final_canonicality(fc_rank_sum:usize,fc_canonical:bool)
+  branch fc_canonical rank_sum(fc_rank_sum) noncanonical()
+block rank_sum(final_sum:usize)
+  v94:usize = const() {"value":3}
+  v95:bool = compare.le(final_sum,v94)
+  branch v95 ok() limit()
+block ok()
+  v96:u32 = const() {"value":0}
+  ret(v96)
+block length()
+  v97:u32 = const() {"value":1}
+  ret(v97)
+block bad_version()
+  v98:u32 = const() {"value":2}
+  ret(v98)
+block noncanonical()
+  v99:u32 = const() {"value":3}
+  ret(v99)
+block limit()
+  v100:u32 = const() {"value":4}
+  ret(v100)
+end
+fn ilf3_coefficients(input:readbuf,start:usize,stop:usize) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,start:usize,stop:usize)
+  jump scan(input,start,stop)
+block scan(scan_input:readbuf,scan_pos:usize,scan_stop:usize)
+  v0:bool = compare.lt(scan_pos,scan_stop)
+  branch v0 pair(scan_input,scan_pos,scan_stop) good()
+block pair(pair_input:readbuf,pair_pos:usize,pair_stop:usize)
+  v1:u8 = buffer.load(pair_input,pair_pos)
+  v2:usize = const() {"value":1}
+  v3:usize = int.add.wrap(pair_pos,v2)
+  v4:u8 = buffer.load(pair_input,v3)
+  v5:u8 = const() {"value":0}
+  v6:bool = compare.eq(v1,v5)
+  v7:u8 = const() {"value":128}
+  v8:bool = compare.eq(v4,v7)
+  v9:bool = bool.and(v6,v8)
+  v10:usize = const() {"value":2}
+  v11:usize = int.add.wrap(pair_pos,v10)
+  branch v9 bad() scan(pair_input,v11,pair_stop)
+block good()
+  v12:bool = const() {"value":true}
+  ret(v12)
+block bad()
+  v13:bool = const() {"value":false}
+  ret(v13)
+end

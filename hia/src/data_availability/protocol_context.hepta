@@ -1,0 +1,102 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_da_protocol_context_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  n:usize = buffer.len(input)
+  fixed:usize = const() {"value":64}
+  enough:bool = compare.ge(n,fixed)
+  branch enough text_extent(input,output,n,fixed) malformed()
+block text_extent(i:readbuf,o:mutbuf,n1:usize,fixed1:usize)
+  count:usize = int.sub.wrap(n1,fixed1)
+  zero:usize = const() {"value":0}
+  limit:usize = const() {"value":128}
+  nonempty:bool = compare.gt(count,zero)
+  bounded:bool = compare.le(count,limit)
+  valid:bool = bool.and(nonempty,bounded)
+  branch valid verify_byte(i,o,n1,count,fixed1) invalid()
+block verify_byte(i2:readbuf,o2:mutbuf,n2:usize,c2:usize,p2:usize)
+  byte:u8 = buffer.load(i2,p2)
+  ascii:u8 = const() {"value":128}
+  accepted:bool = compare.lt(byte,ascii)
+  branch accepted advance(i2,o2,n2,c2,p2) invalid()
+block advance(i3:readbuf,o3:mutbuf,n3:usize,c3:usize,p3:usize)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(p3,one)
+  more:bool = compare.lt(next,n3)
+  branch more verify_byte(i3,o3,n3,c3,next) capacity(i3,o3,c3)
+block capacity(i4:readbuf,o4:mutbuf,c4:usize)
+  constant:usize = const() {"value":74}
+  bytes:usize = int.add.wrap(c4,constant)
+  available:usize = buffer.len(o4)
+  can_publish:bool = compare.ge(available,bytes)
+  branch can_publish write(i4,o4,c4) short()
+block write(i5:readbuf,o5:mutbuf,c5:usize)
+  zero5:usize = const() {"value":0}
+  two:usize = const() {"value":2}
+  four:usize = const() {"value":4}
+  thirty_two:usize = const() {"value":32}
+  sixty_four:usize = const() {"value":64}
+  thirty_four:usize = const() {"value":34}
+  thirty_eight:usize = const() {"value":38}
+  width:u8 = int.cast(c5) {"mode":"wrap"}
+  one5:u8 = const() {"value":1}
+  _schema:u32 = call(o5,zero5,one5,two) {"function":"low_word"}
+  _genesis:u32 = call(i5,o5,zero5,two,thirty_two) {"function":"copy_bytes"}
+  _count:u32 = call(o5,thirty_four,width,four) {"function":"low_word"}
+  _text:u32 = call(i5,o5,sixty_four,thirty_eight,c5) {"function":"copy_bytes"}
+  proto_at:usize = int.add.wrap(thirty_eight,c5)
+  _protocol:u32 = call(o5,proto_at,one5,four) {"function":"low_word"}
+  stack_at:usize = int.add.wrap(proto_at,four)
+  status:u32 = call(i5,o5,thirty_two,stack_at,thirty_two) {"function":"copy_bytes"}
+  ret(status)
+block malformed()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+block invalid()
+  invalid_status:u32 = const() {"value":2}
+  ret(invalid_status)
+block short()
+  short_status:u32 = const() {"value":102}
+  ret(short_status)
+end
+fn low_word(output:mutbuf,at:usize,first:u8,narrow:usize) -> (u32) effects(write,trap) entry(write_first)
+block write_first(output:mutbuf,at:usize,first:u8,narrow:usize)
+  zero:u8 = const() {"value":0}
+  one:usize = const() {"value":1}
+  second:usize = int.add.wrap(at,one)
+  _ = buffer.store(output,at,first)
+  _ = buffer.store(output,second,zero)
+  two:usize = const() {"value":2}
+  finished:bool = compare.eq(narrow,two)
+  branch finished done() write_tail(output,second)
+block write_tail(o:mutbuf,base:usize)
+  zero_t:u8 = const() {"value":0}
+  one_t:usize = const() {"value":1}
+  two_t:usize = const() {"value":2}
+  at_two:usize = int.add.wrap(base,one_t)
+  at_three:usize = int.add.wrap(base,two_t)
+  _ = buffer.store(o,at_two,zero_t)
+  _ = buffer.store(o,at_three,zero_t)
+  jump done()
+block done()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+end
+fn copy_bytes(input:readbuf,output:mutbuf,src:usize,dst:usize,count:usize) -> (u32) effects(read,write,trap) entry(start)
+block start(input:readbuf,output:mutbuf,src:usize,dst:usize,count:usize)
+  jump loop(input,output,src,dst,count)
+block loop(li:readbuf,lo:mutbuf,ls:usize,ld:usize,ln:usize)
+  zero:usize = const() {"value":0}
+  done:bool = compare.eq(ln,zero)
+  branch done finished() transfer(li,lo,ls,ld,ln)
+block transfer(i:readbuf,o:mutbuf,s:usize,d:usize,n:usize)
+  val:u8 = buffer.load(i,s)
+  _ = buffer.store(o,d,val)
+  one:usize = const() {"value":1}
+  next_s:usize = int.add.wrap(s,one)
+  next_d:usize = int.add.wrap(d,one)
+  next_n:usize = int.sub.wrap(n,one)
+  jump loop(i,o,next_s,next_d,next_n)
+block finished()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+end

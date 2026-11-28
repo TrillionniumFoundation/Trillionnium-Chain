@@ -1,0 +1,158 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_content_manifest_construct
+fn f0(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf)
+  entry_n_:usize = buffer.len(entry_r)
+  entry_n:u64 = int.cast(entry_n_) {"mode":"wrap"}
+  entry_min:u64 = const() {"value":318}
+  entry_max:u64 = const() {"value":1048576}
+  entry_lo:bool = compare.ge(entry_n,entry_min)
+  entry_hi:bool = compare.le(entry_n,entry_max)
+  entry_ok:bool = bool.and(entry_lo,entry_hi)
+  branch entry_ok fields(entry_r,entry_o,entry_w,entry_n,entry_min) bad_frame()
+block fields(fields_r:readbuf,fields_o:mutbuf,fields_w:mutbuf,fields_total:u64,fields_minimum:u64)
+  fields_at:usize = const() {"value":157}
+  fields_fam_:u8 = buffer.load(fields_r,fields_at)
+  fields_fam:u64 = int.cast(fields_fam_) {"mode":"wrap"}
+  fields_start:u64 = int.add.wrap(fields_minimum,fields_fam)
+  fields_enough:bool = compare.ge(fields_total,fields_start)
+  fields_n:u64 = int.sub.wrap(fields_total,fields_start)
+  branch fields_enough context(fields_r,fields_o,fields_w,fields_fam,fields_start,fields_n) bad_frame()
+block context(context_r:readbuf,context_o:mutbuf,context_w:mutbuf,context_fam:u64,context_base:u64,context_n:u64)
+  context_z:u64 = const() {"value":0}
+  context_ok_s:u32 = const() {"value":0}
+  context_status:u32,context_kind:u8 = call(context_r,context_z) {"function":"ccm_claim"}
+  context_ok:bool = compare.eq(context_status,context_ok_s)
+  branch context_ok limits(context_r,context_o,context_w,context_fam,context_base,context_n,context_kind) context_error(context_status)
+block limits(limits_r:readbuf,limits_o:mutbuf,limits_w:mutbuf,limits_fam:u64,limits_base:u64,limits_n:u64,limits_kind:u8)
+  limits_ra:u64 = const() {"value":141}
+  limits_ba:u64 = const() {"value":149}
+  limits_zero:u64 = const() {"value":0}
+  limits_mr:u64 = call(limits_r,limits_ra) {"function":"root_be64"}
+  limits_mb:u64 = call(limits_r,limits_ba) {"function":"root_be64"}
+  limits_reads_ok:bool = compare.gt(limits_mr,limits_zero)
+  limits_bytes_ok:bool = compare.gt(limits_mb,limits_zero)
+  limits_ok:bool = bool.and(limits_reads_ok,limits_bytes_ok)
+  branch limits_ok budget(limits_r,limits_o,limits_w,limits_fam,limits_base,limits_n,limits_kind,limits_mb) bad_limits()
+block budget(budget_r:readbuf,budget_o:mutbuf,budget_w:mutbuf,budget_fam:u64,budget_base:u64,budget_n:u64,budget_kind:u8,budget_mb:u64)
+  budget_one:u64 = const() {"value":1}
+  budget_bytes:u64 = int.add.wrap(budget_n,budget_one)
+  budget_within:bool = compare.le(budget_bytes,budget_mb)
+  branch budget_within decoded_family(budget_r,budget_o,budget_w,budget_fam,budget_base,budget_n,budget_kind) denied()
+block decoded_family(decoded_family_r:readbuf,decoded_family_o:mutbuf,decoded_family_w:mutbuf,decoded_family_fam:u64,decoded_family_base:u64,decoded_family_n:u64,decoded_family_kind:u8)
+  decoded_family_at:usize = const() {"value":158}
+  decoded_family_fl:usize = int.cast(decoded_family_fam) {"mode":"wrap"}
+  decoded_family_ok:bool = call(decoded_family_r,decoded_family_at,decoded_family_fl) {"function":"utf8"}
+  branch decoded_family_ok model_family(decoded_family_r,decoded_family_o,decoded_family_w,decoded_family_fam,decoded_family_base,decoded_family_n,decoded_family_kind) invalid_encoding()
+block model_family(model_family_r:readbuf,model_family_o:mutbuf,model_family_w:mutbuf,model_family_fam:u64,model_family_base:u64,model_family_n:u64,model_family_kind:u8)
+  model_family_lo:u64 = const() {"value":1}
+  model_family_hi:u64 = const() {"value":64}
+  model_family_low:bool = compare.ge(model_family_fam,model_family_lo)
+  model_family_high:bool = compare.le(model_family_fam,model_family_hi)
+  model_family_range:bool = bool.and(model_family_low,model_family_high)
+  branch model_family_range family_ascii(model_family_r,model_family_o,model_family_w,model_family_fam,model_family_base,model_family_n,model_family_kind) invalid_family()
+block family_ascii(family_ascii_r:readbuf,family_ascii_o:mutbuf,family_ascii_w:mutbuf,family_ascii_fam:u64,family_ascii_base:u64,family_ascii_n:u64,family_ascii_kind:u8)
+  family_ascii_at:u64 = const() {"value":158}
+  family_ascii_ok:bool = call(family_ascii_r,family_ascii_at,family_ascii_fam) {"function":"cm_family_chars"}
+  branch family_ascii_ok purpose(family_ascii_r,family_ascii_o,family_ascii_w,family_ascii_fam,family_ascii_base,family_ascii_n,family_ascii_kind) invalid_family()
+block purpose(purpose_r:readbuf,purpose_o:mutbuf,purpose_w:mutbuf,purpose_fam:u64,purpose_base:u64,purpose_n:u64,purpose_kind:u8)
+  purpose_payload:u8 = const() {"value":4}
+  purpose_ok:bool = compare.eq(purpose_kind,purpose_payload)
+  branch purpose_ok payload_size(purpose_r,purpose_o,purpose_w,purpose_fam,purpose_base,purpose_n) invalid_kind()
+block payload_size(payload_size_r:readbuf,payload_size_o:mutbuf,payload_size_w:mutbuf,payload_size_fam:u64,payload_size_base:u64,payload_size_n:u64)
+  payload_size_one:u64 = const() {"value":1}
+  payload_size_ok:bool = compare.ge(payload_size_n,payload_size_one)
+  branch payload_size_ok capacity(payload_size_r,payload_size_o,payload_size_w,payload_size_fam,payload_size_base,payload_size_n) invalid_size()
+block capacity(capacity_r:readbuf,capacity_o:mutbuf,capacity_w:mutbuf,capacity_fam:u64,capacity_base:u64,capacity_n:u64)
+  capacity_wl:usize = buffer.len(capacity_w)
+  capacity_ol:usize = buffer.len(capacity_o)
+  capacity_scratch:usize = const() {"value":131232}
+  capacity_fixed:u64 = const() {"value":378}
+  capacity_out_wide:u64 = int.add.wrap(capacity_fixed,capacity_fam)
+  capacity_wanted:usize = int.cast(capacity_out_wide) {"mode":"wrap"}
+  capacity_enough_w:bool = compare.ge(capacity_wl,capacity_scratch)
+  capacity_enough_o:bool = compare.ge(capacity_ol,capacity_wanted)
+  capacity_ok:bool = bool.and(capacity_enough_w,capacity_enough_o)
+  branch capacity_ok run(capacity_r,capacity_o,capacity_w,capacity_fam,capacity_base,capacity_n) short()
+block run(run_r:readbuf,run_o:mutbuf,run_w:mutbuf,run_fam:u64,run_base:u64,run_n:u64)
+  run_status:u32 = call(run_r,run_w,run_base,run_n) {"function":"tco_hash"}
+  run_zero:u32 = const() {"value":0}
+  run_ok:bool = compare.eq(run_status,run_zero)
+  branch run_ok publish(run_r,run_o,run_w,run_fam,run_n) fail(run_status)
+block publish(publish_r:readbuf,publish_o:mutbuf,publish_w:mutbuf,publish_fam:u64,publish_n:u64)
+  publish_z:usize = const() {"value":0}
+  publish_one:usize = const() {"value":1}
+  publish_two:usize = const() {"value":2}
+  publish_three:usize = const() {"value":3}
+  publish_four:usize = const() {"value":4}
+  publish_tag_t:u8 = const() {"value":84}
+  publish_tag_c:u8 = const() {"value":67}
+  publish_tag_m:u8 = const() {"value":77}
+  publish_tag_2:u8 = const() {"value":50}
+  _ = buffer.store(publish_o,publish_z,publish_tag_t)
+  _ = buffer.store(publish_o,publish_one,publish_tag_c)
+  _ = buffer.store(publish_o,publish_two,publish_tag_m)
+  _ = buffer.store(publish_o,publish_three,publish_tag_2)
+  publish_src:usize = const() {"value":157}
+  publish_fixed:u64 = const() {"value":161}
+  publish_meta:u64 = int.add.wrap(publish_fam,publish_fixed)
+  publish_meta_n:usize = int.cast(publish_meta) {"mode":"wrap"}
+  publish_meta_copied:u64 = call(publish_r,publish_o,publish_src,publish_four,publish_meta_n) {"function":"daav_copy"}
+  publish_prefix:u64 = const() {"value":165}
+  publish_claim:u64 = int.add.wrap(publish_fam,publish_prefix)
+  publish_claim_at:usize = int.cast(publish_claim) {"mode":"wrap"}
+  publish_claim_n:usize = const() {"value":141}
+  publish_prefix_copied:u64 = call(publish_r,publish_o,publish_z,publish_claim_at,publish_claim_n) {"function":"daav_copy"}
+  publish_rel_len:u64 = const() {"value":141}
+  publish_len_at:u64 = int.add.wrap(publish_claim,publish_rel_len)
+  _ = call(publish_o,publish_len_at,publish_n) {"function":"tco_store_be64"}
+  publish_rel_digest:usize = const() {"value":149}
+  publish_digest_at:usize = int.add.wrap(publish_claim_at,publish_rel_digest)
+  jump digest(publish_o,publish_w,publish_digest_at,publish_z)
+block digest(digest_o:mutbuf,digest_w:mutbuf,digest_start:usize,digest_i:usize)
+  digest_work:usize = const() {"value":131168}
+  digest_from_:usize = int.add.wrap(digest_work,digest_i)
+  digest_target:usize = int.add.wrap(digest_start,digest_i)
+  digest_v:u8 = buffer.load(digest_w,digest_from_)
+  _ = buffer.store(digest_o,digest_target,digest_v)
+  digest_one:usize = const() {"value":1}
+  digest_next:usize = int.add.wrap(digest_i,digest_one)
+  digest_sixty_four:usize = const() {"value":64}
+  digest_more:bool = compare.lt(digest_next,digest_sixty_four)
+  branch digest_more digest(digest_o,digest_w,digest_start,digest_next) success()
+block context_error(context_error_wrong:u32)
+  context_error_encoding:u32 = const() {"value":6}
+  context_error_enc:bool = compare.eq(context_error_wrong,context_error_encoding)
+  context_error_e31:u32 = const() {"value":31}
+  context_error_e32:u32 = const() {"value":32}
+  context_error_code:u32 = select(context_error_enc,context_error_e31,context_error_e32)
+  ret(context_error_code)
+block fail(fail_status:u32)
+  ret(fail_status)
+block success()
+  success_s:u32 = const() {"value":0}
+  ret(success_s)
+block invalid_encoding()
+  invalid_encoding_s:u32 = const() {"value":5}
+  ret(invalid_encoding_s)
+block invalid_family()
+  invalid_family_s:u32 = const() {"value":8}
+  ret(invalid_family_s)
+block invalid_kind()
+  invalid_kind_s:u32 = const() {"value":9}
+  ret(invalid_kind_s)
+block invalid_size()
+  invalid_size_s:u32 = const() {"value":10}
+  ret(invalid_size_s)
+block bad_limits()
+  bad_limits_s:u32 = const() {"value":30}
+  ret(bad_limits_s)
+block denied()
+  denied_s:u32 = const() {"value":35}
+  ret(denied_s)
+block bad_frame()
+  bad_frame_s:u32 = const() {"value":100}
+  ret(bad_frame_s)
+block short()
+  short_s:u32 = const() {"value":102}
+  ret(short_s)
+end

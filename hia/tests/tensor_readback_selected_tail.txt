@@ -1,0 +1,159 @@
+fn lt_save(q:readbuf,at:u64,n:u64,w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(q:readbuf,at:u64,n:u64,w:mutbuf)
+  w0:usize = buffer.len(w)
+  wn:u64 = int.cast(w0) {"mode":"wrap"}
+  need:u64 = const() {"value":840456}
+  fit:bool = compare.le(need,wn)
+  branch fit input(q,at,n,w) done()
+block input(q1:readbuf,a1:u64,n1:u64,w1:mutbuf)
+  z:u64 = const() {"value":0}
+  maxq:u64 = const() {"value":255}
+  upper:bool = compare.le(n1,maxq)
+  lower:bool = compare.lt(z,n1)
+  bounded:bool = bool.and(upper,lower)
+  branch bounded check(q1,a1,n1,w1) bad(w1)
+block check(q2:readbuf,a2:u64,n2:u64,w2:mutbuf)
+  utf:u64 = call(q2,a2,n2) {"function":"value_utf8"}
+  one:u64 = const() {"value":1}
+  valid:bool = compare.eq(utf,one)
+  branch valid copy(q2,a2,n2,w2) bad(w2)
+block copy(q3:readbuf,a3:u64,n3:u64,w3:mutbuf)
+  pos:u64 = const() {"value":840200}
+  saved:u64 = call(q3,a3,w3,pos,n3) {"function":"cp_copy"}
+  jump length(w3,n3)
+block bad(w4:mutbuf)
+  zero:u64 = const() {"value":0}
+  jump length(w4,zero)
+block length(w5:mutbuf,n5:u64)
+  slot:u64 = const() {"value":840192}
+  put:u64 = call(w5,slot,n5) {"function":"cp_put"}
+  jump done()
+block done()
+  ok:u64 = const() {"value":0}
+  ret(ok)
+end
+
+fn lt_observe(i:readbuf,o:mutbuf,w:mutbuf,e:u64,l:u64,c:u64,idx:u64,b:readbuf,s:bool,x:readbuf,y:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf,e:u64,l:u64,c:u64,idx:u64,b:readbuf,s:bool,x:readbuf,y:readbuf)
+  slot:u64 = const() {"value":840192}
+  qn:u64 = call(w,slot) {"function":"cp_get"}
+  z:u64 = const() {"value":0}
+  nonempty:bool = compare.lt(z,qn)
+  branch nonempty locate(i,o,w,e,l,c,idx,b,s,x,y,qn,z) absent()
+block locate(i2:readbuf,o2:mutbuf,w2:mutbuf,e2:u64,l2:u64,c2:u64,idx2:u64,b2:readbuf,s2:bool,x2:readbuf,y2:readbuf,qn2:u64,z2:u64)
+  h34:u64 = const() {"value":34}
+  h4:u64 = const() {"value":4}
+  count_at:u64 = const() {"value":78}
+  h38:u64 = const() {"value":38}
+  tlen:u64 = call(i2,h34,h4) {"function":"ca_read_be"}
+  end:u64 = int.add.wrap(h38,tlen)
+  cnt:u64,pos:u64 = call(i2,end,idx2,count_at) {"function":"sl_find"}
+  consistent:bool = compare.eq(cnt,c2)
+  branch consistent select_range(i2,o2,w2,e2,l2,b2,s2,x2,y2,qn2,z2,cnt,pos,end) internal()
+block select_range(i3:readbuf,o3:mutbuf,w3:mutbuf,e3:u64,l3:u64,b3:readbuf,s3:bool,x3:readbuf,y3:readbuf,qn3:u64,z3:u64,c3:u64,pos3:u64,end3:u64)
+  ord:u64 = call(i3,end3,c3,pos3,w3,qn3,z3) {"function":"lt_find"}
+  found:bool = compare.lt(ord,c3)
+  branch found range(i3,o3,w3,e3,l3,b3,s3,x3,y3,z3,ord) absent()
+block range(i4:readbuf,o4:mutbuf,w4:mutbuf,e4:u64,l4:u64,b4:readbuf,s4:bool,x4:readbuf,y4:readbuf,z4:u64,ord4:u64)
+  eight:u64 = const() {"value":8}
+  canon:u64 = const() {"value":709120}
+  base_at:u64 = const() {"value":159472}
+  base:u64 = call(w4,base_at) {"function":"cp_get"}
+  delta:u64 = int.mul.wrap(ord4,eight)
+  at:u64 = int.add.wrap(canon,delta)
+  packed:u64 = call(w4,at) {"function":"cp_get"}
+  mask:u64 = const() {"value":4194303}
+  shift:u64 = const() {"value":22}
+  from:u64 = int.shr.checked(packed,shift)
+  till:u64 = bit.and(packed,mask)
+  limit:u64 = int.add.wrap(base,till)
+  inside:bool = compare.le(limit,l4)
+  increasing:bool = compare.lt(from,till)
+  sane:bool = bool.and(inside,increasing)
+  branch sane capacity(i4,o4,e4,b4,s4,x4,y4,z4,base,from,till,eight) internal()
+block capacity(i5:readbuf,o5:mutbuf,e5:u64,b5:readbuf,s5:bool,x5:readbuf,y5:readbuf,z5:u64,base5:u64,from5:u64,till5:u64,k5:u64)
+  n:u64 = int.sub.wrap(till5,from5)
+  out_cap:u64 = const() {"value":1048576}
+  needed:u64 = int.add.wrap(k5,n)
+  stock:bool = compare.le(needed,out_cap)
+  o0:usize = buffer.len(o5)
+  o_room:u64 = int.cast(o0) {"mode":"wrap"}
+  enough:bool = compare.le(needed,o_room)
+  room:bool = bool.and(stock,enough)
+  branch room publish(i5,o5,e5,b5,s5,x5,y5,z5,base5,from5,n,k5) short()
+block publish(i6:readbuf,o6:mutbuf,e6:u64,b6:readbuf,s6:bool,x6:readbuf,y6:readbuf,z6:u64,base6:u64,from6:u64,n6:u64,k6:u64)
+  size_w:u64 = call(o6,z6,n6) {"function":"cp_put"}
+  branch s6 split(o6,b6,x6,y6,from6,n6,k6) contiguous(i6,o6,e6,base6,from6,n6,k6)
+block contiguous(i7:readbuf,o7:mutbuf,e7:u64,base7:u64,from7:u64,n7:u64,k7:u64)
+  start:u64 = int.add.wrap(e7,base7)
+  pos7:u64 = int.add.wrap(start,from7)
+  done:u64 = call(i7,pos7,o7,k7,n7) {"function":"cp_copy"}
+  jump success()
+block split(o8:mutbuf,b8:readbuf,x8:readbuf,y8:readbuf,from8:u64,n8:u64,k8:u64)
+  part_s2:u64,part_n2:u64,o2p:u64 = call(b8,o8,from8,n8,k8) {"function":"lt_part"}
+  part_s3:u64,part_n3:u64,o3p:u64 = call(x8,o8,part_s2,part_n2,o2p) {"function":"lt_part"}
+  part_s4:u64,part_n4:u64,o4p:u64 = call(y8,o8,part_s3,part_n3,o3p) {"function":"lt_part"}
+  jump success()
+block success()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block absent()
+  missing:u32 = const() {"value":226}
+  ret(missing)
+block short()
+  no_room:u32 = const() {"value":102}
+  ret(no_room)
+block internal()
+  bad:u32 = const() {"value":103}
+  ret(bad)
+end
+
+fn lt_find(i:readbuf,end:u64,c:u64,p:u64,q:mutbuf,qn:u64,j:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,end:u64,c:u64,p:u64,q:mutbuf,qn:u64,j:u64)
+  jump loop(i,end,c,p,q,qn,j)
+block loop(li:readbuf,le:u64,lc:u64,lp:u64,lq:mutbuf,ln:u64,lj:u64)
+  done:bool = compare.eq(lj,lc)
+  branch done answer(lc) row(li,le,lc,lp,lq,ln,lj)
+block row(i1:readbuf,e1:u64,c1:u64,p1:u64,q1:mutbuf,n1:u64,j1:u64)
+  code:u32,dt:u64,next:u64 = call(i1,e1,p1) {"function":"tt_row"}
+  z:u32 = const() {"value":0}
+  sane:bool = compare.eq(code,z)
+  branch sane match_name(i1,e1,c1,p1,q1,n1,j1,dt,next) answer(c1)
+block match_name(i2:readbuf,e2:u64,c2:u64,p2:u64,q2:mutbuf,n2:u64,j2:u64,dt2:u64,next2:u64)
+  two:u64 = const() {"value":2}
+  view:u64 = int.add.wrap(p2,two)
+  size:u64 = int.sub.wrap(dt2,view)
+  same_extent:bool = compare.eq(size,n2)
+  branch same_extent compare_name(i2,e2,c2,q2,n2,j2,next2,view) advance(i2,e2,c2,q2,n2,j2,next2)
+block compare_name(i3:readbuf,e3:u64,c3:u64,q3:mutbuf,n3:u64,j3:u64,next3:u64,view3:u64)
+  query_pos:u64 = const() {"value":840200}
+  eq_one:u64 = const() {"value":1}
+  equal:u64 = call(i3,view3,q3,query_pos,n3) {"function":"ca_equal"}
+  same:bool = compare.eq(equal,eq_one)
+  branch same answer(j3) advance(i3,e3,c3,q3,n3,j3,next3)
+block advance(i4:readbuf,e4:u64,c4:u64,q4:mutbuf,n4:u64,j4:u64,next4:u64)
+  one:u64 = const() {"value":1}
+  jnext:u64 = int.add.wrap(j4,one)
+  jump loop(i4,e4,c4,next4,q4,n4,jnext)
+block answer(ordinal:u64)
+  ret(ordinal)
+end
+
+fn lt_part(b:readbuf,o:mutbuf,start:u64,n:u64,pos:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(b:readbuf,o:mutbuf,start:u64,n:u64,pos:u64)
+  r0:usize = buffer.len(b)
+  r:u64 = int.cast(r0) {"mode":"wrap"}
+  skip:bool = compare.le(r,start)
+  branch skip later(start,n,pos,r) copy(b,o,start,n,pos,r)
+block later(s1:u64,n1:u64,p1:u64,r1:u64)
+  next:u64 = int.sub.wrap(s1,r1)
+  ret(next,n1,p1)
+block copy(b2:readbuf,o2:mutbuf,s2:u64,n2:u64,p2:u64,r2:u64)
+  room:u64 = int.sub.wrap(r2,s2)
+  fits:bool = compare.le(n2,room)
+  here:u64 = select(fits,n2,room)
+  out:u64 = call(b2,s2,o2,p2,here) {"function":"cp_copy"}
+  rem:u64 = int.sub.wrap(n2,here)
+  z:u64 = const() {"value":0}
+  ret(z,rem,out)
+end

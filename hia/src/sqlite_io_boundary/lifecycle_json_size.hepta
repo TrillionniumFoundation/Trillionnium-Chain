@@ -1,0 +1,246 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_lifecycle_json_size
+fn f0(raw:readbuf,out:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,scratch:mutbuf)
+  n:usize = buffer.len(raw)
+  minimum:usize = const() {"value":104}
+  maximum:usize = const() {"value":616}
+  enough:bool = compare.ge(n,minimum)
+  bounded:bool = compare.le(n,maximum)
+  valid:bool = bool.and(enough,bounded)
+  branch valid capacity(raw,out,n) malformed()
+block capacity(cr:readbuf,co:mutbuf,cn:usize)
+  outlen:usize = buffer.len(co)
+  need:usize = const() {"value":8}
+  space:bool = compare.ge(outlen,need)
+  branch space measure(cr,co,cn) short()
+block measure(mr:readbuf,mo:mutbuf,mn:usize)
+  offset:u64 = const() {"value":104}
+  size:u64 = int.cast(mn) {"mode":"wrap"}
+  bytes:u64 = call(mr,offset,size) {"function":"mlj_measure"}
+  zero:u64 = const() {"value":0}
+  measured_ok:bool = compare.ne(bytes,zero)
+  branch measured_ok publish(mo,bytes) malformed()
+block publish(po:mutbuf,pn:u64)
+  p0:u64 = const() {"value":0}
+  written:u64 = call(po,p0,pn) {"function":"cp_put"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  malformedcode:u32 = const() {"value":100}
+  ret(malformedcode)
+block short()
+  shortcode:u32 = const() {"value":102}
+  ret(shortcode)
+end
+
+fn mlj_measure(r:readbuf,head:u64,len:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,head:u64,len:u64)
+  zero:u64 = const() {"value":0}
+  bytes:u64 = call(r,zero,head,len) {"function":"mlj_measure_at"}
+  ret(bytes)
+end
+
+fn mlj_measure_at(mr:readbuf,origin:u64,head:u64,len:u64) -> (u64) effects(read,write,trap) entry(measure)
+block measure(mr:readbuf,origin:u64,head:u64,len:u64)
+  tail:u64 = int.sub.wrap(len,head)
+  namebytes:u64 = call(mr,head,tail) {"function":"je_string_size"}
+  utf8error:u64 = const() {"value":4294967280}
+  utf8ok:bool = compare.ne(namebytes,utf8error)
+  branch utf8ok fields(mr,origin,namebytes) malformed()
+block fields(fr:readbuf,fb:u64,nb:u64)
+  attag:u64 = const() {"value":0}
+  tag:u64 = call(fr,fb,attag) {"function":"mlj_fixed"}
+  ab:u64 = call(tag) {"function":"mlj_action_size"}
+  zero:u64 = const() {"value":0}
+  known:bool = compare.gt(ab,zero)
+  option:u64 = call(fr,fb) {"function":"mlj_options"}
+  valid_option:bool = compare.ne(option,zero)
+  good:bool = bool.and(known,valid_option)
+  branch good lower(fr,fb,nb,ab,option) malformed()
+block lower(lr:readbuf,lb:u64,ln:u64,la:u64,lp:u64)
+  counts:u64 = call(lr,lb) {"function":"mlj_counts"}
+  zero_l:u64 = const() {"value":0}
+  valid_l:bool = compare.ne(counts,zero_l)
+  branch valid_l total(lr,lb,ln,la,lp,counts) malformed()
+block total(tr:readbuf,tb:u64,tn:u64,ta:u64,tp:u64,tc:u64)
+  ds:u64 = call(tr,tb) {"function":"mlj_tail"}
+  base:u64 = const() {"value":165}
+  sum0:u64 = int.add.wrap(base,tn)
+  sum1:u64 = int.add.wrap(sum0,ta)
+  sum2:u64 = int.add.wrap(sum1,tp)
+  sum3:u64 = int.add.wrap(sum2,tc)
+  sum4:u64 = int.add.wrap(sum3,ds)
+  ret(sum4)
+block malformed()
+  invalid:u64 = const() {"value":0}
+  ret(invalid)
+end
+
+fn mlj_fixed(r:readbuf,base:u64,rel:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,base:u64,rel:u64)
+  position:u64 = int.add.wrap(base,rel)
+  value:u64 = call(r,position) {"function":"tr_read"}
+  ret(value)
+end
+
+fn mlj_action_size(id:u64) -> (u64) effects(trap) entry(entry)
+block entry(id:u64)
+  one:u64 = const() {"value":1}
+  top:u64 = const() {"value":12}
+  eight:u64 = const() {"value":8}
+  sixtyfour:u64 = const() {"value":64}
+  mask:u64 = const() {"value":255}
+  zero:u64 = const() {"value":0}
+  positive:bool = compare.ge(id,one)
+  bounded:bool = compare.le(id,top)
+  valid:bool = bool.and(positive,bounded)
+  branch valid lookup(id,one,eight,sixtyfour,mask) unknown()
+block lookup(li:u64,lo:u64,le:u64,ls:u64,lm:u64)
+  index:u64 = int.sub.wrap(li,lo)
+  bitpos:u64 = int.mul.wrap(index,le)
+  first:bool = compare.lt(bitpos,ls)
+  branch first low(bitpos,lm) high(bitpos,ls,lm)
+block low(pos:u64,msk:u64)
+  word:u64 = const() {"value":1736709471386803214}
+  shifted:u64 = int.shr.checked(word,pos)
+  out:u64 = bit.and(shifted,msk)
+  ret(out)
+block high(hpos:u64,hs:u64,hm:u64)
+  tailword:u64 = const() {"value":169218575}
+  shift:u64 = int.sub.wrap(hpos,hs)
+  tail_shift:u64 = int.shr.checked(tailword,shift)
+  val:u64 = bit.and(tail_shift,hm)
+  ret(val)
+block unknown()
+  uz:u64 = const() {"value":0}
+  ret(uz)
+end
+
+fn mlj_options(r:readbuf,origin:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64)
+  atflags:u64 = const() {"value":96}
+  flags:u64 = call(r,origin,atflags) {"function":"mlj_fixed"}
+  seven:u64 = const() {"value":7}
+  legal:bool = compare.le(flags,seven)
+  branch legal size(r,origin,flags) bad()
+block size(br:readbuf,bb:u64,bf:u64)
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  key:u64 = const() {"value":22}
+  deviceoff:u64 = const() {"value":24}
+  device:u64 = call(br,bb,deviceoff,bf,one) {"function":"mlj_opt"}
+  inodeoff:u64 = const() {"value":32}
+  inode:u64 = call(br,bb,inodeoff,bf,two) {"function":"mlj_opt"}
+  requestoff:u64 = const() {"value":88}
+  request:u64 = call(br,bb,requestoff,bf,four) {"function":"mlj_opt"}
+  zero:u64 = const() {"value":0}
+  deviceok:bool = compare.ne(device,zero)
+  inodeok:bool = compare.ne(inode,zero)
+  requestok:bool = compare.ne(request,zero)
+  p1:bool = bool.and(deviceok,inodeok)
+  p2:bool = bool.and(p1,requestok)
+  branch p2 sums(device,inode,request,key,two) bad()
+block sums(sd:u64,si:u64,sr:u64,sk:u64,st:u64)
+  one2:u64 = const() {"value":1}
+  null:u64 = const() {"value":4}
+  reqabsent:bool = compare.eq(sr,one2)
+  reqbytes:u64 = int.add.wrap(sr,sk)
+  wanted:u64 = select(reqabsent,one2,reqbytes)
+  dabs:bool = compare.eq(sd,one2)
+  iabs:bool = compare.eq(si,one2)
+  dw:u64 = select(dabs,null,sd)
+  iw:u64 = select(iabs,null,si)
+  opt:u64 = int.add.wrap(dw,iw)
+  opt2:u64 = int.add.wrap(opt,wanted)
+  db:u64 = select(dabs,one2,st)
+  ib:u64 = select(iabs,one2,st)
+  dib:u64 = int.add.wrap(db,ib)
+  adjust:u64 = int.sub.wrap(dib,one2)
+  result:u64 = int.sub.wrap(opt2,adjust)
+  ret(result)
+block bad()
+  badzero:u64 = const() {"value":0}
+  ret(badzero)
+end
+
+fn mlj_opt(r:readbuf,origin:u64,at:u64,flags:u64,bit:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64,at:u64,flags:u64,bit:u64)
+  value:u64 = call(r,origin,at) {"function":"mlj_fixed"}
+  current:u64 = bit.and(flags,bit)
+  zero:u64 = const() {"value":0}
+  has:bool = compare.ne(current,zero)
+  branch has present(value) absent(value)
+block present(pv:u64)
+  z:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  digits:u64 = call(pv,z) {"function":"value_integer_size"}
+  encoded:u64 = int.add.wrap(digits,one)
+  ret(encoded)
+block absent(av:u64)
+  az:u64 = const() {"value":0}
+  aone:u64 = const() {"value":1}
+  canonical:bool = compare.eq(av,az)
+  valid:u64 = select(canonical,aone,az)
+  ret(valid)
+end
+
+fn mlj_counts(r:readbuf,origin:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64)
+  atlinked:u64 = const() {"value":40}
+  linked:u64 = call(r,origin,atlinked) {"function":"mlj_fixed"}
+  athandle:u64 = const() {"value":48}
+  handle:u64 = call(r,origin,athandle) {"function":"mlj_fixed"}
+  atpending:u64 = const() {"value":56}
+  pending:u64 = call(r,origin,atpending) {"function":"mlj_fixed"}
+  atshm:u64 = const() {"value":64}
+  shm:u64 = call(r,origin,atshm) {"function":"mlj_fixed"}
+  one:u64 = const() {"value":1}
+  cap:u64 = const() {"value":4294967295}
+  linkedok:bool = compare.le(linked,one)
+  handleok:bool = compare.le(handle,cap)
+  pendingok:bool = compare.le(pending,cap)
+  shmok:bool = compare.le(shm,cap)
+  a:bool = bool.and(linkedok,handleok)
+  b:bool = bool.and(pendingok,shmok)
+  good:bool = bool.and(a,b)
+  branch good size(linked,handle,pending,shm) bad()
+block size(l:u64,h:u64,p:u64,s:u64)
+  zero:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  five:u64 = const() {"value":5}
+  yes:bool = compare.ne(l,zero)
+  w:u64 = select(yes,four,five)
+  hw:u64 = call(h,zero) {"function":"value_integer_size"}
+  pw:u64 = call(p,zero) {"function":"value_integer_size"}
+  sw:u64 = call(s,zero) {"function":"value_integer_size"}
+  hp:u64 = int.add.wrap(hw,pw)
+  hps:u64 = int.add.wrap(hp,sw)
+  total:u64 = int.add.wrap(hps,w)
+  ret(total)
+block bad()
+  bz:u64 = const() {"value":0}
+  ret(bz)
+end
+
+fn mlj_tail(r:readbuf,origin:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,origin:u64)
+  zero:u64 = const() {"value":0}
+  atseq:u64 = const() {"value":8}
+  seq:u64 = call(r,origin,atseq) {"function":"mlj_fixed"}
+  seqdigits:u64 = call(seq,zero) {"function":"value_integer_size"}
+  seqsum:u64 = int.add.wrap(zero,seqdigits)
+  atgen:u64 = const() {"value":16}
+  gen:u64 = call(r,origin,atgen) {"function":"mlj_fixed"}
+  gendigits:u64 = call(gen,zero) {"function":"value_integer_size"}
+  gensum:u64 = int.add.wrap(seqsum,gendigits)
+  athigh:u64 = const() {"value":72}
+  high:u64 = call(r,origin,athigh) {"function":"mlj_fixed"}
+  highdigits:u64 = call(high,zero) {"function":"value_integer_size"}
+  highsum:u64 = int.add.wrap(gensum,highdigits)
+  atactual:u64 = const() {"value":80}
+  actual:u64 = call(r,origin,atactual) {"function":"mlj_fixed"}
+  actualdigits:u64 = call(actual,zero) {"function":"value_integer_size"}
+  actualsum:u64 = int.add.wrap(highsum,actualdigits)
+  ret(actualsum)
+end

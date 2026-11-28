@@ -1,0 +1,78 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_pq_role_identity_v1
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  width:usize = const() {"value":33}
+  length:usize = buffer.len(input)
+  fits:bool = compare.eq(width,length)
+  branch fits role(input,output,work) malformed()
+block role(ri:readbuf,ro:mutbuf,rw:mutbuf)
+  role_at:usize = const() {"value":32}
+  role_tag:u8 = buffer.load(ri,role_at)
+  one:u8 = const() {"value":1}
+  four:u8 = const() {"value":4}
+  minimum:bool = compare.ge(role_tag,one)
+  maximum:bool = compare.le(role_tag,four)
+  typed:bool = bool.and(minimum,maximum)
+  branch typed capacity(ri,ro,rw) malformed()
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf)
+  out_len:usize = buffer.len(co)
+  work_len:usize = buffer.len(cw)
+  min_out:usize = const() {"value":32}
+  min_work:usize = const() {"value":1256}
+  out_ok:bool = compare.ge(out_len,min_out)
+  work_ok:bool = compare.ge(work_len,min_work)
+  enough:bool = bool.and(out_ok,work_ok)
+  branch enough start(ci,co,cw) short()
+block start(si:readbuf,so:mutbuf,sw:mutbuf)
+  initialized:u64 = call(sw) {"function":"tr_sha_init"}
+  szero:u64 = const() {"value":0}
+  success:bool = compare.eq(initialized,szero)
+  branch success domain(si,so,sw) internal()
+block domain(di:readbuf,doo:mutbuf,dw:mutbuf)
+  p0:u64 = const() {"value":1208}
+  d0:u64 = const() {"value":7810739491857912404}
+  _d0:u64 = call(dw,p0,d0) {"function":"tr_put"}
+  p8:u64 = const() {"value":1216}
+  d8:u64 = const() {"value":3409594557391921509}
+  _d8:u64 = call(dw,p8,d8) {"function":"tr_put"}
+  p16:u64 = const() {"value":1224}
+  d16:u64 = const() {"value":3903848277881998413}
+  _d16:u64 = call(dw,p16,d16) {"function":"tr_put"}
+  p24:u64 = const() {"value":1232}
+  d24:u64 = const() {"value":7959375669416570677}
+  _d24:u64 = call(dw,p24,d24) {"function":"tr_put"}
+  p32:u64 = const() {"value":1240}
+  d32:u64 = const() {"value":7308338831494048868}
+  _d32:u64 = call(dw,p32,d32) {"function":"tr_put"}
+  p40:u64 = const() {"value":1248}
+  d40:u64 = const() {"value":0}
+  _d40:u64 = call(dw,p40,d40) {"function":"tr_put"}
+  size:u64 = const() {"value":41}
+  fed:u64 = call(dw,p0,size) {"function":"tr_sha_update_work"}
+  dzero:u64 = const() {"value":0}
+  domain_ok:bool = compare.eq(fed,dzero)
+  branch domain_ok network(di,doo,dw,dzero) internal()
+block network(ni:readbuf,no:mutbuf,nw:mutbuf,nzero:u64)
+  nsize:u64 = const() {"value":33}
+  added:u64 = call(ni,nzero,nsize,nw) {"function":"tr_sha_update"}
+  fed_public:u64 = const() {"value":0}
+  network_ok:bool = compare.eq(added,fed_public)
+  branch network_ok finalize(no,nw,nzero) internal()
+block finalize(fo:mutbuf,fw:mutbuf,fzero:u64)
+  result:u64 = call(fw) {"function":"tr_sha_final"}
+  digest_ok:bool = compare.eq(result,fzero)
+  branch digest_ok publish(fo,fw,fzero) internal()
+block publish(po:mutbuf,pw:mutbuf,pzero:u64)
+  _copy:u64 = call(pw,po,pzero) {"function":"sb_copy_digest"}
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block malformed()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block short()
+  bad_capacity:u32 = const() {"value":102}
+  ret(bad_capacity)
+block internal()
+  bad_hash:u32 = const() {"value":103}
+  ret(bad_hash)
+end

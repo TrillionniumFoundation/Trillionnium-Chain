@@ -1,0 +1,95 @@
+{
+  "archive": {
+    "all_declared_members_read_completely": true,
+    "bytes": 2762380,
+    "logical_bytes": 103350313,
+    "member_index": "MANIFEST.json",
+    "member_index_sha256": "64d39123c0f88cc4a1ab2da5081bb45fd29323b0a13a3b2971deb0bc33bc673c",
+    "path": "control-plane-development.tar.xz",
+    "readback": "PASS",
+    "regular_members": 3933,
+    "sha256": "f687e83b64104c847319a232b93eb0268e117ad8c4a1882c7435840ef705a0b2",
+    "single_xz_stream": true,
+    "tar_tail_all_zero": true
+  },
+  "base_commit": "5a71deab1f254fff3297b482a96d86fbc8965b89",
+  "final_execution": {
+    "actual_allocator_observer_runs": 7,
+    "actual_calloc_failure_points": 3,
+    "complete_report_member": "run6/observations.json",
+    "complete_report_sha256": "3680942f8cfcdd01194c1effa0aeef73dcc7ead9ce59383500a9b3eb61d41526",
+    "finalized": true,
+    "native_calls": 2577,
+    "original_comparisons": 2564,
+    "original_retained_tests": 5,
+    "registry_commands": 1542,
+    "run": "run6",
+    "source_inputs": {
+      "hia/components.json": "511ccc428f71ee22b0626fd0d95af3a975cd6f109b0b24a86c0d6d3543e338b2",
+      "hia/src/control_plane/core.hepta": "4a40a35d8720da13763b3285dc42eea292b99ebe23e680b6ec411ff1ad6cd6d8",
+      "hia/src/control_plane/registry.hepta": "67ba78837c8b56a9504462083fe295f32125a4cb640dc585799ced26f602c2ab",
+      "hia/src/crypto/sha256_stream.hepta": "2fc24eecc10f7772f20bf8010b4dd9b79db3689b1b23cc9251bd0708fb15dff3",
+      "hia/tests/control_plane_alloc.c": "7c66c79cbf0c9b7247f4c71141f86166d6175d4c7968fe14bd650a2f836cb845",
+      "hia/tests/control_plane_original.rs": "a828e9c9e2acc52622583f5362b050e3a2c9a75a6f5df10d810d58667eeb9884",
+      "hia/tests/native_support.py": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4",
+      "hia/tests/test_control_plane.py": "eb8ca9a5607843849c3f974b5ffd1fa9746eeb027ef8c2378a9c582378418fbd",
+      "hia/toolchain.lock.json": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71",
+      "hia/tools/toolchain.py": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057",
+      "trillionnium/crates/trnm-control-plane/src/lib.rs": "c1facc89f6965c95945e9b013b08b6063c37afe6dc4f41b6f0f212399e71c0a3"
+    },
+    "source_unchanged": true,
+    "status": "PASS",
+    "test_methods": 15,
+    "wall_seconds": 21.944
+  },
+  "hosted_execution": "NOT_RUN for this source increment at preparation",
+  "independent_readback": {
+    "blob_references": 33554,
+    "files_read": 3904,
+    "logical_bytes": 101387132,
+    "record_member": "root-independent-readback.json",
+    "runtime_reexecuted": false,
+    "status": "PASS",
+    "verifier_member": "root-independent-verifier.py"
+  },
+  "native_and_original_artifacts": {
+    "allocator-observer/alloc-observer": {
+      "bytes": 17320,
+      "sha256": "26fb3c3dd4aa7dc17910e58809f86a2d5740a4162ba2d61031fabf4d4da6416d"
+    },
+    "native.so": {
+      "bytes": 160616,
+      "sha256": "ee40baaf591a3b35a66b8abdaa5ea21dbd50501932e6a5e08575d5fd71f633c7"
+    },
+    "original": {
+      "bytes": 4552736,
+      "sha256": "ab94f9437290ba525dc7b5bee0a6a99c136f26b1735537c4a043e0fdcff2e58b"
+    },
+    "original-tests": {
+      "bytes": 7336856,
+      "sha256": "95c0437b777bba69956992e5eb7a6398a3bd9b2d27eab3b8ac841ad8934cac29"
+    },
+    "registry.so": {
+      "bytes": 103760,
+      "sha256": "9308f8225ac7195a036606aeed26d0d87783d212c52f4be8e2d7f82ecd4d180f"
+    }
+  },
+  "old_stack_can_be_removed": false,
+  "preserved_history": {
+    "initial_builds": "Missing temporarily registered include and original adapter syntax failure logs retained with their own source identity",
+    "reporter_controls": "Seven actual finalized unittest outcomes distinguish pass, failure, error, skipped, expected failure, unexpected success and subtest failure",
+    "run3": "Actual successful suite, but its old tearDown reporter could falsely mark failing tests PASS; not accepted as final qualification",
+    "run5": "Actual successful suite, but temporary allocation-observer binary not retained; final run6 reran all methods after retention was fixed"
+  },
+  "production_activation": false,
+  "remaining": [
+    "LocalPlanGuardV0 and the actual PlanSignatureVerifierV0 provider boundary",
+    "Live authenticated plan application and persistent Node integration",
+    "Whole package and whole-chain retirement"
+  ],
+  "retirement_accepted": false,
+  "schema": "trnm.hia.control-plane-development.v1",
+  "scope": "Complete public value operations and private ObserverRegistryV0 histories; LocalPlanGuardV0 and signature-provider integration remain open",
+  "source_profile": "Pinned HIA self-host compiler; Linux x86_64 shared-library target, external linker and calloc/free; private staged output, no host business algorithm",
+  "whole_chain_native": false
+}

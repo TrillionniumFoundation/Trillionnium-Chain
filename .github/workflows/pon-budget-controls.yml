@@ -33,10 +33,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        source: [budget-before-v2, pool-before-v2, pool-scan-before, fixed]
+        source: [budget-before-v3, pool-before-v3, pool-scan-before-v2, fixed]
     env:
       DRIVER_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      SUBJECT_SHA: ${{ matrix.source == 'budget-before-v2' && '89fb2269b0dd306fbd32c36f464842c3d7daee2b' || matrix.source == 'pool-before-v2' && '84e68b4f7a9b2f48f9c47ed05c9a44229d186e30' || matrix.source == 'pool-scan-before' && 'ae657e262278ae4a058220f66a6a0495721eb9ad' || github.event.pull_request.head.sha || github.sha }}
+      SUBJECT_SHA: ${{ matrix.source == 'budget-before-v3' && '270eb51919d9b02e3962ffab5140ccffbbbb1470' || matrix.source == 'pool-before-v3' && 'e6c530ccd3edd035892870315877ae9adfff7e23' || matrix.source == 'pool-scan-before-v2' && 'd84b9e0af0943c1f779b432589e31ca58db3364f' || github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Reserve fresh component observations
         env:

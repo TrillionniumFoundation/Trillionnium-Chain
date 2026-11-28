@@ -1,0 +1,45 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_archive_inclusion_verify_v1
+fn f0(raw:readbuf,out:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,w:mutbuf)
+  cap:usize = buffer.len(w)
+  minimum:usize = const() {"value":1344}
+  enough:bool = compare.ge(cap,minimum)
+  branch enough admit(raw,w) short()
+block admit(ar:readbuf,aw:mutbuf)
+  head_status:u32 = call(ar,aw) {"function":"archive_header_verify"}
+  clear:u32 = const() {"value":0}
+  valid:bool = compare.eq(head_status,clear)
+  branch valid record(ar,aw) done(head_status)
+block record(rr:readbuf,rw:mutbuf)
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  header:u64 = const() {"value":16}
+  s_len:u64 = call(rr,zero) {"function":"tr_read"}
+  rlen:u64 = call(rr,eight) {"function":"tr_read"}
+  record_at:u64 = int.add.wrap(s_len,header)
+  policy:bool = const() {"value":false}
+  hashed:bool = call(rr,rw,record_at,rlen,policy) {"function":"archive_value_digest"}
+  proof_at:u64 = int.add.wrap(record_at,rlen)
+  root_back:u64 = const() {"value":32}
+  bind_at:u64 = int.sub.wrap(record_at,root_back)
+  branch hashed proof(rr,rw,proof_at,bind_at) internal()
+block proof(pr:readbuf,pw:mutbuf,pp:u64,root:u64)
+  index_off:u64 = const() {"value":34}
+  depth_off:u64 = const() {"value":38}
+  sibling_off:u64 = const() {"value":42}
+  index_at:u64 = int.add.wrap(pp,index_off)
+  depth_at:u64 = int.add.wrap(pp,depth_off)
+  sibling_at:u64 = int.add.wrap(pp,sibling_off)
+  idx:u64 = call(pr,index_at) {"function":"archive_u32"}
+  cnt:u64 = call(pr,depth_at) {"function":"archive_u32"}
+  verified:u32 = call(pr,pw,root,idx,cnt,sibling_at) {"function":"archive_fold_to_root"}
+  ret(verified)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block internal()
+  internal_code:u32 = const() {"value":103}
+  ret(internal_code)
+block done(d:u32)
+  ret(d)
+end

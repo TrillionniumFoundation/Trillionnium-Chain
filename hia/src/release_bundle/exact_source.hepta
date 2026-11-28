@@ -1,0 +1,194 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_exact_source_v0
+fn f0(input:readbuf,digest:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,digest:mutbuf,scratch:mutbuf)
+  extent:usize = buffer.len(input)
+  expected:usize = const() {"value":193}
+  exact:bool = compare.eq(extent,expected)
+  branch exact validate(input,digest,scratch) malformed()
+block validate(candidate:readbuf,out:mutbuf,work:mutbuf)
+  status:u32 = call(candidate) {"function":"es_validate_prefix"}
+  ok:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,ok)
+  branch valid capacity(candidate,out,work) refused(status)
+block capacity(cap_input:readbuf,cap_out:mutbuf,cap_work:mutbuf)
+  out_size:usize = buffer.len(cap_out)
+  work_size:usize = buffer.len(cap_work)
+  digest_bytes:usize = const() {"value":32}
+  scratch_bytes:usize = const() {"value":1493}
+  enough_out:bool = compare.ge(out_size,digest_bytes)
+  enough_work:bool = compare.ge(work_size,scratch_bytes)
+  enough:bool = bool.and(enough_out,enough_work)
+  branch enough hash(cap_input,cap_out,cap_work) capacity_error()
+block hash(hash_input:readbuf,hash_out:mutbuf,hash_work:mutbuf)
+  result:u64 = call(hash_input,hash_work) {"function":"es_hash_prefix"}
+  zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(result,zero)
+  branch hashed publish(hash_out,hash_work,zero) hash_error()
+block refused(code:u32)
+  ret(code)
+block publish(pub_out:mutbuf,pub_work:mutbuf,idx:u64)
+  state_digest:u64 = const() {"value":1168}
+  source_pos:u64 = int.add.wrap(state_digest,idx)
+  source_idx:usize = int.cast(source_pos) {"mode":"wrap"}
+  target_idx:usize = int.cast(idx) {"mode":"wrap"}
+  value:u8 = buffer.load(pub_work,source_idx)
+  _ = buffer.store(pub_out,target_idx,value)
+  one:u64 = const() {"value":1}
+  next_idx:u64 = int.add.wrap(idx,one)
+  end_idx:u64 = const() {"value":32}
+  all_written:bool = compare.eq(next_idx,end_idx)
+  branch all_written success() publish(pub_out,pub_work,next_idx)
+block success()
+  ok_code:u32 = const() {"value":0}
+  ret(ok_code)
+block malformed()
+  frame_code:u32 = const() {"value":100}
+  ret(frame_code)
+block capacity_error()
+  capacity_code:u32 = const() {"value":102}
+  ret(capacity_code)
+block hash_error()
+  hash_code:u32 = const() {"value":103}
+  ret(hash_code)
+end
+
+fn es_validate_prefix(input:readbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf)
+  section:u64 = const() {"value":0}
+  answer:u32 = call(input,section) {"function":"es_validate_at"}
+  ret(answer)
+end
+
+fn es_hash_prefix(input:readbuf,work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf)
+  section:u64 = const() {"value":0}
+  answer:u64 = call(input,work,section) {"function":"es_hash_at"}
+  ret(answer)
+end
+
+fn es_validate_at(input:readbuf,section:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,section:u64)
+  offset:u64 = const() {"value":192}
+  raw_flag:u64 = int.add.wrap(section,offset)
+  flag_at:usize = int.cast(raw_flag) {"mode":"wrap"}
+  dirty:u8 = buffer.load(input,flag_at)
+  max_bool:u8 = const() {"value":1}
+  noncanonical:bool = compare.gt(dirty,max_bool)
+  branch noncanonical malformed() check_clean(input,dirty,section)
+block check_clean(clean_input:readbuf,dirty_flag:u8,section_check_clean:u64)
+  clean_byte:u8 = const() {"value":0}
+  clean:bool = compare.eq(dirty_flag,clean_byte)
+  branch clean validate_field(clean_input,section_check_clean,section_check_clean) invalid()
+block validate_field(val_input:readbuf,val_at:u64,section_validate_field:u64)
+  nonzero:bool = call(val_input,val_at) {"function":"es_nonzero"}
+  branch nonzero continue_validation(val_input,val_at,section_validate_field) invalid()
+block continue_validation(next_input:readbuf,prior_at:u64,section_continue_validation:u64)
+  width:u64 = const() {"value":32}
+  digest_bytes:u64 = const() {"value":192}
+  end_of_digests:u64 = int.add.wrap(section_continue_validation,digest_bytes)
+  next_at:u64 = int.add.wrap(prior_at,width)
+  last:bool = compare.eq(next_at,end_of_digests)
+  branch last success() validate_field(next_input,next_at,section_continue_validation)
+block success()
+  code_ok:u32 = const() {"value":0}
+  ret(code_ok)
+block malformed()
+  code_format:u32 = const() {"value":100}
+  ret(code_format)
+block invalid()
+  code_invalid:u32 = const() {"value":101}
+  ret(code_invalid)
+end
+
+fn es_hash_at(input:readbuf,work:mutbuf,section:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,section:u64)
+  init:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(init,zero)
+  branch ready domain(input,work,section) hash_error()
+block domain(dom_input:readbuf,dom_work:mutbuf,section_domain:u64)
+  start:u64 = const() {"value":1208}
+  len_prefix:u64 = const() {"value":2017612633061982208}
+  _length:u64 = call(dom_work,start,len_prefix) {"function":"tr_put"}
+  offset0:u64 = const() {"value":1216}
+  word0:u64 = const() {"value":7810774672474010228}
+  _domain0:u64 = call(dom_work,offset0,word0) {"function":"tr_put"}
+  offset1:u64 = const() {"value":1224}
+  word1:u64 = const() {"value":7023474868829249893}
+  _domain1:u64 = call(dom_work,offset1,word1) {"function":"tr_put"}
+  offset2:u64 = const() {"value":1232}
+  word2:u64 = const() {"value":7165919078634058851}
+  _domain2:u64 = call(dom_work,offset2,word2) {"function":"tr_put"}
+  offset3:u64 = const() {"value":1240}
+  word3:u64 = const() {"value":813051493}
+  _domain3:u64 = call(dom_work,offset3,word3) {"function":"tr_put"}
+  first_part:u64 = const() {"value":1244}
+  jump write_field(dom_input,dom_work,section_domain,first_part,section_domain)
+block write_field(write_input:readbuf,write_work:mutbuf,src_at:u64,dst_at:u64,section_write_field:u64)
+  len_field:u64 = const() {"value":2305843009213693952}
+  _part_len:u64 = call(write_work,dst_at,len_field) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  payload_at:u64 = int.add.wrap(dst_at,eight)
+  next_output_at:u64 = call(write_input,write_work,src_at,payload_at) {"function":"es_copy_field"}
+  width32:u64 = const() {"value":32}
+  next_input_at:u64 = int.add.wrap(src_at,width32)
+  all_field_bytes:u64 = const() {"value":192}
+  last_field_at:u64 = int.add.wrap(section_write_field,all_field_bytes)
+  all_fields:bool = compare.eq(next_input_at,last_field_at)
+  branch all_fields append_flag(write_work,next_output_at) write_field(write_input,write_work,next_input_at,next_output_at,section_write_field)
+block append_flag(append_work:mutbuf,flag_prefix:u64)
+  flag_len:u64 = const() {"value":72057594037927936}
+  _flag_prefix:u64 = call(append_work,flag_prefix,flag_len) {"function":"tr_put"}
+  flag_pos:usize = const() {"value":1492}
+  flag_zero:u8 = const() {"value":0}
+  _ = buffer.store(append_work,flag_pos,flag_zero)
+  hash_start:u64 = const() {"value":1208}
+  hash_bytes:u64 = const() {"value":285}
+  update:u64 = call(append_work,hash_start,hash_bytes) {"function":"tr_sha_update_work"}
+  update_zero:u64 = const() {"value":0}
+  updated:bool = compare.eq(update,update_zero)
+  branch updated finish(append_work) hash_error()
+block finish(fin_work:mutbuf)
+  observed:u64 = call(fin_work) {"function":"tr_sha_final"}
+  ret(observed)
+block hash_error()
+  hash_code:u64 = const() {"value":103}
+  ret(hash_code)
+end
+
+fn es_nonzero(input:readbuf,position:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,position:u64)
+  eight:u64 = const() {"value":8}
+  sixteen:u64 = const() {"value":16}
+  twenty_four:u64 = const() {"value":24}
+  second_at:u64 = int.add.wrap(position,eight)
+  third_at:u64 = int.add.wrap(position,sixteen)
+  fourth_at:u64 = int.add.wrap(position,twenty_four)
+  first:u64 = call(input,position) {"function":"tr_read"}
+  second:u64 = call(input,second_at) {"function":"tr_read"}
+  third:u64 = call(input,third_at) {"function":"tr_read"}
+  fourth:u64 = call(input,fourth_at) {"function":"tr_read"}
+  low:u64 = bit.or(first,second)
+  high:u64 = bit.or(third,fourth)
+  folded:u64 = bit.or(low,high)
+  zero:u64 = const() {"value":0}
+  valid:bool = compare.ne(folded,zero)
+  ret(valid)
+end
+
+fn es_copy_field(input:readbuf,work:mutbuf,source:u64,target:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,source:u64,target:u64)
+  width:u64 = const() {"value":32}
+  end_source:u64 = int.add.wrap(source,width)
+  jump loop(input,work,source,target,end_source)
+block loop(loop_input:readbuf,loop_work:mutbuf,source_at:u64,target_at:u64,end_at:u64)
+  word:u64 = call(loop_input,source_at) {"function":"tr_read"}
+  _copied:u64 = call(loop_work,target_at,word) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  next_source:u64 = int.add.wrap(source_at,eight)
+  next_target:u64 = int.add.wrap(target_at,eight)
+  complete:bool = compare.eq(next_source,end_at)
+  branch complete done(next_target) loop(loop_input,loop_work,next_source,next_target,end_at)
+block done(after:u64)
+  ret(after)
+end

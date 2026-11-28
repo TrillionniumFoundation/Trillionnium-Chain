@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_rollup_replay
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  three:u64 = const() {"value":3}
+  code:u32 = call(raw,mem,work,three) {"function":"hfr_read"}
+  ret(code)
+end

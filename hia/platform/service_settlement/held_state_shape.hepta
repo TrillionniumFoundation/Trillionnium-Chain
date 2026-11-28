@@ -1,0 +1,67 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_state_shape
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  ext:usize = const() {"value":1048576}
+  msize:usize = buffer.len(mem)
+  wsize:usize = buffer.len(work)
+  good_m:bool = compare.eq(msize,ext)
+  good_w:bool = compare.eq(wsize,ext)
+  ready:bool = bool.and(good_m,good_w)
+  branch ready phase(raw,mem,work) refused()
+block phase(pr:readbuf,pm:mutbuf,pw:mutbuf)
+  root_mode_at:u64 = const() {"value":130000}
+  one:u64 = const() {"value":1}
+  mode:u64 = call(pm,root_mode_at,one) {"function":"cp_put"}
+  zero:u64 = const() {"value":0}
+  current:u64 = call(pm,zero) {"function":"cp_get"}
+  state_phase:u64 = const() {"value":27}
+  is_state:bool = compare.eq(current,state_phase)
+  branch is_state check(pr,pm,pw) delegate(pr,pm,pw)
+block check(cr:readbuf,cm:mutbuf,cw:mutbuf)
+  extent_us:usize = buffer.len(cr)
+  extent:u64 = int.cast(extent_us) {"mode":"wrap"}
+  min_frame:u64 = const() {"value":135}
+  max_frame:u64 = const() {"value":65560}
+  lo:bool = compare.ge(extent,min_frame)
+  hi:bool = compare.le(extent,max_frame)
+  wide:bool = bool.and(lo,hi)
+  branch wide typed(cr,cm,cw,extent) refused()
+block typed(tr:readbuf,tm:mutbuf,tw:mutbuf,tn:u64)
+  blob:u64 = const() {"value":4}
+  variable:u64 = const() {"value":0}
+  right:bool = call(tr,tn,blob,variable) {"function":"smr_field"}
+  branch right decode(tr,tm,tw,tn) refused()
+block decode(dr:readbuf,dm:mutbuf,dw:mutbuf,dn:u64)
+  header:u64 = const() {"value":24}
+  body:u64 = int.sub.wrap(dn,header)
+  base:u64 = const() {"value":600000}
+  end:u64 = call(dr,header,dw,base,body) {"function":"cp_copy"}
+  parsed:u64 = call(dw,base,end) {"function":"sks_state"}
+  exact:bool = compare.eq(parsed,end)
+  cleared:u64 = call(dw,base,end) {"function":"hks_clear"}
+  branch exact delegate(dr,dm,dw) refused()
+block delegate(rr:readbuf,rm:mutbuf,rw:mutbuf)
+  nohold:bool = const() {"value":false}
+  rc:u32 = call(rr,rm,rw,nohold) {"function":"smr_held"}
+  ret(rc)
+block refused()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+end
+
+fn hks_clear(w:mutbuf,lo:u64,hi:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,lo:u64,hi:u64)
+  jump loop(w,lo,hi)
+block loop(lw:mutbuf,lp:u64,lh:u64)
+  more:bool = compare.lt(lp,lh)
+  branch more clear(lw,lp,lh) done(lh)
+block clear(cw:mutbuf,cp:u64,ch:u64)
+  at:usize = int.cast(cp) {"mode":"wrap"}
+  zero:u8 = const() {"value":0}
+  _ = buffer.store(cw,at,zero)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(cp,one)
+  jump loop(cw,next,ch)
+block done(dn:u64)
+  ret(dn)
+end

@@ -1,0 +1,4 @@
+{
+  global: trnm_worker_audit_export_v1;
+  local: *;
+};

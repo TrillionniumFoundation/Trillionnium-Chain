@@ -1,0 +1,70 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_version_catalog_anchor_value_v3
+fn f0(input:readbuf,output:mutbuf,unused:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,unused:mutbuf)
+  len:usize = buffer.len(input)
+  n:u64 = int.cast(len) {"mode":"wrap"}
+  four:u64 = const() {"value":4}
+  has_tag:bool = compare.ge(n,four)
+  branch has_tag tag(input,output,n,four) short()
+block tag(ti:readbuf,to:mutbuf,tn:u64,t4:u64)
+  start:u64 = const() {"value":0}
+  seen:u64 = call(ti,start,t4) {"function":"rac_read_le"}
+  expected:u64 = const() {"value":859919939}
+  valid:bool = compare.eq(seen,expected)
+  branch valid extent(ti,to,tn,t4) namespace()
+block extent(ei:readbuf,eo:mutbuf,en:u64,e4:u64)
+  full_len:u64 = const() {"value":44}
+  enough:bool = compare.ge(en,full_len)
+  branch enough exact(ei,eo,en,e4,full_len) short()
+block exact(ai:readbuf,ao:mutbuf,an:u64,a4:u64,af:u64)
+  aligned:bool = compare.eq(an,af)
+  branch aligned generation(ai,ao,a4,af) encoding()
+block generation(gi:readbuf,go:mutbuf,g4:u64,gfull:u64)
+  width:u64 = const() {"value":8}
+  bound:u64 = const() {"value":384}
+  value:u64 = call(gi,g4,width) {"function":"ca_read_be"}
+  allowed:bool = compare.le(value,bound)
+  branch allowed commitment(gi,go,value,gfull) encoding()
+block commitment(ci:readbuf,co:mutbuf,cg:u64,cf:u64)
+  p0:u64 = const() {"value":12}
+  p1:u64 = const() {"value":20}
+  p2:u64 = const() {"value":28}
+  p3:u64 = const() {"value":36}
+  q0:u64 = call(ci,p0) {"function":"tr_read"}
+  q1:u64 = call(ci,p1) {"function":"tr_read"}
+  q2:u64 = call(ci,p2) {"function":"tr_read"}
+  q3:u64 = call(ci,p3) {"function":"tr_read"}
+  pair0:u64 = bit.or(q0,q1)
+  pair1:u64 = bit.or(q2,q3)
+  all:u64 = bit.or(pair0,pair1)
+  zero:u64 = const() {"value":0}
+  nonzero:bool = compare.ne(all,zero)
+  branch nonzero capacity(ci,co,cg,cf,p0) encoding()
+block capacity(ki:readbuf,ko:mutbuf,kg:u64,kf:u64,kp:u64)
+  min:usize = const() {"value":84}
+  cap:usize = buffer.len(ko)
+  room:bool = compare.ge(cap,min)
+  branch room publish(ki,ko,kg,kf,kp) space()
+block publish(pi:readbuf,po:mutbuf,pg:u64,pf:u64,pp:u64)
+  pos0:u64 = const() {"value":0}
+  pos1:u64 = const() {"value":8}
+  pos2:u64 = const() {"value":40}
+  digest_len:u64 = const() {"value":32}
+  _gen:u64 = call(po,pos0,pg) {"function":"tr_put"}
+  _digest:u64 = call(pi,pp,po,pos1,digest_len) {"function":"cp_copy"}
+  _wire:u64 = call(pi,pos0,po,pos2,pf) {"function":"cp_copy"}
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block short()
+  e1:u32 = const() {"value":20}
+  ret(e1)
+block namespace()
+  e2:u32 = const() {"value":21}
+  ret(e2)
+block encoding()
+  e3:u32 = const() {"value":22}
+  ret(e3)
+block space()
+  out_short:u32 = const() {"value":102}
+  ret(out_short)
+end

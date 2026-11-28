@@ -1,0 +1,70 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_version_content_lookup_v2
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  len:usize = buffer.len(input)
+  n:u64 = int.cast(len) {"mode":"wrap"}
+  cap:u64 = const() {"value":1048576}
+  bounded:bool = compare.le(n,cap)
+  branch bounded query(input,output,scratch,n) extent()
+block query(qi:readbuf,qo:mutbuf,qw:mutbuf,qn:u64)
+  header:u64 = const() {"value":32}
+  enough:bool = compare.ge(qn,header)
+  branch enough validate(qi,qo,qw,qn,header) query_short()
+block validate(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vstart:u64)
+  status:u32 = call(vi,vw,vstart,vn) {"function":"c3_tcv_content"}
+  okay_code:u32 = const() {"value":0}
+  okay:bool = compare.eq(status,okay_code)
+  branch okay member_frame(vi,vo,vn) failure(status)
+block member_frame(mi:readbuf,mo:mutbuf,mend:u64)
+  length_at:u64 = const() {"value":36}
+  q2:u64 = const() {"value":2}
+  member_start:u64,member_end:u64 = call(mi,length_at,mend) {"function":"tc_frame"}
+  row_start:u64 = int.add.wrap(member_end,q2)
+  jump inspect(mi,mo,row_start,mend)
+block inspect(ii:readbuf,io:mutbuf,ic:u64,ie:u64)
+  z:u64 = const() {"value":0}
+  q32:u64 = const() {"value":32}
+  order:u64 = call(ii,z,ic,q32,q32) {"function":"sb_compare"}
+  before_id:bool = compare.eq(order,z)
+  branch before_id absent() row(ii,io,ic,ie,order)
+block row(ri:readbuf,ro:mutbuf,rc:u64,re:u64,rorder:u64)
+  ninety_six:u64 = const() {"value":96}
+  four:u64 = const() {"value":4}
+  sixty_four:u64 = const() {"value":64}
+  fixed:u64 = const() {"value":100}
+  one:u64 = const() {"value":1}
+  at:u64 = int.add.wrap(rc,ninety_six)
+  chunks:u64 = call(ri,at,four) {"function":"ca_read_be"}
+  hashes:u64 = int.mul.wrap(chunks,sixty_four)
+  size:u64 = int.add.wrap(hashes,fixed)
+  found:bool = compare.eq(rorder,one)
+  branch found room(ri,ro,rc,size) next(ri,ro,rc,re,size)
+block next(ni:readbuf,no:mutbuf,nc:u64,ne:u64,ns:u64)
+  after:u64 = int.add.wrap(nc,ns)
+  more:bool = compare.lt(after,ne)
+  branch more inspect(ni,no,after,ne) absent()
+block room(ci:readbuf,co:mutbuf,cp:u64,cn:u64)
+  output_len:usize = buffer.len(co)
+  room_n:u64 = int.cast(output_len) {"mode":"wrap"}
+  fits:bool = compare.ge(room_n,cn)
+  branch fits publish(ci,co,cp,cn) capacity()
+block publish(pi:readbuf,po:mutbuf,pp:u64,pn:u64)
+  zero:u64 = const() {"value":0}
+  count:u64 = call(pi,pp,po,zero,pn) {"function":"cs_copy"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block failure(reason:u32)
+  ret(reason)
+block capacity()
+  cap_code:u32 = const() {"value":102}
+  ret(cap_code)
+block extent()
+  len_code:u32 = const() {"value":232}
+  ret(len_code)
+block query_short()
+  missing_query:u32 = const() {"value":233}
+  ret(missing_query)
+block absent()
+  missing_id:u32 = const() {"value":234}
+  ret(missing_id)
+end

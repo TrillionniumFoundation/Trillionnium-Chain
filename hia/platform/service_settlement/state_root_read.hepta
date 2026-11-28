@@ -1,0 +1,18 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_state_root_read
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  available:usize = buffer.len(mem)
+  fixed:usize = const() {"value":1048576}
+  enough:bool = compare.eq(available,fixed)
+  branch enough route(raw,mem,work) bad()
+block route(rr:readbuf,rm:mutbuf,rw:mutbuf)
+  loc:u64 = const() {"value":130000}
+  one:u64 = const() {"value":1}
+  mode:u64 = call(rm,loc,one) {"function":"cp_put"}
+  nohold:bool = const() {"value":false}
+  status:u32 = call(rr,rm,rw,nohold) {"function":"smr_held"}
+  ret(status)
+block bad()
+  refused:u32 = const() {"value":100}
+  ret(refused)
+end

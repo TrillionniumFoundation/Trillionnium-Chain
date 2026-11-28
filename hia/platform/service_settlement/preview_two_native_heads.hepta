@@ -1,0 +1,194 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_preview_two_native_heads
+fn f0(req:readbuf,head:mutbuf,ctl:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(req:readbuf,head:mutbuf,ctl:mutbuf)
+  hold_size:usize = const() {"value":1048576}
+  ctl_size:usize = const() {"value":16384}
+  rmin:usize = const() {"value":10}
+  rmax:usize = const() {"value":1806}
+  hl:usize = buffer.len(head)
+  cl:usize = buffer.len(ctl)
+  rl:usize = buffer.len(req)
+  hm:bool = compare.eq(hl,hold_size)
+  cm:bool = compare.eq(cl,ctl_size)
+  r1:bool = compare.ge(rl,rmin)
+  r2:bool = compare.le(rl,rmax)
+  mem:bool = bool.and(hm,cm)
+  raw:bool = bool.and(r1,r2)
+  ok:bool = bool.and(mem,raw)
+  branch ok custody(req,head,ctl,rl) refuse()
+block custody(cr:readbuf,ch:mutbuf,cc:mutbuf,cn:usize)
+  co0:u64 = const() {"value":0}
+  ct0:u64 = const() {"value":56}
+  cg0:u64 = call(ch,co0) {"function":"cp_get"}
+  ce0:bool = compare.eq(cg0,ct0)
+  co1:u64 = const() {"value":8}
+  ct1:u64 = const() {"value":3}
+  cg1:u64 = call(ch,co1) {"function":"cp_get"}
+  ce1:bool = compare.eq(cg1,ct1)
+  co2:u64 = const() {"value":24}
+  ct2:u64 = const() {"value":219}
+  cg2:u64 = call(ch,co2) {"function":"cp_get"}
+  ce2:bool = compare.eq(cg2,ct2)
+  co3:u64 = const() {"value":4138}
+  ct3:u64 = const() {"value":0}
+  cg3:u64 = call(ch,co3) {"function":"cp_get"}
+  ce3:bool = compare.eq(cg3,ct3)
+  cx:bool = bool.and(ce0,ce1)
+  cy:bool = bool.and(ce2,ce3)
+  cz:bool = bool.and(cx,cy)
+  branch cz context(cr,ch,cc,cn) refuse()
+block context(xr:readbuf,xh:mutbuf,xc:mutbuf,xn:usize)
+  base:u64 = const() {"value":8192}
+  ctx:u64 = const() {"value":8226}
+  cfga:u64 = const() {"value":104}
+  cfglo:u64 = const() {"value":108}
+  cfghi:u64 = const() {"value":8194}
+  cfg:u64 = call(xh,cfga) {"function":"cp_get"}
+  low:bool = compare.ge(cfg,cfglo)
+  high:bool = compare.le(cfg,cfghi)
+  bound:bool = bool.and(low,high)
+  branch bound parse(xr,xh,xc,xn,cfg,base,ctx) refuse()
+block parse(pr:readbuf,ph:mutbuf,pc:mutbuf,pn:usize,pw:u64,pb:u64,px:u64)
+  tail:u64 = int.add.wrap(pb,pw)
+  end:u64 = call(ph,px,tail) {"function":"srci_context"}
+  left:bool = compare.gt(end,px)
+  right:bool = compare.le(end,tail)
+  valid:bool = bool.and(left,right)
+  extent:u64 = int.sub.wrap(end,px)
+  branch valid choose(pr,ph,pc,pn,extent) refuse()
+block choose(qr:readbuf,qh:mutbuf,qc:mutbuf,qn:usize,qe:u64)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  command:u64 = call(qr,zero) {"function":"tr_read"}
+  phase:u64 = call(qc,zero) {"function":"cp_get"}
+  first:bool = compare.eq(command,zero)
+  new:bool = compare.eq(phase,zero)
+  start:bool = bool.and(first,new)
+  branch start before(qr,qh,qc,qn,qe) second(qr,qh,qc,qn,qe,command,phase,one)
+block before(br:readbuf,bh:mutbuf,bc:mutbuf,bn:usize,be:u64)
+  first_min:usize = const() {"value":270}
+  first_max:usize = const() {"value":1805}
+  count_slot:u64 = const() {"value":4096}
+  just_genesis:u64 = const() {"value":1}
+  marker_count:u64 = call(bh,count_slot) {"function":"cp_get"}
+  b1:bool = compare.ge(bn,first_min)
+  b2:bool = compare.le(bn,first_max)
+  b3:bool = compare.eq(marker_count,just_genesis)
+  b12:bool = bool.and(b1,b2)
+  bok:bool = bool.and(b12,b3)
+  branch bok retain(br,bh,bc,bn,be) refuse()
+block retain(rr:readbuf,rh:mutbuf,rc:mutbuf,rn:usize,re:u64)
+  ra0:u64 = const() {"value":0}
+  ra8:u64 = const() {"value":8}
+  ra16:u64 = const() {"value":16}
+  ra32:u64 = const() {"value":32}
+  ra261:u64 = const() {"value":261}
+  ra512:u64 = const() {"value":512}
+  ra2048:u64 = const() {"value":2048}
+  ra2080:u64 = const() {"value":2080}
+  ra2112:u64 = const() {"value":2112}
+  ra2226:u64 = const() {"value":2226}
+  ra4097:u64 = const() {"value":4097}
+  ra4104:u64 = const() {"value":4104}
+  ra4136:u64 = const() {"value":4136}
+  ra8192:u64 = const() {"value":8192}
+  ra8226:u64 = const() {"value":8226}
+  ra269:u64 = const() {"value":269}
+  ra114:u64 = const() {"value":114}
+  rqphase:u64 = const() {"value":1}
+  rn64:u64 = int.cast(rn) {"mode":"wrap"}
+  path_n:u64 = int.sub.wrap(rn64,ra269)
+  r_result:u64 = call(rr,ra8,rc,ra32,ra261) {"function":"cp_copy"}
+  r_path:u64 = call(rr,ra269,rc,ra512,path_n) {"function":"cp_copy"}
+  r_marker:u64 = call(rh,ra4104,rc,ra2048,ra32) {"function":"cp_wout"}
+  r_store:u64 = call(rh,ra8192,rc,ra2080,ra32) {"function":"cp_wout"}
+  r_meta:u64 = call(rh,ra4136,rc,ra2112,ra114) {"function":"cp_wout"}
+  r_context:u64 = call(rh,ra8226,rc,ra2226,re) {"function":"cp_wout"}
+  rpn:u64 = call(rc,ra8,path_n) {"function":"cp_put"}
+  rcn:u64 = call(rc,ra16,re) {"function":"cp_put"}
+  rp:u64 = call(rc,ra0,rqphase) {"function":"cp_put"}
+  more:u32 = const() {"value":199}
+  ret(more)
+block second(sr:readbuf,sh:mutbuf,sc:mutbuf,sn:usize,se:u64,sm:u64,sp:u64,so:u64)
+  is_second:bool = compare.eq(sm,so)
+  pending:bool = compare.eq(sp,so)
+  s_ok:bool = bool.and(is_second,pending)
+  branch s_ok compare_heads(sr,sh,sc,sn,se) refuse()
+block compare_heads(ar:readbuf,ah:mutbuf,ac:mutbuf,an:usize,ae:u64)
+  a8:u64 = const() {"value":8}
+  a16:u64 = const() {"value":16}
+  a512:usize = const() {"value":512}
+  raw_at:usize = const() {"value":8}
+  n64:u64 = int.cast(an) {"mode":"wrap"}
+  p64:u64 = int.sub.wrap(n64,a8)
+  stored_p:u64 = call(ac,a8) {"function":"cp_get"}
+  stored_c:u64 = call(ac,a16) {"function":"cp_get"}
+  p_equal:bool = compare.eq(stored_p,p64)
+  branch p_equal paths(ar,ah,ac,ae,stored_c,p64,raw_at,a512) refuse()
+block paths(yr:readbuf,yh:mutbuf,yc:mutbuf,ye:u64,ys:u64,yp:u64,ya:usize,yb:usize)
+  same_path:bool = call(yr,yc,ya,yb,yp) {"function":"smr_eq_bound"}
+  branch same_path heads(yh,yc,ye,ys) refuse()
+block heads(zh:mutbuf,zc:mutbuf,ze:u64,zs:u64)
+  ext_same:bool = compare.eq(ze,zs)
+  branch ext_same exact(zh,zc,ze) stale(zc)
+block exact(eh:mutbuf,ec:mutbuf,ee:u64)
+  ea0:u64 = const() {"value":4104}
+  eb0:u64 = const() {"value":2048}
+  en0:u64 = const() {"value":32}
+  eq0:bool = call(eh,ec,ea0,eb0,en0) {"function":"p2_eq"}
+  ea1:u64 = const() {"value":8192}
+  eb1:u64 = const() {"value":2080}
+  en1:u64 = const() {"value":32}
+  eq1:bool = call(eh,ec,ea1,eb1,en1) {"function":"p2_eq"}
+  ea2:u64 = const() {"value":4136}
+  eb2:u64 = const() {"value":2112}
+  en2:u64 = const() {"value":114}
+  eq2:bool = call(eh,ec,ea2,eb2,en2) {"function":"p2_eq"}
+  ea3:u64 = const() {"value":8226}
+  eb3:u64 = const() {"value":2226}
+  eq3:bool = call(eh,ec,ea3,eb3,ee) {"function":"p2_eq"}
+  ex:bool = bool.and(eq0,eq1)
+  ey:bool = bool.and(eq2,eq3)
+  ez:bool = bool.and(ex,ey)
+  branch ez success(ec) stale(ec)
+block success(success_dest:mutbuf)
+  success_a:u64 = const() {"value":0}
+  success_final:u64 = const() {"value":2}
+  success_phase:u64 = call(success_dest,success_a,success_final) {"function":"cp_put"}
+  success_code:u32 = const() {"value":0}
+  ret(success_code)
+block stale(stale_dest:mutbuf)
+  stale_a:u64 = const() {"value":0}
+  stale_final:u64 = const() {"value":3}
+  stale_phase:u64 = call(stale_dest,stale_a,stale_final) {"function":"cp_put"}
+  stale_code:u32 = const() {"value":104}
+  ret(stale_code)
+block refuse()
+  refused:u32 = const() {"value":102}
+  ret(refused)
+end
+fn p2_eq(a:mutbuf,b:mutbuf,aa:u64,bb:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(a:mutbuf,b:mutbuf,aa:u64,bb:u64,n:u64)
+  start:u64 = const() {"value":0}
+  jump loop(a,b,aa,bb,n,start)
+block loop(la:mutbuf,lb:mutbuf,lx:u64,ly:u64,ln:u64,li:u64)
+  done:bool = compare.eq(ln,li)
+  branch done equal() one(la,lb,lx,ly,ln,li)
+block one(oa:mutbuf,ob:mutbuf,ox:u64,oy:u64,on:u64,oi:u64)
+  xa:u64 = int.add.wrap(ox,oi)
+  xb:u64 = int.add.wrap(oy,oi)
+  ax:usize = int.cast(xa) {"mode":"wrap"}
+  bx:usize = int.cast(xb) {"mode":"wrap"}
+  va:u8 = buffer.load(oa,ax)
+  vb:u8 = buffer.load(ob,bx)
+  same:bool = compare.eq(va,vb)
+  unit:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(oi,unit)
+  branch same loop(oa,ob,ox,oy,on,next) unequal()
+block equal()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block unequal()
+  no:bool = const() {"value":false}
+  ret(no)
+end

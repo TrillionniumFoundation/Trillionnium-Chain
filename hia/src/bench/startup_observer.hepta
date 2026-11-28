@@ -1,0 +1,89 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_startup_observer_v1
+fn f0(input:readbuf,result:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,result:mutbuf,scratch:mutbuf)
+  inlen:usize = buffer.len(input)
+  outlen:usize = buffer.len(result)
+  worklen:usize = buffer.len(scratch)
+  header:usize = const() {"value":8}
+  out_need:usize = const() {"value":56}
+  work_need:usize = const() {"value":1208}
+  min_ok:bool = compare.ge(inlen,header)
+  out_ok:bool = compare.ge(outlen,out_need)
+  work_ok:bool = compare.ge(worklen,work_need)
+  mut_ok:bool = bool.and(out_ok,work_ok)
+  valid:bool = bool.and(min_ok,mut_ok)
+  extent:u64 = int.cast(inlen) {"mode":"wrap"}
+  branch valid validate_count(input,result,scratch,extent) refusal()
+block validate_count(i:readbuf,o:mutbuf,w:mutbuf,n:u64)
+  zero:u64 = const() {"value":0}
+  start:u64 = const() {"value":8}
+  count:u64 = call(i,zero) {"function":"tr_read"}
+  count_limit:u64 = const() {"value":262144}
+  chars:u64 = int.sub.wrap(n,start)
+  bytes_limit:u64 = const() {"value":8388608}
+  count_ok:bool = compare.le(count,count_limit)
+  chars_ok:bool = compare.le(chars,bytes_limit)
+  shape_ok:bool = bool.and(count_ok,chars_ok)
+  branch shape_ok count_entries(i,o,w,n,start,zero,count) refusal()
+block count_entries(scan_in:readbuf,scan_out:mutbuf,scan_w:mutbuf,scan_n:u64,p:u64,seen:u64,want:u64)
+  more:bool = compare.lt(p,scan_n)
+  branch more count_byte(scan_in,scan_out,scan_w,scan_n,p,seen,want) count_exact(scan_in,scan_out,scan_w,scan_n,seen,want)
+block count_byte(byte_in:readbuf,byte_out:mutbuf,byte_w:mutbuf,byte_n:u64,pos:u64,counted:u64,expected:u64)
+  offset:usize = int.cast(pos) {"mode":"wrap"}
+  byte:u8 = buffer.load(byte_in,offset)
+  nul:u8 = const() {"value":0}
+  is_end:bool = compare.eq(byte,nul)
+  one:u64 = const() {"value":1}
+  next_pos:u64 = int.add.wrap(pos,one)
+  last:bool = compare.eq(next_pos,byte_n)
+  add_count:u64 = int.add.wrap(counted,one)
+  branch is_end count_entries(byte_in,byte_out,byte_w,byte_n,next_pos,add_count,expected) non_nul(byte_in,byte_out,byte_w,byte_n,next_pos,counted,expected,last)
+block non_nul(nn_i:readbuf,nn_o:mutbuf,nn_w:mutbuf,nn_n:u64,nn_p:u64,nn_c:u64,nn_want:u64,nn_last:bool)
+  branch nn_last refusal() count_entries(nn_i,nn_o,nn_w,nn_n,nn_p,nn_c,nn_want)
+block count_exact(ex_in:readbuf,ex_out:mutbuf,ex_w:mutbuf,ex_n:u64,have:u64,need:u64)
+  equal:bool = compare.eq(have,need)
+  branch equal initialize(ex_in,ex_out,ex_w,ex_n,need) refusal()
+block initialize(init_in:readbuf,init_out:mutbuf,init_w:mutbuf,init_n:u64,init_count:u64)
+  code:u64 = call(init_w) {"function":"tr_sha_init"}
+  code_zero:u64 = const() {"value":0}
+  ok_init:bool = compare.eq(code,code_zero)
+  branch ok_init hash(init_in,init_out,init_w,init_n,init_count) refusal()
+block hash(hash_in:readbuf,hash_out:mutbuf,hash_w:mutbuf,hash_n:u64,hash_count:u64)
+  src:u64 = const() {"value":0}
+  updated:u64 = call(hash_in,src,hash_n,hash_w) {"function":"tr_sha_update_full"}
+  update_ok:bool = compare.eq(updated,src)
+  branch update_ok finish(hash_out,hash_w,hash_n,hash_count) refusal()
+block finish(fin_out:mutbuf,fin_w:mutbuf,fin_n:u64,fin_count:u64)
+  finalized:u64 = call(fin_w) {"function":"tr_sha_final_full"}
+  fin_zero:u64 = const() {"value":0}
+  final_ok:bool = compare.eq(finalized,fin_zero)
+  branch final_ok header_out(fin_out,fin_w,fin_n,fin_count) refusal()
+block header_out(h_out:mutbuf,h_w:mutbuf,h_n:u64,h_count:u64)
+  origin:u64 = const() {"value":0}
+  magic:u64 = const() {"value":3544386053862474050}
+  count_at:u64 = const() {"value":8}
+  bytes_at:u64 = const() {"value":16}
+  used:u64 = int.sub.wrap(h_n,count_at)
+  _magic:u64 = call(h_out,origin,magic) {"function":"tr_put"}
+  _count:u64 = call(h_out,count_at,h_count) {"function":"tr_put"}
+  _bytes:u64 = call(h_out,bytes_at,used) {"function":"tr_put"}
+  jump digest(h_out,h_w,origin)
+block digest(d_out:mutbuf,d_w:mutbuf,k:u64)
+  base:u64 = const() {"value":1168}
+  dst:u64 = const() {"value":24}
+  at1:u64 = int.add.wrap(base,k)
+  at2:u64 = int.add.wrap(dst,k)
+  word:u64 = call(d_w,at1) {"function":"tr_get"}
+  _word:u64 = call(d_out,at2,word) {"function":"tr_put"}
+  step:u64 = const() {"value":8}
+  end:u64 = const() {"value":32}
+  next_k:u64 = int.add.wrap(k,step)
+  more_digest:bool = compare.lt(next_k,end)
+  branch more_digest digest(d_out,d_w,next_k) success()
+block success()
+  success_status:u32 = const() {"value":0}
+  ret(success_status)
+block refusal()
+  failed:u32 = const() {"value":1}
+  ret(failed)
+end

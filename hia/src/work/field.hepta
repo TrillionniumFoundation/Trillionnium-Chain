@@ -1,0 +1,45 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_w1_field
+fn f0(v0:u64) -> (u32) effects(trap) entry(b0)
+block b0(v0:u64)
+  v1:u64 = const() {"value":4294967291}
+  v2:u64 = int.rem.checked(v0,v1)
+  v3:u32 = int.cast(v2) {"mode":"wrap"}
+  ret(v3)
+end
+fn f1(v0:u32,v1:u32) -> (u32) effects(trap) entry(b0)
+block b0(v0:u32,v1:u32)
+  v2:u64 = int.cast(v0) {"mode":"wrap"}
+  v3:u64 = int.cast(v1) {"mode":"wrap"}
+  v4:u64 = int.mul.checked(v2,v3)
+  v5:u64 = const() {"value":4294967291}
+  v6:u64 = int.rem.checked(v4,v5)
+  v7:u32 = int.cast(v6) {"mode":"wrap"}
+  ret(v7)
+end
+fn f2(v0:u32,v1:u32) -> (u32) effects(trap) entry(b0)
+block b0(v0:u32,v1:u32)
+  v2:u64 = int.cast(v0) {"mode":"wrap"}
+  v3:u64 = int.cast(v1) {"mode":"wrap"}
+  v4:u64 = int.add.checked(v2,v3)
+  v5:u64 = const() {"value":4294967291}
+  v6:u64 = int.rem.checked(v4,v5)
+  v7:u32 = int.cast(v6) {"mode":"wrap"}
+  ret(v7)
+end
+fn f3(v0:u32,v1:u32,v2:u32) -> (u32) effects(trap) entry(b0)
+block b0(v0:u32,v1:u32,v2:u32)
+  v3:u64 = int.cast(v0) {"mode":"wrap"}
+  v4:u64 = int.cast(v1) {"mode":"wrap"}
+  v5:u64 = int.cast(v2) {"mode":"wrap"}
+  v6:u64 = const() {"value":4294967291}
+  v7:u64 = int.rem.checked(v3,v6)
+  v8:u64 = int.rem.checked(v4,v6)
+  v9:u64 = int.rem.checked(v5,v6)
+  v10:u64 = const() {"value":8589934582}
+  v11:u64 = int.add.checked(v7,v10)
+  v12:u64 = int.sub.checked(v11,v8)
+  v13:u64 = int.sub.checked(v12,v9)
+  v14:u64 = int.rem.checked(v13,v6)
+  v15:u32 = int.cast(v14) {"mode":"wrap"}
+  ret(v15)
+end

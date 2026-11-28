@@ -1051,15 +1051,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
     folder = args.evidence or args.root/('evidence/pon-public-readiness-v1' if args.historical else 'evidence/pon-public-readiness-v2')
     if args.historical:
-        from historical_evidence import measured_checkout
-        validate_artifacts(args.root.resolve(),folder.absolute(),load(safe(folder,'manifest.json')))
-        with measured_checkout(args.root,folder) as source:
-            child = subprocess.run([sys.executable,'-B',str(source/'scripts/ci/check_public_readiness_evidence.py'),
-                                    '--root',str(source),'--evidence',str(folder.absolute())],
-                                   cwd=source,check=True,capture_output=True,text=True)
-            original = json.loads(child.stdout.splitlines()[-1])
-        result = dict(original,current_source_qualified_by_this_check=False,runtime_matches=False,
-                      historical_semantics_verified=True,**{flag:False for flag in FLAGS})
+        from check_public_readiness_archive import dispatch_historical_archive
+        result = dispatch_historical_archive(args.root,folder)
+        if result is None:
+            from historical_evidence import measured_checkout
+            validate_artifacts(args.root.resolve(),folder.absolute(),load(safe(folder,'manifest.json')))
+            with measured_checkout(args.root,folder) as source:
+                child = subprocess.run([sys.executable,'-B',str(source/'scripts/ci/check_public_readiness_evidence.py'),
+                                        '--root',str(source),'--evidence',str(folder.absolute())],
+                                       cwd=source,check=True,capture_output=True,text=True)
+                original = json.loads(child.stdout.splitlines()[-1])
+            result = dict(original,current_source_qualified_by_this_check=False,runtime_matches=False,
+                          historical_semantics_verified=True,**{flag:False for flag in FLAGS})
     else:
         result = validate(args.root,folder)
     print(json.dumps(result,sort_keys=True))

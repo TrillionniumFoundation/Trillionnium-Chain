@@ -1,0 +1,493 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_envp_v1
+fn f0(i_entry:readbuf,o_entry:mutbuf,w_entry:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i_entry:readbuf,o_entry:mutbuf,w_entry:mutbuf)
+  wide_entry:usize = buffer.len(i_entry)
+  n_entry:u64 = int.cast(wide_entry) {"mode":"wrap"}
+  zero_entry:u64 = const() {"value":0}
+  empty_entry:bool = compare.eq(n_entry,zero_entry)
+  branch empty_entry capacity(i_entry,o_entry,w_entry,n_entry) terminator(i_entry,o_entry,w_entry,n_entry)
+block terminator(i_terminator:readbuf,o_terminator:mutbuf,w_terminator:mutbuf,n_terminator:u64)
+  one_terminator:u64 = const() {"value":1}
+  last_terminator:u64 = int.sub.wrap(n_terminator,one_terminator)
+  final_at_terminator:usize = int.cast(last_terminator) {"mode":"wrap"}
+  c_terminator:u8 = buffer.load(i_terminator,final_at_terminator)
+  zero_terminator:u8 = const() {"value":0}
+  closed_terminator:bool = compare.eq(c_terminator,zero_terminator)
+  branch closed_terminator capacity(i_terminator,o_terminator,w_terminator,n_terminator) bad_frame()
+block capacity(i_capacity:readbuf,o_capacity:mutbuf,w_capacity:mutbuf,n_capacity:u64)
+  scratch_capacity:usize = buffer.len(w_capacity)
+  output_capacity:usize = buffer.len(o_capacity)
+  need_scratch_capacity:usize = const() {"value":192}
+  need_output_capacity:usize = const() {"value":104}
+  enough_scratch_capacity:bool = compare.ge(scratch_capacity,need_scratch_capacity)
+  enough_output_capacity:bool = compare.ge(output_capacity,need_output_capacity)
+  both_capacity:bool = bool.and(enough_scratch_capacity,enough_output_capacity)
+  largest_capacity:u64 = const() {"value":18446744073709551511}
+  size_ok_capacity:bool = compare.le(n_capacity,largest_capacity)
+  safe_capacity:bool = bool.and(both_capacity,size_ok_capacity)
+  zero_capacity:u64 = const() {"value":0}
+  branch safe_capacity init(i_capacity,o_capacity,w_capacity,n_capacity,zero_capacity) no_capacity()
+block init(i_init:readbuf,o_init:mutbuf,w_init:mutbuf,n_init:u64,s_init:u64)
+  eight_init:u64 = const() {"value":8}
+  step_init:u64 = const() {"value":16}
+  end_init:u64 = const() {"value":192}
+  zero_init:u64 = const() {"value":0}
+  missing_init:u64 = const() {"value":18446744073709551615}
+  lenslot_init:u64 = int.add.wrap(s_init,eight_init)
+  put_at_init:u64 = call(w_init,s_init,zero_init) {"function":"bench_put"}
+  put_len_init:u64 = call(w_init,lenslot_init,missing_init) {"function":"bench_put"}
+  next_init:u64 = int.add.wrap(s_init,step_init)
+  more_init:bool = compare.lt(next_init,end_init)
+  header_init:u64 = const() {"value":104}
+  branch more_init init(i_init,o_init,w_init,n_init,next_init) scan(i_init,o_init,w_init,n_init,zero_init,zero_init,missing_init,missing_init,header_init)
+block scan(i_scan:readbuf,o_scan:mutbuf,w_scan:mutbuf,n_scan:u64,p_scan:u64,start_scan:u64,eq_at_scan:u64,which_scan:u64,total_scan:u64)
+  more_scan:bool = compare.lt(p_scan,n_scan)
+  branch more_scan byte(i_scan,o_scan,w_scan,n_scan,p_scan,start_scan,eq_at_scan,which_scan,total_scan) output(i_scan,o_scan,w_scan,total_scan)
+block byte(i_byte:readbuf,o_byte:mutbuf,w_byte:mutbuf,n_byte:u64,p_byte:u64,start_byte:u64,eq_at_byte:u64,which_byte:u64,total_byte:u64)
+  at_byte:usize = int.cast(p_byte) {"mode":"wrap"}
+  c_byte:u8 = buffer.load(i_byte,at_byte)
+  zero_byte:u8 = const() {"value":0}
+  equal_byte:u8 = const() {"value":61}
+  missing_byte:u64 = const() {"value":18446744073709551615}
+  one_byte:u64 = const() {"value":1}
+  next_byte:u64 = int.add.wrap(p_byte,one_byte)
+  is_end_byte:bool = compare.eq(c_byte,zero_byte)
+  is_equal_byte:bool = compare.eq(c_byte,equal_byte)
+  no_eq_yet_byte:bool = compare.eq(eq_at_byte,missing_byte)
+  first_eq_byte:bool = bool.and(is_equal_byte,no_eq_yet_byte)
+  branch is_end_byte finish(i_byte,o_byte,w_byte,n_byte,p_byte,next_byte,eq_at_byte,which_byte,total_byte) key_or_value(i_byte,o_byte,w_byte,n_byte,p_byte,next_byte,start_byte,eq_at_byte,which_byte,total_byte,first_eq_byte)
+block key_or_value(i_key_or_value:readbuf,o_key_or_value:mutbuf,w_key_or_value:mutbuf,n_key_or_value:u64,p_key_or_value:u64,next_key_or_value:u64,start_key_or_value:u64,eq_at_key_or_value:u64,which_key_or_value:u64,total_key_or_value:u64,first_eq_key_or_value:bool)
+  branch first_eq_key_or_value key(i_key_or_value,o_key_or_value,w_key_or_value,n_key_or_value,p_key_or_value,next_key_or_value,start_key_or_value,total_key_or_value) scan(i_key_or_value,o_key_or_value,w_key_or_value,n_key_or_value,next_key_or_value,start_key_or_value,eq_at_key_or_value,which_key_or_value,total_key_or_value)
+block key(i_key:readbuf,o_key:mutbuf,w_key:mutbuf,n_key:u64,p_key:u64,next_key:u64,start_key:u64,total_key:u64)
+  width_key:u64 = int.sub.wrap(p_key,start_key)
+  name_key:u64 = call(i_key,start_key,width_key) {"function":"envp_name"}
+  jump scan(i_key,o_key,w_key,n_key,next_key,start_key,p_key,name_key,total_key)
+block finish(i_finish:readbuf,o_finish:mutbuf,w_finish:mutbuf,n_finish:u64,p_finish:u64,next_finish:u64,eq_at_finish:u64,which_finish:u64,total_finish:u64)
+  stop_finish:u64 = const() {"value":12}
+  selected_finish:bool = compare.lt(which_finish,stop_finish)
+  missing_finish:u64 = const() {"value":18446744073709551615}
+  branch selected_finish recorded(i_finish,o_finish,w_finish,n_finish,p_finish,next_finish,eq_at_finish,which_finish,total_finish) scan(i_finish,o_finish,w_finish,n_finish,next_finish,next_finish,missing_finish,missing_finish,total_finish)
+block recorded(i_recorded:readbuf,o_recorded:mutbuf,w_recorded:mutbuf,n_recorded:u64,p_recorded:u64,next_recorded:u64,eq_at_recorded:u64,which_recorded:u64,total_recorded:u64)
+  step_recorded:u64 = const() {"value":16}
+  eight_recorded:u64 = const() {"value":8}
+  pair_recorded:u64 = int.mul.wrap(which_recorded,step_recorded)
+  slot_recorded:u64 = int.add.wrap(pair_recorded,eight_recorded)
+  stored_recorded:u64 = call(w_recorded,slot_recorded) {"function":"bench_get"}
+  missing_recorded:u64 = const() {"value":18446744073709551615}
+  fresh_recorded:bool = compare.eq(stored_recorded,missing_recorded)
+  branch fresh_recorded keep(i_recorded,o_recorded,w_recorded,n_recorded,p_recorded,next_recorded,eq_at_recorded,pair_recorded,slot_recorded,total_recorded) scan(i_recorded,o_recorded,w_recorded,n_recorded,next_recorded,next_recorded,missing_recorded,missing_recorded,total_recorded)
+block keep(i_keep:readbuf,o_keep:mutbuf,w_keep:mutbuf,n_keep:u64,p_keep:u64,next_keep:u64,eq_at_keep:u64,pair_keep:u64,slot_keep:u64,total_keep:u64)
+  one_keep:u64 = const() {"value":1}
+  value_keep:u64 = int.add.wrap(eq_at_keep,one_keep)
+  width_keep:u64 = int.sub.wrap(p_keep,value_keep)
+  put_at_keep:u64 = call(w_keep,pair_keep,value_keep) {"function":"bench_put"}
+  put_len_keep:u64 = call(w_keep,slot_keep,width_keep) {"function":"bench_put"}
+  sum_keep:u64 = int.add.wrap(total_keep,width_keep)
+  missing_keep:u64 = const() {"value":18446744073709551615}
+  jump scan(i_keep,o_keep,w_keep,n_keep,next_keep,next_keep,missing_keep,missing_keep,sum_keep)
+block output(i_output:readbuf,o_output:mutbuf,w_output:mutbuf,total_output:u64)
+  wide_output:usize = buffer.len(o_output)
+  size_output:u64 = int.cast(wide_output) {"mode":"wrap"}
+  fits_output:bool = compare.le(total_output,size_output)
+  branch fits_output start_output(i_output,o_output,w_output) no_capacity()
+block start_output(i_start_output:readbuf,o_start_output:mutbuf,w_start_output:mutbuf)
+  zero_start_output:u64 = const() {"value":0}
+  header_start_output:u64 = const() {"value":104}
+  magic_start_output:u64 = const() {"value":3544385890905113922}
+  put_start_output:u64 = call(o_start_output,zero_start_output,magic_start_output) {"function":"bench_put"}
+  jump slot(i_start_output,o_start_output,w_start_output,zero_start_output,header_start_output)
+block slot(i_slot:readbuf,o_slot:mutbuf,w_slot:mutbuf,s_slot:u64,dest_slot:u64)
+  eight_slot:u64 = const() {"value":8}
+  pair_slot:u64 = int.add.wrap(s_slot,s_slot)
+  lenslot_slot:u64 = int.add.wrap(pair_slot,eight_slot)
+  width_slot:u64 = call(w_slot,lenslot_slot) {"function":"bench_get"}
+  source_slot:u64 = call(w_slot,pair_slot) {"function":"bench_get"}
+  at_slot:u64 = int.add.wrap(s_slot,eight_slot)
+  put_slot:u64 = call(o_slot,at_slot,width_slot) {"function":"bench_put"}
+  missing_slot:u64 = const() {"value":18446744073709551615}
+  absent_slot:bool = compare.eq(width_slot,missing_slot)
+  branch absent_slot next_slot(i_slot,o_slot,w_slot,at_slot,dest_slot) copy(i_slot,o_slot,w_slot,at_slot,dest_slot,source_slot,width_slot)
+block copy(i_copy:readbuf,o_copy:mutbuf,w_copy:mutbuf,s_copy:u64,dest_copy:u64,source_copy:u64,width_copy:u64)
+  zero_copy:u64 = const() {"value":0}
+  done_copy:bool = compare.eq(width_copy,zero_copy)
+  branch done_copy next_slot(i_copy,o_copy,w_copy,s_copy,dest_copy) copy_byte(i_copy,o_copy,w_copy,s_copy,dest_copy,source_copy,width_copy)
+block copy_byte(i_copy_byte:readbuf,o_copy_byte:mutbuf,w_copy_byte:mutbuf,s_copy_byte:u64,dest_copy_byte:u64,source_copy_byte:u64,width_copy_byte:u64)
+  from_copy_byte:usize = int.cast(source_copy_byte) {"mode":"wrap"}
+  to_copy_byte:usize = int.cast(dest_copy_byte) {"mode":"wrap"}
+  octet_copy_byte:u8 = buffer.load(i_copy_byte,from_copy_byte)
+  _ = buffer.store(o_copy_byte,to_copy_byte,octet_copy_byte)
+  one_copy_byte:u64 = const() {"value":1}
+  d_copy_byte:u64 = int.add.wrap(dest_copy_byte,one_copy_byte)
+  p_copy_byte:u64 = int.add.wrap(source_copy_byte,one_copy_byte)
+  left_copy_byte:u64 = int.sub.wrap(width_copy_byte,one_copy_byte)
+  jump copy(i_copy_byte,o_copy_byte,w_copy_byte,s_copy_byte,d_copy_byte,p_copy_byte,left_copy_byte)
+block next_slot(i_next_slot:readbuf,o_next_slot:mutbuf,w_next_slot:mutbuf,s_next_slot:u64,dest_next_slot:u64)
+  end_next_slot:u64 = const() {"value":96}
+  more_next_slot:bool = compare.lt(s_next_slot,end_next_slot)
+  branch more_next_slot slot(i_next_slot,o_next_slot,w_next_slot,s_next_slot,dest_next_slot) ok()
+block ok()
+  result_ok:u32 = const() {"value":0}
+  ret(result_ok)
+block bad_frame()
+  result_bad_frame:u32 = const() {"value":1}
+  ret(result_bad_frame)
+block no_capacity()
+  result_no_capacity:u32 = const() {"value":100}
+  ret(result_no_capacity)
+end
+fn envp_tail(i_entry:readbuf,p_entry:u64,n_entry:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(i_entry:readbuf,p_entry:u64,n_entry:u64)
+  zero_entry:u64 = const() {"value":0}
+  jump piece(i_entry,p_entry,n_entry,zero_entry,zero_entry)
+block piece(i_piece:readbuf,p_piece:u64,n_piece:u64,shift_piece:u64,result_piece:u64)
+  zero_piece:u64 = const() {"value":0}
+  done_piece:bool = compare.eq(n_piece,zero_piece)
+  branch done_piece finish(result_piece) octet(i_piece,p_piece,n_piece,shift_piece,result_piece)
+block octet(i_octet:readbuf,p_octet:u64,n_octet:u64,shift_octet:u64,result_octet:u64)
+  at_octet:usize = int.cast(p_octet) {"mode":"wrap"}
+  c_octet:u8 = buffer.load(i_octet,at_octet)
+  word_octet:u64 = int.cast(c_octet) {"mode":"wrap"}
+  moved_octet:u64 = int.shl.checked(word_octet,shift_octet)
+  combined_octet:u64 = bit.or(result_octet,moved_octet)
+  one_octet:u64 = const() {"value":1}
+  eight_octet:u64 = const() {"value":8}
+  next_octet:u64 = int.add.wrap(p_octet,one_octet)
+  remain_octet:u64 = int.sub.wrap(n_octet,one_octet)
+  new_shift_octet:u64 = int.add.wrap(shift_octet,eight_octet)
+  jump piece(i_octet,next_octet,remain_octet,new_shift_octet,combined_octet)
+block finish(result_finish:u64)
+  ret(result_finish)
+end
+
+fn envp_name(i_entry:readbuf,p_entry:u64,n_entry:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i_entry:readbuf,p_entry:u64,n_entry:u64)
+  jump k0(i_entry,p_entry,n_entry)
+block k0(i_k0:readbuf,p_k0:u64,n_k0:u64)
+  length_k0:u64 = const() {"value":19}
+  fits_k0:bool = compare.eq(n_k0,length_k0)
+  branch fits_k0 name0(i_k0,p_k0,n_k0) k1(i_k0,p_k0,n_k0)
+block name0(i_name0:readbuf,p_name0:u64,n_name0:u64)
+  raw0_name0:u64 = call(i_name0,p_name0) {"function":"bench_read"}
+  want0_name0:u64 = const() {"value":5136145777614017108}
+  match0_name0:bool = compare.eq(raw0_name0,want0_name0)
+  offset8_name0:u64 = const() {"value":8}
+  p8_name0:u64 = int.add.wrap(p_name0,offset8_name0)
+  raw8_name0:u64 = call(i_name0,p8_name0) {"function":"bench_read"}
+  want8_name0:u64 = const() {"value":6007608686380605266}
+  match8_name0:bool = compare.eq(raw8_name0,want8_name0)
+  offset16_name0:u64 = const() {"value":16}
+  p16_name0:u64 = int.add.wrap(p_name0,offset16_name0)
+  tail16_name0:u64 = const() {"value":3}
+  raw16_name0:u64 = call(i_name0,p16_name0,tail16_name0) {"function":"envp_tail"}
+  want16_name0:u64 = const() {"value":5128515}
+  match16_name0:bool = compare.eq(raw16_name0,want16_name0)
+  combo1_name0:bool = bool.and(match0_name0,match8_name0)
+  combo2_name0:bool = bool.and(combo1_name0,match16_name0)
+  id_name0:u64 = const() {"value":0}
+  branch combo2_name0 found(id_name0) k1(i_name0,p_name0,n_name0)
+block k1(i_k1:readbuf,p_k1:u64,n_k1:u64)
+  length_k1:u64 = const() {"value":33}
+  fits_k1:bool = compare.eq(n_k1,length_k1)
+  branch fits_k1 name1(i_k1,p_k1,n_k1) k2(i_k1,p_k1,n_k1)
+block name1(i_name1:readbuf,p_name1:u64,n_name1:u64)
+  raw0_name1:u64 = call(i_name1,p_name1) {"function":"bench_read"}
+  want0_name1:u64 = const() {"value":5136145777614017108}
+  match0_name1:bool = compare.eq(raw0_name1,want0_name1)
+  offset8_name1:u64 = const() {"value":8}
+  p8_name1:u64 = int.add.wrap(p_name1,offset8_name1)
+  raw8_name1:u64 = call(i_name1,p8_name1) {"function":"bench_read"}
+  want8_name1:u64 = const() {"value":4998802387131129682}
+  match8_name1:bool = compare.eq(raw8_name1,want8_name1)
+  offset16_name1:u64 = const() {"value":16}
+  p16_name1:u64 = int.add.wrap(p_name1,offset16_name1)
+  raw16_name1:u64 = call(i_name1,p16_name1) {"function":"bench_read"}
+  want16_name1:u64 = const() {"value":4707479179494707277}
+  match16_name1:bool = compare.eq(raw16_name1,want16_name1)
+  offset24_name1:u64 = const() {"value":24}
+  p24_name1:u64 = int.add.wrap(p_name1,offset24_name1)
+  raw24_name1:u64 = call(i_name1,p24_name1) {"function":"bench_read"}
+  want24_name1:u64 = const() {"value":5423254552954488135}
+  match24_name1:bool = compare.eq(raw24_name1,want24_name1)
+  offset32_name1:u64 = const() {"value":32}
+  p32_name1:u64 = int.add.wrap(p_name1,offset32_name1)
+  tail32_name1:u64 = const() {"value":1}
+  raw32_name1:u64 = call(i_name1,p32_name1,tail32_name1) {"function":"envp_tail"}
+  want32_name1:u64 = const() {"value":83}
+  match32_name1:bool = compare.eq(raw32_name1,want32_name1)
+  combo1_name1:bool = bool.and(match0_name1,match8_name1)
+  combo2_name1:bool = bool.and(combo1_name1,match16_name1)
+  combo3_name1:bool = bool.and(combo2_name1,match24_name1)
+  combo4_name1:bool = bool.and(combo3_name1,match32_name1)
+  id_name1:u64 = const() {"value":1}
+  branch combo4_name1 found(id_name1) k2(i_name1,p_name1,n_name1)
+block k2(i_k2:readbuf,p_k2:u64,n_k2:u64)
+  length_k2:u64 = const() {"value":26}
+  fits_k2:bool = compare.eq(n_k2,length_k2)
+  branch fits_k2 name2(i_k2,p_k2,n_k2) k3(i_k2,p_k2,n_k2)
+block name2(i_name2:readbuf,p_name2:u64,n_name2:u64)
+  raw0_name2:u64 = call(i_name2,p_name2) {"function":"bench_read"}
+  want0_name2:u64 = const() {"value":5136145777614017108}
+  match0_name2:bool = compare.eq(raw0_name2,want0_name2)
+  offset8_name2:u64 = const() {"value":8}
+  p8_name2:u64 = int.add.wrap(p_name2,offset8_name2)
+  raw8_name2:u64 = call(i_name2,p8_name2) {"function":"bench_read"}
+  want8_name2:u64 = const() {"value":5935548876106981202}
+  match8_name2:bool = compare.eq(raw8_name2,want8_name2)
+  offset16_name2:u64 = const() {"value":16}
+  p16_name2:u64 = int.add.wrap(p_name2,offset16_name2)
+  raw16_name2:u64 = call(i_name2,p16_name2) {"function":"bench_read"}
+  want16_name2:u64 = const() {"value":4778128298784740687}
+  match16_name2:bool = compare.eq(raw16_name2,want16_name2)
+  offset24_name2:u64 = const() {"value":24}
+  p24_name2:u64 = int.add.wrap(p_name2,offset24_name2)
+  tail24_name2:u64 = const() {"value":2}
+  raw24_name2:u64 = call(i_name2,p24_name2,tail24_name2) {"function":"envp_tail"}
+  want24_name2:u64 = const() {"value":20041}
+  match24_name2:bool = compare.eq(raw24_name2,want24_name2)
+  combo1_name2:bool = bool.and(match0_name2,match8_name2)
+  combo2_name2:bool = bool.and(combo1_name2,match16_name2)
+  combo3_name2:bool = bool.and(combo2_name2,match24_name2)
+  id_name2:u64 = const() {"value":2}
+  branch combo3_name2 found(id_name2) k3(i_name2,p_name2,n_name2)
+block k3(i_k3:readbuf,p_k3:u64,n_k3:u64)
+  length_k3:u64 = const() {"value":21}
+  fits_k3:bool = compare.eq(n_k3,length_k3)
+  branch fits_k3 name3(i_k3,p_k3,n_k3) k4(i_k3,p_k3,n_k3)
+block name3(i_name3:readbuf,p_name3:u64,n_name3:u64)
+  raw0_name3:u64 = call(i_name3,p_name3) {"function":"bench_read"}
+  want0_name3:u64 = const() {"value":5136145777614017108}
+  match0_name3:bool = compare.eq(raw0_name3,want0_name3)
+  offset8_name3:u64 = const() {"value":8}
+  p8_name3:u64 = int.add.wrap(p_name3,offset8_name3)
+  raw8_name3:u64 = call(i_name3,p8_name3) {"function":"bench_read"}
+  want8_name3:u64 = const() {"value":6295836846296620882}
+  match8_name3:bool = compare.eq(raw8_name3,want8_name3)
+  offset16_name3:u64 = const() {"value":16}
+  p16_name3:u64 = int.add.wrap(p_name3,offset16_name3)
+  tail16_name3:u64 = const() {"value":5}
+  raw16_name3:u64 = call(i_name3,p16_name3,tail16_name3) {"function":"envp_tail"}
+  want16_name3:u64 = const() {"value":374992031305}
+  match16_name3:bool = compare.eq(raw16_name3,want16_name3)
+  combo1_name3:bool = bool.and(match0_name3,match8_name3)
+  combo2_name3:bool = bool.and(combo1_name3,match16_name3)
+  id_name3:u64 = const() {"value":3}
+  branch combo2_name3 found(id_name3) k4(i_name3,p_name3,n_name3)
+block k4(i_k4:readbuf,p_k4:u64,n_k4:u64)
+  length_k4:u64 = const() {"value":22}
+  fits_k4:bool = compare.eq(n_k4,length_k4)
+  branch fits_k4 name4(i_k4,p_k4,n_k4) k5(i_k4,p_k4,n_k4)
+block name4(i_name4:readbuf,p_name4:u64,n_name4:u64)
+  raw0_name4:u64 = call(i_name4,p_name4) {"function":"bench_read"}
+  want0_name4:u64 = const() {"value":5136145777614017108}
+  match0_name4:bool = compare.eq(raw0_name4,want0_name4)
+  offset8_name4:u64 = const() {"value":8}
+  p8_name4:u64 = int.add.wrap(p_name4,offset8_name4)
+  raw8_name4:u64 = call(i_name4,p8_name4) {"function":"bench_read"}
+  want8_name4:u64 = const() {"value":5935548876106981202}
+  match8_name4:bool = compare.eq(raw8_name4,want8_name4)
+  offset16_name4:u64 = const() {"value":16}
+  p16_name4:u64 = int.add.wrap(p_name4,offset16_name4)
+  tail16_name4:u64 = const() {"value":6}
+  raw16_name4:u64 = call(i_name4,p16_name4,tail16_name4) {"function":"envp_tail"}
+  want16_name4:u64 = const() {"value":75064306523986}
+  match16_name4:bool = compare.eq(raw16_name4,want16_name4)
+  combo1_name4:bool = bool.and(match0_name4,match8_name4)
+  combo2_name4:bool = bool.and(combo1_name4,match16_name4)
+  id_name4:u64 = const() {"value":4}
+  branch combo2_name4 found(id_name4) k5(i_name4,p_name4,n_name4)
+block k5(i_k5:readbuf,p_k5:u64,n_k5:u64)
+  length_k5:u64 = const() {"value":16}
+  fits_k5:bool = compare.eq(n_k5,length_k5)
+  branch fits_k5 name5(i_k5,p_k5,n_k5) k6(i_k5,p_k5,n_k5)
+block name5(i_name5:readbuf,p_name5:u64,n_name5:u64)
+  raw0_name5:u64 = call(i_name5,p_name5) {"function":"bench_read"}
+  want0_name5:u64 = const() {"value":6075153996502159956}
+  match0_name5:bool = compare.eq(raw0_name5,want0_name5)
+  offset8_name5:u64 = const() {"value":8}
+  p8_name5:u64 = int.add.wrap(p_name5,offset8_name5)
+  raw8_name5:u64 = call(i_name5,p8_name5) {"function":"bench_read"}
+  want8_name5:u64 = const() {"value":6004500392746238559}
+  match8_name5:bool = compare.eq(raw8_name5,want8_name5)
+  combo1_name5:bool = bool.and(match0_name5,match8_name5)
+  id_name5:u64 = const() {"value":5}
+  branch combo1_name5 found(id_name5) k6(i_name5,p_name5,n_name5)
+block k6(i_k6:readbuf,p_k6:u64,n_k6:u64)
+  length_k6:u64 = const() {"value":23}
+  fits_k6:bool = compare.eq(n_k6,length_k6)
+  branch fits_k6 name6(i_k6,p_k6,n_k6) k7(i_k6,p_k6,n_k6)
+block name6(i_name6:readbuf,p_name6:u64,n_name6:u64)
+  raw0_name6:u64 = call(i_name6,p_name6) {"function":"bench_read"}
+  want0_name6:u64 = const() {"value":6076835149781029460}
+  match0_name6:bool = compare.eq(raw0_name6,want0_name6)
+  offset8_name6:u64 = const() {"value":8}
+  p8_name6:u64 = int.add.wrap(p_name6,offset8_name6)
+  raw8_name6:u64 = call(i_name6,p8_name6) {"function":"bench_read"}
+  want8_name6:u64 = const() {"value":4702425750770114383}
+  match8_name6:bool = compare.eq(raw8_name6,want8_name6)
+  offset16_name6:u64 = const() {"value":16}
+  p16_name6:u64 = int.add.wrap(p_name6,offset16_name6)
+  tail16_name6:u64 = const() {"value":7}
+  raw16_name6:u64 = call(i_name6,p16_name6,tail16_name6) {"function":"envp_tail"}
+  want16_name6:u64 = const() {"value":22031242501833556}
+  match16_name6:bool = compare.eq(raw16_name6,want16_name6)
+  combo1_name6:bool = bool.and(match0_name6,match8_name6)
+  combo2_name6:bool = bool.and(combo1_name6,match16_name6)
+  id_name6:u64 = const() {"value":6}
+  branch combo2_name6 found(id_name6) k7(i_name6,p_name6,n_name6)
+block k7(i_k7:readbuf,p_k7:u64,n_k7:u64)
+  length_k7:u64 = const() {"value":20}
+  fits_k7:bool = compare.eq(n_k7,length_k7)
+  branch fits_k7 name7(i_k7,p_k7,n_k7) k8(i_k7,p_k7,n_k7)
+block name7(i_name7:readbuf,p_name7:u64,n_name7:u64)
+  raw0_name7:u64 = call(i_name7,p_name7) {"function":"bench_read"}
+  want0_name7:u64 = const() {"value":6076835149781029460}
+  match0_name7:bool = compare.eq(raw0_name7,want0_name7)
+  offset8_name7:u64 = const() {"value":8}
+  p8_name7:u64 = int.add.wrap(p_name7,offset8_name7)
+  raw8_name7:u64 = call(i_name7,p8_name7) {"function":"bench_read"}
+  want8_name7:u64 = const() {"value":4993454379585724239}
+  match8_name7:bool = compare.eq(raw8_name7,want8_name7)
+  offset16_name7:u64 = const() {"value":16}
+  p16_name7:u64 = int.add.wrap(p_name7,offset16_name7)
+  tail16_name7:u64 = const() {"value":4}
+  raw16_name7:u64 = call(i_name7,p16_name7,tail16_name7) {"function":"envp_tail"}
+  want16_name7:u64 = const() {"value":1313164383}
+  match16_name7:bool = compare.eq(raw16_name7,want16_name7)
+  combo1_name7:bool = bool.and(match0_name7,match8_name7)
+  combo2_name7:bool = bool.and(combo1_name7,match16_name7)
+  id_name7:u64 = const() {"value":7}
+  branch combo2_name7 found(id_name7) k8(i_name7,p_name7,n_name7)
+block k8(i_k8:readbuf,p_k8:u64,n_k8:u64)
+  length_k8:u64 = const() {"value":26}
+  fits_k8:bool = compare.eq(n_k8,length_k8)
+  branch fits_k8 name8(i_k8,p_k8,n_k8) k9(i_k8,p_k8,n_k8)
+block name8(i_name8:readbuf,p_name8:u64,n_name8:u64)
+  raw0_name8:u64 = call(i_name8,p_name8) {"function":"bench_read"}
+  want0_name8:u64 = const() {"value":6076835149781029460}
+  match0_name8:bool = compare.eq(raw0_name8,want0_name8)
+  offset8_name8:u64 = const() {"value":8}
+  p8_name8:u64 = int.add.wrap(p_name8,offset8_name8)
+  raw8_name8:u64 = call(i_name8,p8_name8) {"function":"bench_read"}
+  want8_name8:u64 = const() {"value":6076305137964965711}
+  match8_name8:bool = compare.eq(raw8_name8,want8_name8)
+  offset16_name8:u64 = const() {"value":16}
+  p16_name8:u64 = int.add.wrap(p_name8,offset16_name8)
+  raw16_name8:u64 = call(i_name8,p16_name8) {"function":"bench_read"}
+  want16_name8:u64 = const() {"value":6071224341910078802}
+  match16_name8:bool = compare.eq(raw16_name8,want16_name8)
+  offset24_name8:u64 = const() {"value":24}
+  p24_name8:u64 = int.add.wrap(p_name8,offset24_name8)
+  tail24_name8:u64 = const() {"value":2}
+  raw24_name8:u64 = call(i_name8,p24_name8,tail24_name8) {"function":"envp_tail"}
+  want24_name8:u64 = const() {"value":20297}
+  match24_name8:bool = compare.eq(raw24_name8,want24_name8)
+  combo1_name8:bool = bool.and(match0_name8,match8_name8)
+  combo2_name8:bool = bool.and(combo1_name8,match16_name8)
+  combo3_name8:bool = bool.and(combo2_name8,match24_name8)
+  id_name8:u64 = const() {"value":8}
+  branch combo3_name8 found(id_name8) k9(i_name8,p_name8,n_name8)
+block k9(i_k9:readbuf,p_k9:u64,n_k9:u64)
+  length_k9:u64 = const() {"value":28}
+  fits_k9:bool = compare.eq(n_k9,length_k9)
+  branch fits_k9 name9(i_k9,p_k9,n_k9) k10(i_k9,p_k9,n_k9)
+block name9(i_name9:readbuf,p_name9:u64,n_name9:u64)
+  raw0_name9:u64 = call(i_name9,p_name9) {"function":"bench_read"}
+  want0_name9:u64 = const() {"value":6076835149781029460}
+  match0_name9:bool = compare.eq(raw0_name9,want0_name9)
+  offset8_name9:u64 = const() {"value":8}
+  p8_name9:u64 = int.add.wrap(p_name9,offset8_name9)
+  raw8_name9:u64 = call(i_name9,p8_name9) {"function":"bench_read"}
+  want8_name9:u64 = const() {"value":4991204787452272463}
+  match8_name9:bool = compare.eq(raw8_name9,want8_name9)
+  offset16_name9:u64 = const() {"value":16}
+  p16_name9:u64 = int.add.wrap(p_name9,offset16_name9)
+  raw16_name9:u64 = call(i_name9,p16_name9) {"function":"bench_read"}
+  want16_name9:u64 = const() {"value":4705521975513931602}
+  match16_name9:bool = compare.eq(raw16_name9,want16_name9)
+  offset24_name9:u64 = const() {"value":24}
+  p24_name9:u64 = int.add.wrap(p_name9,offset24_name9)
+  tail24_name9:u64 = const() {"value":4}
+  raw24_name9:u64 = call(i_name9,p24_name9,tail24_name9) {"function":"envp_tail"}
+  want24_name9:u64 = const() {"value":1313425234}
+  match24_name9:bool = compare.eq(raw24_name9,want24_name9)
+  combo1_name9:bool = bool.and(match0_name9,match8_name9)
+  combo2_name9:bool = bool.and(combo1_name9,match16_name9)
+  combo3_name9:bool = bool.and(combo2_name9,match24_name9)
+  id_name9:u64 = const() {"value":9}
+  branch combo3_name9 found(id_name9) k10(i_name9,p_name9,n_name9)
+block k10(i_k10:readbuf,p_k10:u64,n_k10:u64)
+  length_k10:u64 = const() {"value":35}
+  fits_k10:bool = compare.eq(n_k10,length_k10)
+  branch fits_k10 name10(i_k10,p_k10,n_k10) k11(i_k10,p_k10,n_k10)
+block name10(i_name10:readbuf,p_name10:u64,n_name10:u64)
+  raw0_name10:u64 = call(i_name10,p_name10) {"function":"bench_read"}
+  want0_name10:u64 = const() {"value":6076835149781029460}
+  match0_name10:bool = compare.eq(raw0_name10,want0_name10)
+  offset8_name10:u64 = const() {"value":8}
+  p8_name10:u64 = int.add.wrap(p_name10,offset8_name10)
+  raw8_name10:u64 = call(i_name10,p8_name10) {"function":"bench_read"}
+  want8_name10:u64 = const() {"value":4991204787452272463}
+  match8_name10:bool = compare.eq(raw8_name10,want8_name10)
+  offset16_name10:u64 = const() {"value":16}
+  p16_name10:u64 = int.add.wrap(p_name10,offset16_name10)
+  raw16_name10:u64 = call(i_name10,p16_name10) {"function":"bench_read"}
+  want16_name10:u64 = const() {"value":5712920917161369426}
+  match16_name10:bool = compare.eq(raw16_name10,want16_name10)
+  offset24_name10:u64 = const() {"value":24}
+  p24_name10:u64 = int.add.wrap(p_name10,offset24_name10)
+  raw24_name10:u64 = call(i_name10,p24_name10) {"function":"bench_read"}
+  want24_name10:u64 = const() {"value":5211614030817091412}
+  match24_name10:bool = compare.eq(raw24_name10,want24_name10)
+  offset32_name10:u64 = const() {"value":32}
+  p32_name10:u64 = int.add.wrap(p_name10,offset32_name10)
+  tail32_name10:u64 = const() {"value":3}
+  raw32_name10:u64 = call(i_name10,p32_name10,tail32_name10) {"function":"envp_tail"}
+  want32_name10:u64 = const() {"value":4543041}
+  match32_name10:bool = compare.eq(raw32_name10,want32_name10)
+  combo1_name10:bool = bool.and(match0_name10,match8_name10)
+  combo2_name10:bool = bool.and(combo1_name10,match16_name10)
+  combo3_name10:bool = bool.and(combo2_name10,match24_name10)
+  combo4_name10:bool = bool.and(combo3_name10,match32_name10)
+  id_name10:u64 = const() {"value":10}
+  branch combo4_name10 found(id_name10) k11(i_name10,p_name10,n_name10)
+block k11(i_k11:readbuf,p_k11:u64,n_k11:u64)
+  length_k11:u64 = const() {"value":33}
+  fits_k11:bool = compare.eq(n_k11,length_k11)
+  branch fits_k11 name11(i_k11,p_k11,n_k11) absent()
+block name11(i_name11:readbuf,p_name11:u64,n_name11:u64)
+  raw0_name11:u64 = call(i_name11,p_name11) {"function":"bench_read"}
+  want0_name11:u64 = const() {"value":6076835149781029460}
+  match0_name11:bool = compare.eq(raw0_name11,want0_name11)
+  offset8_name11:u64 = const() {"value":8}
+  p8_name11:u64 = int.add.wrap(p_name11,offset8_name11)
+  raw8_name11:u64 = call(i_name11,p8_name11) {"function":"bench_read"}
+  want8_name11:u64 = const() {"value":6360594838572588879}
+  match8_name11:bool = compare.eq(raw8_name11,want8_name11)
+  offset16_name11:u64 = const() {"value":16}
+  p16_name11:u64 = int.add.wrap(p_name11,offset16_name11)
+  raw16_name11:u64 = call(i_name11,p16_name11) {"function":"bench_read"}
+  want16_name11:u64 = const() {"value":5142904364037522768}
+  match16_name11:bool = compare.eq(raw16_name11,want16_name11)
+  offset24_name11:u64 = const() {"value":24}
+  p24_name11:u64 = int.add.wrap(p_name11,offset24_name11)
+  raw24_name11:u64 = call(i_name11,p24_name11) {"function":"bench_read"}
+  want24_name11:u64 = const() {"value":5931033259630545217}
+  match24_name11:bool = compare.eq(raw24_name11,want24_name11)
+  offset32_name11:u64 = const() {"value":32}
+  p32_name11:u64 = int.add.wrap(p_name11,offset32_name11)
+  tail32_name11:u64 = const() {"value":1}
+  raw32_name11:u64 = call(i_name11,p32_name11,tail32_name11) {"function":"envp_tail"}
+  want32_name11:u64 = const() {"value":69}
+  match32_name11:bool = compare.eq(raw32_name11,want32_name11)
+  combo1_name11:bool = bool.and(match0_name11,match8_name11)
+  combo2_name11:bool = bool.and(combo1_name11,match16_name11)
+  combo3_name11:bool = bool.and(combo2_name11,match24_name11)
+  combo4_name11:bool = bool.and(combo3_name11,match32_name11)
+  id_name11:u64 = const() {"value":11}
+  branch combo4_name11 found(id_name11) absent()
+block found(id_found:u64)
+  ret(id_found)
+block absent()
+  id_absent:u64 = const() {"value":12}
+  ret(id_absent)
+end

@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_audit_export_preselection_wat2
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  preselection:bool = const() {"value":true}
+  result:u32 = call(input,output,scratch,preselection) {"function":"wt_transaction"}
+  ret(result)
+end

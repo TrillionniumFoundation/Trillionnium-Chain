@@ -1,0 +1,194 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_builder_provenance_ordered_256_v0
+fn f0(b1_r:readbuf,b1_o:mutbuf,b1_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b1_r:readbuf,b1_o:mutbuf,b1_w:mutbuf)
+  b1_n:usize = buffer.len(b1_r)
+  b1_min:usize = const() {"value":259}
+  b1_ok:bool = compare.ge(b1_n,b1_min)
+  b1_nn:u64 = int.cast(b1_n) {"mode":"wrap"}
+  branch b1_ok size(b1_r,b1_o,b1_w,b1_nn) format()
+block size(b2_r:readbuf,b2_o:mutbuf,b2_w:mutbuf,b2_n:u64)
+  b2_off:u64 = const() {"value":0}
+  b2_mode_ix:usize = int.cast(b2_off) {"mode":"wrap"}
+  b2_mode:u8 = buffer.load(b2_r,b2_mode_ix)
+  b2_zero:u8 = const() {"value":0}
+  b2_digest:bool = compare.eq(b2_mode,b2_zero)
+  b2_p:usize = const() {"value":1}
+  b2_c:u64 = call(b2_r,b2_p) {"function":"rb_le16"}
+  b2_max:u64 = const() {"value":256}
+  b2_bound:bool = compare.le(b2_c,b2_max)
+  b2_slot:u64 = const() {"value":578}
+  b2_header:u64 = const() {"value":259}
+  b2_rows:u64 = int.mul.wrap(b2_slot,b2_c)
+  b2_whole:u64 = int.add.wrap(b2_header,b2_rows)
+  b2_exact:bool = compare.eq(b2_n,b2_whole)
+  b2_fit:bool = bool.and(b2_bound,b2_exact)
+  b2_ok:bool = bool.and(b2_fit,b2_digest)
+  branch b2_ok validate(b2_r,b2_o,b2_w,b2_c,b2_header,b2_n) format()
+block validate(b3_r:readbuf,b3_o:mutbuf,b3_w:mutbuf,b3_n:u64,b3_p:u64,b3_limit:u64)
+  b3_done:bool = compare.eq(b3_p,b3_limit)
+  branch b3_done capacity(b3_r,b3_o,b3_w,b3_n) slot(b3_r,b3_o,b3_w,b3_n,b3_p,b3_limit)
+block slot(b4_r:readbuf,b4_o:mutbuf,b4_w:mutbuf,b4_n:u64,b4_p:u64,b4_limit:u64)
+  b4_ok:bool = call(b4_r,b4_p) {"function":"prov_well_formed"}
+  b4_len:u64 = const() {"value":578}
+  b4_next:u64 = int.add.wrap(b4_p,b4_len)
+  branch b4_ok validate(b4_r,b4_o,b4_w,b4_n,b4_next,b4_limit) format()
+block capacity(b5_r:readbuf,b5_o:mutbuf,b5_w:mutbuf,b5_n:u64)
+  b5_om:usize = buffer.len(b5_o)
+  b5_wm:usize = buffer.len(b5_w)
+  b5_out:usize = const() {"value":32}
+  b5_work:usize = const() {"value":14336}
+  b5_a:bool = compare.ge(b5_om,b5_out)
+  b5_b:bool = compare.ge(b5_wm,b5_work)
+  b5_ok:bool = bool.and(b5_a,b5_b)
+  branch b5_ok initialize(b5_r,b5_o,b5_w,b5_n) short()
+block initialize(b6_r:readbuf,b6_o:mutbuf,b6_w:mutbuf,b6_n:u64)
+  b6_z:u64 = const() {"value":0}
+  jump fill(b6_r,b6_o,b6_w,b6_n,b6_z)
+block fill(b7_r:readbuf,b7_o:mutbuf,b7_w:mutbuf,b7_n:u64,b7_i:u64)
+  b7_done:bool = compare.eq(b7_i,b7_n)
+  branch b7_done heap_start(b7_r,b7_o,b7_w,b7_n) store(b7_r,b7_o,b7_w,b7_n,b7_i)
+block store(b8_r:readbuf,b8_o:mutbuf,b8_w:mutbuf,b8_n:u64,b8_i:u64)
+  b8__r:u64 = call(b8_w,b8_i,b8_i) {"function":"prov_heap_put"}
+  b8_one:u64 = const() {"value":1}
+  b8_next:u64 = int.add.wrap(b8_i,b8_one)
+  jump fill(b8_r,b8_o,b8_w,b8_n,b8_next)
+block heap_start(b9_r:readbuf,b9_o:mutbuf,b9_w:mutbuf,b9_n:u64)
+  b9_one:u64 = const() {"value":1}
+  b9_half:u64 = int.shr.checked(b9_n,b9_one)
+  jump heapify(b9_r,b9_o,b9_w,b9_n,b9_half)
+block heapify(b10_r:readbuf,b10_o:mutbuf,b10_w:mutbuf,b10_n:u64,b10_i:u64)
+  b10_z:u64 = const() {"value":0}
+  b10_done:bool = compare.eq(b10_i,b10_z)
+  branch b10_done extract(b10_r,b10_o,b10_w,b10_n,b10_n) build(b10_r,b10_o,b10_w,b10_n,b10_i)
+block build(b11_r:readbuf,b11_o:mutbuf,b11_w:mutbuf,b11_n:u64,b11_i:u64)
+  b11_one:u64 = const() {"value":1}
+  b11_p:u64 = int.sub.wrap(b11_i,b11_one)
+  b11__s:u64 = call(b11_r,b11_w,b11_p,b11_n) {"function":"prov_heap_sift"}
+  jump heapify(b11_r,b11_o,b11_w,b11_n,b11_p)
+block extract(b12_r:readbuf,b12_o:mutbuf,b12_w:mutbuf,b12_n:u64,b12_edge:u64)
+  b12_one:u64 = const() {"value":1}
+  b12_done:bool = compare.le(b12_edge,b12_one)
+  branch b12_done start_fold(b12_r,b12_o,b12_w,b12_n) swap_leaf(b12_r,b12_o,b12_w,b12_n,b12_edge)
+block swap_leaf(b13_r:readbuf,b13_o:mutbuf,b13_w:mutbuf,b13_n:u64,b13_edge:u64)
+  b13_one:u64 = const() {"value":1}
+  b13_z:u64 = const() {"value":0}
+  b13_next:u64 = int.sub.wrap(b13_edge,b13_one)
+  b13__swap:u64 = call(b13_w,b13_z,b13_next) {"function":"prov_heap_swap"}
+  b13__sift:u64 = call(b13_r,b13_w,b13_z,b13_next) {"function":"prov_heap_sift"}
+  jump extract(b13_r,b13_o,b13_w,b13_n,b13_next)
+block start_fold(b14_r:readbuf,b14_o:mutbuf,b14_w:mutbuf,b14_n:u64)
+  b14_f:u64 = const() {"value":3}
+  b14_z:u64 = const() {"value":0}
+  b14_p:u64 = call(b14_r,b14_w,b14_n,b14_f) {"function":"prov_prefix_at"}
+  jump fold(b14_r,b14_o,b14_w,b14_n,b14_p,b14_z)
+block fold(b15_r:readbuf,b15_o:mutbuf,b15_w:mutbuf,b15_n:u64,b15_p:u64,b15_i:u64)
+  b15_done:bool = compare.eq(b15_i,b15_n)
+  branch b15_done hash_tail(b15_r,b15_o,b15_w,b15_p) member(b15_r,b15_o,b15_w,b15_n,b15_p,b15_i)
+block member(b16_r:readbuf,b16_o:mutbuf,b16_w:mutbuf,b16_n:u64,b16_p:u64,b16_i:u64)
+  b16_start:u64 = const() {"value":259}
+  b16_ix:u64 = call(b16_w,b16_i) {"function":"prov_heap_get"}
+  b16_row:u64 = call(b16_ix,b16_start) {"function":"prov_row_at"}
+  b16_hashed:u64 = call(b16_r,b16_w,b16_row) {"function":"prov_digest_member"}
+  b16_z:u64 = const() {"value":0}
+  b16_ok:bool = compare.eq(b16_hashed,b16_z)
+  branch b16_ok append(b16_r,b16_o,b16_w,b16_n,b16_p,b16_i) integrity()
+block append(b17_r:readbuf,b17_o:mutbuf,b17_w:mutbuf,b17_n:u64,b17_p:u64,b17_i:u64)
+  b17_pos:u64 = call(b17_w,b17_p) {"function":"sb_append_digest"}
+  b17_one:u64 = const() {"value":1}
+  b17_next:u64 = int.add.wrap(b17_i,b17_one)
+  jump fold(b17_r,b17_o,b17_w,b17_n,b17_pos,b17_next)
+block hash_tail(b18_r:readbuf,b18_o:mutbuf,b18_w:mutbuf,b18_p:u64)
+  b18_off:u64 = const() {"value":163}
+  b18_size:u64 = const() {"value":64}
+  b18_end:u64 = call(b18_r,b18_w,b18_off,b18_p,b18_size) {"function":"rac_copy"}
+  b18_start:u64 = const() {"value":2800}
+  b18_len:u64 = int.sub.wrap(b18_end,b18_start)
+  b18_z:u64 = const() {"value":0}
+  b18_init:u64 = call(b18_w) {"function":"tr_sha_init"}
+  b18_ok:bool = compare.eq(b18_init,b18_z)
+  branch b18_ok final(b18_o,b18_w,b18_start,b18_len) integrity()
+block final(b19_o:mutbuf,b19_w:mutbuf,b19_start:u64,b19_len:u64)
+  b19_hash:u64 = call(b19_w,b19_start,b19_len) {"function":"sb_hash_transcript"}
+  b19_z:u64 = const() {"value":0}
+  b19_ok:bool = compare.eq(b19_hash,b19_z)
+  branch b19_ok publish(b19_o,b19_w,b19_z) integrity()
+block publish(b20_o:mutbuf,b20_w:mutbuf,b20_z:u64)
+  b20__copy:u64 = call(b20_w,b20_o,b20_z) {"function":"sb_copy_digest"}
+  b20_rc:u32 = const() {"value":0}
+  ret(b20_rc)
+block format()
+  b21_rc:u32 = const() {"value":100}
+  ret(b21_rc)
+block short()
+  b22_rc:u32 = const() {"value":102}
+  ret(b22_rc)
+block integrity()
+  b23_rc:u32 = const() {"value":103}
+  ret(b23_rc)
+end
+
+fn prov_heap_get(b24_w:mutbuf,b24_i:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b24_w:mutbuf,b24_i:u64)
+  b24_bank:u64 = const() {"value":12288}
+  b24_v:u64 = call(b24_w,b24_bank,b24_i) {"function":"m_get"}
+  ret(b24_v)
+end
+
+fn prov_heap_put(b25_w:mutbuf,b25_i:u64,b25_v:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b25_w:mutbuf,b25_i:u64,b25_v:u64)
+  b25_bank:u64 = const() {"value":12288}
+  b25_x:u64 = call(b25_w,b25_bank,b25_i,b25_v) {"function":"m_put"}
+  ret(b25_x)
+end
+
+fn prov_heap_swap(b26_w:mutbuf,b26_a:u64,b26_b:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b26_w:mutbuf,b26_a:u64,b26_b:u64)
+  b26_x:u64 = call(b26_w,b26_a) {"function":"prov_heap_get"}
+  b26_y:u64 = call(b26_w,b26_b) {"function":"prov_heap_get"}
+  b26__a:u64 = call(b26_w,b26_a,b26_y) {"function":"prov_heap_put"}
+  b26__b:u64 = call(b26_w,b26_b,b26_x) {"function":"prov_heap_put"}
+  ret(b26_x)
+end
+
+fn prov_heap_cmp(b27_r:readbuf,b27_w:mutbuf,b27_a:u64,b27_b:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b27_r:readbuf,b27_w:mutbuf,b27_a:u64,b27_b:u64)
+  b27_start:u64 = const() {"value":259}
+  b27_x:u64 = call(b27_w,b27_a) {"function":"prov_heap_get"}
+  b27_y:u64 = call(b27_w,b27_b) {"function":"prov_heap_get"}
+  b27_rowa:u64 = call(b27_x,b27_start) {"function":"prov_row_at"}
+  b27_rowb:u64 = call(b27_y,b27_start) {"function":"prov_row_at"}
+  b27_code:u64 = call(b27_r,b27_rowa,b27_rowb) {"function":"prov_ord"}
+  ret(b27_code)
+end
+
+fn prov_heap_sift(b28_r:readbuf,b28_w:mutbuf,b28_cur:u64,b28_n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b28_r:readbuf,b28_w:mutbuf,b28_cur:u64,b28_n:u64)
+  jump child(b28_r,b28_w,b28_cur,b28_n)
+block child(b29_r:readbuf,b29_w:mutbuf,b29_cur:u64,b29_n:u64)
+  b29_one:u64 = const() {"value":1}
+  b29_double:u64 = int.add.wrap(b29_cur,b29_cur)
+  b29_left:u64 = int.add.wrap(b29_double,b29_one)
+  b29_has:bool = compare.lt(b29_left,b29_n)
+  branch b29_has sibling(b29_r,b29_w,b29_cur,b29_n,b29_left) done(b29_cur)
+block sibling(b30_r:readbuf,b30_w:mutbuf,b30_cur:u64,b30_n:u64,b30_left:u64)
+  b30_one:u64 = const() {"value":1}
+  b30_right:u64 = int.add.wrap(b30_left,b30_one)
+  b30_has:bool = compare.lt(b30_right,b30_n)
+  branch b30_has larger(b30_r,b30_w,b30_cur,b30_n,b30_left,b30_right) contend(b30_r,b30_w,b30_cur,b30_n,b30_left)
+block larger(b31_r:readbuf,b31_w:mutbuf,b31_cur:u64,b31_n:u64,b31_left:u64,b31_right:u64)
+  b31_lt:u64 = const() {"value":0}
+  b31_order:u64 = call(b31_r,b31_w,b31_left,b31_right) {"function":"prov_heap_cmp"}
+  b31_right_big:bool = compare.eq(b31_order,b31_lt)
+  b31_next:u64 = select(b31_right_big,b31_right,b31_left)
+  jump contend(b31_r,b31_w,b31_cur,b31_n,b31_next)
+block contend(b32_r:readbuf,b32_w:mutbuf,b32_cur:u64,b32_n:u64,b32_chosen:u64)
+  b32_order:u64 = call(b32_r,b32_w,b32_cur,b32_chosen) {"function":"prov_heap_cmp"}
+  b32_lt:u64 = const() {"value":0}
+  b32_smaller:bool = compare.eq(b32_order,b32_lt)
+  branch b32_smaller swap(b32_r,b32_w,b32_cur,b32_n,b32_chosen) done(b32_cur)
+block swap(b33_r:readbuf,b33_w:mutbuf,b33_cur:u64,b33_n:u64,b33_chosen:u64)
+  b33__swap:u64 = call(b33_w,b33_cur,b33_chosen) {"function":"prov_heap_swap"}
+  jump child(b33_r,b33_w,b33_chosen,b33_n)
+block done(b34_i:u64)
+  ret(b34_i)
+end

@@ -1,0 +1,181 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_node_history_inline_record
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  extent:usize = buffer.len(r)
+  n:u64 = int.cast(extent) {"mode":"wrap"}
+  fixed:u64 = const() {"value":72}
+  max:u64 = const() {"value":16456}
+  lo:bool = compare.le(fixed,n)
+  hi:bool = compare.le(n,max)
+  fit:bool = bool.and(lo,hi)
+  branch fit version(r,o,n,fixed) bad()
+block version(vr:readbuf,vo:mutbuf,vn:u64,vp:u64)
+  origin:u64 = const() {"value":0}
+  magic:u64 = const() {"value":827476296}
+  actual:u64 = call(vr,origin) {"function":"tr_read"}
+  matches:bool = compare.eq(actual,magic)
+  branch matches frame0(vr,vo,vn,vp) bad()
+block frame0(c0r:readbuf,c0o:mutbuf,c0n:u64,c0p:u64)
+  c0at:u64 = const() {"value":8}
+  c0tag:u64,c0len:u64,c0next:u64 = call(c0r,c0n,c0p,c0at) {"function":"hir_span"}
+  c0zero:u64 = const() {"value":0}
+  c0good:bool = compare.ne(c0next,c0zero)
+  branch c0good frame1(c0r,c0o,c0n,c0next,c0p,c0tag,c0len) bad()
+block frame1(c1r:readbuf,c1o:mutbuf,c1n:u64,c1p:u64,c1f0p:u64,c1f0t:u64,c1f0l:u64)
+  c1at:u64 = const() {"value":24}
+  c1tag:u64,c1len:u64,c1next:u64 = call(c1r,c1n,c1p,c1at) {"function":"hir_span"}
+  c1zero:u64 = const() {"value":0}
+  c1good:bool = compare.ne(c1next,c1zero)
+  branch c1good frame2(c1r,c1o,c1n,c1next,c1f0p,c1f0t,c1f0l,c1p,c1tag,c1len) bad()
+block frame2(c2r:readbuf,c2o:mutbuf,c2n:u64,c2p:u64,c2f0p:u64,c2f0t:u64,c2f0l:u64,c2f1p:u64,c2f1t:u64,c2f1l:u64)
+  c2at:u64 = const() {"value":40}
+  c2tag:u64,c2len:u64,c2next:u64 = call(c2r,c2n,c2p,c2at) {"function":"hir_span"}
+  c2zero:u64 = const() {"value":0}
+  c2good:bool = compare.ne(c2next,c2zero)
+  branch c2good frame3(c2r,c2o,c2n,c2next,c2f0p,c2f0t,c2f0l,c2f1p,c2f1t,c2f1l,c2p,c2tag,c2len) bad()
+block frame3(c3r:readbuf,c3o:mutbuf,c3n:u64,c3p:u64,c3f0p:u64,c3f0t:u64,c3f0l:u64,c3f1p:u64,c3f1t:u64,c3f1l:u64,c3f2p:u64,c3f2t:u64,c3f2l:u64)
+  c3at:u64 = const() {"value":56}
+  c3tag:u64,c3len:u64,c3next:u64 = call(c3r,c3n,c3p,c3at) {"function":"hir_span"}
+  c3zero:u64 = const() {"value":0}
+  c3good:bool = compare.ne(c3next,c3zero)
+  c3exact:bool = compare.eq(c3next,c3n)
+  c3valid:bool = bool.and(c3good,c3exact)
+  branch c3valid types0(c3r,c3o,c3f0p,c3f0t,c3f0l,c3f1p,c3f1t,c3f1l,c3f2p,c3f2t,c3f2l,c3p,c3tag,c3len) bad()
+block types0(pr:readbuf,po:mutbuf,pp:u64,pt:u64,pl:u64,hp:u64,ht:u64,hl:u64,wp:u64,wt:u64,wl:u64,rp:u64,rt:u64,rl:u64)
+  null:u64 = const() {"value":0}
+  blob:u64 = const() {"value":4}
+  is_null:bool = compare.eq(pt,null)
+  parent_blob:bool = compare.eq(pt,blob)
+  okay_p:bool = bool.or(is_null,parent_blob)
+  branch okay_p types1(pr,po,pp,pl,parent_blob,hp,ht,wp,wt,wl,rp,rt,rl) parent_type()
+block types1(hr:readbuf,ho:mutbuf,hpp:u64,hpl:u64,hparent:bool,hhp:u64,hht:u64,hwp:u64,hwt:u64,hwl:u64,hrp:u64,hrt:u64,hrl:u64)
+  integer:u64 = const() {"value":1}
+  is_integer:bool = compare.eq(hht,integer)
+  branch is_integer sign(hr,ho,hpp,hpl,hparent,hhp,hwp,hwt,hwl,hrp,hrt,hrl) height_type()
+block sign(sr:readbuf,so:mutbuf,spp:u64,spl:u64,sparent:bool,shp:u64,swp:u64,swt:u64,swl:u64,srp:u64,srt:u64,srl:u64)
+  height:u64 = call(sr,shp) {"function":"tr_read"}
+  i64_max:u64 = const() {"value":9223372036854775807}
+  in_range:bool = compare.le(height,i64_max)
+  branch in_range types2(sr,so,spp,spl,sparent,height,swp,swt,swl,srp,srt,srl) height_range()
+block types2(wr:readbuf,wo:mutbuf,wpp:u64,wpl:u64,wparent:bool,wh:u64,wwp:u64,wwt:u64,wwl:u64,wrp:u64,wrt:u64,wrl:u64)
+  work_blob:u64 = const() {"value":4}
+  w_ok:bool = compare.eq(wwt,work_blob)
+  branch w_ok types3(wr,wo,wpp,wpl,wparent,wh,wwp,wwl,wrp,wrt,wrl) work_type()
+block types3(rr:readbuf,ro:mutbuf,rpp:u64,rpl:u64,rparent:bool,rh:u64,rwp:u64,rwl:u64,rrp:u64,rrt:u64,rrl:u64)
+  root_blob:u64 = const() {"value":4}
+  r_ok:bool = compare.eq(rrt,root_blob)
+  branch r_ok width0(rr,ro,rpp,rpl,rparent,rh,rwp,rwl,rrp,rrl) root_type()
+block width0(ar:readbuf,ao:mutbuf,app:u64,apl:u64,aparent:bool,ah:u64,awp:u64,awl:u64,arp:u64,arl:u64)
+  width_a:u64 = const() {"value":32}
+  ap_length:bool = compare.eq(apl,width_a)
+  not_p:bool = bool.not(aparent)
+  ap_ok:bool = bool.or(ap_length,not_p)
+  branch ap_ok width1(ar,ao,app,aparent,ah,awp,awl,arp,arl) hash_width()
+block width1(br:readbuf,bo:mutbuf,bpp:u64,bparent:bool,bh:u64,bwp:u64,bwl:u64,brp:u64,brl:u64)
+  width_b:u64 = const() {"value":64}
+  bw_ok:bool = compare.eq(bwl,width_b)
+  branch bw_ok width2(br,bo,bpp,bparent,bh,bwp,brp,brl) work_width()
+block width2(cr:readbuf,co:mutbuf,cpp:u64,cparent:bool,ch:u64,cwp:u64,crp:u64,crl:u64)
+  width_c:u64 = const() {"value":32}
+  cr_ok:bool = compare.eq(crl,width_c)
+  branch cr_ok space(cr,co,cpp,cparent,ch,cwp,crp) hash_width()
+block space(dr:readbuf,do_:mutbuf,dpp:u64,dparent:bool,dh:u64,dwp:u64,drp:u64)
+  span:usize = buffer.len(do_)
+  asked:usize = const() {"value":144}
+  room:bool = compare.le(asked,span)
+  branch room write(dr,do_,dpp,dparent,dh,dwp,drp) short()
+block write(er:readbuf,eo:mutbuf,epp:u64,eparent:bool,eh:u64,ewp:u64,erp:u64)
+  z:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  place_h:u64 = const() {"value":40}
+  place_w:u64 = const() {"value":48}
+  place_r:u64 = const() {"value":112}
+  bytes_w:u64 = const() {"value":64}
+  bytes_r:u64 = const() {"value":32}
+  flag:u64 = select(eparent,one,z)
+  write_0:u64 = call(eo,z,flag) {"function":"tr_put"}
+  write_1:u64 = call(eo,place_h,eh) {"function":"tr_put"}
+  write_2:u64 = call(er,ewp,eo,place_w,bytes_w) {"function":"cp_copy"}
+  write_3:u64 = call(er,erp,eo,place_r,bytes_r) {"function":"cp_copy"}
+  branch eparent parent(er,eo,epp) no_parent(eo)
+block parent(yr:readbuf,yo:mutbuf,yp:u64)
+  at:u64 = const() {"value":8}
+  size:u64 = const() {"value":32}
+  write_4:u64 = call(yr,yp,yo,at,size) {"function":"cp_copy"}
+  jump success()
+block no_parent(no:mutbuf)
+  start:usize = const() {"value":8}
+  stop:usize = const() {"value":40}
+  fill:u8 = const() {"value":0}
+  _ = buffer.fill_range(no,start,stop,fill)
+  jump success()
+block success()
+  success_code:u32 = const() {"value":0}
+  ret(success_code)
+block parent_type()
+  parent_type_code:u32 = const() {"value":10}
+  ret(parent_type_code)
+block height_type()
+  height_type_code:u32 = const() {"value":11}
+  ret(height_type_code)
+block work_type()
+  work_type_code:u32 = const() {"value":12}
+  ret(work_type_code)
+block root_type()
+  root_type_code:u32 = const() {"value":13}
+  ret(root_type_code)
+block height_range()
+  height_range_code:u32 = const() {"value":14}
+  ret(height_range_code)
+block hash_width()
+  hash_width_code:u32 = const() {"value":30}
+  ret(hash_width_code)
+block work_width()
+  work_width_code:u32 = const() {"value":31}
+  ret(work_width_code)
+block bad()
+  bad_code:u32 = const() {"value":100}
+  ret(bad_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+end
+
+fn hir_span(r:readbuf,n:u64,p:u64,at:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,n:u64,p:u64,at:u64)
+  eight:u64 = const() {"value":8}
+  off:u64 = int.add.wrap(at,eight)
+  tag:u64 = call(r,at) {"function":"tr_read"}
+  len:u64 = call(r,off) {"function":"tr_read"}
+  max:u64 = const() {"value":4096}
+  tags:u64 = const() {"value":4}
+  room:u64 = int.sub.wrap(n,p)
+  stored:bool = compare.le(len,room)
+  cap:bool = compare.le(len,max)
+  recognized:bool = compare.le(tag,tags)
+  enough:bool = bool.and(stored,cap)
+  bounded:bool = bool.and(enough,recognized)
+  branch bounded kind(tag,len,p) bad()
+block kind(t:u64,l:u64,p_:u64)
+  nil:u64 = const() {"value":0}
+  start:u64 = const() {"value":2}
+  fixed:u64 = const() {"value":8}
+  is_null:bool = compare.eq(t,nil)
+  len_zero:bool = compare.eq(l,nil)
+  no_data:bool = bool.and(is_null,len_zero)
+  not_null:bool = bool.not(is_null)
+  numeric:bool = compare.le(t,start)
+  len_number:bool = compare.eq(l,fixed)
+  is_number:bool = bool.and(not_null,numeric)
+  good_number:bool = bool.and(is_number,len_number)
+  variable:bool = bool.not(numeric)
+  numeric_or_text:bool = bool.or(good_number,variable)
+  ready:bool = bool.or(no_data,numeric_or_text)
+  branch ready finish(t,l,p_) bad()
+block finish(ft:u64,fl:u64,fp:u64)
+  next:u64 = int.add.wrap(fp,fl)
+  ret(ft,fl,next)
+block bad()
+  zero:u64 = const() {"value":0}
+  ret(zero,zero,zero)
+end

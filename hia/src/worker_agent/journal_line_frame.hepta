@@ -1,0 +1,115 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_worker_journal_frame_wjf1
+fn f0(snapshot:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(snapshot:readbuf,output:mutbuf,scratch:mutbuf)
+  input_native:usize = buffer.len(snapshot)
+  input_size:u64 = int.cast(input_native) {"mode":"wrap"}
+  upper:u64 = const() {"value":65536}
+  bounded:bool = compare.le(input_size,upper)
+  branch bounded final_byte(snapshot,output,input_size) capacity()
+block final_byte(fi:readbuf,fo:mutbuf,fn:u64)
+  zero:u64 = const() {"value":0}
+  empty:bool = compare.eq(fn,zero)
+  branch empty measure(fi,fo,fn) terminated(fi,fo,fn)
+block terminated(ti:readbuf,to:mutbuf,tn:u64)
+  one:u64 = const() {"value":1}
+  last:u64 = int.sub.wrap(tn,one)
+  read_last:usize = int.cast(last) {"mode":"wrap"}
+  final:u8 = buffer.load(ti,read_last)
+  lf:u8 = const() {"value":10}
+  complete:bool = compare.eq(final,lf)
+  branch complete unicode(ti,to,tn) malformed()
+block unicode(ui:readbuf,uo:mutbuf,un:u64)
+  start:u64 = const() {"value":0}
+  expected:u64 = const() {"value":1}
+  utf8:u64 = call(ui,start,un) {"function":"value_utf8"}
+  valid:bool = compare.eq(utf8,expected)
+  branch valid measure(ui,uo,un) malformed()
+block measure(mi:readbuf,mo:mutbuf,mn:u64)
+  dry:bool = const() {"value":false}
+  records:u64 = call(mi,mo,mn,dry) {"function":"wjf_scan"}
+  limit:u64 = const() {"value":64}
+  fits_records:bool = compare.le(records,limit)
+  branch fits_records fit(mi,mo,mn,records) capacity()
+block fit(ci:readbuf,co:mutbuf,cn:u64,cc:u64)
+  native_cap:usize = buffer.len(co)
+  cap:u64 = int.cast(native_cap) {"mode":"wrap"}
+  header:u64 = const() {"value":8}
+  desc_size:u64 = const() {"value":12}
+  body:u64 = int.mul.wrap(cc,desc_size)
+  total:u64 = int.add.wrap(header,body)
+  enough:bool = compare.le(total,cap)
+  branch enough emit(ci,co,cn,cc,total) capacity()
+block emit(ei:readbuf,eo:mutbuf,en:u64,ec:u64,et:u64)
+  zero_at:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  magic:u64 = const() {"value":826690135}
+  yes:bool = const() {"value":true}
+  count_at:u64 = call(eo,zero_at,magic,four,yes) {"function":"wa_word"}
+  body_at:u64 = call(eo,count_at,ec,four,yes) {"function":"wa_word"}
+  emitted_count:u64 = call(ei,eo,en,yes) {"function":"wjf_scan"}
+  actual:u32 = int.cast(et) {"mode":"wrap"}
+  ret(actual)
+block malformed()
+  invalid:u32 = const() {"value":4294967295}
+  ret(invalid)
+block capacity()
+  too_short:u32 = const() {"value":4294967294}
+  ret(too_short)
+end
+fn wjf_scan(input:readbuf,out:mutbuf,extent:u64,emit:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,out:mutbuf,extent:u64,emit:bool)
+  zero:u64 = const() {"value":0}
+  jump scan(input,out,extent,emit,zero,zero,zero)
+block scan(si:readbuf,so:mutbuf,se:u64,sw:bool,st:u64,at:u64,count:u64)
+  more:bool = compare.lt(at,se)
+  branch more octet(si,so,se,sw,st,at,count) finish(count)
+block octet(oi:readbuf,oo:mutbuf,oe:u64,ow:bool,os:u64,oa:u64,oc:u64)
+  index:usize = int.cast(oa) {"mode":"wrap"}
+  byte:u8 = buffer.load(oi,index)
+  lf:u8 = const() {"value":10}
+  found:bool = compare.eq(byte,lf)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(oa,one)
+  branch found line(oi,oo,oe,ow,os,oa,oc,next) scan(oi,oo,oe,ow,os,next,oc)
+block line(li:readbuf,lo:mutbuf,le:u64,lw:bool,ls:u64,line_lf_at:u64,lc:u64,ln:u64)
+  has_body:bool = compare.lt(ls,line_lf_at)
+  branch has_body preceding(li,lo,le,lw,ls,line_lf_at,lc,ln) scan(li,lo,le,lw,ln,ln,lc)
+block preceding(pi:readbuf,po:mutbuf,pe:u64,pw:bool,ps:u64,pf:u64,pc:u64,pn:u64)
+  one_byte:u64 = const() {"value":1}
+  before_lf:u64 = int.sub.wrap(pf,one_byte)
+  before_at:usize = int.cast(before_lf) {"mode":"wrap"}
+  preceding_byte:u8 = buffer.load(pi,before_at)
+  cr:u8 = const() {"value":13}
+  crlf:bool = compare.eq(preceding_byte,cr)
+  end_at:u64 = select(crlf,before_lf,pf)
+  len:u64 = int.sub.wrap(end_at,ps)
+  first_nonblank:u64 = call(pi,ps,len) {"function":"or_trim_start"}
+  nonblank:bool = compare.lt(first_nonblank,end_at)
+  branch nonblank admit(pi,po,pe,pw,ps,pc,pn,len) scan(pi,po,pe,pw,pn,pn,pc)
+block admit(ai:readbuf,ao:mutbuf,ae:u64,aw:bool,ass:u64,ac:u64,an:u64,al:u64)
+  cap:u64 = const() {"value":64}
+  room:bool = compare.lt(ac,cap)
+  branch room record(ai,ao,ae,aw,ass,ac,an,al) exceeded()
+block record(ri:readbuf,ro:mutbuf,re:u64,rw:bool,rs:u64,rc:u64,rn:u64,rl:u64)
+  _ = call(ro,rc,rs,rl,rw) {"function":"wjf_descriptor"}
+  step:u64 = const() {"value":1}
+  next_count:u64 = int.add.wrap(rc,step)
+  jump scan(ri,ro,re,rw,rn,rn,next_count)
+block finish(records:u64)
+  ret(records)
+block exceeded()
+  too_many:u64 = const() {"value":65}
+  ret(too_many)
+end
+fn wjf_descriptor(out:mutbuf,ordinal:u64,start:u64,span:u64,emit:bool) -> () effects(read,write,trap) entry(entry)
+block entry(out:mutbuf,ordinal:u64,start:u64,span:u64,emit:bool)
+  four:u64 = const() {"value":4}
+  header:u64 = const() {"value":8}
+  width:u64 = const() {"value":12}
+  index_offset:u64 = int.mul.wrap(ordinal,width)
+  at:u64 = int.add.wrap(header,index_offset)
+  start_at:u64 = call(out,at,ordinal,four,emit) {"function":"wa_word"}
+  length_at:u64 = call(out,start_at,start,four,emit) {"function":"wa_word"}
+  descriptor_end:u64 = call(out,length_at,span,four,emit) {"function":"wa_word"}
+  ret()
+end

@@ -1,0 +1,139 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_tile_checkpoint_extract
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  len_r:usize = buffer.len(r)
+  n:u64 = int.cast(len_r) {"mode":"wrap"}
+  min:u64 = const() {"value":48}
+  max:u64 = const() {"value":1048576}
+  lo:bool = compare.le(min,n)
+  hi:bool = compare.le(n,max)
+  have:bool = bool.and(lo,hi)
+  branch have wire_check(r,o,w,n) frame()
+block wire_check(er:readbuf,eo:mutbuf,ew:mutbuf,en:u64)
+  zero_e:u64 = const() {"value":0}
+  magic:u64 = call(er,zero_e) {"function":"tr_read"}
+  expected:u64 = const() {"value":826622804}
+  is_frame:bool = compare.eq(magic,expected)
+  branch is_frame capacity(er,eo,ew,en) frame()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
+  out_len:usize = buffer.len(co)
+  scratch_len:usize = buffer.len(cw)
+  tile_need:usize = const() {"value":8192}
+  scratch_need:usize = const() {"value":18000}
+  room1:bool = compare.le(tile_need,out_len)
+  room2:bool = compare.le(scratch_need,scratch_len)
+  good:bool = bool.and(room1,room2)
+  branch good size(cr,co,cw,cn) short()
+block size(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64)
+  size_at:u64 = const() {"value":40}
+  expected_n:u64 = call(sr,size_at) {"function":"tr_read"}
+  raw_start:u64 = const() {"value":48}
+  pin_at:u64 = const() {"value":8}
+  status:u32,first:u64 = call(sr,sw,raw_start,sn,expected_n,pin_at) {"function":"tce_private"}
+  zero:u32 = const() {"value":0}
+  matched:bool = compare.eq(status,zero)
+  branch matched tile(sr,so,first) refusal(status)
+block tile(tr:readbuf,to:mutbuf,tp:u64)
+  result:u32 = call(tr,to,tp) {"function":"tce_copy"}
+  ret(result)
+block frame()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block short()
+  short_space:u32 = const() {"value":102}
+  ret(short_space)
+block refusal(c:u32)
+  ret(c)
+end
+
+fn tce_private(r:readbuf,w:mutbuf,p:u64,n:u64,expected:u64,pin_at:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,expected:u64,pin_at:u64)
+  actual_n:u64 = int.sub.wrap(n,p)
+  exact:bool = compare.eq(expected,actual_n)
+  branch exact prefix(r,w,n,p,actual_n,pin_at) size_error()
+block prefix(pr:readbuf,pw:mutbuf,pn:u64,pp:u64,ps:u64,pa:u64)
+  eight:u64 = const() {"value":8}
+  have_prefix:bool = compare.le(eight,ps)
+  branch have_prefix range(pr,pw,pn,pp,ps,pa) prefix_error()
+block range(rr:readbuf,rw:mutbuf,rn:u64,rp:u64,rs:u64,ra:u64)
+  header_bytes:u64 = call(rr,rp) {"function":"tr_read"}
+  eight_r:u64 = const() {"value":8}
+  start:u64 = int.add.wrap(rp,eight_r)
+  avail:u64 = int.sub.wrap(rn,start)
+  two:u64 = const() {"value":2}
+  ceiling:u64 = const() {"value":16777216}
+  low:bool = compare.le(two,header_bytes)
+  high:bool = compare.le(header_bytes,ceiling)
+  inside:bool = compare.le(header_bytes,avail)
+  bounds:bool = bool.and(low,high)
+  okay:bool = bool.and(bounds,inside)
+  end_header:u64 = int.add.wrap(start,header_bytes)
+  payload:u64 = int.sub.wrap(avail,header_bytes)
+  branch okay header(rr,rw,rp,rs,start,end_header,payload,ra) header_error()
+block header(hr:readbuf,hw:mutbuf,hraw:u64,hs:u64,hb:u64,he:u64,hp:u64,ha:u64)
+  status:u32,count:u64,slot:u64 = call(hr,hw,he,hb,hp) {"function":"th_header_private"}
+  zero_h:u32 = const() {"value":0}
+  proved:bool = compare.eq(status,zero_h)
+  branch proved digest(hr,hw,hraw,hs,he,slot,ha) refusal(status)
+block digest(dr:readbuf,dw:mutbuf,dstart:u64,ds:u64,de:u64,dt:u64,da:u64)
+  init:u64 = call(dw) {"function":"tr_sha_init"}
+  feed:u64 = call(dr,dstart,ds,dw) {"function":"tr_sha_update"}
+  final:u64 = call(dw) {"function":"tr_sha_final"}
+  two_d:u64 = bit.or(init,feed)
+  all_d:u64 = bit.or(two_d,final)
+  zero_d:u64 = const() {"value":0}
+  good_digest:bool = compare.eq(all_d,zero_d)
+  branch good_digest pin(dr,dw,de,dt,da) sha_error()
+block pin(ar:readbuf,aw:mutbuf,ae:u64,at:u64,ap:u64)
+  sha_at:u64 = const() {"value":1168}
+  matches:bool = call(ar,aw,ap,sha_at) {"function":"tac_match_pin"}
+  branch matches tile(aw,ae,at) pin_error()
+block tile(tw:mutbuf,te:u64,tt:u64)
+  offset:u64 = call(tw,tt) {"function":"tr_get"}
+  tile_at:u64 = int.add.wrap(te,offset)
+  good:u32 = const() {"value":0}
+  ret(good,tile_at)
+block size_error()
+  wrong_size:u32 = const() {"value":1}
+  jump refusal(wrong_size)
+block prefix_error()
+  bad_read:u32 = const() {"value":12}
+  jump refusal(bad_read)
+block header_error()
+  wrong_header:u32 = const() {"value":13}
+  jump refusal(wrong_header)
+block pin_error()
+  wrong_pin:u32 = const() {"value":14}
+  jump refusal(wrong_pin)
+block sha_error()
+  failed_sha:u32 = const() {"value":104}
+  jump refusal(failed_sha)
+block refusal(c:u32)
+  absent:u64 = const() {"value":0}
+  ret(c,absent)
+end
+
+fn tce_copy(r:readbuf,o:mutbuf,p:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,p:u64)
+  row0:u64 = const() {"value":0}
+  jump loop(r,o,p,row0,row0)
+block loop(lr:readbuf,lo:mutbuf,lp:u64,ld:u64,lk:u64)
+  total:u64 = const() {"value":64}
+  complete:bool = compare.eq(lk,total)
+  branch complete done() row(lr,lo,lp,ld,lk)
+block row(ar:readbuf,ao:mutbuf,ap:u64,ad:u64,ak:u64)
+  src:usize = int.cast(ap) {"mode":"wrap"}
+  dst:usize = int.cast(ad) {"mode":"wrap"}
+  byte_count:usize = const() {"value":128}
+  _ = buffer.copy_range(ao,ar,dst,src,byte_count)
+  input_stride:u64 = const() {"value":1152}
+  output_stride:u64 = const() {"value":128}
+  next_p:u64 = int.add.wrap(ap,input_stride)
+  next_d:u64 = int.add.wrap(ad,output_stride)
+  one:u64 = const() {"value":1}
+  next_k:u64 = int.add.wrap(ak,one)
+  jump loop(ar,ao,next_p,next_d,next_k)
+block done()
+  status:u32 = const() {"value":0}
+  ret(status)
+end

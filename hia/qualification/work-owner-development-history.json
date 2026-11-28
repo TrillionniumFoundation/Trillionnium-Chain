@@ -1,0 +1,49 @@
+{
+  "commit": "c3901ff19c26815205d9cdd6975fc24ecc51ae88",
+  "complete_archive": {
+    "bytes": 26328788,
+    "sha256": "b5c82d8e2b2c1976ce8fa4399e637dd9cceea93d95d5cf9c29d4315d2ec759db"
+  },
+  "complete_current_and_Git_blob_bytes_compared": true,
+  "files": {
+    "hia/qualification/work-owner-development.json": {
+      "bytes": 45113,
+      "git_blob": "d283d84271dd29b78d786cf2c825f57692697d89",
+      "sha256": "95956c56c4027f57ae8d9db324b183d3836175244d5a44c5d781350f3fd5b3e0"
+    },
+    "hia/qualification/work-owner-development.parts/manifest.json": {
+      "bytes": 1317,
+      "git_blob": "2328ae352f36630151b58e09eb78fdfb98a22ee6",
+      "sha256": "18595c148a8a133c8ec2fbaf2ad7005b6fe6e52e420ab0f2f13a64466c784525"
+    },
+    "hia/qualification/work-owner-development.parts/part-000": {
+      "bytes": 6291456,
+      "git_blob": "b5b648bdce85b25ab51c61ada221278fd5cd7404",
+      "sha256": "4d760591bdd68887a54fa013cdc3fd838c6dc4581de614cf1f4d60ebd672a243"
+    },
+    "hia/qualification/work-owner-development.parts/part-001": {
+      "bytes": 6291456,
+      "git_blob": "c53f935157564d72d036e2ee31d5afad3f1e5ffe",
+      "sha256": "2bf1a973b6c4ce8f0b56908ab380dd3a5f8adfb043d20eba604735f41977db5e"
+    },
+    "hia/qualification/work-owner-development.parts/part-002": {
+      "bytes": 6291456,
+      "git_blob": "ad83c34417dee2719237a485a3bd32223a588e8b",
+      "sha256": "2ee93b21589c44bc51a46132f28acc569e02961f5b1d850a5713fad27208f7c0"
+    },
+    "hia/qualification/work-owner-development.parts/part-003": {
+      "bytes": 6291456,
+      "git_blob": "6681b12650e3b5d3a5e0e11fa00556e42ce97f11",
+      "sha256": "eef431cdd74759438e3bf0c596646d7ce098877407b88d4d4454f61a68e11b9a"
+    },
+    "hia/qualification/work-owner-development.parts/part-004": {
+      "bytes": 1162964,
+      "git_blob": "3940a548386681564046c67b569eeb58d85abeb9",
+      "sha256": "b3320ba5933c3885ac8955db0f47491a1d249889386a970ce5b856689e6e621c"
+    }
+  },
+  "history_rewritten": false,
+  "old_qualification_status_changed": false,
+  "schema": "trnm.hia.work-owner-prior-view-git-archive.v1",
+  "tree": "b51997025da0c61e6a9e516b1950efa3d709df3b"
+}

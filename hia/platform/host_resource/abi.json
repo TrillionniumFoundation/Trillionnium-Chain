@@ -1,0 +1,25 @@
+{
+  "schema": "trnm.hia.host-resource-abi.v1",
+  "target": "x86_64-linux",
+  "entry": {"event_bytes": 64, "command_bytes": 4096, "initial_private_state_bytes": 8192},
+  "adapter": "byte-identical hia/platform/host_checkpoint/linux_emitter.hepta",
+  "request": {
+    "bytes": 24,
+    "encoding": "three little-endian u64",
+    "fields": ["operation", "fixture_gate", "read_chunk"],
+    "operations": {"1": "physical sample and private baseline", "2": "physical sample and checked delta from private baseline"},
+    "production_gate": 0,
+    "production_read_chunk": 4096,
+    "fixture_gates": {"1": "fresh boot", "2": "fresh parent", "3": "five limits read", "4": "limits parsed before inode fence", "5": "first full check before counter reads", "6": "three counters read before parsing", "7": "counters parsed before parent close", "8": "parent closed before second full check"}
+  },
+  "receipt": {
+    "bytes": 256,
+    "encoding": "32 little-endian u64",
+    "magic": "HIAKR001",
+    "fields": ["magic", "fixture", "error", "sequence", "complete_checks", "complete_physical_samples", "operation", "qualified_sample", "cpu_usage_usec", "cpu_nr_periods", "cpu_nr_throttled", "cpu_throttled_usec", "memory_current_bytes", "pids_current", "delta_usage_usec", "delta_nr_periods", "delta_nr_throttled", "delta_throttled_usec", "opens", "reads", "read_bytes", "eintr_retries", "close_errors", "tid", "state_capacity", "thread_cpu_ns", "wall_ns", "diagnostic_counter_or_rewind_field", "complete_counter_reads", "resource_gates", "private_baseline_present", "positive_short_reads"]
+  },
+  "additional_errors": {"13": "PUBLIC_HOST_KERNEL_COUNTERS", "14": "PUBLIC_HOST_KERNEL_COUNTER_REWIND", "15": "private baseline unavailable"},
+  "preserved_errors": "Host checkpoint ABI errors 1 through 12",
+  "exit": {"success": 0, "owner_error": "64 + error", "adapter_refusal": 88, "bootstrap_refusal": 89},
+  "scope": {"runtime_counters_from_caller": false, "runtime_paths_from_caller": false, "resource_files_writable": false, "thread_cpu_account": false, "external_wait4_child_owner": false, "consensus_or_work_authority": false, "production_activation": false}
+}

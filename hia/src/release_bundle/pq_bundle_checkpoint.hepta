@@ -1,0 +1,141 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_bundle_shadow_checkpoint_v1
+fn f0(input:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,work:mutbuf)
+  status:u32 = call(input) {"function":"rs_validate"}
+  zero:u32 = const() {"value":0}
+  state_ok:bool = compare.eq(status,zero)
+  branch state_ok capacity(input,output,work) refused(status)
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf)
+  out_len:usize = buffer.len(co)
+  work_len:usize = buffer.len(cw)
+  min_out:usize = const() {"value":64}
+  min_work:usize = const() {"value":1504}
+  out_ok:bool = compare.ge(out_len,min_out)
+  work_ok:bool = compare.ge(work_len,min_work)
+  enough:bool = bool.and(out_ok,work_ok)
+  branch enough checkpoint(ci,co,cw) short()
+block checkpoint(pi:readbuf,po:mutbuf,pw:mutbuf)
+  base:u64 = const() {"value":1208}
+  p8:u64 = const() {"value":1216}
+  p16:u64 = const() {"value":1224}
+  p24:u64 = const() {"value":1232}
+  d0:u64 = const() {"value":7810739491857912404}
+  d1:u64 = const() {"value":3409594557391921509}
+  d2:u64 = const() {"value":7597414702928717891}
+  d3:u64 = const() {"value":212436218990}
+  _d0:u64 = call(pw,base,d0) {"function":"tr_put"}
+  _d1:u64 = call(pw,p8,d1) {"function":"tr_put"}
+  _d2:u64 = call(pw,p16,d2) {"function":"tr_put"}
+  _d3:u64 = call(pw,p24,d3) {"function":"tr_put"}
+  prior:u64 = const() {"value":235}
+  tip_at:u64 = const() {"value":1238}
+  digest_width:u64 = const() {"value":32}
+  now_out:u64 = call(pi,pw,prior,tip_at,digest_width) {"function":"rac_copy"}
+  now_in:u64 = const() {"value":316}
+  now:u64 = call(pi,now_in) {"function":"md_read64"}
+  eight:u64 = const() {"value":8}
+  msg_width_out:u64 = call(pw,now_out,now,eight) {"function":"rac_write_be"}
+  msg_width:u64 = const() {"value":184}
+  msg_out:u64 = call(pw,msg_width_out,msg_width,eight) {"function":"rac_write_be"}
+  end_at:u64 = call(pi,pw,msg_out) {"function":"pm_write"}
+  length:u64 = int.sub.wrap(end_at,base)
+  tip_status:u64 = call(pw,base,length) {"function":"bc_head_hash"}
+  tip_zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(tip_status,tip_zero)
+  branch hashed retain(pi,po,pw) internal()
+block retain(ri:readbuf,ro:mutbuf,rw:mutbuf)
+  private_tip:u64 = const() {"value":1472}
+  _retain:u64 = call(rw,private_tip) {"function":"sb_append_digest"}
+  head_status:u64 = call(rw) {"function":"bc_snapshot_begin"}
+  retain_zero:u64 = const() {"value":0}
+  header_added:bool = compare.eq(head_status,retain_zero)
+  branch header_added snapshot(ri,ro,rw,retain_zero) internal()
+block snapshot(si:readbuf,so:mutbuf,sw:mutbuf,snapshot_zero:u64)
+  extent:usize = buffer.len(si)
+  bytes:u64 = int.cast(extent) {"mode":"wrap"}
+  fed:u64 = call(si,snapshot_zero,bytes,sw) {"function":"tr_sha_update"}
+  added:bool = compare.eq(fed,snapshot_zero)
+  branch added finalize(so,sw,snapshot_zero) internal()
+block finalize(fo:mutbuf,fw:mutbuf,final_zero:u64)
+  final_status:u64 = call(fw) {"function":"tr_sha_final"}
+  complete:bool = compare.eq(final_status,final_zero)
+  branch complete publish(fo,fw) internal()
+block publish(published_out:mutbuf,published_work:mutbuf)
+  private_publish:u64 = const() {"value":1472}
+  _copy:u64 = call(published_work,published_out,private_publish) {"function":"bc_copy_checkpoint"}
+  snapshot_at:u64 = const() {"value":32}
+  _identity:u64 = call(published_work,published_out,snapshot_at) {"function":"sb_copy_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refused(code:u32)
+  ret(code)
+block short()
+  shortage:u32 = const() {"value":102}
+  ret(shortage)
+block internal()
+  hash_error:u32 = const() {"value":103}
+  ret(hash_error)
+end
+
+fn bc_head_hash(work:mutbuf,base:u64,length:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,base:u64,length:u64)
+  state:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  initialized:bool = compare.eq(state,zero)
+  branch initialized feed(work,base,length,zero) bad(state)
+block feed(fw:mutbuf,fb:u64,fl:u64,fz:u64)
+  code:u64 = call(fw,fb,fl) {"function":"tr_sha_update_work"}
+  fed:bool = compare.eq(code,fz)
+  branch fed finish(fw) bad(code)
+block finish(finish_work:mutbuf)
+  status:u64 = call(finish_work) {"function":"tr_sha_final"}
+  ret(status)
+block bad(error:u64)
+  ret(error)
+end
+
+fn bc_snapshot_begin(work:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf)
+  code:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  initialized:bool = compare.eq(code,zero)
+  branch initialized domain(work) bad(code)
+block domain(dw:mutbuf)
+  p0:u64 = const() {"value":1208}
+  p8:u64 = const() {"value":1216}
+  p16:u64 = const() {"value":1224}
+  p24:u64 = const() {"value":1232}
+  p32:u64 = const() {"value":1240}
+  d0:u64 = const() {"value":4704370653762835028}
+  d1:u64 = const() {"value":7236850578353115183}
+  d2:u64 = const() {"value":8606207782453208428}
+  d3:u64 = const() {"value":8390039475830484563}
+  d4:u64 = const() {"value":3241519}
+  _d0:u64 = call(dw,p0,d0) {"function":"tr_put"}
+  _d1:u64 = call(dw,p8,d1) {"function":"tr_put"}
+  _d2:u64 = call(dw,p16,d2) {"function":"tr_put"}
+  _d3:u64 = call(dw,p24,d3) {"function":"tr_put"}
+  _d4:u64 = call(dw,p32,d4) {"function":"tr_put"}
+  domain_size:u64 = const() {"value":36}
+  status:u64 = call(dw,p0,domain_size) {"function":"tr_sha_update_work"}
+  ret(status)
+block bad(error:u64)
+  ret(error)
+end
+
+fn bc_copy_checkpoint(work:mutbuf,output:mutbuf,from:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(work:mutbuf,output:mutbuf,from:u64)
+  zero:u64 = const() {"value":0}
+  jump copy(work,output,from,zero)
+block copy(cw:mutbuf,co:mutbuf,src:u64,dst:u64)
+  value:u64 = call(cw,src) {"function":"tr_get"}
+  _written:u64 = call(co,dst,value) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  next_source:u64 = int.add.wrap(src,eight)
+  next_target:u64 = int.add.wrap(dst,eight)
+  limit:u64 = const() {"value":32}
+  done:bool = compare.eq(next_target,limit)
+  branch done complete(next_target) copy(cw,co,next_source,next_target)
+block complete(copied:u64)
+  ret(copied)
+end

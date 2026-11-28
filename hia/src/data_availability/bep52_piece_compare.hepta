@@ -1,0 +1,214 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_bep52_immutable_piece_compare_v1
+fn f0(a_r:readbuf,a_o:mutbuf,a_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_o:mutbuf,a_w:mutbuf)
+  a_buf:usize = buffer.len(a_r)
+  a_n:u64 = int.cast(a_buf) {"mode":"wrap"}
+  a_min:u64 = const() {"value":6}
+  a_max:u64 = const() {"value":1048576}
+  a_lo:bool = compare.ge(a_n,a_min)
+  a_hi:bool = compare.le(a_n,a_max)
+  a_ok:bool = bool.and(a_lo,a_hi)
+  branch a_ok frame(a_r,a_w,a_n,a_min) bad_frame()
+block frame(b_r:readbuf,b_w:mutbuf,b_n:u64,b_trailer:u64)
+  b_end:u64 = int.sub.wrap(b_n,b_trailer)
+  b_four:u64 = const() {"value":4}
+  b_two:u64 = const() {"value":2}
+  b_proof_at:u64 = int.add.wrap(b_end,b_four)
+  b_bpb:u64 = call(b_r,b_end,b_four) {"function":"ca_read_be"}
+  b_cb:u64 = call(b_r,b_proof_at,b_two) {"function":"ca_read_be"}
+  b_next:u64 = int.add.wrap(b_bpb,b_cb)
+  b_ok:bool = compare.le(b_next,b_end)
+  branch b_ok binding(b_r,b_w,b_bpb,b_cb,b_next,b_end) bad_frame()
+block binding(c_r:readbuf,c_w:mutbuf,c_bpb:u64,c_cb:u64,c_payload:u64,c_end:u64)
+  c_s:u32,c_rows:u64,c_count:u64 = call(c_r,c_w,c_bpb) {"function":"bcp_check"}
+  c_z:u32 = const() {"value":0}
+  c_valid:bool = compare.eq(c_s,c_z)
+  branch c_valid proof(c_r,c_w,c_bpb,c_cb,c_payload,c_end,c_rows,c_count) fail(c_s)
+block proof(d_r:readbuf,d_w:mutbuf,d_at:u64,d_n:u64,d_payload:u64,d_end:u64,d_rows:u64,d_count:u64)
+  d_s:u32 = call(d_r,d_w,d_at,d_n) {"function":"cbp_check_at"}
+  d_z:u32 = const() {"value":0}
+  d_valid:bool = compare.eq(d_s,d_z)
+  branch d_valid manifest(d_r,d_w,d_at,d_payload,d_end,d_rows,d_count) fail(d_s)
+block manifest(e_r:readbuf,e_w:mutbuf,e_at:u64,e_payload:u64,e_end:u64,e_rows:u64,e_count:u64)
+  e_four:u64 = const() {"value":4}
+  e_n:u64 = const() {"value":32}
+  e_one:u64 = const() {"value":1}
+  e_pin_at:u64 = int.add.wrap(e_at,e_four)
+  e_same:u64 = call(e_r,e_pin_at,e_four,e_n) {"function":"cp_equal_read"}
+  e_ok:bool = compare.eq(e_same,e_one)
+  branch e_ok capacity(e_r,e_w,e_at,e_payload,e_end,e_rows,e_count) bad_pin()
+block capacity(f_r:readbuf,f_w:mutbuf,f_at:u64,f_payload:u64,f_end:u64,f_rows:u64,f_count:u64)
+  f_pow:u64,f_unused:u64 = call(f_count) {"function":"cbp_geometry"}
+  f_base:u64 = const() {"value":1760}
+  f_stride:u64 = const() {"value":32}
+  f_b:u64 = int.mul.wrap(f_pow,f_stride)
+  f_need:u64 = int.add.wrap(f_base,f_b)
+  f_actual_:usize = buffer.len(f_w)
+  f_actual:u64 = int.cast(f_actual_) {"mode":"wrap"}
+  f_ok:bool = compare.ge(f_actual,f_need)
+  branch f_ok hash(f_r,f_w,f_at,f_payload,f_end,f_rows,f_count,f_pow) short()
+block hash(g_r:readbuf,g_w:mutbuf,g_at:u64,g_payload:u64,g_end:u64,g_rows:u64,g_count:u64,g_pow:u64)
+  g_status:u64,g_root:u64 = call(g_r,g_w,g_rows,g_count,g_pow) {"function":"cbv_info"}
+  g_z:u64 = const() {"value":0}
+  g_ok:bool = compare.eq(g_status,g_z)
+  branch g_ok info(g_r,g_w,g_at,g_payload,g_end,g_rows,g_count,g_root) internal()
+block info(h_r:readbuf,h_w:mutbuf,h_at:u64,h_payload:u64,h_end:u64,h_rows:u64,h_count:u64,h_root:u64)
+  h_delta:u64 = const() {"value":36}
+  h_n:u64 = const() {"value":32}
+  h_digest:u64 = const() {"value":1168}
+  h_one:u64 = const() {"value":1}
+  h_pin:u64 = int.add.wrap(h_at,h_delta)
+  h_equal:u64 = call(h_r,h_pin,h_w,h_digest,h_n) {"function":"ca_equal"}
+  h_ok:bool = compare.eq(h_equal,h_one)
+  branch h_ok coverage(h_r,h_w,h_at,h_payload,h_end,h_rows,h_count,h_root) bad_pin()
+block coverage(i_r:readbuf,i_w:mutbuf,i_at:u64,i_payload:u64,i_end:u64,i_rows:u64,i_count:u64,i_root:u64)
+  i_delta:u64 = const() {"value":72}
+  i_n:u64 = const() {"value":4}
+  i_pin:u64 = int.add.wrap(i_at,i_delta)
+  i_declared:u64 = call(i_r,i_pin,i_n) {"function":"ca_read_be"}
+  i_ok:bool = compare.eq(i_declared,i_count)
+  branch i_ok length(i_r,i_w,i_at,i_payload,i_end,i_rows,i_root) bad_coverage()
+block length(j_r:readbuf,j_w:mutbuf,j_at:u64,j_payload:u64,j_end:u64,j_rows:u64,j_root:u64)
+  j_delta:u64 = const() {"value":68}
+  j_n:u64 = const() {"value":4}
+  j_stride:u64 = const() {"value":36}
+  j_i_at:u64 = int.add.wrap(j_at,j_delta)
+  j_i:u64 = call(j_r,j_i_at,j_n) {"function":"ca_read_be"}
+  j_shift:u64 = int.mul.wrap(j_i,j_stride)
+  j_row:u64 = int.add.wrap(j_rows,j_shift)
+  j_len:u64 = call(j_r,j_row,j_n) {"function":"ca_read_be"}
+  j_body:u64 = int.sub.wrap(j_end,j_payload)
+  j_fit:bool = compare.eq(j_len,j_body)
+  j_pin:u64 = int.add.wrap(j_row,j_n)
+  branch j_fit digest(j_r,j_w,j_at,j_payload,j_body,j_i,j_pin,j_root) bad_length()
+block digest(k_r:readbuf,k_w:mutbuf,k_at:u64,k_payload:u64,k_body:u64,k_i:u64,k_pin:u64,k_root:u64)
+  k_s:u64 = call(k_r,k_w,k_payload,k_body) {"function":"cbv_hash_read"}
+  k_z:u64 = const() {"value":0}
+  k_ok:bool = compare.eq(k_s,k_z)
+  branch k_ok leaf(k_r,k_w,k_at,k_payload,k_i,k_pin,k_root) internal()
+block leaf(l_r:readbuf,l_w:mutbuf,l_at:u64,l_end:u64,l_i:u64,l_pin:u64,l_root:u64)
+  l_hash:u64 = const() {"value":1168}
+  l_n:u64 = const() {"value":32}
+  l_header:u64 = const() {"value":77}
+  l_one:u64 = const() {"value":1}
+  l_equal:u64 = call(l_r,l_pin,l_w,l_hash,l_n) {"function":"ca_equal"}
+  l_ok:bool = compare.eq(l_equal,l_one)
+  l_siblings:u64 = int.add.wrap(l_at,l_header)
+  branch l_ok fold(l_r,l_w,l_siblings,l_end,l_i,l_root) bad_digest()
+block fold(m_r:readbuf,m_w:mutbuf,m_at:u64,m_end:u64,m_i:u64,m_root:u64)
+  m_s:u32 = call(m_r,m_w,m_at,m_end,m_i,m_root) {"function":"cbv_fold"}
+  ret(m_s)
+block bad_pin()
+  n_s:u32 = const() {"value":40}
+  ret(n_s)
+block bad_coverage()
+  o_s:u32 = const() {"value":41}
+  ret(o_s)
+block bad_length()
+  p_s:u32 = const() {"value":42}
+  ret(p_s)
+block bad_digest()
+  q_s:u32 = const() {"value":43}
+  ret(q_s)
+block bad_frame()
+  r_s:u32 = const() {"value":100}
+  ret(r_s)
+block short()
+  s_s:u32 = const() {"value":102}
+  ret(s_s)
+block internal()
+  t_s:u32 = const() {"value":103}
+  ret(t_s)
+block fail(u_s:u32)
+  ret(u_s)
+end
+
+fn cbv_info(a_r:readbuf,a_w:mutbuf,a_rows:u64,a_count:u64,a_pow:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_w:mutbuf,a_rows:u64,a_count:u64,a_pow:u64)
+  a_tree:u64 = call(a_r,a_w,a_rows,a_count,a_pow) {"function":"bcp_fill"}
+  a_s:u64 = call(a_w,a_pow,a_tree) {"function":"bcp_tree"}
+  a_z:u64 = const() {"value":0}
+  a_ok:bool = compare.eq(a_s,a_z)
+  branch a_ok info(a_r,a_w,a_rows,a_tree) fail(a_s,a_tree)
+block info(b_r:readbuf,b_w:mutbuf,b_rows:u64,b_tree:u64)
+  b_back:u64 = const() {"value":48}
+  b_8:u64 = const() {"value":8}
+  b_base:u64 = const() {"value":1408}
+  b_at:u64 = int.sub.wrap(b_rows,b_back)
+  b_size:u64 = call(b_r,b_at,b_8) {"function":"ca_read_be"}
+  b_end:u64 = call(b_w,b_tree,b_size) {"function":"bcp_info"}
+  b_n:u64 = int.sub.wrap(b_end,b_base)
+  b_s:u64 = call(b_w,b_base,b_n) {"function":"bcp_hash_work"}
+  ret(b_s,b_tree)
+block fail(c_s:u64,c_tree:u64)
+  ret(c_s,c_tree)
+end
+
+fn cbv_hash_read(a_r:readbuf,a_w:mutbuf,a_at:u64,a_n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_w:mutbuf,a_at:u64,a_n:u64)
+  a_s:u64 = call(a_w) {"function":"tr_sha_init"}
+  a_z:u64 = const() {"value":0}
+  a_ok:bool = compare.eq(a_s,a_z)
+  branch a_ok update(a_r,a_w,a_at,a_n,a_z) fail(a_s)
+block update(b_r:readbuf,b_w:mutbuf,b_at:u64,b_n:u64,b_z:u64)
+  b_s:u64 = call(b_r,b_at,b_n,b_w) {"function":"tr_sha_update"}
+  b_ok:bool = compare.eq(b_s,b_z)
+  branch b_ok finish(b_w) fail(b_s)
+block finish(c_w:mutbuf)
+  c_s:u64 = call(c_w) {"function":"tr_sha_final"}
+  ret(c_s)
+block fail(d_s:u64)
+  ret(d_s)
+end
+
+fn cbv_fold(a_r:readbuf,a_w:mutbuf,a_at:u64,a_end:u64,a_i:u64,a_root:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_w:mutbuf,a_at:u64,a_end:u64,a_i:u64,a_root:u64)
+  jump row(a_r,a_w,a_at,a_end,a_i,a_root)
+block row(b_r:readbuf,b_w:mutbuf,b_at:u64,b_end:u64,b_i:u64,b_root:u64)
+  b_more:bool = compare.lt(b_at,b_end)
+  branch b_more orient(b_r,b_w,b_at,b_end,b_i,b_root) compare(b_w,b_root)
+block orient(c_r:readbuf,c_w:mutbuf,c_at:u64,c_end:u64,c_i:u64,c_root:u64)
+  c_one:u64 = const() {"value":1}
+  c_zero:u64 = const() {"value":0}
+  c_p0:u64 = const() {"value":1280}
+  c_p1:u64 = const() {"value":1312}
+  c_m:u64 = bit.and(c_i,c_one)
+  c_left:bool = compare.eq(c_m,c_zero)
+  c_self:u64 = select(c_left,c_p0,c_p1)
+  c_ext:u64 = select(c_left,c_p1,c_p0)
+  c_n:u64 = const() {"value":32}
+  c_pair:u64 = const() {"value":64}
+  c_digest:u64 = const() {"value":1168}
+  c_ignore0:u64 = call(c_w,c_digest,c_self,c_n) {"function":"bcp_move"}
+  c_ignore1:u64 = call(c_r,c_at,c_w,c_ext,c_n) {"function":"cs_copy"}
+  c_s:u64 = call(c_w,c_p0,c_pair) {"function":"bcp_hash_work"}
+  c_ok:bool = compare.eq(c_s,c_zero)
+  c_next:u64 = int.add.wrap(c_at,c_n)
+  c_parent:u64 = int.shr.checked(c_i,c_one)
+  branch c_ok row(c_r,c_w,c_next,c_end,c_parent,c_root) internal()
+block compare(d_w:mutbuf,d_root:u64)
+  d_base:u64 = const() {"value":1168}
+  d_width:u64 = const() {"value":32}
+  d_end:u64 = int.add.wrap(d_base,d_width)
+  jump word(d_w,d_root,d_base,d_end)
+block word(e_w:mutbuf,e_root:u64,e_pos:u64,e_end:u64)
+  e_more:bool = compare.lt(e_pos,e_end)
+  branch e_more eq(e_w,e_root,e_pos,e_end) success()
+block eq(f_w:mutbuf,f_root:u64,f_pos:u64,f_end:u64)
+  f_l:u64 = call(f_w,f_root) {"function":"tr_get"}
+  f_r:u64 = call(f_w,f_pos) {"function":"tr_get"}
+  f_ok:bool = compare.eq(f_l,f_r)
+  f_width:u64 = const() {"value":8}
+  f_lr:u64 = int.add.wrap(f_root,f_width)
+  f_rp:u64 = int.add.wrap(f_pos,f_width)
+  branch f_ok word(f_w,f_lr,f_rp,f_end) bad_root()
+block bad_root()
+  g_s:u32 = const() {"value":44}
+  ret(g_s)
+block internal()
+  h_s:u32 = const() {"value":103}
+  ret(h_s)
+block success()
+  i_s:u32 = const() {"value":0}
+  ret(i_s)
+end

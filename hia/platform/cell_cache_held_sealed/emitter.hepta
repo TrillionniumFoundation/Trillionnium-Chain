@@ -1,0 +1,122 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_cache_held_sealed
+fn f0(kernel:readbuf,image:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(kernel:readbuf,image:mutbuf,scratch:mutbuf)
+  input_n:usize = buffer.len(kernel)
+  image_cap:usize = buffer.len(image)
+  pinned_n:usize = const() {"value":102947}
+  required:usize = const() {"value":103867}
+  exact:bool = compare.eq(input_n,pinned_n)
+  fits:bool = compare.ge(image_cap,required)
+  ready:bool = bool.and(exact,fits)
+  branch ready pack(kernel,image,input_n) refuse()
+block pack(src:readbuf,out:mutbuf,n:usize)
+  start:usize = const() {"value":0}
+  stop:usize = const() {"value":920}
+  nul:u8 = const() {"value":0}
+  _ = buffer.fill_range(out,start,stop,nul)
+  _elf_header:u64 = call(out) {"function":"elf_header"}
+  _fd_checks:u64 = call(out) {"function":"fd_checks"}
+  _anonymous_buffers:u64 = call(out) {"function":"anonymous_buffers"}
+  _read_exact:u64 = call(out) {"function":"read_exact"}
+  _eof_and_call:u64 = call(out) {"function":"eof_and_call"}
+  _stdout:u64 = call(out) {"function":"stdout"}
+  _retry_and_exit:u64 = call(out) {"function":"retry_and_exit"}
+  _held:u64 = call(out) {"function":"held_thunk"}
+  from0:usize = const() {"value":0}
+  to_prefix:usize = const() {"value":920}
+  jump copy(src,out,n,from0,to_prefix)
+block copy(c_src:readbuf,c_out:mutbuf,c_n:usize,c_at:usize,c_dst:usize)
+  done:bool = compare.eq(c_at,c_n)
+  branch done success() byte(c_src,c_out,c_n,c_at,c_dst)
+block byte(b_src:readbuf,b_out:mutbuf,b_n:usize,b_at:usize,b_dst:usize)
+  value:u8 = buffer.load(b_src,b_at)
+  _ = buffer.store(b_out,b_dst,value)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(b_at,one)
+  dst_next:usize = int.add.wrap(b_dst,one)
+  jump copy(b_src,b_out,b_n,next,dst_next)
+block success()
+  image_n:u32 = const() {"value":103867}
+  ret(image_n)
+block refuse()
+  invalid:u32 = const() {"value":4294967294}
+  ret(invalid)
+end
+
+fn elf_header(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  offset_0:u64 = const() {"value":0}
+  word_0:u64 = const() {"value":282584257676671}
+  _at_0:u64 = call(out,offset_0,word_0) {"function":"put_le64"}
+  offset_16:u64 = const() {"value":16}
+  word_16:u64 = const() {"value":4299030530}
+  _at_16:u64 = call(out,offset_16,word_16) {"function":"put_le64"}
+  offset_24:u64 = const() {"value":24}
+  word_24:u64 = const() {"value":4194480}
+  _at_24:u64 = call(out,offset_24,word_24) {"function":"put_le64"}
+  offset_32:u64 = const() {"value":32}
+  word_32:u64 = const() {"value":64}
+  _at_32:u64 = call(out,offset_32,word_32) {"function":"put_le64"}
+  offset_48:u64 = const() {"value":48}
+  word_48:u64 = const() {"value":15762873573703680}
+  _at_48:u64 = call(out,offset_48,word_48) {"function":"put_le64"}
+  offset_56:u64 = const() {"value":56}
+  word_56:u64 = const() {"value":2}
+  _at_56:u64 = call(out,offset_56,word_56) {"function":"put_le64"}
+  offset_64:u64 = const() {"value":64}
+  word_64:u64 = const() {"value":21474836481}
+  _at_64:u64 = call(out,offset_64,word_64) {"function":"put_le64"}
+  offset_80:u64 = const() {"value":80}
+  word_80:u64 = const() {"value":4194304}
+  _at_80:u64 = call(out,offset_80,word_80) {"function":"put_le64"}
+  offset_88:u64 = const() {"value":88}
+  word_88:u64 = const() {"value":4194304}
+  _at_88:u64 = call(out,offset_88,word_88) {"function":"put_le64"}
+  offset_96:u64 = const() {"value":96}
+  word_96:u64 = const() {"value":103867}
+  _at_96:u64 = call(out,offset_96,word_96) {"function":"put_le64"}
+  offset_104:u64 = const() {"value":104}
+  word_104:u64 = const() {"value":103867}
+  _at_104:u64 = call(out,offset_104,word_104) {"function":"put_le64"}
+  offset_112:u64 = const() {"value":112}
+  word_112:u64 = const() {"value":4096}
+  _at_112:u64 = call(out,offset_112,word_112) {"function":"put_le64"}
+  offset_120:u64 = const() {"value":120}
+  word_120:u64 = const() {"value":27455186257}
+  _at_120:u64 = call(out,offset_120,word_120) {"function":"put_le64"}
+  offset_168:u64 = const() {"value":168}
+  word_168:u64 = const() {"value":16}
+  _at_168:u64 = call(out,offset_168,word_168) {"function":"put_le64"}
+  done:u64 = const() {"value":0}
+  ret(done)
+end
+
+fn held_thunk(out:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(out:mutbuf)
+  at_856:u64 = const() {"value":856}
+  word_856:u64 = const() {"value":72075984341911635}
+  store_856:u64 = call(out,at_856,word_856) {"function":"put_le64"}
+  at_864:u64 = const() {"value":864}
+  word_864:u64 = const() {"value":16717361837480952064}
+  store_864:u64 = call(out,at_864,word_864) {"function":"put_le64"}
+  at_872:u64 = const() {"value":872}
+  word_872:u64 = const() {"value":8484928242250154028}
+  store_872:u64 = call(out,at_872,word_872) {"function":"put_le64"}
+  at_880:u64 = const() {"value":880}
+  word_880:u64 = const() {"value":17249173909489682}
+  store_880:u64 = call(out,at_880,word_880) {"function":"put_le64"}
+  at_888:u64 = const() {"value":888}
+  word_888:u64 = const() {"value":13872010469834752256}
+  store_888:u64 = call(out,at_888,word_888) {"function":"put_le64"}
+  at_896:u64 = const() {"value":896}
+  word_896:u64 = const() {"value":10431282042946935568}
+  store_896:u64 = call(out,at_896,word_896) {"function":"put_le64"}
+  at_904:u64 = const() {"value":904}
+  word_904:u64 = const() {"value":10416984888683040912}
+  store_904:u64 = call(out,at_904,word_904) {"function":"put_le64"}
+  at_912:u64 = const() {"value":912}
+  word_912:u64 = const() {"value":10416984888683040912}
+  store_912:u64 = call(out,at_912,word_912) {"function":"put_le64"}
+  zero:u64 = const() {"value":0}
+  ret(zero)
+end

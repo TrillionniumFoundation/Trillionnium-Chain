@@ -1,0 +1,253 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_executor_config_grouped_u64_v1
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  zero:usize = const() {"value":0}
+  length:usize = buffer.len(input)
+  start:usize = call(input,zero,length) {"function":"trim_left"}
+  end:usize = call(input,start,length) {"function":"trim_right"}
+  width:usize = int.sub.wrap(end,start)
+  two:usize = const() {"value":2}
+  may_quote:bool = compare.ge(width,two)
+  branch may_quote quote(input,output,start,end) initial(input,output,start,end)
+block quote(qinp:readbuf,qout:mutbuf,qstart:usize,qend:usize)
+  one:usize = const() {"value":1}
+  last:usize = int.sub.wrap(qend,one)
+  first_byte:u8 = buffer.load(qinp,qstart)
+  last_byte:u8 = buffer.load(qinp,last)
+  single:u8 = const() {"value":39}
+  double:u8 = const() {"value":34}
+  same:bool = compare.eq(first_byte,last_byte)
+  is_single:bool = compare.eq(first_byte,single)
+  is_double:bool = compare.eq(first_byte,double)
+  is_quote:bool = bool.or(is_single,is_double)
+  quoted:bool = bool.and(same,is_quote)
+  branch quoted inside(qinp,qout,qstart,last) initial(qinp,qout,qstart,qend)
+block inside(iinp:readbuf,iout:mutbuf,istart:usize,iend:usize)
+  ione:usize = const() {"value":1}
+  first_inner:usize = int.add.wrap(istart,ione)
+  istripped:usize = call(iinp,first_inner,iend) {"function":"trim_left"}
+  ilast:usize = call(iinp,istripped,iend) {"function":"trim_right"}
+  jump initial(iinp,iout,istripped,ilast)
+block initial(ainp:readbuf,aout:mutbuf,apos:usize,aend:usize)
+  az:u64 = const() {"value":0}
+  az8:u8 = const() {"value":0}
+  no:bool = const() {"value":false}
+  jump scan(ainp,aout,apos,aend,az,az8,az8,no)
+block scan(sinp:readbuf,sout:mutbuf,spos:usize,send:usize,total:u64,group:u8,plus:u8,grouped:bool)
+  more:bool = compare.lt(spos,send)
+  branch more byte(sinp,sout,spos,send,total,group,plus,grouped) finish(sout,total,group,grouped)
+block byte(binp:readbuf,bout:mutbuf,bpos:usize,bend:usize,btotal:u64,bgroup:u8,bplus:u8,bgrouped:bool)
+  current:u8 = buffer.load(binp,bpos)
+  onep:usize = const() {"value":1}
+  next:usize = int.add.wrap(bpos,onep)
+  underscore:u8 = const() {"value":95}
+  skip:bool = compare.eq(current,underscore)
+  branch skip scan(binp,bout,next,bend,btotal,bgroup,bplus,bgrouped) token(binp,bout,next,bend,btotal,bgroup,bplus,bgrouped,current)
+block token(tinp:readbuf,tout:mutbuf,tpos:usize,tend:usize,ttotal:u64,tgroup:u8,tplus:u8,tgrouped:bool,ch:u8)
+  plus_byte:u8 = const() {"value":43}
+  comma_byte:u8 = const() {"value":44}
+  plus_char:bool = compare.eq(ch,plus_byte)
+  comma_char:bool = compare.eq(ch,comma_byte)
+  branch plus_char sign(tinp,tout,tpos,tend,ttotal,tgroup,tplus,tgrouped) nonplus(tinp,tout,tpos,tend,ttotal,tgroup,tplus,tgrouped,ch,comma_char)
+block sign(pinp:readbuf,pout:mutbuf,ppos:usize,pend:usize,ptotal:u64,pgroup:u8,pplus:u8,pgrouped:bool)
+  pzero:u8 = const() {"value":0}
+  pone:u8 = const() {"value":1}
+  no_digits:bool = compare.eq(pgroup,pzero)
+  plus_space:bool = compare.le(pplus,pone)
+  no_comma:bool = bool.not(pgrouped)
+  before_digits:bool = bool.and(no_digits,no_comma)
+  valid_sign:bool = bool.and(before_digits,plus_space)
+  nplus:u8 = int.add.wrap(pplus,pone)
+  branch valid_sign scan(pinp,pout,ppos,pend,ptotal,pgroup,nplus,pgrouped) invalid()
+block nonplus(ninp:readbuf,nout:mutbuf,npos:usize,nend:usize,ntotal:u64,ngroup:u8,npl:u8,ngrouped:bool,nch:u8,ncomma:bool)
+  branch ncomma comma(ninp,nout,npos,nend,ntotal,ngroup,npl,ngrouped) digit(ninp,nout,npos,nend,ntotal,ngroup,npl,ngrouped,nch)
+block comma(cinp:readbuf,cout:mutbuf,cpos:usize,cend:usize,ctotal:u64,cgroup:u8,cplus:u8,cgrouped:bool)
+  cz:u8 = const() {"value":0}
+  cone:u8 = const() {"value":1}
+  cthree:u8 = const() {"value":3}
+  yes:bool = const() {"value":true}
+  group_nonempty:bool = compare.gt(cgroup,cz)
+  group_exact:bool = compare.eq(cgroup,cthree)
+  group_valid:bool = select(cgrouped,group_exact,group_nonempty)
+  sign_valid:bool = compare.le(cplus,cone)
+  comma_valid:bool = bool.and(group_valid,sign_valid)
+  branch comma_valid scan(cinp,cout,cpos,cend,ctotal,cz,cplus,yes) invalid()
+block digit(dinp:readbuf,dout:mutbuf,dpos:usize,dend:usize,dtotal:u64,dgroup:u8,dplus:u8,dgrouped:bool,dch:u8)
+  digit_zero:u8 = const() {"value":48}
+  digit_nine:u8 = const() {"value":57}
+  not_low:bool = compare.ge(dch,digit_zero)
+  not_high:bool = compare.le(dch,digit_nine)
+  numeric:bool = bool.and(not_low,not_high)
+  raw_digit:u8 = int.sub.wrap(dch,digit_zero)
+  wide_digit:u64 = int.cast(raw_digit) {"mode":"wrap"}
+  max_prefix:u64 = const() {"value":1844674407370955161}
+  last_max:u8 = const() {"value":5}
+  can_multiply:bool = compare.lt(dtotal,max_prefix)
+  edge_prefix:bool = compare.eq(dtotal,max_prefix)
+  edge_digit:bool = compare.le(raw_digit,last_max)
+  edge_ok:bool = bool.and(edge_prefix,edge_digit)
+  range_ok:bool = bool.or(can_multiply,edge_ok)
+  digit_ok:bool = bool.and(numeric,range_ok)
+  branch digit_ok accum(dinp,dout,dpos,dend,dtotal,dgroup,dplus,dgrouped,wide_digit) invalid()
+block accum(xinp:readbuf,xout:mutbuf,xpos:usize,xend:usize,xtotal:u64,xgroup:u8,xplus:u8,xgrouped:bool,xvalue:u64)
+  ten:u64 = const() {"value":10}
+  mul:u64 = int.mul.wrap(xtotal,ten)
+  sum:u64 = int.add.wrap(mul,xvalue)
+  xone:u8 = const() {"value":1}
+  cap:u8 = const() {"value":4}
+  below_cap:bool = compare.lt(xgroup,cap)
+  add_group:u8 = int.add.wrap(xgroup,xone)
+  next_group:u8 = select(below_cap,add_group,xgroup)
+  jump scan(xinp,xout,xpos,xend,sum,next_group,xplus,xgrouped)
+block finish(fout:mutbuf,ftotal:u64,fgroup:u8,fgrouped:bool)
+  fzero:u8 = const() {"value":0}
+  fthree:u8 = const() {"value":3}
+  has_digit:bool = compare.gt(fgroup,fzero)
+  group_ok:bool = compare.eq(fgroup,fthree)
+  final_ok:bool = select(fgrouped,group_ok,has_digit)
+  branch final_ok capacity(fout,ftotal) invalid()
+block capacity(caout:mutbuf,value:u64)
+  min:usize = const() {"value":8}
+  output_size:usize = buffer.len(caout)
+  fit:bool = compare.ge(output_size,min)
+  branch fit emit(caout,value) short()
+block emit(eout:mutbuf,evalue:u64)
+  ezero:usize = const() {"value":0}
+  jump write(eout,evalue,ezero)
+block write(wout:mutbuf,wvalue:u64,offset:usize)
+  low:u8 = int.cast(wvalue) {"mode":"wrap"}
+  _ = buffer.store(wout,offset,low)
+  wone:usize = const() {"value":1}
+  wnext:usize = int.add.wrap(offset,wone)
+  eight:usize = const() {"value":8}
+  bits:u64 = const() {"value":8}
+  remainder:u64 = int.shr.checked(wvalue,bits)
+  more_byte:bool = compare.lt(wnext,eight)
+  branch more_byte write(wout,remainder,wnext) success()
+block success()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block invalid()
+  bad:u32 = const() {"value":1}
+  ret(bad)
+block short()
+  small:u32 = const() {"value":2}
+  ret(small)
+end
+fn trim_left(start_li:readbuf,start_lp:usize,start_le:usize) -> (usize) effects(read,trap) entry(start)
+block start(start_li:readbuf,start_lp:usize,start_le:usize)
+  jump loop(start_li,start_lp,start_le)
+block loop(li:readbuf,lp:usize,le:usize)
+  left_width:usize = call(li,lp,le) {"function":"ws_width"}
+  lzero:usize = const() {"value":0}
+  advanced:usize = int.add.wrap(lp,left_width)
+  can_advance:bool = compare.gt(left_width,lzero)
+  branch can_advance loop(li,advanced,le) done(lp)
+block done(lret:usize)
+  ret(lret)
+end
+fn trim_right(start_ri:readbuf,start_rs:usize,start_re:usize) -> (usize) effects(read,trap) entry(start)
+block start(start_ri:readbuf,start_rs:usize,start_re:usize)
+  jump loop(start_ri,start_rs,start_re)
+block loop(ri:readbuf,rs:usize,re:usize)
+  rone:usize = const() {"value":1}
+  jump candidate(ri,rs,re,rone)
+block candidate(ci:readbuf,cs:usize,ce:usize,cw:usize)
+  remaining:usize = int.sub.wrap(ce,cs)
+  fits:bool = compare.ge(remaining,cw)
+  branch fits measure(ci,cs,ce,cw) done(ce)
+block measure(mi:readbuf,ms:usize,me:usize,mw:usize)
+  position:usize = int.sub.wrap(me,mw)
+  actual:usize = call(mi,position,me) {"function":"ws_width"}
+  match:bool = compare.eq(mw,actual)
+  branch match loop(mi,ms,position) wider(mi,ms,me,mw)
+block wider(wi:readbuf,ws:usize,we:usize,ww:usize)
+  max:usize = const() {"value":3}
+  plus_one:usize = const() {"value":1}
+  try_more:bool = compare.lt(ww,max)
+  new_width:usize = int.add.wrap(ww,plus_one)
+  branch try_more candidate(wi,ws,we,new_width) done(we)
+block done(rret:usize)
+  ret(rret)
+end
+fn ws_width(wi:readbuf,wp:usize,we:usize) -> (usize) effects(read,trap) entry(entry)
+block entry(wi:readbuf,wp:usize,we:usize)
+  has_one:bool = compare.lt(wp,we)
+  branch has_one first(wi,wp,we) none()
+block first(fi:readbuf,fp:usize,fe:usize)
+  first:u8 = buffer.load(fi,fp)
+  tab:u8 = const() {"value":9}
+  cr:u8 = const() {"value":13}
+  space:u8 = const() {"value":32}
+  above:bool = compare.ge(first,tab)
+  below:bool = compare.le(first,cr)
+  tab_through_cr:bool = bool.and(above,below)
+  ascii_space:bool = compare.eq(first,space)
+  ascii_ws:bool = bool.or(ascii_space,tab_through_cr)
+  branch ascii_ws one() multibyte(fi,fp,fe,first)
+block multibyte(ui:readbuf,up:usize,ue:usize,ub:u8)
+  mone:usize = const() {"value":1}
+  next:usize = int.add.wrap(up,mone)
+  has_two:bool = compare.lt(next,ue)
+  branch has_two second(ui,next,ue,ub) none()
+block second(ti:readbuf,tp:usize,te:usize,tb:u8)
+  second_byte:u8 = buffer.load(ti,tp)
+  hi:u32 = int.cast(tb) {"mode":"wrap"}
+  lo:u32 = int.cast(second_byte) {"mode":"wrap"}
+  shift:u32 = const() {"value":8}
+  hi_shift:u32 = int.shl.checked(hi,shift)
+  packed:u32 = bit.or(hi_shift,lo)
+  nel:u32 = const() {"value":49797}
+  is_nel:bool = compare.eq(packed,nel)
+  nbsp:u32 = const() {"value":49824}
+  is_nbsp:bool = compare.eq(packed,nbsp)
+  double_ws:bool = bool.or(is_nel,is_nbsp)
+  branch double_ws two() third_bound(ti,tp,te,packed)
+block third_bound(di:readbuf,dp:usize,de:usize,dpacked:u32)
+  done:usize = const() {"value":1}
+  third_pos:usize = int.add.wrap(dp,done)
+  has_three:bool = compare.lt(third_pos,de)
+  branch has_three third(di,third_pos,dpacked) none()
+block third(thi:readbuf,thp:usize,thpacked:u32)
+  third_byte:u8 = buffer.load(thi,thp)
+  third_low:u32 = int.cast(third_byte) {"mode":"wrap"}
+  tshift:u32 = const() {"value":8}
+  triple_hi:u32 = int.shl.checked(thpacked,tshift)
+  triple:u32 = bit.or(triple_hi,third_low)
+  ogham:u32 = const() {"value":14785152}
+  is_ogham:bool = compare.eq(triple,ogham)
+  line_sep:u32 = const() {"value":14844072}
+  is_line_sep:bool = compare.eq(triple,line_sep)
+  para_sep:u32 = const() {"value":14844073}
+  is_para_sep:bool = compare.eq(triple,para_sep)
+  narrow_nbsp:u32 = const() {"value":14844079}
+  is_narrow_nbsp:bool = compare.eq(triple,narrow_nbsp)
+  medium_space:u32 = const() {"value":14844319}
+  is_medium_space:bool = compare.eq(triple,medium_space)
+  ideographic:u32 = const() {"value":14909568}
+  is_ideographic:bool = compare.eq(triple,ideographic)
+  en_quad:u32 = const() {"value":14844032}
+  hair_space:u32 = const() {"value":14844042}
+  above_quad:bool = compare.ge(triple,en_quad)
+  below_hair:bool = compare.le(triple,hair_space)
+  in_spaces:bool = bool.and(above_quad,below_hair)
+  sep_pair:bool = bool.or(is_line_sep,is_para_sep)
+  no_break_pair:bool = bool.or(is_narrow_nbsp,is_medium_space)
+  outer_pair:bool = bool.or(is_ogham,is_ideographic)
+  non_quad_a:bool = bool.or(sep_pair,no_break_pair)
+  non_quad_b:bool = bool.or(non_quad_a,outer_pair)
+  triple_ws:bool = bool.or(non_quad_b,in_spaces)
+  branch triple_ws three() none()
+block one()
+  one_byte:usize = const() {"value":1}
+  ret(one_byte)
+block two()
+  two_bytes:usize = const() {"value":2}
+  ret(two_bytes)
+block three()
+  three_bytes:usize = const() {"value":3}
+  ret(three_bytes)
+block none()
+  no_bytes:usize = const() {"value":0}
+  ret(no_bytes)
+end

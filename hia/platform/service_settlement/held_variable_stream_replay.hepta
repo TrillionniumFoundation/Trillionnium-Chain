@@ -1,0 +1,44 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_settlement_held_variable_stream_replay
+fn f0(raw:readbuf,mem:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,mem:mutbuf,work:mutbuf)
+  extent:usize = const() {"value":1048576}
+  mn:usize = buffer.len(mem)
+  wn:usize = buffer.len(work)
+  cm:bool = compare.eq(mn,extent)
+  cw:bool = compare.eq(wn,extent)
+  fit:bool = bool.and(cm,cw)
+  branch fit route(raw,mem,work) bad()
+block route(r:readbuf,m:mutbuf,w:mutbuf)
+  state_at:u64 = const() {"value":96}
+  stage:u64 = call(m,state_at) {"function":"cp_get"}
+  complete:u64 = const() {"value":3}
+  verified:bool = compare.ge(stage,complete)
+  branch verified select_rows(r,m,w) prepare(r,m,w)
+block prepare(pr:readbuf,pm:mutbuf,pw:mutbuf)
+  measured:u64 = const() {"value":6}
+  result:u32 = call(pr,pm,pw,measured) {"function":"hfr_read"}
+  ret(result)
+block select_rows(sr:readbuf,sm:mutbuf,sw:mutbuf)
+  at:u64 = const() {"value":7002}
+  rows:u64 = call(sm,at) {"function":"cp_get"}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  four:u64 = const() {"value":4}
+  single:bool = compare.eq(rows,one)
+  pair:bool = compare.eq(rows,two)
+  mixed:bool = compare.eq(rows,four)
+  first:bool = bool.or(single,pair)
+  allowed:bool = bool.or(first,mixed)
+  six:u64 = const() {"value":6}
+  seven:u64 = const() {"value":7}
+  eight:u64 = const() {"value":8}
+  earlier:u64 = select(pair,seven,six)
+  profile:u64 = select(mixed,eight,earlier)
+  branch allowed proceed(sr,sm,sw,profile) bad()
+block proceed(rr:readbuf,rm:mutbuf,rw:mutbuf,rp:u64)
+  code:u32 = call(rr,rm,rw,rp) {"function":"hfr_read"}
+  ret(code)
+block bad()
+  refuse:u32 = const() {"value":100}
+  ret(refuse)
+end

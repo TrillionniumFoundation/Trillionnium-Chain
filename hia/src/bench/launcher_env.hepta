@@ -1,0 +1,69 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_launcher_env_names_v1
+fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,s:mutbuf)
+  n:usize = buffer.len(i)
+  zero:usize = const() {"value":0}
+  mask:usize = const() {"value":7}
+  limit:usize = const() {"value":512}
+  bounded:bool = compare.le(n,limit)
+  residue:usize = bit.and(n,mask)
+  aligned:bool = compare.eq(residue,zero)
+  valid:bool = bool.and(bounded,aligned)
+  branch valid scan(i,n,zero) reject()
+block scan(si:readbuf,sn:usize,sp:usize)
+  done:bool = compare.eq(sn,sp)
+  branch done allow() check(si,sn,sp)
+block check(ci:readbuf,cn:usize,cp:usize)
+  word:u64 = call(ci,cp) {"function":"benv_launcher_name"}
+  eight:usize = const() {"value":8}
+  next:usize = int.add.wrap(cp,eight)
+  k0:u64 = const() {"value":1213481296}
+  m0:bool = compare.eq(word,k0)
+  k1:u64 = const() {"value":1162694472}
+  m1:bool = compare.eq(word,k1)
+  k2:u64 = const() {"value":1196310860}
+  m2:bool = compare.eq(word,k2)
+  k3:u64 = const() {"value":83890397987660}
+  m3:bool = compare.eq(word,k3)
+  k4:u64 = const() {"value":4994590205196321612}
+  m4:bool = compare.eq(word,k4)
+  k5:u64 = const() {"value":1297237332}
+  m5:bool = compare.eq(word,k5)
+  k6:u64 = const() {"value":90474632203604}
+  m6:bool = compare.eq(word,k6)
+  v1:bool = bool.or(m0,m1)
+  v2:bool = bool.or(v1,m2)
+  v3:bool = bool.or(v2,m3)
+  v4:bool = bool.or(v3,m4)
+  v5:bool = bool.or(v4,m5)
+  v6:bool = bool.or(v5,m6)
+  branch v6 scan(ci,cn,next) reject()
+block allow()
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block reject()
+  invalid:u32 = const() {"value":1}
+  ret(invalid)
+end
+
+fn benv_launcher_name(i:readbuf,p:usize) -> (u64) effects(read,trap) entry(entry)
+block entry(i:readbuf,p:usize)
+  z:u64 = const() {"value":0}
+  jump scan(i,p,z,z)
+block scan(si:readbuf,sp:usize,shift:u64,value:u64)
+  max:u64 = const() {"value":64}
+  done:bool = compare.eq(shift,max)
+  branch done finish(value) byte(si,sp,shift,value)
+block byte(bi:readbuf,bp:usize,bs:u64,bv:u64)
+  c:u8 = buffer.load(bi,bp)
+  n:u64 = int.cast(c) {"mode":"wrap"}
+  bits:u64 = int.shl.checked(n,bs)
+  v:u64 = bit.or(bv,bits)
+  eight:u64 = const() {"value":8}
+  one:usize = const() {"value":1}
+  next_shift:u64 = int.add.wrap(bs,eight)
+  next_pos:usize = int.add.wrap(bp,one)
+  jump scan(bi,next_pos,next_shift,v)
+block finish(x:u64)
+  ret(x)
+end

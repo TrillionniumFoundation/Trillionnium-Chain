@@ -1,0 +1,408 @@
+{
+  "schema": "trnm.hia.paid-cpu.private-continuation-layout.v1",
+  "arena_bytes": 73728,
+  "fields": [
+    {
+      "name": "command",
+      "offset": 256,
+      "bytes": 8
+    },
+    {
+      "name": "argument",
+      "offset": 264,
+      "bytes": 8
+    },
+    {
+      "name": "phase",
+      "offset": 320,
+      "bytes": 8
+    },
+    {
+      "name": "sample_next",
+      "offset": 352,
+      "bytes": 8
+    },
+    {
+      "name": "cpu_retry",
+      "offset": 360,
+      "bytes": 8
+    },
+    {
+      "name": "sample_some",
+      "offset": 368,
+      "bytes": 8
+    },
+    {
+      "name": "sample_now",
+      "offset": 376,
+      "bytes": 8
+    },
+    {
+      "name": "actual_tid",
+      "offset": 392,
+      "bytes": 8
+    },
+    {
+      "name": "native_life",
+      "offset": 400,
+      "bytes": 8
+    },
+    {
+      "name": "native_role",
+      "offset": 408,
+      "bytes": 8
+    },
+    {
+      "name": "request",
+      "offset": 416,
+      "bytes": 8
+    },
+    {
+      "name": "worker",
+      "offset": 424,
+      "bytes": 8
+    },
+    {
+      "name": "outer_baseline",
+      "offset": 432,
+      "bytes": 8
+    },
+    {
+      "name": "outer_some",
+      "offset": 440,
+      "bytes": 8
+    },
+    {
+      "name": "wall_next",
+      "offset": 448,
+      "bytes": 8
+    },
+    {
+      "name": "panicking",
+      "offset": 456,
+      "bytes": 8
+    },
+    {
+      "name": "interval_live",
+      "offset": 464,
+      "bytes": 8
+    },
+    {
+      "name": "operation_live",
+      "offset": 480,
+      "bytes": 8
+    },
+    {
+      "name": "begin_result",
+      "offset": 496,
+      "bytes": 8
+    },
+    {
+      "name": "observe_remove",
+      "offset": 504,
+      "bytes": 8
+    },
+    {
+      "name": "observe_enforce",
+      "offset": 512,
+      "bytes": 8
+    },
+    {
+      "name": "observe_next",
+      "offset": 520,
+      "bytes": 8
+    },
+    {
+      "name": "observe_baseline",
+      "offset": 528,
+      "bytes": 8
+    },
+    {
+      "name": "observe_budget_result",
+      "offset": 536,
+      "bytes": 8
+    },
+    {
+      "name": "observe_result",
+      "offset": 544,
+      "bytes": 8
+    },
+    {
+      "name": "unknown_next",
+      "offset": 552,
+      "bytes": 8
+    },
+    {
+      "name": "counter_failed",
+      "offset": 584,
+      "bytes": 8
+    },
+    {
+      "name": "collector_unknown_next",
+      "offset": 592,
+      "bytes": 8
+    },
+    {
+      "name": "live_some",
+      "offset": 608,
+      "bytes": 8
+    },
+    {
+      "name": "live_ns",
+      "offset": 616,
+      "bytes": 8
+    },
+    {
+      "name": "owner_some",
+      "offset": 624,
+      "bytes": 8
+    },
+    {
+      "name": "owner_ns",
+      "offset": 632,
+      "bytes": 8
+    },
+    {
+      "name": "workers_some",
+      "offset": 640,
+      "bytes": 8
+    },
+    {
+      "name": "workers_ns",
+      "offset": 648,
+      "bytes": 8
+    },
+    {
+      "name": "spawned",
+      "offset": 656,
+      "bytes": 8
+    },
+    {
+      "name": "started",
+      "offset": 664,
+      "bytes": 8
+    },
+    {
+      "name": "finished",
+      "offset": 672,
+      "bytes": 8
+    },
+    {
+      "name": "known",
+      "offset": 680,
+      "bytes": 8
+    },
+    {
+      "name": "full_some",
+      "offset": 688,
+      "bytes": 8
+    },
+    {
+      "name": "full_ns",
+      "offset": 696,
+      "bytes": 8
+    },
+    {
+      "name": "residual_some",
+      "offset": 704,
+      "bytes": 8
+    },
+    {
+      "name": "residual_ns",
+      "offset": 712,
+      "bytes": 8
+    },
+    {
+      "name": "budget_settled",
+      "offset": 720,
+      "bytes": 8
+    },
+    {
+      "name": "was_refused",
+      "offset": 728,
+      "bytes": 8
+    },
+    {
+      "name": "release_next",
+      "offset": 744,
+      "bytes": 8
+    },
+    {
+      "name": "arithmetic_lo",
+      "offset": 1056,
+      "bytes": 8
+    },
+    {
+      "name": "arithmetic_hi",
+      "offset": 1064,
+      "bytes": 8
+    },
+    {
+      "name": "elapsed_seconds",
+      "offset": 1120,
+      "bytes": 8
+    },
+    {
+      "name": "elapsed_nanos",
+      "offset": 1128,
+      "bytes": 8
+    },
+    {
+      "name": "wall_seconds",
+      "offset": 1160,
+      "bytes": 8
+    },
+    {
+      "name": "wall_nanos",
+      "offset": 1168,
+      "bytes": 8
+    },
+    {
+      "name": "actual_delta",
+      "offset": 1176,
+      "bytes": 8
+    },
+    {
+      "name": "request_total",
+      "offset": 1184,
+      "bytes": 8
+    },
+    {
+      "name": "settle_some",
+      "offset": 1200,
+      "bytes": 8
+    },
+    {
+      "name": "settle_residual",
+      "offset": 1208,
+      "bytes": 8
+    },
+    {
+      "name": "attribution_some",
+      "offset": 1216,
+      "bytes": 8
+    },
+    {
+      "name": "attribution_full",
+      "offset": 1224,
+      "bytes": 8
+    },
+    {
+      "name": "attribution_live",
+      "offset": 1232,
+      "bytes": 8
+    },
+    {
+      "name": "scope_count",
+      "offset": 1400,
+      "bytes": 8
+    },
+    {
+      "name": "spawn_index",
+      "offset": 1408,
+      "bytes": 8
+    },
+    {
+      "name": "spawned_count",
+      "offset": 1416,
+      "bytes": 8
+    },
+    {
+      "name": "joined_count",
+      "offset": 1424,
+      "bytes": 8
+    },
+    {
+      "name": "partial_spawn",
+      "offset": 1432,
+      "bytes": 8
+    },
+    {
+      "name": "child_panicked",
+      "offset": 1440,
+      "bytes": 8
+    },
+    {
+      "name": "native_result",
+      "offset": 1448,
+      "bytes": 8
+    },
+    {
+      "name": "work_mask",
+      "offset": 1456,
+      "bytes": 8
+    },
+    {
+      "name": "work_result_refused",
+      "offset": 1464,
+      "bytes": 8
+    },
+    {
+      "name": "desired_workers",
+      "offset": 1500,
+      "bytes": 8
+    },
+    {
+      "name": "transactions",
+      "offset": 1508,
+      "bytes": 8
+    },
+    {
+      "name": "work_units",
+      "offset": 1516,
+      "bytes": 8
+    },
+    {
+      "name": "work_seed",
+      "offset": 1524,
+      "bytes": 8
+    },
+    {
+      "name": "work_index",
+      "offset": 1532,
+      "bytes": 8
+    },
+    {
+      "name": "work_step",
+      "offset": 1540,
+      "bytes": 8
+    }
+  ],
+  "regions": [
+    {
+      "name": "validated_work_plan_bytes",
+      "offset": 0,
+      "bytes": 192
+    },
+    {
+      "name": "flow_projection",
+      "offset": 2048,
+      "bytes": 128
+    },
+    {
+      "name": "freshness_projection",
+      "offset": 2304,
+      "bytes": 72
+    },
+    {
+      "name": "receipts_after_actual_join",
+      "offset": 4096,
+      "bytes": 1536
+    },
+    {
+      "name": "actual_private_work_results",
+      "offset": 8192,
+      "bytes": 256
+    }
+  ],
+  "original_failed_overlap": {
+    "begin_result": {
+      "offset": 496,
+      "bytes": 8
+    },
+    "observe_remove": {
+      "offset": 500,
+      "bytes": 8
+    }
+  }
+}

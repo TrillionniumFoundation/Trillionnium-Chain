@@ -1,0 +1,626 @@
+{
+  "artifacts": {
+    "checkpoint-store-api": {
+      "bytes": 4246558,
+      "profile": 2,
+      "sha256": "9177bef739c26d23d4c792505d66d45518f43e7598087eac8fb041d5688af7e7",
+      "structure": {
+        "dynamic_linker": false,
+        "entry": 4194480,
+        "format": "ELF64LE",
+        "instruction_semantics_verified_by_this_check": false,
+        "interpreter": null,
+        "load_flags": "RX",
+        "machine": "x86_64",
+        "stack_flags": "RW",
+        "type": "ET_EXEC"
+      }
+    },
+    "trnm-external-node-checkpoint-v2": {
+      "bytes": 4246558,
+      "profile": 1,
+      "sha256": "eb533313b1f19e3ce19599ec9c764cdb8a2f773af2b23434514695a38233a0c4",
+      "structure": {
+        "dynamic_linker": false,
+        "entry": 4194480,
+        "format": "ELF64LE",
+        "instruction_semantics_verified_by_this_check": false,
+        "interpreter": null,
+        "load_flags": "RX",
+        "machine": "x86_64",
+        "stack_flags": "RW",
+        "type": "ET_EXEC"
+      }
+    }
+  },
+  "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+  "core": {
+    "api_driver": {
+      "blocks": 221,
+      "functions": 44,
+      "maximum_function_blocks": 26,
+      "ops": 2030
+    },
+    "api_methods": {
+      "blocks": 369,
+      "functions": 67,
+      "maximum_function_blocks": 72,
+      "ops": 2433
+    },
+    "api_objects": {
+      "blocks": 485,
+      "functions": 78,
+      "maximum_function_blocks": 94,
+      "ops": 3247
+    },
+    "authority_fence": {
+      "blocks": 272,
+      "functions": 51,
+      "maximum_function_blocks": 40,
+      "ops": 2122
+    },
+    "authority_head": {
+      "blocks": 334,
+      "functions": 69,
+      "maximum_function_blocks": 76,
+      "ops": 2672
+    },
+    "authority_open": {
+      "blocks": 381,
+      "functions": 72,
+      "maximum_function_blocks": 82,
+      "ops": 2747
+    },
+    "authority_operations": {
+      "blocks": 336,
+      "functions": 61,
+      "maximum_function_blocks": 60,
+      "ops": 2330
+    },
+    "checkpoint_files": {
+      "blocks": 320,
+      "functions": 67,
+      "maximum_function_blocks": 72,
+      "ops": 2622
+    },
+    "errno_text": {
+      "blocks": 457,
+      "functions": 38,
+      "maximum_function_blocks": 74,
+      "ops": 5845
+    },
+    "error_formatter": {
+      "blocks": 203,
+      "functions": 42,
+      "maximum_function_blocks": 22,
+      "ops": 1872
+    },
+    "error_text_a": {
+      "blocks": 387,
+      "functions": 37,
+      "maximum_function_blocks": 74,
+      "ops": 6684
+    },
+    "error_text_b": {
+      "blocks": 413,
+      "functions": 38,
+      "maximum_function_blocks": 74,
+      "ops": 6878
+    },
+    "filesystem": {
+      "blocks": 372,
+      "functions": 71,
+      "maximum_function_blocks": 80,
+      "ops": 3420
+    },
+    "io": {
+      "blocks": 229,
+      "functions": 42,
+      "maximum_function_blocks": 22,
+      "ops": 2155
+    },
+    "ledger_files": {
+      "blocks": 448,
+      "functions": 95,
+      "maximum_function_blocks": 128,
+      "ops": 3443
+    },
+    "ledger_inventory": {
+      "blocks": 316,
+      "functions": 61,
+      "maximum_function_blocks": 60,
+      "ops": 3211
+    },
+    "ledger_open": {
+      "blocks": 406,
+      "functions": 79,
+      "maximum_function_blocks": 96,
+      "ops": 3044
+    },
+    "ledger_operations": {
+      "blocks": 252,
+      "functions": 49,
+      "maximum_function_blocks": 36,
+      "ops": 2032
+    },
+    "ledger_recovery": {
+      "blocks": 333,
+      "functions": 64,
+      "maximum_function_blocks": 66,
+      "ops": 2361
+    },
+    "linux_emitter": {
+      "blocks": 38,
+      "functions": 7,
+      "maximum_function_blocks": 14,
+      "ops": 2900
+    },
+    "main": {
+      "blocks": 313,
+      "functions": 67,
+      "maximum_function_blocks": 72,
+      "ops": 3585
+    },
+    "socket_owner": {
+      "blocks": 445,
+      "functions": 86,
+      "maximum_function_blocks": 110,
+      "ops": 3241
+    },
+    "socket_path": {
+      "blocks": 239,
+      "functions": 46,
+      "maximum_function_blocks": 30,
+      "ops": 2124
+    },
+    "transport_frame": {
+      "blocks": 236,
+      "functions": 44,
+      "maximum_function_blocks": 22,
+      "ops": 2096
+    },
+    "unix_client": {
+      "blocks": 282,
+      "functions": 59,
+      "maximum_function_blocks": 56,
+      "ops": 2280
+    },
+    "unix_daemon": {
+      "blocks": 280,
+      "functions": 57,
+      "maximum_function_blocks": 52,
+      "ops": 2364
+    },
+    "value_bridge": {
+      "blocks": 523,
+      "functions": 88,
+      "maximum_function_blocks": 46,
+      "ops": 5361
+    }
+  },
+  "image_order": [
+    "main",
+    "io",
+    "filesystem",
+    "authority_open",
+    "authority_fence",
+    "authority_head",
+    "socket_owner",
+    "transport_frame",
+    "value_bridge",
+    "ledger_open",
+    "ledger_recovery",
+    "ledger_operations",
+    "error_formatter",
+    "authority_operations",
+    "api_driver",
+    "socket_path",
+    "unix_client",
+    "unix_daemon",
+    "ledger_files",
+    "ledger_inventory",
+    "checkpoint_files",
+    "error_text_a",
+    "error_text_b",
+    "errno_text",
+    "api_methods",
+    "api_objects"
+  ],
+  "images": {
+    "api_driver": {
+      "bytes": 102045,
+      "sha256": "b8da496e5d69cd00aa1eee85db258143b302076c0d9ac1cf4991651d3fa5d763"
+    },
+    "api_methods": {
+      "bytes": 150326,
+      "sha256": "9d01c7eeb7e5072f6268b161f793ffb1af0d78d15dcd187447bf394d910794b0"
+    },
+    "api_objects": {
+      "bytes": 205687,
+      "sha256": "ca69727208be6561ac79eae64c51f0239f5251916c85f8e73295fb09fc2eb142"
+    },
+    "authority_fence": {
+      "bytes": 117339,
+      "sha256": "1a32ee594a9caa1ae84d282a3bc52f5e2a3dde57c4ead1561bfb87d4964cdec5"
+    },
+    "authority_head": {
+      "bytes": 152393,
+      "sha256": "b06a14b7ab0ba89b315daf5f1ca0a5c341a613b5d96a1efe9138aa940d248020"
+    },
+    "authority_open": {
+      "bytes": 163648,
+      "sha256": "5b2f563edcba685f2e3aaf16e8422afabbae3815dfa47bbf4849482945443aa1"
+    },
+    "authority_operations": {
+      "bytes": 138355,
+      "sha256": "39e082b14152f12fb4e986204066adedb7526b8067d9274d20fa3cbd0fa57305"
+    },
+    "checkpoint_files": {
+      "bytes": 148181,
+      "sha256": "1c0d4123ae43628c688aa8e1e22cd2d8d5478bbf7a6f2731218d8fa24f4adff0"
+    },
+    "errno_text": {
+      "bytes": 232540,
+      "sha256": "a65b16857bcc9f0479ba198ad1db6225eb25b4ac4d0ad2ac71eceb3772641774"
+    },
+    "error_formatter": {
+      "bytes": 92505,
+      "sha256": "5904e2532c2e6469dbf9ee962e93f4de16176fdc2f7c9e97ca2ac871802f8738"
+    },
+    "error_text_a": {
+      "bytes": 265678,
+      "sha256": "07e2230d2318ad44cb8c5c9c8a108bf0dc8332b3b47f5eb3dadb1eb49bbcdc71"
+    },
+    "error_text_b": {
+      "bytes": 272550,
+      "sha256": "77ede25ef7f11970662d033352a7decdd5996b0cd431e5fbef60f4e61547434c"
+    },
+    "filesystem": {
+      "bytes": 191395,
+      "sha256": "ab352b4c023b0152686021dc37babf63acdd87d3e5c19b3c80b75e85140e02fa"
+    },
+    "io": {
+      "bytes": 112599,
+      "sha256": "330585f70f1a3e259b0202c51a504b73bb7a4e1d29b1ed6aabc90bdda104d95a"
+    },
+    "ledger_files": {
+      "bytes": 207919,
+      "sha256": "92034b5ef8fca8e6399629a6056db2cb31461573e00347f5fdf0179ef09ec8b8"
+    },
+    "ledger_inventory": {
+      "bytes": 161474,
+      "sha256": "4412cf138683c7ea25fb9da11ccef8d4b885584ce514d16b264c8f7ef57ef6a8"
+    },
+    "ledger_open": {
+      "bytes": 180978,
+      "sha256": "dbd1125b023896c7bf8751528c0379a33affb53f45d4f85892dfc45bdd9a8cfb"
+    },
+    "ledger_operations": {
+      "bytes": 109222,
+      "sha256": "856ade75d761a988f394696892a73e6f34ea9ad943ba8dfe7c7feeee70bb7566"
+    },
+    "ledger_recovery": {
+      "bytes": 137655,
+      "sha256": "2f40f1053f0d0decdbf40fdf2ff46177c631859a5c52f6939fbb6f4ca987564f"
+    },
+    "linux_emitter": {
+      "bytes": 123826,
+      "sha256": "a730919001554150714e7c07e8a87dc3e1d001a0b4cc3517ebb1cf33c470b79e"
+    },
+    "main": {
+      "bytes": 170786,
+      "sha256": "e717b8503622c8b62eaf41ce5287c20b101f8b3d061f849d840b5907e025654b"
+    },
+    "socket_owner": {
+      "bytes": 196004,
+      "sha256": "c30b48f8c5b78ab59b4ba48633adfa0f55c68b9cc2ea777d2694cb8638ae3116"
+    },
+    "socket_path": {
+      "bytes": 111489,
+      "sha256": "d6731d072194db9c404d9cf472eba307fa34e512f191dffb6d14205076685570"
+    },
+    "transport_frame": {
+      "bytes": 108082,
+      "sha256": "4d7b6c428e7299f3cdd0ca8589285b8ba23995008a05b7ce868ccc3439fefda3"
+    },
+    "unix_client": {
+      "bytes": 127111,
+      "sha256": "276840651a5bce90f630fd6d6b7aa39c2973c49814474d2dbbbf1d180a95b88d"
+    },
+    "unix_daemon": {
+      "bytes": 127314,
+      "sha256": "ca982b0ded03912da5044301ec74c7e6af280772a994c9cea46d65d8820bfec1"
+    },
+    "value_bridge": {
+      "bytes": 258163,
+      "sha256": "eecb8991f8a07aa54d72d20f649d72b75cd708ffe45cdf2ec2a9ade2c2c15b23"
+    }
+  },
+  "prefixes": {
+    "checkpoint-store-api": {
+      "bytes": 5120,
+      "sha256": "3c7cbe48ec0d6d167ce3722966384fc336df53e54bcf7c7a6f9d046718627cc4"
+    },
+    "trnm-external-node-checkpoint-v2": {
+      "bytes": 5120,
+      "sha256": "fda2bf1c2a2fc601ef4710f3c611d62610778bc3a5b22da13ed74b4d6cc053cf"
+    }
+  },
+  "profiles": {
+    "checkpoint-store-api": 2,
+    "trnm-external-node-checkpoint-v2": 1
+  },
+  "schema": "trnm.hia.checkpoint-store-native-images.v1",
+  "sources": {
+    "api_driver": {
+      "compiler_input": {
+        "bytes": 107767,
+        "sha256": "820b0c5d8d6d76a09ed96e0d32d91989b2c808f6d54d7aeb89f5cc7228357427"
+      },
+      "composed": {
+        "bytes": 107767,
+        "sha256": "820b0c5d8d6d76a09ed96e0d32d91989b2c808f6d54d7aeb89f5cc7228357427"
+      }
+    },
+    "api_methods": {
+      "compiler_input": {
+        "bytes": 145742,
+        "sha256": "901ff8da0cd8eb71b5aca865697dd49dab6905f6fe246f07b89dc2cdeb3eb555"
+      },
+      "composed": {
+        "bytes": 145742,
+        "sha256": "901ff8da0cd8eb71b5aca865697dd49dab6905f6fe246f07b89dc2cdeb3eb555"
+      }
+    },
+    "api_objects": {
+      "compiler_input": {
+        "bytes": 195338,
+        "sha256": "5a7358a3cf81ad86982697328fa095fbf90bf813aff7c4887ef155dc025e0263"
+      },
+      "composed": {
+        "bytes": 195338,
+        "sha256": "5a7358a3cf81ad86982697328fa095fbf90bf813aff7c4887ef155dc025e0263"
+      }
+    },
+    "authority_fence": {
+      "compiler_input": {
+        "bytes": 119805,
+        "sha256": "dc1af0ac15bd53c0297e45b8ecac8ad9370618256023fa9a1010b01a3ca05e73"
+      },
+      "composed": {
+        "bytes": 119805,
+        "sha256": "dc1af0ac15bd53c0297e45b8ecac8ad9370618256023fa9a1010b01a3ca05e73"
+      }
+    },
+    "authority_head": {
+      "compiler_input": {
+        "bytes": 150349,
+        "sha256": "8d3d1b7a5ef45f2b6d4fd8a336750e13f0105a03ce4c2a537ed5e95b5e916ffe"
+      },
+      "composed": {
+        "bytes": 150349,
+        "sha256": "8d3d1b7a5ef45f2b6d4fd8a336750e13f0105a03ce4c2a537ed5e95b5e916ffe"
+      }
+    },
+    "authority_open": {
+      "compiler_input": {
+        "bytes": 159398,
+        "sha256": "0366b31afe6bccff68ddcb80fd1de817e285856d4f7e424d13c41dd9e22a0525"
+      },
+      "composed": {
+        "bytes": 159398,
+        "sha256": "0366b31afe6bccff68ddcb80fd1de817e285856d4f7e424d13c41dd9e22a0525"
+      }
+    },
+    "authority_operations": {
+      "compiler_input": {
+        "bytes": 136910,
+        "sha256": "9ecee62bee40262d76edc884381fae39a0d5563ed6202fa31476bad6df2f476b"
+      },
+      "composed": {
+        "bytes": 136910,
+        "sha256": "9ecee62bee40262d76edc884381fae39a0d5563ed6202fa31476bad6df2f476b"
+      }
+    },
+    "checkpoint_files": {
+      "compiler_input": {
+        "bytes": 147218,
+        "sha256": "5020774c894fbf847552aa37272808f7415ae18a60638458cbe2af12fafe5512"
+      },
+      "composed": {
+        "bytes": 147218,
+        "sha256": "5020774c894fbf847552aa37272808f7415ae18a60638458cbe2af12fafe5512"
+      }
+    },
+    "errno_text": {
+      "compiler_input": {
+        "bytes": 300305,
+        "sha256": "a27bb595a746ba35fa2163eba4202b6d416d4893b2e7ebef4f56d4aee55f71a1"
+      },
+      "composed": {
+        "bytes": 300305,
+        "sha256": "a27bb595a746ba35fa2163eba4202b6d416d4893b2e7ebef4f56d4aee55f71a1"
+      }
+    },
+    "error_formatter": {
+      "compiler_input": {
+        "bytes": 99534,
+        "sha256": "274667a848561c2ed6cc4f38c10833c0ba9a79e812f33e4fca9dd6f579f7c188"
+      },
+      "composed": {
+        "bytes": 99534,
+        "sha256": "274667a848561c2ed6cc4f38c10833c0ba9a79e812f33e4fca9dd6f579f7c188"
+      }
+    },
+    "error_text_a": {
+      "compiler_input": {
+        "bytes": 342328,
+        "sha256": "ebc9976a7c314d75e19b7986926d09ed273909dd2db636e194d606bc12733be3"
+      },
+      "composed": {
+        "bytes": 342328,
+        "sha256": "ebc9976a7c314d75e19b7986926d09ed273909dd2db636e194d606bc12733be3"
+      }
+    },
+    "error_text_b": {
+      "compiler_input": {
+        "bytes": 351676,
+        "sha256": "7ad7571fa460fdc06203534201917b8c37055c3e39aad8285c46ec6aabe42274"
+      },
+      "composed": {
+        "bytes": 351676,
+        "sha256": "7ad7571fa460fdc06203534201917b8c37055c3e39aad8285c46ec6aabe42274"
+      }
+    },
+    "filesystem": {
+      "compiler_input": {
+        "bytes": 187389,
+        "sha256": "ae7349a680bc0e1122362f8df941f8291a0a03d493f9b3d1875f054ee601b0d2"
+      },
+      "composed": {
+        "bytes": 187389,
+        "sha256": "ae7349a680bc0e1122362f8df941f8291a0a03d493f9b3d1875f054ee601b0d2"
+      }
+    },
+    "io": {
+      "compiler_input": {
+        "bytes": 115308,
+        "sha256": "9daa09979e95b39bf0f71e224d1e4079a1708caaaf8eff55de86b42d23e136a5"
+      },
+      "composed": {
+        "bytes": 115308,
+        "sha256": "9daa09979e95b39bf0f71e224d1e4079a1708caaaf8eff55de86b42d23e136a5"
+      }
+    },
+    "ledger_files": {
+      "compiler_input": {
+        "bytes": 198296,
+        "sha256": "73e049a3f5987ab7c6213b38660c753d71fc3e37d871462b42957c213f9c1b4c"
+      },
+      "composed": {
+        "bytes": 198296,
+        "sha256": "73e049a3f5987ab7c6213b38660c753d71fc3e37d871462b42957c213f9c1b4c"
+      }
+    },
+    "ledger_inventory": {
+      "compiler_input": {
+        "bytes": 166314,
+        "sha256": "a680355e9d723e494a594fd8c2624a079654e1745e26904f90566af0d1eada9e"
+      },
+      "composed": {
+        "bytes": 166314,
+        "sha256": "a680355e9d723e494a594fd8c2624a079654e1745e26904f90566af0d1eada9e"
+      }
+    },
+    "ledger_open": {
+      "compiler_input": {
+        "bytes": 176062,
+        "sha256": "e26439b2d068799ff96772c6c26dc15af284f54e0b48a8aeb5226cff9edb9d70"
+      },
+      "composed": {
+        "bytes": 176062,
+        "sha256": "e26439b2d068799ff96772c6c26dc15af284f54e0b48a8aeb5226cff9edb9d70"
+      }
+    },
+    "ledger_operations": {
+      "compiler_input": {
+        "bytes": 113277,
+        "sha256": "c6d129eea2d6c3d161aeb485c2ac0d0c9f9eda4940733b90f2d7ca198c1318d9"
+      },
+      "composed": {
+        "bytes": 113277,
+        "sha256": "c6d129eea2d6c3d161aeb485c2ac0d0c9f9eda4940733b90f2d7ca198c1318d9"
+      }
+    },
+    "ledger_recovery": {
+      "compiler_input": {
+        "bytes": 137547,
+        "sha256": "fb0ed7b49a49c1c0b800ec631f4b54d5f64548b66022d24879bf4765f55a1325"
+      },
+      "composed": {
+        "bytes": 137547,
+        "sha256": "fb0ed7b49a49c1c0b800ec631f4b54d5f64548b66022d24879bf4765f55a1325"
+      }
+    },
+    "linux_emitter": {
+      "compiler_input": {
+        "bytes": 143640,
+        "sha256": "8130b691d94dd2bd30245b6f2ef15eaa4d139d23f20b2848a94fd8d17af5bbaf"
+      },
+      "composed": {
+        "bytes": 143640,
+        "sha256": "8130b691d94dd2bd30245b6f2ef15eaa4d139d23f20b2848a94fd8d17af5bbaf"
+      }
+    },
+    "main": {
+      "compiler_input": {
+        "bytes": 180504,
+        "sha256": "2963399bab0c878fad3fdfea26696fdcdf84fa39f0d8d7da66304c489e1fa3a6"
+      },
+      "composed": {
+        "bytes": 180504,
+        "sha256": "2963399bab0c878fad3fdfea26696fdcdf84fa39f0d8d7da66304c489e1fa3a6"
+      }
+    },
+    "socket_owner": {
+      "compiler_input": {
+        "bytes": 189733,
+        "sha256": "b65b3979dcaf20714710a8e07838848a45a8694803f08f44453787913d544a1a"
+      },
+      "composed": {
+        "bytes": 189733,
+        "sha256": "b65b3979dcaf20714710a8e07838848a45a8694803f08f44453787913d544a1a"
+      }
+    },
+    "socket_path": {
+      "compiler_input": {
+        "bytes": 116027,
+        "sha256": "9f41a8f45f66f07f49c2e5ea3416b3e393ee61d0d4c9a6f82df3f8d7acf81802"
+      },
+      "composed": {
+        "bytes": 116027,
+        "sha256": "9f41a8f45f66f07f49c2e5ea3416b3e393ee61d0d4c9a6f82df3f8d7acf81802"
+      }
+    },
+    "transport_frame": {
+      "compiler_input": {
+        "bytes": 113712,
+        "sha256": "f0a8c4ca3b4501530f6a86ec07e3c4f331895e35c5ab3cc7916a52e4f017d91e"
+      },
+      "composed": {
+        "bytes": 113712,
+        "sha256": "f0a8c4ca3b4501530f6a86ec07e3c4f331895e35c5ab3cc7916a52e4f017d91e"
+      }
+    },
+    "unix_client": {
+      "compiler_input": {
+        "bytes": 127143,
+        "sha256": "d1ac2cff41a73c1fd5dfa78bacf75975fbb8b4c634ca8d6d3b41cbcd8796f141"
+      },
+      "composed": {
+        "bytes": 127143,
+        "sha256": "d1ac2cff41a73c1fd5dfa78bacf75975fbb8b4c634ca8d6d3b41cbcd8796f141"
+      }
+    },
+    "unix_daemon": {
+      "compiler_input": {
+        "bytes": 128957,
+        "sha256": "3bffa8c2a40f2a77af615ebad6d33ce486cb61f8842b847c1e590221f4ee68b8"
+      },
+      "composed": {
+        "bytes": 128957,
+        "sha256": "3bffa8c2a40f2a77af615ebad6d33ce486cb61f8842b847c1e590221f4ee68b8"
+      }
+    },
+    "value_bridge": {
+      "compiler_input": {
+        "bytes": 273735,
+        "sha256": "5041fd7df74bd9ec15b2a34d68bf661e0c7f112b2f3fd3368316e8f0e54e4725"
+      },
+      "composed": {
+        "bytes": 273735,
+        "sha256": "5041fd7df74bd9ec15b2a34d68bf661e0c7f112b2f3fd3368316e8f0e54e4725"
+      }
+    }
+  }
+}

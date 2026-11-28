@@ -1,0 +1,1152 @@
+{
+  "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+  "implementation_sources": [
+    {
+      "bytes": 198342,
+      "git_blob_sha": "0a146ed5901746006e0cd9296f8fe103fa729171",
+      "path": "hia/storage/owner_policy.hepta",
+      "sha256": "fe9b18eea0b19ae40db8b831fcdc0d485690d562b7b2b73fe1223884a31f64b6"
+    },
+    {
+      "bytes": 13907,
+      "git_blob_sha": "4f7636ce2660c0deec00cebe3012757a1626e677",
+      "path": "hia/storage/abi.json",
+      "sha256": "512e017f196ab296f27bf89db322adf7ed9ac5588842865b2158dcdff85baa5d"
+    },
+    {
+      "bytes": 6464,
+      "git_blob_sha": "aa93aa4242259150415d9e94f33c164c634eab16",
+      "path": "hia/storage/build.py",
+      "sha256": "2208e05eca3daf622aafab63ec3f438bef65bdaa2d76b1c3d983254d31aaf766"
+    },
+    {
+      "bytes": 14448,
+      "git_blob_sha": "d49cb58152b47076faf79c42caa6f40f8f7b713d",
+      "path": "hia/storage/README.md",
+      "sha256": "cfdc2eda772bf26e5fb21c42148431f2dee446bd0d5542dff9a8597c898e8439"
+    },
+    {
+      "bytes": 2045,
+      "git_blob_sha": "99f8e245314859002126d0700d63b32dc70f6538",
+      "path": "hia/tests/test_storage_recovery.py",
+      "sha256": "4c6d3795a2d90b062da4743a635ee9a4f584adb98c61bffb5e60f314a8627661"
+    },
+    {
+      "bytes": 17789,
+      "git_blob_sha": "96b671aa9c661fd2bb61b670f9c2798185e8d83b",
+      "path": "hia/tools/qualify_storage_recovery.py",
+      "sha256": "a20f31ba0707d5810f7e978ac1318f54a249b0cd7da137b89ed3902b269c7d3a"
+    }
+  ],
+  "literal_isa_adapter_is_separate_trusted_boundary": true,
+  "native_and_cli_unit_tests": {
+    "elapsed_seconds": 9.896,
+    "modules": [
+      "hia.tests.test_storage_native",
+      "hia.tests.test_storage_recovery"
+    ],
+    "optimized_python_refusals": [
+      "-O",
+      "-OO",
+      "PYTHONOPTIMIZE=2"
+    ],
+    "skips": 0,
+    "status": "PASS",
+    "tests": 8
+  },
+  "native_executable": {
+    "bytes": 439996,
+    "dynamic_linker": false,
+    "entry": 4194480,
+    "format": "ELF64LE",
+    "instruction_semantics_verified_by_this_check": false,
+    "interpreter": null,
+    "load_flags": "RX",
+    "machine": "x86_64",
+    "sha256": "455703f49fead5d16ee521a3f96515a329d761477ccc2c48398bc70b34cd1a58",
+    "stack_flags": "RW",
+    "type": "ET_EXEC"
+  },
+  "not_claimed": [
+    "physical power-loss safety",
+    "arbitrary continuously hostile same-UID writer safety",
+    "whole-directory rollback defense",
+    "ENOSPC or complete filesystem EIO model",
+    "original Node service budgets",
+    "typed Node State, branch/reorg, replay or outbox integration",
+    "full Rust package retirement",
+    "exact-head hosted CI success before the published commit actually completes it"
+  ],
+  "old_runtime_retirement_authorized": false,
+  "original_physical_regression": {
+    "capacity_controls": {
+      "complete-original-State-wire-extent": {
+        "canonical_value_bytes": 4096,
+        "case": "complete-original-State-wire-extent",
+        "commit": {
+          "bytes": 279445512,
+          "plain_sha256": "d971de3feb63dea2fa48861d8f6aec256b652eb53e422d485583f2f0d063699e",
+          "sequence": 1,
+          "storage_digest": "e9c921f26501dad2c1c2e3d457afc7560b62a0d9df145857dc1a293df3ec4d3c"
+        },
+        "input_output_buffered_whole": false,
+        "key_bytes": 160,
+        "maximum_test_controller_wait_seconds": 180,
+        "original_service_budget_qualified": false,
+        "processes": [
+          {
+            "address_space_limit_bytes": 2147483648,
+            "cleanup": null,
+            "elapsed_ns": 56456370027,
+            "exit_code": 0,
+            "image_sha256": "455703f49fead5d16ee521a3f96515a329d761477ccc2c48398bc70b34cd1a58",
+            "observed_maximum_rss_kib": 564,
+            "production_service_budget_qualified": false,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdin_bytes": 279445720,
+            "stdin_sha256": "26230597cbae99e7887dc21fe9c668c1b7c4c40366e311a42fd0e8130c832d8c",
+            "stdout_bytes": 128,
+            "stdout_sha256": "94f214500e909f82fb3e099efd471a0836393de8cb46c277f220fb572bfc908f",
+            "test_io_controller_seconds": 180
+          },
+          {
+            "address_space_limit_bytes": 2147483648,
+            "cleanup": null,
+            "elapsed_ns": 113626093783,
+            "exit_code": 0,
+            "image_sha256": "455703f49fead5d16ee521a3f96515a329d761477ccc2c48398bc70b34cd1a58",
+            "observed_maximum_rss_kib": 564,
+            "production_service_budget_qualified": false,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdin_bytes": 208,
+            "stdin_sha256": "a1f590f2516f10c75fc0b5a2baac6a2a50210617ed7cc79a0e109d7886b86fb0",
+            "stdout_bytes": 279445640,
+            "stdout_sha256": "1bfcc36037eaf1d247efa2084da0606fc24666be04397fcf3d0161b6108dcd6a",
+            "test_io_controller_seconds": 180
+          }
+        ],
+        "readback": {
+          "bytes": 279445512,
+          "plain_sha256": "d971de3feb63dea2fa48861d8f6aec256b652eb53e422d485583f2f0d063699e"
+        },
+        "rows": 65536,
+        "scope": "actual exact payload bytes, not complete State grammar/root qualification",
+        "status": "PASS"
+      },
+      "past-artificial-4096-history-cap": {
+        "actual_committed_transactions": 4105,
+        "actual_retained_transaction_files": 4105,
+        "case": "past-artificial-4096-history-cap",
+        "history_materialized_in_native_memory": false,
+        "physical_UINT64_MAX_history_qualified": false,
+        "processes": [
+          {
+            "address_space_limit_bytes": 2147483648,
+            "cleanup": null,
+            "elapsed_ns": 725737893,
+            "exit_code": 0,
+            "image_sha256": "455703f49fead5d16ee521a3f96515a329d761477ccc2c48398bc70b34cd1a58",
+            "observed_maximum_rss_kib": 512,
+            "production_service_budget_qualified": false,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdin_bytes": 262864,
+            "stdin_sha256": "fe6a64b8f2c4882638efb7a48abf1e78baf16464b448fb2f338d69138b6c3391",
+            "stdout_bytes": 262784,
+            "stdout_sha256": "83258b094365c68aea7305a6f29830c9e9daf62b1f9355329523e6688ec938c0",
+            "test_io_controller_seconds": 180
+          },
+          {
+            "address_space_limit_bytes": 2147483648,
+            "cleanup": null,
+            "elapsed_ns": 192115414,
+            "exit_code": 0,
+            "image_sha256": "455703f49fead5d16ee521a3f96515a329d761477ccc2c48398bc70b34cd1a58",
+            "observed_maximum_rss_kib": 536,
+            "production_service_budget_qualified": false,
+            "stderr_bytes": 0,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdin_bytes": 208,
+            "stdin_sha256": "f720d1f43f1a5837c20cc4315d01e6bce994946a824856de203d7bc407bf07c2",
+            "stdout_bytes": 128,
+            "stdout_sha256": "99c5739356f6a086758d08373cd6bccc82a49f3065c3b1425e2ad2d40da0d9aa",
+            "test_io_controller_seconds": 180
+          }
+        ],
+        "reopened_sequence": 4105,
+        "status": "PASS",
+        "storage_digest": "bb1f4afd22ef87db5a81ccd7dd24dc03b3a75ca33a61a03005e6ce01e882abe0"
+      }
+    },
+    "passed": 52,
+    "report": {
+      "bytes": 27048,
+      "path": "/tmp/chain-storage-readback-original-final/report.json",
+      "sha256": "c87aca7e2b1448a410fe693af8faa90b40af20388d1c7a4d2288e353f9c050f8"
+    },
+    "same_executable_and_source_inputs_as_recovery": true,
+    "syscall_trace": {
+      "cleanup": null,
+      "executable_sha256": "455703f49fead5d16ee521a3f96515a329d761477ccc2c48398bc70b34cd1a58",
+      "exit_code": 1,
+      "reason": "PTRACE_EPERM",
+      "status": "UNKNOWN",
+      "stderr": "/usr/bin/strace: test_ptrace_get_syscall_info: PTRACE_TRACEME: Operation not permitted\n/usr/bin/strace: ptrace(PTRACE_TRACEME, ...): Operation not permitted\n/usr/bin/strace: PTRACE_SETOPTIONS: Operation not permitted\n/usr/bin/strace: cleanup: waitpid(-1, __WALL): No child processes\n",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "total": 52
+  },
+  "physical_recovery": {
+    "cases": [
+      {
+        "case": "complete-temporary-prefix-None",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-0",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-1",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-2",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-3",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-4",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-5",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-6",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-7",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-8",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-9",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-10",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-11",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-12",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-13",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-14",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-15",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-16",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-17",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-18",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-19",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-20",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-21",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-22",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-23",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-24",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-25",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-26",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-27",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-28",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-29",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-30",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-31",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-32",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-33",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-34",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-35",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-36",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-37",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-38",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-39",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-40",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-41",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-42",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-43",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-44",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-45",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-46",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-47",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-48",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-49",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-50",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-51",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-52",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-53",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-54",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-55",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-56",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-57",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-58",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-59",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-60",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-61",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-62",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-63",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-temporary-prefix-64",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-None",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-0",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-1",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-2",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-3",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-4",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-5",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-6",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-7",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-8",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-9",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-10",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-11",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-12",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-13",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-14",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-15",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-16",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-17",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-18",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-19",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-20",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-21",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-22",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-23",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-24",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-25",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-26",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-27",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-28",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-29",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-30",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-31",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-32",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-33",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-34",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-35",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-36",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-37",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-38",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-39",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-40",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-41",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-42",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-43",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-44",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-45",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-46",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-47",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-48",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-49",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-50",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-51",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-52",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-53",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-54",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-55",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-56",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-57",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-58",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-59",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-60",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-61",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-62",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-63",
+        "status": "PASS"
+      },
+      {
+        "case": "complete-published-prefix-64",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-lock-only",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-ambiguous-head-and-temporary",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-wrong-context",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-0",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-8",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-16",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-24",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-56",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-88",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-field-120",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-size-0",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-size-1",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-size-127",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-genesis-size-129",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-name-txn.0000000000000001",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-name-txn.0000000000000001.tmp",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-name-unknown",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-name-data.sqlite",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-0",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-7",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-8",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-39",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-40",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-48",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-56",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-field-63",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-format-extended",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-HEAD.tmp-symlink",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-HEAD.tmp-directory",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-HEAD.tmp-fifo",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-HEAD.tmp-hardlink",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-HEAD.tmp-wrong-mode",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-FORMAT-symlink",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-FORMAT-directory",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-FORMAT-fifo",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-FORMAT-hardlink",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-FORMAT-wrong-mode",
+        "status": "PASS"
+      },
+      {
+        "case": "actual-two-process-recovery-lock",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-30",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-34",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-36",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-35",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-31",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-32",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-33",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-37",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-sigkill-20",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-30",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-34",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-36",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-35",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-31",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-32",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-33",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-37",
+        "status": "PASS"
+      },
+      {
+        "case": "recovery-gate-eof-20",
+        "status": "PASS"
+      },
+      {
+        "case": "actual-format-partial-pwrite-and-limit",
+        "status": "PASS"
+      },
+      {
+        "case": "interleave-format-create-collision",
+        "status": "PASS"
+      },
+      {
+        "case": "interleave-head-noreplace-collision",
+        "status": "PASS"
+      },
+      {
+        "case": "interleave-format-appeared-before-open",
+        "status": "PASS"
+      },
+      {
+        "case": "interleave-format-disappeared-before-open",
+        "status": "PASS"
+      },
+      {
+        "case": "readback-refuses-validated-format-prefix",
+        "status": "PASS"
+      },
+      {
+        "case": "readback-refuses-published-head",
+        "status": "PASS"
+      },
+      {
+        "case": "readback-refuses-published-format",
+        "status": "PASS"
+      },
+      {
+        "case": "refuse-committed-transaction-namespace",
+        "status": "PASS"
+      }
+    ],
+    "key_coverage": [
+      "actual native initializer SIGKILL seeds HEAD.tmp and HEAD",
+      "absent FORMAT and every exact 0..64-byte prefix, each with cold readback and a subsequent real transaction",
+      "context, exact genesis bytes, type/UID/mode/link/size and namespace negatives",
+      "nine recovery SIGKILL cuts and nine actual gate-pipe EOF failures",
+      "actual RLIMIT_FSIZE=16 partial pwrite followed by cold prefix recovery",
+      "two-process exclusive owner lock",
+      "exclusive FORMAT creation and no-replace HEAD collision controls",
+      "three published-record readback refusals with zero opened receipts"
+    ],
+    "passed": 197,
+    "report": {
+      "bytes": 74032,
+      "path": "/tmp/chain-storage-recovery-readback-confirmed/report.json",
+      "sha256": "e18cdfa441fae5db018440c5e18b0033d0d471e809ff6839155e37fba35a19df"
+    },
+    "total": 197
+  },
+  "preserved_failed_observations": [
+    {
+      "actual_exit_code": 0,
+      "actual_stdout_bytes": 64,
+      "candidate_executable_sha256": "b5eafaa52ecdbaef5af263cfd7bafdffc1d36bfea7670e2f8677d645ecb1d82c",
+      "corrupt_retained_format": {
+        "bytes": 64,
+        "path": "/tmp/chain-storage-recovery-races/format-prefix-replaced/namespace/FORMAT",
+        "sha256": "dff5868d5a44b409867b2bc2e27aefe75328252f1c23c18461c6269eb2372304"
+      },
+      "current_controls": [
+        "readback-refuses-validated-format-prefix",
+        "readback-refuses-published-head",
+        "readback-refuses-published-format"
+      ],
+      "current_results": "All three return UNKNOWN initialization code 71 and zero opened receipt bytes; corrupt cold reopen refuses unchanged.",
+      "kind": "pre_readback_candidate_issued_an_opened_receipt_after_FORMAT_prefix_replacement",
+      "process_record": {
+        "bytes": 1790,
+        "path": "/tmp/chain-storage-recovery-races/format-prefix-replaced/native/result.json",
+        "sha256": "b16608c829b9bbf9f6bd1bc8e5e7b4f92a099bcd3cbaa35ae97987bf0291f669"
+      },
+      "repair": "Native complete published HEAD and FORMAT metadata/byte readback precedes opened receipt.",
+      "stdout_sha256": "c518a953a22db09d4de50c3fd07b520bde8094c13d8194a464474a6acd8cf32c"
+    },
+    {
+      "actual_exit_code": -9,
+      "actual_stdout_bytes": 0,
+      "case": "readback-refuses-validated-format-prefix",
+      "cleanup": {
+        "complete": true,
+        "elapsed_ns": 266399,
+        "reason": "finish-timeout",
+        "signal": "SIGKILL",
+        "signal_outcome": "sent"
+      },
+      "kind": "qualification_controller_did_not_resume_remaining_gates_after_tag_35",
+      "passed": 196,
+      "repair": "The controller advances through native tag 37 before awaiting the actual readback refusal. No native source change was needed for this harness correction.",
+      "report": {
+        "bytes": 76772,
+        "path": "/tmp/chain-storage-recovery-readback-final/report.json",
+        "sha256": "eb4dfa6cafdb3e1e297620af8e56c8fe167b655a55a581ee18a5b1a2221fce60"
+      },
+      "status": "FAIL",
+      "total": 197
+    }
+  ],
+  "runtime_host_language_proxy": false,
+  "schema": "trnm.hia.genesis-recovery-development.v1",
+  "scope": "Explicit bootstrap mode 3 for a unique context-bound genesis and an exact FORMAT prefix; no typed Node owner or retirement witness.",
+  "source_inputs": {
+    "components.json": {
+      "bytes": 19591,
+      "sha256": "d6aadc322b6ba2b78d2e859d3984b4127bd64a0af3bf5e4ca2f992d3177db654"
+    },
+    "platform/build.py": {
+      "bytes": 11808,
+      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+    },
+    "qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "qualification/compiler-cold-full.json.xz": {
+      "bytes": 838544,
+      "sha256": "da5be887e256d72f0c75f3cb4621392fb66239e8d647ea91f6abab50778ca5c9"
+    },
+    "qualification/compiler-cold.json": {
+      "bytes": 108675,
+      "sha256": "1d5d1a0be1aa6773d67b5b125de3fdd34a111bbbf2fff604d013d5cf0924dbab"
+    },
+    "src/crypto/sha256_arena.hepta": {
+      "bytes": 28919,
+      "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+    },
+    "src/protocol/state_root.hepta": {
+      "bytes": 221073,
+      "sha256": "a5b236c0411fa5808b748beef6393508de7b1a40170b14cbeb7612b34ff75466"
+    },
+    "storage/README.md": {
+      "bytes": 14448,
+      "sha256": "cfdc2eda772bf26e5fb21c42148431f2dee446bd0d5542dff9a8597c898e8439"
+    },
+    "storage/abi.json": {
+      "bytes": 13907,
+      "sha256": "512e017f196ab296f27bf89db322adf7ed9ac5588842865b2158dcdff85baa5d"
+    },
+    "storage/build.py": {
+      "bytes": 6464,
+      "sha256": "2208e05eca3daf622aafab63ec3f438bef65bdaa2d76b1c3d983254d31aaf766"
+    },
+    "storage/linux_adapter_emitter.hepta": {
+      "bytes": 37259,
+      "sha256": "27f51fd4d0449088d3f7454bfa337845e916ce11b9a582cb39fad32e4fd9ae6c"
+    },
+    "storage/owner_policy.hepta": {
+      "bytes": 198342,
+      "sha256": "fe9b18eea0b19ae40db8b831fcdc0d485690d562b7b2b73fe1223884a31f64b6"
+    },
+    "storage/sha256_framing.hepta": {
+      "bytes": 10424,
+      "sha256": "81296bb7b0cda34a374dbbb1d269a7d56cd196aba3eca7585e610f79c9d15eb4"
+    },
+    "tests/native_support.py": {
+      "bytes": 9793,
+      "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+    },
+    "tests/test_storage_native.py": {
+      "bytes": 8855,
+      "sha256": "528f90934aaf671c00a62e4228098391ba8ecd74d7b5e137e140c4ce575966c3"
+    },
+    "tests/test_storage_recovery.py": {
+      "bytes": 2045,
+      "sha256": "4c6d3795a2d90b062da4743a635ee9a4f584adb98c61bffb5e60f314a8627661"
+    },
+    "toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "tools/qualify_storage.py": {
+      "bytes": 46657,
+      "sha256": "63ad43b55b589099182dcfc2c00928c59f927a6eca21e120aacd26621031f497"
+    },
+    "tools/qualify_storage_recovery.py": {
+      "bytes": 17789,
+      "sha256": "a20f31ba0707d5810f7e978ac1318f54a249b0cd7da137b89ed3902b269c7d3a"
+    },
+    "tools/toolchain.py": {
+      "bytes": 14157,
+      "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    }
+  },
+  "source_inputs_stable": true,
+  "status": "LOCAL_COMPONENT_PASS_EXACT_HEAD_CI_NOT_YET_RECORDED",
+  "toolchain": {
+    "assembly_schema": "hia-asm.v1",
+    "language_schema": "hepta.hia.program.v8",
+    "repository": "TrillionniumFoundation/Hepta",
+    "revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+    "target": "x86_64-linux-gnu"
+  }
+}

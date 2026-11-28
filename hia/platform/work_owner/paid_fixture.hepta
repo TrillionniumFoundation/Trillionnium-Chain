@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_hia_work_paid_method_fixture_v1
+fn f0(e:readbuf,p:mutbuf,v:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(e:readbuf,p:mutbuf,v:mutbuf)
+  fixture:u64 = const() {"value":1}
+  result:u32 = call(e,p,v,fixture) {"function":"pw_entry"}
+  ret(result)
+end

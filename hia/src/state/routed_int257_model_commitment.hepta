@@ -1,0 +1,201 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_routed_int257_model_commitment
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  width:usize = buffer.len(r)
+  fixed:usize = const() {"value":15452}
+  exact:bool = compare.eq(width,fixed)
+  branch exact coefficients(r,o,w) malformed()
+block coefficients(r1:readbuf,o1:mutbuf,w1:mutbuf)
+  valid:bool = call(r1) {"function":"rim_validate"}
+  branch valid capacity(r1,o1,w1) coefficient_error()
+block capacity(r2:readbuf,o2:mutbuf,w2:mutbuf)
+  work:usize = buffer.len(w2)
+  result:usize = buffer.len(o2)
+  req_work:usize = const() {"value":32272}
+  req_out:usize = const() {"value":32}
+  inner:bool = compare.ge(work,req_work)
+  outer:bool = compare.ge(result,req_out)
+  okay:bool = bool.and(inner,outer)
+  branch okay stage(r2,o2,w2) short()
+block stage(r3:readbuf,o3:mutbuf,w3:mutbuf)
+  _prefix:u64 = call(w3) {"function":"rim_prefix"}
+  from:usize = const() {"value":0}
+  where:usize = const() {"value":1376}
+  n:usize = const() {"value":32}
+  _version:u64 = call(r3,w3,from,where,n) {"function":"daav_copy"}
+  dims:u64 = const() {"value":1408}
+  classes:u64 = const() {"value":1416}
+  experts:u64 = const() {"value":1424}
+  d:u64 = const() {"value":257}
+  c:u64 = const() {"value":3}
+  _dim:u64 = call(w3,dims,d) {"function":"rim_be64"}
+  _classes:u64 = call(w3,classes,c) {"function":"rim_be64"}
+  _experts:u64 = call(w3,experts,c) {"function":"rim_be64"}
+  _body:u64 = call(r3,w3) {"function":"rim_body"}
+  jump digest(o3,w3)
+block digest(o4:mutbuf,w4:mutbuf)
+  start:u64 = const() {"value":1208}
+  total:u64 = const() {"value":31064}
+  a:u64 = call(w4) {"function":"tr_sha_init"}
+  b:u64 = call(w4,start,total) {"function":"tr_sha_update_work"}
+  c4:u64 = call(w4) {"function":"tr_sha_final"}
+  ab:u64 = bit.or(a,b)
+  all:u64 = bit.or(ab,c4)
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(all,z)
+  branch done publish(o4,w4,z) internal()
+block publish(o5:mutbuf,w5:mutbuf,z5:u64)
+  hashed:u64 = const() {"value":1168}
+  _out:u64 = call(w5,hashed,o5,z5) {"function":"dab_copy32"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block malformed()
+  shape_code:u32 = const() {"value":100}
+  ret(shape_code)
+block coefficient_error()
+  coeff_code:u32 = const() {"value":3}
+  ret(coeff_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block internal()
+  internal_code:u32 = const() {"value":103}
+  ret(internal_code)
+end
+
+fn rim_validate(r:readbuf) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf)
+  start:u64 = const() {"value":32}
+  jump coefficient(r,start)
+block coefficient(r1:readbuf,at1:u64)
+  x:i64 = call(r1,at1) {"function":"rio_i32"}
+  min:i64 = const() {"value":-32767}
+  max:i64 = const() {"value":32767}
+  lo:bool = compare.ge(x,min)
+  hi:bool = compare.le(x,max)
+  okay:bool = bool.and(lo,hi)
+  branch okay next(r1,at1) bad()
+block next(r2:readbuf,at2:u64)
+  step:u64 = const() {"value":4}
+  tail:u64 = const() {"value":15452}
+  new:u64 = int.add.wrap(at2,step)
+  done:bool = compare.eq(new,tail)
+  branch done good() coefficient(r2,new)
+block good()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block bad()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn rim_body(r:readbuf,w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf)
+  first:u64 = const() {"value":32}
+  out:u64 = const() {"value":1432}
+  jump emit(r,w,first,out)
+block emit(r1:readbuf,w1:mutbuf,at1:u64,out1:u64)
+  x:i64 = call(r1,at1) {"function":"rio_i32"}
+  bits:u64 = int.cast(x) {"mode":"wrap"}
+  _coefficient:u64 = call(w1,out1,bits) {"function":"rim_be64"}
+  input_stride:u64 = const() {"value":4}
+  output_stride:u64 = const() {"value":8}
+  tail:u64 = const() {"value":15452}
+  new:u64 = int.add.wrap(at1,input_stride)
+  out_next:u64 = int.add.wrap(out1,output_stride)
+  done:bool = compare.eq(new,tail)
+  branch done finish(out_next) emit(r1,w1,new,out_next)
+block finish(width:u64)
+  ret(width)
+end
+
+fn rim_be64(w:mutbuf,at:u64,v:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,at:u64,v:u64)
+  last:u64 = const() {"value":7}
+  z:u64 = const() {"value":0}
+  jump byte(w,at,v,last,z)
+block byte(w1:mutbuf,at1:u64,v1:u64,offset1:u64,shift1:u64)
+  p:u64 = int.add.wrap(at1,offset1)
+  pos:usize = int.cast(p) {"mode":"wrap"}
+  high:u64 = int.shr.checked(v1,shift1)
+  a:u8 = int.cast(high) {"mode":"wrap"}
+  _ = buffer.store(w1,pos,a)
+  one:u64 = const() {"value":1}
+  eight:u64 = const() {"value":8}
+  z1:u64 = const() {"value":0}
+  left:u64 = int.sub.wrap(offset1,one)
+  next:u64 = int.add.wrap(shift1,eight)
+  done1:bool = compare.eq(offset1,z1)
+  branch done1 finish(z1) byte(w1,at1,v1,left,next)
+block finish(okay:u64)
+  ret(okay)
+end
+
+fn rim_prefix(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  at0:u64 = const() {"value":1208}
+  b0:u64 = const() {"value":7885631623116255860}
+  _p0:u64 = call(w,at0,b0) {"function":"tr_put"}
+  at1:u64 = const() {"value":1216}
+  b1:u64 = const() {"value":7526466502349711713}
+  _p1:u64 = call(w,at1,b1) {"function":"tr_put"}
+  at2:u64 = const() {"value":1224}
+  b2:u64 = const() {"value":3241518}
+  _p2:u64 = call(w,at2,b2) {"function":"tr_put"}
+  at3:u64 = const() {"value":1232}
+  b3:u64 = const() {"value":8227353519177465856}
+  _p3:u64 = call(w,at3,b3) {"function":"tr_put"}
+  at4:u64 = const() {"value":1240}
+  b4:u64 = const() {"value":7955940125948802415}
+  _p4:u64 = call(w,at4,b4) {"function":"tr_put"}
+  at5:u64 = const() {"value":1248}
+  b5:u64 = const() {"value":8030594529452438132}
+  _p5:u64 = call(w,at5,b5) {"function":"tr_put"}
+  at6:u64 = const() {"value":1256}
+  b6:u64 = const() {"value":7237123167933001845}
+  _p6:u64 = call(w,at6,b6) {"function":"tr_put"}
+  at7:u64 = const() {"value":1264}
+  b7:u64 = const() {"value":208141118565}
+  _p7:u64 = call(w,at7,b7) {"function":"tr_put"}
+  at8:u64 = const() {"value":1272}
+  b8:u64 = const() {"value":7957702370803056640}
+  _p8:u64 = call(w,at8,b8) {"function":"tr_put"}
+  at9:u64 = const() {"value":1280}
+  b9:u64 = const() {"value":3270850780238672429}
+  _p9:u64 = call(w,at9,b9) {"function":"tr_put"}
+  at10:u64 = const() {"value":1288}
+  b10:u64 = const() {"value":7434659261477842537}
+  _p10:u64 = call(w,at10,b10) {"function":"tr_put"}
+  at11:u64 = const() {"value":1296}
+  b11:u64 = const() {"value":8227342481116983154}
+  _p11:u64 = call(w,at11,b11) {"function":"tr_put"}
+  at12:u64 = const() {"value":1304}
+  b12:u64 = const() {"value":3271974472196125541}
+  _p12:u64 = call(w,at12,b12) {"function":"tr_put"}
+  at13:u64 = const() {"value":1312}
+  b13:u64 = const() {"value":12406}
+  _p13:u64 = call(w,at13,b13) {"function":"tr_put"}
+  at14:u64 = const() {"value":1320}
+  b14:u64 = const() {"value":7234309766870412800}
+  _p14:u64 = call(w,at14,b14) {"function":"tr_put"}
+  at15:u64 = const() {"value":1328}
+  b15:u64 = const() {"value":7309169766012512557}
+  _p15:u64 = call(w,at15,b15) {"function":"tr_put"}
+  at16:u64 = const() {"value":1336}
+  b16:u64 = const() {"value":7002310403928450662}
+  _p16:u64 = call(w,at16,b16) {"function":"tr_put"}
+  at17:u64 = const() {"value":1344}
+  b17:u64 = const() {"value":7019249441483088739}
+  _p17:u64 = call(w,at17,b17) {"function":"tr_put"}
+  at18:u64 = const() {"value":1352}
+  b18:u64 = const() {"value":8315183607449466995}
+  _p18:u64 = call(w,at18,b18) {"function":"tr_put"}
+  at19:u64 = const() {"value":1360}
+  b19:u64 = const() {"value":8674334648360316276}
+  _p19:u64 = call(w,at19,b19) {"function":"tr_put"}
+  at20:u64 = const() {"value":1368}
+  b20:u64 = const() {"value":12715913547880595456}
+  _p20:u64 = call(w,at20,b20) {"function":"tr_put"}
+  zero:u64 = const() {"value":0}
+  ret(zero)
+end

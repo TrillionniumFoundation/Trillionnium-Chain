@@ -1,0 +1,437 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_version_tcv1
+fn f0(b1_i:readbuf,b1_o:mutbuf,b1_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_o:mutbuf,b1_w:mutbuf)
+  b1_n_size:usize = buffer.len(b1_i)
+  b1_n:u64 = int.cast(b1_n_size) {"mode":"wrap"}
+  b1_cmax:u64 = const() {"value":1048576}
+  b1_okay:bool = compare.le(b1_n,b1_cmax)
+  branch b1_okay tag(b1_i,b1_o,b1_w,b1_n) bad_len()
+block tag(b2_i:readbuf,b2_o:mutbuf,b2_w:mutbuf,b2_n:u64)
+  b2_c4:u64 = const() {"value":4}
+  b2_okay:bool = compare.le(b2_c4,b2_n)
+  branch b2_okay known(b2_i,b2_o,b2_w,b2_n) truncated()
+block known(b3_i:readbuf,b3_o:mutbuf,b3_w:mutbuf,b3_n:u64)
+  b3_c4:u64 = const() {"value":4}
+  b3_z:u64 = const() {"value":0}
+  b3_tcv:u64 = const() {"value":827736916}
+  b3_m:u64 = call(b3_i,b3_z,b3_c4) {"function":"rac_read_le"}
+  b3_okay:bool = compare.eq(b3_m,b3_tcv)
+  branch b3_okay workspace(b3_i,b3_o,b3_w,b3_n) bad_magic()
+block workspace(b4_i:readbuf,b4_o:mutbuf,b4_w:mutbuf,b4_n:u64)
+  b4_wn_size:usize = buffer.len(b4_w)
+  b4_wn:u64 = int.cast(b4_wn_size) {"mode":"wrap"}
+  b4_min:u64 = const() {"value":16032}
+  b4_okay:bool = compare.le(b4_min,b4_wn)
+  branch b4_okay model(b4_i,b4_o,b4_w,b4_n) capacity()
+block model(b5_i:readbuf,b5_o:mutbuf,b5_w:mutbuf,b5_n:u64)
+  b5_c4:u64 = const() {"value":4}
+  b5_mp:u64,b5_me:u64 = call(b5_i,b5_c4,b5_n) {"function":"tc_frame"}
+  b5_z:u64 = const() {"value":0}
+  b5_bad:bool = compare.eq(b5_mp,b5_z)
+  branch b5_bad truncated() model_inner(b5_i,b5_o,b5_w,b5_n,b5_mp,b5_me)
+block model_inner(b6_i:readbuf,b6_o:mutbuf,b6_w:mutbuf,b6_n:u64,b6_mp:u64,b6_me:u64)
+  b6_ml:u64 = int.sub.wrap(b6_me,b6_mp)
+  b6_s:u32,b6_mf:u64 = call(b6_i,b6_w,b6_ml,b6_mp) {"function":"ma_root"}
+  b6_z:u32 = const() {"value":0}
+  b6_okay:bool = compare.eq(b6_s,b6_z)
+  branch b6_okay retain_model(b6_i,b6_o,b6_w,b6_n,b6_me,b6_mf) inner(b6_s)
+block retain_model(b7_i:readbuf,b7_o:mutbuf,b7_w:mutbuf,b7_n:u64,b7_me:u64,b7_mf:u64)
+  b7_tail:u64 = call(b7_w,b7_mf) {"function":"tc_keep_model"}
+  jump environment(b7_i,b7_o,b7_w,b7_n,b7_me,b7_mf)
+block environment(b8_i:readbuf,b8_o:mutbuf,b8_w:mutbuf,b8_n:u64,b8_me:u64,b8_mf:u64)
+  b8_ep:u64,b8_ee:u64 = call(b8_i,b8_me,b8_n) {"function":"tc_frame"}
+  b8_z:u64 = const() {"value":0}
+  b8_bad:bool = compare.eq(b8_ep,b8_z)
+  branch b8_bad truncated() env_inner(b8_i,b8_o,b8_w,b8_n,b8_ep,b8_ee,b8_mf)
+block env_inner(b9_i:readbuf,b9_o:mutbuf,b9_w:mutbuf,b9_n:u64,b9_ep:u64,b9_ee:u64,b9_mf:u64)
+  b9_el:u64 = int.sub.wrap(b9_ee,b9_ep)
+  b9_yes:bool = const() {"value":true}
+  b9_s:u32,b9_ef:u64,b9_unused:u64 = call(b9_i,b9_yes,b9_w,b9_el,b9_ep) {"function":"td_validate"}
+  b9_z:u32 = const() {"value":0}
+  b9_okay:bool = compare.eq(b9_s,b9_z)
+  branch b9_okay count(b9_i,b9_o,b9_w,b9_n,b9_ep,b9_ee,b9_mf,b9_ef) inner(b9_s)
+block count(b10_i:readbuf,b10_o:mutbuf,b10_w:mutbuf,b10_n:u64,b10_ep:u64,b10_ee:u64,b10_mf:u64,b10_ef:u64)
+  b10_c2:u64 = const() {"value":2}
+  b10_begin:u64 = int.add.wrap(b10_ee,b10_c2)
+  b10_fits:bool = compare.le(b10_begin,b10_n)
+  branch b10_fits count_value(b10_i,b10_o,b10_w,b10_n,b10_ep,b10_ee,b10_begin,b10_mf,b10_ef) truncated()
+block count_value(b11_i:readbuf,b11_o:mutbuf,b11_w:mutbuf,b11_n:u64,b11_ep:u64,b11_ee:u64,b11_begin:u64,b11_mf:u64,b11_ef:u64)
+  b11_c2:u64 = const() {"value":2}
+  b11_c512:u64 = const() {"value":512}
+  b11_z:u64 = const() {"value":0}
+  b11_cnt:u64 = call(b11_i,b11_ee,b11_c2) {"function":"ca_read_be"}
+  b11_pos:bool = compare.lt(b11_z,b11_cnt)
+  b11_within:bool = compare.le(b11_cnt,b11_c512)
+  b11_okay:bool = bool.and(b11_pos,b11_within)
+  branch b11_okay child(b11_i,b11_o,b11_w,b11_n,b11_ep,b11_ee,b11_begin,b11_mf,b11_ef,b11_cnt,b11_begin,b11_cnt) bad_count()
+block child(b12_i:readbuf,b12_o:mutbuf,b12_w:mutbuf,b12_n:u64,b12_ep:u64,b12_ee:u64,b12_begin:u64,b12_mf:u64,b12_ef:u64,b12_cnt:u64,b12_cur:u64,b12_left:u64)
+  b12_cp:u64,b12_ce:u64 = call(b12_i,b12_cur,b12_n) {"function":"tc_frame"}
+  b12_z:u64 = const() {"value":0}
+  b12_bad:bool = compare.eq(b12_cp,b12_z)
+  branch b12_bad truncated() child_decode(b12_i,b12_o,b12_w,b12_n,b12_ep,b12_ee,b12_begin,b12_mf,b12_ef,b12_cnt,b12_cp,b12_ce,b12_left)
+block child_decode(b13_i:readbuf,b13_o:mutbuf,b13_w:mutbuf,b13_n:u64,b13_ep:u64,b13_ee:u64,b13_begin:u64,b13_mf:u64,b13_ef:u64,b13_cnt:u64,b13_cp:u64,b13_ce:u64,b13_left:u64)
+  b13_cl:u64 = int.sub.wrap(b13_ce,b13_cp)
+  b13_s:u32,b13_rows:u64,b13_chunks:u64 = call(b13_i,b13_cp,b13_cl) {"function":"cm_decode"}
+  b13_z:u32 = const() {"value":0}
+  b13_okay:bool = compare.eq(b13_s,b13_z)
+  branch b13_okay child_next(b13_i,b13_o,b13_w,b13_n,b13_ep,b13_ee,b13_begin,b13_mf,b13_ef,b13_cnt,b13_ce,b13_left) inner_cm(b13_s)
+block child_next(b14_i:readbuf,b14_o:mutbuf,b14_w:mutbuf,b14_n:u64,b14_ep:u64,b14_ee:u64,b14_begin:u64,b14_mf:u64,b14_ef:u64,b14_cnt:u64,b14_ce:u64,b14_left:u64)
+  b14_one:u64 = const() {"value":1}
+  b14_last:bool = compare.eq(b14_left,b14_one)
+  b14_next:u64 = int.sub.wrap(b14_left,b14_one)
+  branch b14_last suffix(b14_i,b14_o,b14_w,b14_n,b14_ep,b14_ee,b14_begin,b14_mf,b14_ef,b14_cnt,b14_ce) child(b14_i,b14_o,b14_w,b14_n,b14_ep,b14_ee,b14_begin,b14_mf,b14_ef,b14_cnt,b14_ce,b14_next)
+block suffix(b15_i:readbuf,b15_o:mutbuf,b15_w:mutbuf,b15_n:u64,b15_ep:u64,b15_ee:u64,b15_begin:u64,b15_mf:u64,b15_ef:u64,b15_cnt:u64,b15_ce:u64)
+  b15_exact:bool = compare.eq(b15_ce,b15_n)
+  branch b15_exact declared(b15_i,b15_o,b15_w,b15_n,b15_ep,b15_ee,b15_begin,b15_mf,b15_ef,b15_cnt) trailing()
+block declared(b16_i:readbuf,b16_o:mutbuf,b16_w:mutbuf,b16_n:u64,b16_ep:u64,b16_ee:u64,b16_begin:u64,b16_mf:u64,b16_ef:u64,b16_cnt:u64)
+  b16_el:u64 = int.sub.wrap(b16_ee,b16_ep)
+  b16_s:u32 = call(b16_i,b16_w,b16_ep,b16_el,b16_ef) {"function":"tc_declared"}
+  b16_z:u32 = const() {"value":0}
+  b16_okay:bool = compare.eq(b16_s,b16_z)
+  branch b16_okay union(b16_i,b16_o,b16_w,b16_n,b16_ep,b16_begin,b16_mf,b16_ef,b16_cnt) inner(b16_s)
+block union(b17_i:readbuf,b17_o:mutbuf,b17_w:mutbuf,b17_n:u64,b17_ep:u64,b17_begin:u64,b17_mf:u64,b17_ef:u64,b17_cnt:u64)
+  b17_c68:u64 = const() {"value":68}
+  b17_c52:u64 = const() {"value":52}
+  b17_ec:u64 = int.add.wrap(b17_ep,b17_c52)
+  b17_mp:u64,b17_me:u64 = call(b17_i,b17_c68) {"function":"tc_ids"}
+  b17_ep0:u64,b17_ee0:u64 = call(b17_i,b17_ec) {"function":"tc_ids"}
+  b17_total:u64 = call(b17_i,b17_mp,b17_me,b17_ep0,b17_ee0) {"function":"tc_union_count"}
+  b17_okay:bool = compare.eq(b17_total,b17_cnt)
+  branch b17_okay member(b17_i,b17_o,b17_w,b17_n,b17_ec,b17_mf,b17_ef,b17_cnt,b17_begin,b17_mp,b17_me,b17_ep0,b17_ee0) coverage()
+block member(b18_i:readbuf,b18_o:mutbuf,b18_w:mutbuf,b18_n:u64,b18_ec:u64,b18_mf:u64,b18_ef:u64,b18_cnt:u64,b18_cur:u64,b18_mp:u64,b18_me:u64,b18_ep0:u64,b18_ee0:u64)
+  b18_cp:u64,b18_ce:u64 = call(b18_i,b18_cur,b18_n) {"function":"tc_frame"}
+  b18_cl:u64 = int.sub.wrap(b18_ce,b18_cp)
+  b18_hr:u64 = call(b18_i,b18_cp,b18_cl,b18_w) {"function":"cm_hash"}
+  b18_z:u64 = const() {"value":0}
+  b18_okay:bool = compare.eq(b18_hr,b18_z)
+  branch b18_okay member_id(b18_i,b18_o,b18_w,b18_n,b18_ec,b18_mf,b18_ef,b18_cnt,b18_cp,b18_ce,b18_mp,b18_me,b18_ep0,b18_ee0) internal()
+block member_id(b19_i:readbuf,b19_o:mutbuf,b19_w:mutbuf,b19_n:u64,b19_ec:u64,b19_mf:u64,b19_ef:u64,b19_cnt:u64,b19_cp:u64,b19_ce:u64,b19_mp:u64,b19_me:u64,b19_ep0:u64,b19_ee0:u64)
+  b19_id:u64,b19_nm:u64,b19_ne:u64 = call(b19_i,b19_mp,b19_me,b19_ep0,b19_ee0) {"function":"tc_pick"}
+  b19_model_same:bool = compare.eq(b19_mp,b19_nm)
+  b19_env_same:bool = compare.eq(b19_ep0,b19_ne)
+  b19_zero:u64 = const() {"value":0}
+  b19_one:u64 = const() {"value":1}
+  b19_two:u64 = const() {"value":2}
+  b19_model_bit:u64 = select(b19_model_same,b19_zero,b19_one)
+  b19_env_bit:u64 = select(b19_env_same,b19_zero,b19_two)
+  b19_which:u64 = int.add.wrap(b19_model_bit,b19_env_bit)
+  b19_c1168:u64 = const() {"value":1168}
+  b19_c32:u64 = const() {"value":32}
+  b19_c1:u64 = const() {"value":1}
+  b19_raw:u64 = call(b19_i,b19_id,b19_w,b19_c1168,b19_c32) {"function":"ca_equal"}
+  b19_same:bool = compare.eq(b19_raw,b19_c1)
+  branch b19_same links(b19_i,b19_o,b19_w,b19_n,b19_ec,b19_mf,b19_ef,b19_cnt,b19_cp,b19_ce,b19_nm,b19_me,b19_ne,b19_ee0,b19_which) noncanon()
+block links(b20_i:readbuf,b20_o:mutbuf,b20_w:mutbuf,b20_n:u64,b20_ec:u64,b20_mf:u64,b20_ef:u64,b20_cnt:u64,b20_cp:u64,b20_ce:u64,b20_nm:u64,b20_me:u64,b20_ne:u64,b20_ee0:u64,b20_which:u64)
+  b20_s:u32 = call(b20_i,b20_w,b20_cp,b20_ec,b20_mf,b20_ef,b20_which) {"function":"tc_links"}
+  b20_z:u32 = const() {"value":0}
+  b20_okay:bool = compare.eq(b20_s,b20_z)
+  branch b20_okay next(b20_i,b20_o,b20_w,b20_n,b20_ec,b20_mf,b20_ef,b20_cnt,b20_ce,b20_nm,b20_me,b20_ne,b20_ee0) inner(b20_s)
+block next(b21_i:readbuf,b21_o:mutbuf,b21_w:mutbuf,b21_n:u64,b21_ec:u64,b21_mf:u64,b21_ef:u64,b21_cnt:u64,b21_ce:u64,b21_nm:u64,b21_me:u64,b21_ne:u64,b21_ee0:u64)
+  b21_mend:bool = compare.eq(b21_nm,b21_me)
+  b21_eend:bool = compare.eq(b21_ne,b21_ee0)
+  b21_done:bool = bool.and(b21_mend,b21_eend)
+  branch b21_done publish_check(b21_o,b21_w,b21_cnt) member(b21_i,b21_o,b21_w,b21_n,b21_ec,b21_mf,b21_ef,b21_cnt,b21_ce,b21_nm,b21_me,b21_ne,b21_ee0)
+block publish_check(b22_o:mutbuf,b22_w:mutbuf,b22_cnt:u64)
+  b22_n_size:usize = buffer.len(b22_o)
+  b22_n:u64 = int.cast(b22_n_size) {"mode":"wrap"}
+  b22_c36:u64 = const() {"value":36}
+  b22_okay:bool = compare.le(b22_c36,b22_n)
+  branch b22_okay publish(b22_o,b22_w,b22_cnt) capacity()
+block publish(b23_o:mutbuf,b23_w:mutbuf,b23_cnt:u64)
+  b23_c32:u64 = const() {"value":32}
+  b23_z:u64 = const() {"value":0}
+  b23_c4:u64 = const() {"value":4}
+  b23_c15992:u64 = const() {"value":15992}
+  b23_outid:u64 = call(b23_w,b23_o,b23_c15992,b23_z) {"function":"td_copy"}
+  b23_n:u64 = call(b23_o,b23_cnt,b23_c32,b23_c4) {"function":"td_count"}
+  b23_ok:u32 = const() {"value":0}
+  ret(b23_ok)
+block inner(b24_s:u32)
+  ret(b24_s)
+block inner_cm(b25_s:u32)
+  b25_c128:u32 = const() {"value":128}
+  b25_out:u32 = int.add.wrap(b25_s,b25_c128)
+  ret(b25_out)
+block bad_len()
+  b26_code:u32 = const() {"value":105}
+  ret(b26_code)
+block bad_magic()
+  b27_code:u32 = const() {"value":104}
+  ret(b27_code)
+block truncated()
+  b28_code:u32 = const() {"value":106}
+  ret(b28_code)
+block bad_count()
+  b29_code:u32 = const() {"value":87}
+  ret(b29_code)
+block trailing()
+  b30_code:u32 = const() {"value":88}
+  ret(b30_code)
+block coverage()
+  b31_code:u32 = const() {"value":86}
+  ret(b31_code)
+block noncanon()
+  b32_code:u32 = const() {"value":89}
+  ret(b32_code)
+block capacity()
+  b33_code:u32 = const() {"value":102}
+  ret(b33_code)
+block internal()
+  b34_code:u32 = const() {"value":103}
+  ret(b34_code)
+end
+
+fn tc_frame(b1_i:readbuf,b1_p:u64,b1_n:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_p:u64,b1_n:u64)
+  b1_c4:u64 = const() {"value":4}
+  b1_b:u64 = int.add.wrap(b1_p,b1_c4)
+  b1_fits:bool = compare.le(b1_b,b1_n)
+  branch b1_fits length(b1_i,b1_p,b1_n,b1_b) fail()
+block length(b2_i:readbuf,b2_p:u64,b2_n:u64,b2_b:u64)
+  b2_c4:u64 = const() {"value":4}
+  b2_l:u64 = call(b2_i,b2_p,b2_c4) {"function":"ca_read_be"}
+  b2_e:u64 = int.add.wrap(b2_b,b2_l)
+  b2_fits:bool = compare.le(b2_e,b2_n)
+  branch b2_fits okay(b2_b,b2_e) fail()
+block okay(b3_b:u64,b3_e:u64)
+  ret(b3_b,b3_e)
+block fail()
+  b4_z:u64 = const() {"value":0}
+  ret(b4_z,b4_z)
+end
+
+fn tc_keep_model(b1_w:mutbuf,b1_cnt:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b1_w:mutbuf,b1_cnt:u64)
+  b1_s:u64 = const() {"value":1288}
+  b1_d:u64 = const() {"value":13944}
+  jump loop(b1_w,b1_cnt,b1_s,b1_d)
+block loop(b2_w:mutbuf,b2_cnt:u64,b2_s:u64,b2_d:u64)
+  b2_role:u64 = call(b2_w,b2_s) {"function":"tr_get"}
+  b2_written:u64 = call(b2_w,b2_d,b2_role) {"function":"tr_put"}
+  b2_one:u64 = const() {"value":1}
+  b2_c8:u64 = const() {"value":8}
+  b2_c40:u64 = const() {"value":40}
+  b2_done:bool = compare.eq(b2_cnt,b2_one)
+  b2_rest:u64 = int.sub.wrap(b2_cnt,b2_one)
+  b2_ns:u64 = int.add.wrap(b2_s,b2_c40)
+  b2_nd:u64 = int.add.wrap(b2_d,b2_c8)
+  branch b2_done finish(b2_nd) loop(b2_w,b2_rest,b2_ns,b2_nd)
+block finish(b3_d:u64)
+  ret(b3_d)
+end
+
+fn tc_declared(b1_i:readbuf,b1_w:mutbuf,b1_ep:u64,b1_el:u64,b1_ef:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_w:mutbuf,b1_ep:u64,b1_el:u64,b1_ef:u64)
+  b1_res:u64 = call(b1_i,b1_ep,b1_el,b1_w) {"function":"ve_env_hash"}
+  b1_z:u64 = const() {"value":0}
+  b1_ok:bool = compare.eq(b1_res,b1_z)
+  branch b1_ok family(b1_i,b1_w,b1_ep,b1_ef) internal()
+block family(b2_i:readbuf,b2_w:mutbuf,b2_ep:u64,b2_ef:u64)
+  b2_c52:u64 = const() {"value":52}
+  b2_c68:u64 = const() {"value":68}
+  b2_c1:u64 = const() {"value":1}
+  b2_ec:u64 = int.add.wrap(b2_ep,b2_c52)
+  b2_ml:u64 = call(b2_i,b2_c68,b2_c1) {"function":"rac_read_le"}
+  b2_el:u64 = call(b2_i,b2_ec,b2_c1) {"function":"rac_read_le"}
+  b2_ms:u64 = int.add.wrap(b2_c68,b2_c1)
+  b2_es:u64 = int.add.wrap(b2_ec,b2_c1)
+  b2_v:u64 = call(b2_i,b2_ms,b2_es,b2_ml,b2_el) {"function":"sb_compare"}
+  b2_same:bool = compare.eq(b2_v,b2_c1)
+  branch b2_same binding(b2_i,b2_w,b2_ms,b2_ml,b2_ef) wrong_bind()
+block binding(b3_i:readbuf,b3_w:mutbuf,b3_ms:u64,b3_ml:u64,b3_ef:u64)
+  b3_c128:u64 = const() {"value":128}
+  b3_c1168:u64 = const() {"value":1168}
+  b3_c32:u64 = const() {"value":32}
+  b3_one:u64 = const() {"value":1}
+  b3_a:u64 = int.add.wrap(b3_ms,b3_ml)
+  b3_b:u64 = int.add.wrap(b3_a,b3_c128)
+  b3_r:u64 = call(b3_i,b3_b,b3_w,b3_c1168,b3_c32) {"function":"ca_equal"}
+  b3_same:bool = compare.eq(b3_r,b3_one)
+  branch b3_same roles(b3_i,b3_w,b3_ef) wrong_bind()
+block roles(b4_i:readbuf,b4_w:mutbuf,b4_ef:u64)
+  b4_at:u64 = const() {"value":1288}
+  jump role(b4_i,b4_w,b4_ef,b4_at)
+block role(b5_i:readbuf,b5_w:mutbuf,b5_ef:u64,b5_at:u64)
+  b5_one:u64 = const() {"value":1}
+  b5_six:u64 = const() {"value":6}
+  b5_p:u64 = call(b5_w,b5_at) {"function":"tr_get"}
+  b5_code:u64 = call(b5_i,b5_p,b5_one) {"function":"rac_read_le"}
+  b5_right:bool = compare.eq(b5_code,b5_six)
+  branch b5_right next(b5_i,b5_w,b5_ef,b5_at) wrong_role()
+block next(b6_i:readbuf,b6_w:mutbuf,b6_ef:u64,b6_at:u64)
+  b6_one:u64 = const() {"value":1}
+  b6_c40:u64 = const() {"value":40}
+  b6_last:bool = compare.eq(b6_ef,b6_one)
+  b6_remaining:u64 = int.sub.wrap(b6_ef,b6_one)
+  b6_np:u64 = int.add.wrap(b6_at,b6_c40)
+  branch b6_last preserve(b6_w) role(b6_i,b6_w,b6_remaining,b6_np)
+block preserve(b7_w:mutbuf)
+  b7_offset:u64 = const() {"value":15992}
+  b7_copied:u64 = call(b7_w,b7_offset) {"function":"sb_append_digest"}
+  b7_z:u32 = const() {"value":0}
+  ret(b7_z)
+block wrong_bind()
+  b8_code:u32 = const() {"value":84}
+  ret(b8_code)
+block wrong_role()
+  b9_code:u32 = const() {"value":85}
+  ret(b9_code)
+block internal()
+  b10_code:u32 = const() {"value":103}
+  ret(b10_code)
+end
+
+fn tc_ids(b1_i:readbuf,b1_ctx:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_ctx:u64)
+  b1_one:u64 = const() {"value":1}
+  b1_c4:u64 = const() {"value":4}
+  b1_c32:u64 = const() {"value":32}
+  b1_c161:u64 = const() {"value":161}
+  b1_l:u64 = call(b1_i,b1_ctx,b1_one) {"function":"rac_read_le"}
+  b1_f:u64 = int.add.wrap(b1_ctx,b1_l)
+  b1_p:u64 = int.add.wrap(b1_f,b1_c161)
+  b1_count:u64 = call(b1_i,b1_p,b1_c4) {"function":"ca_read_be"}
+  b1_first:u64 = int.add.wrap(b1_p,b1_c4)
+  b1_span:u64 = int.mul.wrap(b1_count,b1_c32)
+  b1_last:u64 = int.add.wrap(b1_first,b1_span)
+  ret(b1_first,b1_last)
+end
+
+fn tc_pick(b1_i:readbuf,b1_mp:u64,b1_me:u64,b1_ep:u64,b1_ee:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_mp:u64,b1_me:u64,b1_ep:u64,b1_ee:u64)
+  b1_none:bool = compare.eq(b1_mp,b1_me)
+  branch b1_none from_env(b1_mp,b1_ep) env_exists(b1_i,b1_mp,b1_ep,b1_ee)
+block env_exists(b2_i:readbuf,b2_mp:u64,b2_ep:u64,b2_ee:u64)
+  b2_none:bool = compare.eq(b2_ep,b2_ee)
+  branch b2_none from_model(b2_mp,b2_ep) order(b2_i,b2_mp,b2_ep)
+block order(b3_i:readbuf,b3_mp:u64,b3_ep:u64)
+  b3_c32:u64 = const() {"value":32}
+  b3_z:u64 = const() {"value":0}
+  b3_r:u64 = call(b3_i,b3_mp,b3_ep,b3_c32,b3_c32) {"function":"sb_compare"}
+  b3_left:bool = compare.eq(b3_r,b3_z)
+  branch b3_left from_model(b3_mp,b3_ep) right(b3_mp,b3_ep,b3_r)
+block right(b4_mp:u64,b4_ep:u64,b4_r:u64)
+  b4_c2:u64 = const() {"value":2}
+  b4_right:bool = compare.eq(b4_r,b4_c2)
+  branch b4_right from_env(b4_mp,b4_ep) both(b4_mp,b4_ep)
+block from_model(b5_mp:u64,b5_ep:u64)
+  b5_c32:u64 = const() {"value":32}
+  b5_next:u64 = int.add.wrap(b5_mp,b5_c32)
+  ret(b5_mp,b5_next,b5_ep)
+block from_env(b6_mp:u64,b6_ep:u64)
+  b6_c32:u64 = const() {"value":32}
+  b6_next:u64 = int.add.wrap(b6_ep,b6_c32)
+  ret(b6_ep,b6_mp,b6_next)
+block both(b7_mp:u64,b7_ep:u64)
+  b7_c32:u64 = const() {"value":32}
+  b7_nm:u64 = int.add.wrap(b7_mp,b7_c32)
+  b7_ne:u64 = int.add.wrap(b7_ep,b7_c32)
+  ret(b7_mp,b7_nm,b7_ne)
+end
+
+fn tc_union_count(b1_i:readbuf,b1_mp:u64,b1_me:u64,b1_ep:u64,b1_ee:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_mp:u64,b1_me:u64,b1_ep:u64,b1_ee:u64)
+  b1_z:u64 = const() {"value":0}
+  jump loop(b1_i,b1_mp,b1_me,b1_ep,b1_ee,b1_z)
+block loop(b2_i:readbuf,b2_mp:u64,b2_me:u64,b2_ep:u64,b2_ee:u64,b2_n:u64)
+  b2_mend:bool = compare.eq(b2_mp,b2_me)
+  b2_eend:bool = compare.eq(b2_ep,b2_ee)
+  b2_done:bool = bool.and(b2_mend,b2_eend)
+  branch b2_done finish(b2_n) advance(b2_i,b2_mp,b2_me,b2_ep,b2_ee,b2_n)
+block advance(b3_i:readbuf,b3_mp:u64,b3_me:u64,b3_ep:u64,b3_ee:u64,b3_n:u64)
+  b3_id:u64,b3_nm:u64,b3_ne:u64 = call(b3_i,b3_mp,b3_me,b3_ep,b3_ee) {"function":"tc_pick"}
+  b3_one:u64 = const() {"value":1}
+  b3_next:u64 = int.add.wrap(b3_n,b3_one)
+  jump loop(b3_i,b3_nm,b3_me,b3_ne,b3_ee,b3_next)
+block finish(b4_n:u64)
+  ret(b4_n)
+end
+
+fn tc_links(b1_i:readbuf,b1_w:mutbuf,b1_cp:u64,b1_ec:u64,b1_mf:u64,b1_ef:u64,b1_bits:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_w:mutbuf,b1_cp:u64,b1_ec:u64,b1_mf:u64,b1_ef:u64,b1_bits:u64)
+  b1_two:u64 = const() {"value":2}
+  b1_env_only:bool = compare.eq(b1_bits,b1_two)
+  branch b1_env_only environment(b1_i,b1_w,b1_cp,b1_ec,b1_ef) model(b1_i,b1_w,b1_cp,b1_ec,b1_mf,b1_ef,b1_bits)
+block model(b2_i:readbuf,b2_w:mutbuf,b2_cp:u64,b2_ec:u64,b2_mf:u64,b2_ef:u64,b2_bits:u64)
+  b2_mctx:u64 = const() {"value":68}
+  b2_start:u64 = const() {"value":13944}
+  b2_stride:u64 = const() {"value":8}
+  b2_m:u32 = call(b2_i,b2_w,b2_cp,b2_mctx,b2_mf,b2_start,b2_stride) {"function":"tc_match"}
+  b2_z:u32 = const() {"value":0}
+  b2_good:bool = compare.eq(b2_m,b2_z)
+  branch b2_good maybe_env(b2_i,b2_w,b2_cp,b2_ec,b2_ef,b2_bits) model_error(b2_m)
+block maybe_env(b3_i:readbuf,b3_w:mutbuf,b3_cp:u64,b3_ec:u64,b3_ef:u64,b3_bits:u64)
+  b3_one:u64 = const() {"value":1}
+  b3_model_only:bool = compare.eq(b3_bits,b3_one)
+  branch b3_model_only ok() environment(b3_i,b3_w,b3_cp,b3_ec,b3_ef)
+block environment(b4_i:readbuf,b4_w:mutbuf,b4_cp:u64,b4_ec:u64,b4_ef:u64)
+  b4_start:u64 = const() {"value":1288}
+  b4_stride:u64 = const() {"value":40}
+  b4_e:u32 = call(b4_i,b4_w,b4_cp,b4_ec,b4_ef,b4_start,b4_stride) {"function":"tc_match"}
+  ret(b4_e)
+block model_error(b5_s:u32)
+  ret(b5_s)
+block ok()
+  b6_z:u32 = const() {"value":0}
+  ret(b6_z)
+end
+
+fn tc_match(b1_i:readbuf,b1_w:mutbuf,b1_cp:u64,b1_ctx:u64,b1_count:u64,b1_start:u64,b1_stride:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b1_i:readbuf,b1_w:mutbuf,b1_cp:u64,b1_ctx:u64,b1_count:u64,b1_start:u64,b1_stride:u64)
+  b1_c4:u64 = const() {"value":4}
+  b1_mc:u64 = int.add.wrap(b1_cp,b1_c4)
+  jump find(b1_i,b1_w,b1_mc,b1_ctx,b1_count,b1_start,b1_stride)
+block find(b2_i:readbuf,b2_w:mutbuf,b2_mc:u64,b2_ctx:u64,b2_count:u64,b2_start:u64,b2_stride:u64)
+  b2_role:u64 = call(b2_w,b2_start) {"function":"tr_get"}
+  b2_one:u64 = const() {"value":1}
+  b2_c1168:u64 = const() {"value":1168}
+  b2_c32:u64 = const() {"value":32}
+  b2_member:u64 = int.add.wrap(b2_role,b2_one)
+  b2_r:u64 = call(b2_i,b2_member,b2_w,b2_c1168,b2_c32) {"function":"ca_equal"}
+  b2_same:bool = compare.eq(b2_r,b2_one)
+  branch b2_same context(b2_i,b2_mc,b2_ctx,b2_role) next(b2_i,b2_w,b2_mc,b2_ctx,b2_count,b2_start,b2_stride)
+block next(b3_i:readbuf,b3_w:mutbuf,b3_mc:u64,b3_ctx:u64,b3_count:u64,b3_start:u64,b3_stride:u64)
+  b3_one:u64 = const() {"value":1}
+  b3_last:bool = compare.eq(b3_count,b3_one)
+  b3_after:u64 = int.sub.wrap(b3_count,b3_one)
+  b3_p:u64 = int.add.wrap(b3_start,b3_stride)
+  branch b3_last missing() find(b3_i,b3_w,b3_mc,b3_ctx,b3_after,b3_p,b3_stride)
+block context(b4_i:readbuf,b4_mc:u64,b4_ctx:u64,b4_role:u64)
+  b4_one:u64 = const() {"value":1}
+  b4_c161:u64 = const() {"value":161}
+  b4_a:u64 = call(b4_i,b4_mc,b4_one) {"function":"rac_read_le"}
+  b4_b:u64 = call(b4_i,b4_ctx,b4_one) {"function":"rac_read_le"}
+  b4_al:u64 = int.add.wrap(b4_a,b4_c161)
+  b4_bl:u64 = int.add.wrap(b4_b,b4_c161)
+  b4_r:u64 = call(b4_i,b4_mc,b4_ctx,b4_al,b4_bl) {"function":"sb_compare"}
+  b4_same:bool = compare.eq(b4_r,b4_one)
+  branch b4_same payload(b4_i,b4_mc,b4_al,b4_role) different()
+block payload(b5_i:readbuf,b5_mc:u64,b5_al:u64,b5_role:u64)
+  b5_c33:u64 = const() {"value":33}
+  b5_c8:u64 = const() {"value":8}
+  b5_c32:u64 = const() {"value":32}
+  b5_ml:u64 = int.add.wrap(b5_mc,b5_al)
+  b5_md:u64 = int.add.wrap(b5_ml,b5_c8)
+  b5_rd:u64 = int.add.wrap(b5_role,b5_c33)
+  b5_r:u64 = call(b5_i,b5_md,b5_rd,b5_c32,b5_c32) {"function":"sb_compare"}
+  b5_one:u64 = const() {"value":1}
+  b5_same:bool = compare.eq(b5_r,b5_one)
+  branch b5_same size(b5_i,b5_ml,b5_rd) different()
+block size(b6_i:readbuf,b6_ml:u64,b6_rd:u64)
+  b6_c32:u64 = const() {"value":32}
+  b6_c8:u64 = const() {"value":8}
+  b6_one:u64 = const() {"value":1}
+  b6_rl:u64 = int.add.wrap(b6_rd,b6_c32)
+  b6_r:u64 = call(b6_i,b6_ml,b6_rl,b6_c8,b6_c8) {"function":"sb_compare"}
+  b6_same:bool = compare.eq(b6_r,b6_one)
+  branch b6_same ok() different()
+block ok()
+  b7_code:u32 = const() {"value":0}
+  ret(b7_code)
+block missing()
+  b8_code:u32 = const() {"value":80}
+  ret(b8_code)
+block different()
+  b9_code:u32 = const() {"value":81}
+  ret(b9_code)
+end

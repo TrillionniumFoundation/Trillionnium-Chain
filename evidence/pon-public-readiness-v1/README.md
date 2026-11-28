@@ -112,3 +112,49 @@ remaining implementation, resource and independent-owner obligations. Validate t
 package using `python3 scripts/ci/check_public_readiness_evidence.py` with pinned dependencies
 and the original Git objects available. Full publication CI must be checked separately
 against the final delivery commit.
+
+## Historical storage index
+
+The original evidence bytes and all qualifications above are unchanged. The
+885 payload files under the 21 `observations/pre-correction-{b,c,d}` child
+directories now resolve through [PRE_CORRECTION_ARCHIVE.json](PRE_CORRECTION_ARCHIVE.json),
+which binds every original path, Git blob, byte length and SHA-256 to the
+reachable `893210a45b44742edfe2510fea1d92e9974b5f95` snapshot. Their
+413,594,755 bytes remain recoverable from Git history. The six original nested
+manifest/qualification files, every A/E failure, B aggregate refusal, C/D
+publication failure, CodeQL annotation and final F observation remain present.
+
+The root `manifest.json` still contains all 1,334 original checksums, including
+the original version of this README. It has not been shortened or resealed.
+The dedicated reader verifies every retained original file and current Git
+tracking, verifies the full removed-path roster, and reconstructs a disposable
+1,335-file original view. It checks all 793 measured source hashes and executes
+the unchanged historical checker at `c2b1ca2503aeca35873d20d1b188689369edc752`
+against that full view. Missing local objects, changed claims, omitted files,
+untracked retained files and historical semantic failures are errors. The
+reader never fetches or substitutes another source version.
+
+Run the existing historical command from the repository root:
+
+```bash
+python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1
+```
+
+Or invoke the storage reader explicitly:
+
+```bash
+python3 scripts/ci/check_public_readiness_archive.py --manifest evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json
+```
+
+To retrieve one exact archived file, pass its complete repository path:
+
+```bash
+python3 scripts/ci/check_historical_archive.py --manifest evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json --cat evidence/pon-public-readiness-v1/observations/pre-correction-b/baseline/qualification.json > original-qualification.json
+```
+
+Full historical source objects are required. CI's complete-history checkout
+includes retained archive tags; the dedicated reader independently checks local
+object availability and refuses incomplete checkouts. Source preparation, when
+needed, is an explicit separate operation and grants no acceptance. Successful
+historical replay preserves all original false authority flags; it does not
+qualify the current source, HIA execution, a public network or production use.

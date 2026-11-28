@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_hia_thread_cpu_fixture_v1
+fn f0(e:readbuf,c:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(e:readbuf,c:mutbuf,s:mutbuf)
+  flag:u64 = const() {"value":1}
+  result:u32 = call(e,c,s,flag) {"function":"cpu_entry"}
+  ret(result)
+end

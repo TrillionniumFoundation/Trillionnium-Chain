@@ -1,0 +1,99 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_manifest_tcb1_context_binding
+fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  extent:u64 = int.cast(size) {"mode":"wrap"}
+  fixed:u64 = const() {"value":201}
+  has_context:bool = compare.ge(extent,fixed)
+  branch has_context header(input,output,scratch,extent,fixed) malformed()
+block header(hi:readbuf,ho:mutbuf,hs:mutbuf,he:u64,hf:u64)
+  zero_h:u64 = const() {"value":0}
+  four_h:u64 = const() {"value":4}
+  seen:u64 = call(hi,zero_h,four_h) {"function":"rac_read_le"}
+  tcb1:u64 = const() {"value":826426196}
+  tag_ok:bool = compare.eq(seen,tcb1)
+  branch tag_ok expected_extent(hi,ho,hs,he,hf) malformed()
+block expected_extent(ei:readbuf,eo:mutbuf,es:mutbuf,ee:u64,ef:u64)
+  expected_at:u64 = const() {"value":40}
+  one_e:u64 = const() {"value":1}
+  expected_n:u64 = call(ei,expected_at,one_e) {"function":"rac_read_le"}
+  manifest_at:u64 = int.add.wrap(ef,expected_n)
+  enough:bool = compare.ge(ee,manifest_at)
+  branch enough expected_type(ei,eo,es,ee,manifest_at,expected_n) malformed()
+block expected_type(ti:readbuf,to:mutbuf,ts:mutbuf,te:u64,tm:u64,tn:u64)
+  text_at:u64 = const() {"value":41}
+  typed:u64 = call(ti,text_at,tn) {"function":"value_utf8"}
+  one_t:u64 = const() {"value":1}
+  is_string:bool = compare.eq(typed,one_t)
+  branch is_string decode(ti,to,ts,te,tm,tn) malformed()
+block decode(di:readbuf,doo:mutbuf,ds:mutbuf,de:u64,dm:u64,dn:u64)
+  length:u64 = int.sub.wrap(de,dm)
+  result:u32,rows:u64,count:u64 = call(di,dm,length) {"function":"cm_decode"}
+  zero_d:u32 = const() {"value":0}
+  okay:bool = compare.eq(result,zero_d)
+  branch okay context(di,doo,ds,dm,length,dn,rows,count) failure(result)
+block context(ci:readbuf,co:mutbuf,cs:mutbuf,cm:u64,cl:u64,cn:u64,cr:u64,cc:u64)
+  version_extent:u64 = const() {"value":4}
+  family_at:u64 = int.add.wrap(cm,version_extent)
+  one_c:u64 = const() {"value":1}
+  live_n:u64 = call(ci,family_at,one_c) {"function":"rac_read_le"}
+  prefixed_fixed:u64 = const() {"value":161}
+  expected_n_with_context:u64 = int.add.wrap(cn,prefixed_fixed)
+  live_n_with_context:u64 = int.add.wrap(live_n,prefixed_fixed)
+  start_expected:u64 = const() {"value":40}
+  same_context:u64 = call(ci,start_expected,family_at,expected_n_with_context,live_n_with_context) {"function":"sb_compare"}
+  context_matches:bool = compare.eq(same_context,one_c)
+  branch context_matches workspace(ci,co,cs,cm,cl,cr,cc) wrong_context()
+block workspace(wi:readbuf,wo:mutbuf,ws:mutbuf,wm:u64,wl:u64,wr:u64,wc:u64)
+  work_n:usize = buffer.len(ws)
+  work_need:usize = const() {"value":1232}
+  fits_work:bool = compare.ge(work_n,work_need)
+  branch fits_work hash(wi,wo,ws,wm,wl,wr,wc) capacity()
+block hash(ki:readbuf,ko:mutbuf,ks:mutbuf,km:u64,kl:u64,kr:u64,kc:u64)
+  status:u64 = call(ki,km,kl,ks) {"function":"cm_hash"}
+  zero_k:u64 = const() {"value":0}
+  hashed:bool = compare.eq(status,zero_k)
+  branch hashed manifest_id(ki,ko,ks,kr,kc) internal()
+block manifest_id(mi:readbuf,mo:mutbuf,ms:mutbuf,mr:u64,mc:u64)
+  expected_id_at:u64 = const() {"value":8}
+  digest_at:u64 = const() {"value":1168}
+  size_m:u64 = const() {"value":32}
+  compared:u64 = call(mi,expected_id_at,ms,digest_at,size_m) {"function":"ca_equal"}
+  one_m:u64 = const() {"value":1}
+  digest_matches:bool = compare.eq(compared,one_m)
+  branch digest_matches index(mi,mo,ms,mr,mc) wrong_manifest()
+block index(ii:readbuf,io:mutbuf,is:mutbuf,ir:u64,ic:u64)
+  index_at:u64 = const() {"value":4}
+  selected:u64 = call(ii,index_at,index_at) {"function":"rac_read_le"}
+  in_range:bool = compare.lt(selected,ic)
+  branch in_range room(ii,io,is,ir,selected) absent()
+block room(ri:readbuf,ro:mutbuf,rs:mutbuf,rr:u64,rx:u64)
+  out_n:usize = buffer.len(ro)
+  need_out:usize = const() {"value":72}
+  fits_out:bool = compare.ge(out_n,need_out)
+  branch fits_out publish(ri,ro,rs,rr,rx) capacity()
+block publish(pi:readbuf,po:mutbuf,ps:mutbuf,pr:u64,px:u64)
+  _done:u64 = call(pi,po,ps,pr,px) {"function":"cm_publish_selected"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block failure(error:u32)
+  ret(error)
+block absent()
+  bad_index:u32 = const() {"value":13}
+  ret(bad_index)
+block wrong_context()
+  context_mismatch:u32 = const() {"value":14}
+  ret(context_mismatch)
+block wrong_manifest()
+  manifest_mismatch:u32 = const() {"value":15}
+  ret(manifest_mismatch)
+block malformed()
+  frame_error:u32 = const() {"value":100}
+  ret(frame_error)
+block capacity()
+  insufficient:u32 = const() {"value":102}
+  ret(insufficient)
+block internal()
+  hash_error:u32 = const() {"value":103}
+  ret(hash_error)
+end

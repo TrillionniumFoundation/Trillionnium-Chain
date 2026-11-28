@@ -1,0 +1,42 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_parent_tree_entry
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,write,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:u64 = call(v0,v1,v2) {"function":"sa_bound"}
+  v4:u64 = const() {"value":0}
+  v5:bool = compare.eq(v3,v4)
+  branch v5 b2(v0,v1,v2,v3,v5) b1(v0,v1,v2,v3)
+block b1(v6:readbuf,v7:mutbuf,v8:mutbuf,v9:u64)
+  v16:u64 = const() {"value":136}
+  v17:u64 = call(v8,v16) {"function":"ev_g"}
+  v18:u64 = const() {"value":18446744073709551615}
+  v19:bool = compare.ne(v17,v18)
+  jump b2(v6,v7,v8,v9,v19)
+block b2(v11:readbuf,v12:mutbuf,v13:mutbuf,v14:u64,v15:bool)
+  branch v15 b3(v11,v12,v13) b4(v11,v12,v13,v14)
+block b3(v20:readbuf,v21:mutbuf,v22:mutbuf)
+  v28:u64 = const() {"value":6}
+  v29:u32 = int.cast(v28) {"mode":"wrap"}
+  ret(v29)
+block b4(v24:readbuf,v25:mutbuf,v26:mutbuf,v27:u64)
+  v30:u64 = const() {"value":120}
+  v31:u64 = call(v26,v30) {"function":"ev_g"}
+  v32:u64 = const() {"value":88}
+  v33:u64 = int.add.wrap(v27,v32)
+  v34:u64 = call(v26,v33) {"function":"ev_g"}
+  v35:u64 = const() {"value":128}
+  v36:u64 = call(v26,v35) {"function":"ev_g"}
+  v37:u64 = call(v25,v26,v31,v34,v36) {"function":"sc_apply_tree"}
+  v38:u64 = const() {"value":0}
+  v39:bool = compare.eq(v37,v38)
+  branch v39 b5(v24,v25,v26) b6(v24,v25,v26,v37)
+block b5(v40:readbuf,v41:mutbuf,v42:mutbuf)
+  v50:u64 = const() {"value":6}
+  v51:u32 = int.cast(v50) {"mode":"wrap"}
+  ret(v51)
+block b6(v45:readbuf,v46:mutbuf,v47:mutbuf,v49:u64)
+  v52:u64 = const() {"value":136}
+  v53:u64 = call(v47,v52,v49) {"function":"ev_p"}
+  v54:u64 = const() {"value":9}
+  v55:u32 = int.cast(v54) {"mode":"wrap"}
+  ret(v55)
+end

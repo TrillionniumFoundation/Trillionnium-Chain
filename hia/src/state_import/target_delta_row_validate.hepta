@@ -1,0 +1,128 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_target_delta_row_validate
+fn f0(input:readbuf,unused:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,unused:mutbuf,work:mutbuf)
+  input_len:usize = buffer.len(input)
+  total:u64 = int.cast(input_len) {"mode":"wrap"}
+  suffix:u64 = const() {"value":48}
+  max_bytes:u64 = const() {"value":1048576}
+  have_tail:bool = compare.ge(total,suffix)
+  bounded:bool = compare.le(total,max_bytes)
+  extent:bool = bool.and(have_tail,bounded)
+  branch extent parse(input,work,total,suffix) malformed()
+block parse(raw:readbuf,w:mutbuf,len:u64,tail_size:u64)
+  tail:u64 = int.sub.wrap(len,tail_size)
+  lengths:u64 = call(raw,tail) {"function":"tr_read"}
+  eight:u64 = const() {"value":8}
+  desc_at:u64 = int.add.wrap(tail,eight)
+  desc:u64 = call(raw,desc_at) {"function":"tr_read"}
+  low:u64 = const() {"value":4294967295}
+  hi:u64 = const() {"value":32}
+  ns:u64 = bit.and(lengths,low)
+  key:u64 = int.shr.checked(lengths,hi)
+  val:u64 = bit.and(desc,low)
+  tag:u64 = int.shr.checked(desc,hi)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  present:bool = compare.eq(tag,one)
+  known:bool = compare.le(tag,one)
+  no_value:bool = compare.eq(val,zero)
+  compatible:bool = bool.or(present,no_value)
+  option_ok:bool = bool.and(known,compatible)
+  val_at:u64 = int.add.wrap(ns,key)
+  payload:u64 = int.add.wrap(val_at,val)
+  exact:bool = compare.eq(payload,tail)
+  frame_ok:bool = bool.and(option_ok,exact)
+  branch frame_ok shape(raw,w,tail,ns,key,val,val_at) malformed()
+block shape(raw1:readbuf,w1:mutbuf,tail1:u64,ns1:u64,key1:u64,val1:u64,vpos1:u64)
+  zero1:u64 = const() {"value":0}
+  ns_max:u64 = const() {"value":128}
+  key_max:u64 = const() {"value":65536}
+  ns_nonzero:bool = compare.gt(ns1,zero1)
+  key_nonzero:bool = compare.gt(key1,zero1)
+  ns_fits:bool = compare.le(ns1,ns_max)
+  key_fits:bool = compare.le(key1,key_max)
+  nonzero:bool = bool.and(ns_nonzero,key_nonzero)
+  limits:bool = bool.and(ns_fits,key_fits)
+  shape_ok:bool = bool.and(nonzero,limits)
+  branch shape_ok policy(raw1,w1,tail1,ns1,key1,val1,vpos1) invalid()
+block policy(raw2:readbuf,w2:mutbuf,tail2:u64,ns2:u64,key2:u64,val2:u64,vpos2:u64)
+  ns_bound:usize = int.cast(ns2) {"mode":"wrap"}
+  p1:bool = call(raw2,ns_bound) {"function":"f1"}
+  p2:bool = call(raw2,ns_bound) {"function":"f2"}
+  p3:bool = call(raw2,ns_bound) {"function":"f3"}
+  p4:bool = call(raw2,ns_bound) {"function":"f4"}
+  p5:bool = call(raw2,ns_bound) {"function":"f5"}
+  p6:bool = call(raw2,ns_bound) {"function":"f6"}
+  p7:bool = call(raw2,ns_bound) {"function":"f7"}
+  p12:bool = bool.or(p1,p2)
+  p34:bool = bool.or(p3,p4)
+  p56:bool = bool.or(p5,p6)
+  p1234:bool = bool.or(p12,p34)
+  p567:bool = bool.or(p56,p7)
+  reject:bool = bool.or(p1234,p567)
+  branch reject invalid() capacity(raw2,w2,tail2,ns2,key2,val2,vpos2)
+block capacity(raw3:readbuf,w3:mutbuf,tail3:u64,ns3:u64,key3:u64,val3:u64,vpos3:u64)
+  work_len:usize = buffer.len(w3)
+  scratch:usize = const() {"value":1256}
+  fits:bool = compare.ge(work_len,scratch)
+  branch fits hash(raw3,w3,tail3,ns3,key3,val3,vpos3) short()
+block hash(raw4:readbuf,w4:mutbuf,tail4:u64,ns4:u64,key4:u64,val4:u64,vpos4:u64)
+  initialized:u64 = call(w4) {"function":"tr_sha_init"}
+  domain_at_0:u64 = const() {"value":1208}
+  domain_word_0:u64 = const() {"value":2810246167479189504}
+  _write_0:u64 = call(w4,domain_at_0,domain_word_0) {"function":"tr_put"}
+  domain_at_8:u64 = const() {"value":1216}
+  domain_word_8:u64 = const() {"value":7451607104633074292}
+  _write_8:u64 = call(w4,domain_at_8,domain_word_8) {"function":"tr_put"}
+  domain_at_16:u64 = const() {"value":1224}
+  domain_word_16:u64 = const() {"value":7579116647700783474}
+  _write_16:u64 = call(w4,domain_at_16,domain_word_16) {"function":"tr_put"}
+  domain_at_24:u64 = const() {"value":1232}
+  domain_word_24:u64 = const() {"value":8389754676365648750}
+  _write_24:u64 = call(w4,domain_at_24,domain_word_24) {"function":"tr_put"}
+  domain_at_32:u64 = const() {"value":1240}
+  domain_word_32:u64 = const() {"value":7022356901705641057}
+  _write_32:u64 = call(w4,domain_at_32,domain_word_32) {"function":"tr_put"}
+  domain_at_40:u64 = const() {"value":1248}
+  domain_word_40:u64 = const() {"value":13640740826477101}
+  _write_40:u64 = call(w4,domain_at_40,domain_word_40) {"function":"tr_put"}
+  domain_len:u64 = const() {"value":47}
+  domain:u64 = call(w4,domain_at_0,domain_len) {"function":"tr_sha_update_work"}
+  zero4:u64 = const() {"value":0}
+  one4:u64 = const() {"value":1}
+  tag_bias:u64 = const() {"value":12}
+  tag_at:u64 = int.add.wrap(tail4,tag_bias)
+  ns_part:u64 = call(raw4,w4,zero4,ns4) {"function":"r_part"}
+  key_part:u64 = call(raw4,w4,ns4,key4) {"function":"r_part"}
+  tag_part:u64 = call(raw4,w4,tag_at,one4) {"function":"r_part"}
+  value_part:u64 = call(raw4,w4,vpos4,val4) {"function":"r_part"}
+  sealed:u64 = call(w4) {"function":"tr_sha_final"}
+  st0:u64 = bit.or(initialized,domain)
+  st1:u64 = bit.or(ns_part,key_part)
+  st2:u64 = bit.or(tag_part,value_part)
+  st3:u64 = bit.or(st0,st1)
+  st4:u64 = bit.or(st2,sealed)
+  status:u64 = bit.or(st3,st4)
+  hashed:bool = compare.eq(status,zero4)
+  branch hashed compare(raw4,w4,tail4) internal()
+block compare(raw5:readbuf,w5:mutbuf,tail5:u64)
+  digest_bias:u64 = const() {"value":16}
+  digest_at:u64 = int.add.wrap(tail5,digest_bias)
+  equal:bool = call(raw5,w5,digest_at) {"function":"r_digest_match"}
+  branch equal success() invalid()
+block malformed()
+  code0:u32 = const() {"value":100}
+  ret(code0)
+block invalid()
+  code1:u32 = const() {"value":101}
+  ret(code1)
+block short()
+  code2:u32 = const() {"value":102}
+  ret(code2)
+block internal()
+  code3:u32 = const() {"value":103}
+  ret(code3)
+block success()
+  code4:u32 = const() {"value":0}
+  ret(code4)
+end

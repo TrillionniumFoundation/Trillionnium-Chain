@@ -1,0 +1,390 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_release_builder_provenance_v0
+fn f0(input:readbuf,digest:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,digest:mutbuf,scratch:mutbuf)
+  size:usize = buffer.len(input)
+  header:usize = const() {"value":259}
+  has_header:bool = compare.ge(size,header)
+  branch has_header extent(input,digest,scratch,size) malformed()
+block extent(ei:readbuf,eo:mutbuf,ew:mutbuf,es:usize)
+  mode_at:usize = const() {"value":0}
+  mode:u8 = buffer.load(ei,mode_at)
+  max_mode:u8 = const() {"value":1}
+  known_mode:bool = compare.le(mode,max_mode)
+  check_membership:bool = compare.eq(mode,max_mode)
+  start:usize = const() {"value":1}
+  count:u64 = call(ei,start) {"function":"rb_le16"}
+  maximum:u64 = const() {"value":64}
+  bounded:bool = compare.le(count,maximum)
+  row_bytes:u64 = const() {"value":578}
+  slot_bytes:u64 = int.mul.wrap(count,row_bytes)
+  overhead:u64 = const() {"value":259}
+  expected:u64 = int.add.wrap(slot_bytes,overhead)
+  given:u64 = int.cast(es) {"mode":"wrap"}
+  exact:bool = compare.eq(expected,given)
+  size_ok:bool = bool.and(exact,bounded)
+  admissible:bool = bool.and(size_ok,known_mode)
+  branch admissible check_row(ei,eo,ew,count,overhead,expected,check_membership) malformed()
+block check_row(ci:readbuf,co:mutbuf,cw:mutbuf,cn:u64,crow:u64,climit:u64,cmode:bool)
+  at_end:bool = compare.eq(crow,climit)
+  branch at_end candidate(ci,co,cw,cn,cmode) validate_row(ci,co,cw,cn,crow,climit,cmode)
+block validate_row(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vrow:u64,vlimit:u64,vmode:bool)
+  valid:bool = call(vi,vrow) {"function":"prov_well_formed"}
+  width:u64 = const() {"value":578}
+  next_row:u64 = int.add.wrap(vrow,width)
+  branch valid check_row(vi,vo,vw,vn,next_row,vlimit,vmode) malformed()
+block candidate(mi:readbuf,mo:mutbuf,mw:mutbuf,mn:u64,required:bool)
+  branch required fixed_gate(mi,mo,mw,mn,required) capacity(mi,mo,mw,mn,required)
+block fixed_gate(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_count:u64,fmode:bool)
+  fixed_begin:u64 = const() {"value":3}
+  present:bool = call(fi,fn_count,fixed_begin) {"function":"prov_fixed_valid_at"}
+  branch present capacity(fi,fo,fw,fn_count,fmode) invalid_provenance()
+block capacity(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pmode:bool)
+  output_size:usize = buffer.len(po)
+  work_size:usize = buffer.len(pw)
+  need_output:usize = const() {"value":32}
+  need_work:usize = const() {"value":5114}
+  output_fits:bool = compare.ge(output_size,need_output)
+  scratch_fits:bool = compare.ge(work_size,need_work)
+  fits:bool = bool.and(output_fits,scratch_fits)
+  branch fits hash_section(pi,po,pw,pn,pmode) short()
+block hash_section(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64,hmode:bool)
+  fixed:u64 = const() {"value":3}
+  row_start:u64 = const() {"value":259}
+  result:u32 = call(hi,hw,hn,fixed,row_start) {"function":"prov_hash_at"}
+  hashed_code:u32 = const() {"value":0}
+  okay:bool = compare.eq(result,hashed_code)
+  branch okay after_hash(hi,ho,hw,hn,hmode) refused(result)
+block after_hash(bi:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,bmode:bool)
+  branch bmode compare_declared(bi,bo,bw,bn) publish(bo,bw)
+block compare_declared(di:readbuf,do_:mutbuf,dw:mutbuf,dn:u64)
+  declared:u64 = const() {"value":227}
+  matched:bool = call(di,dw,declared) {"function":"rb_matches_computed"}
+  branch matched check_members(di,do_,dw,dn) invalid_provenance()
+block check_members(mi2:readbuf,mo2:mutbuf,mw2:mutbuf,mn2:u64)
+  row_begin:u64 = const() {"value":259}
+  outcome:u32 = call(mi2,mn2,row_begin) {"function":"prov_membership_at"}
+  pass:u32 = const() {"value":0}
+  members_ok:bool = compare.eq(outcome,pass)
+  branch members_ok publish(mo2,mw2) refused(outcome)
+block publish(pout:mutbuf,pwork:mutbuf)
+  output_start:u64 = const() {"value":0}
+  _copied:u64 = call(pwork,pout,output_start) {"function":"sb_copy_digest"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block refused(code:u32)
+  ret(code)
+block malformed()
+  format_error:u32 = const() {"value":100}
+  ret(format_error)
+block short()
+  capacity_error:u32 = const() {"value":102}
+  ret(capacity_error)
+block invalid_provenance()
+  invalid:u32 = const() {"value":105}
+  ret(invalid)
+end
+
+fn prov_hash_at(ii:readbuf,iw:mutbuf,in_rows:u64,fixed:u64,rows:u64) -> (u32) effects(read,write,trap) entry(init)
+block init(ii:readbuf,iw:mutbuf,in_rows:u64,fixed:u64,rows:u64)
+  beginning:u64 = call(ii,iw,in_rows,fixed) {"function":"prov_prefix_at"}
+  zero:u64 = const() {"value":0}
+  jump choose(ii,iw,in_rows,zero,zero,beginning,fixed,rows)
+block choose(si:readbuf,sw:mutbuf,sn:u64,done:u64,used:u64,aggregate_end:u64,fixed_choose:u64,rows_choose:u64)
+  complete:bool = compare.eq(done,sn)
+  branch complete hash_set(si,sw,sn,aggregate_end,fixed_choose) select_row(si,sw,sn,done,used,aggregate_end,fixed_choose,rows_choose)
+block select_row(ri:readbuf,rw:mutbuf,rn:u64,rd:u64,ru:u64,re:u64,fixed_select_row:u64,rows_select_row:u64)
+  idx:u64 = call(ri,rn,ru,rows_select_row) {"function":"prov_select_at"}
+  found:bool = compare.lt(idx,rn)
+  branch found hash_row(ri,rw,rn,rd,ru,re,idx,fixed_select_row,rows_select_row) hash_error()
+block hash_row(hi:readbuf,hw:mutbuf,hn:u64,hd:u64,hu:u64,he:u64,hidx:u64,fixed_hash_row:u64,rows_hash_row:u64)
+  row:u64 = call(hidx,rows_hash_row) {"function":"prov_row_at"}
+  member_result:u64 = call(hi,hw,row) {"function":"prov_digest_member"}
+  ok_zero:u64 = const() {"value":0}
+  hashed:bool = compare.eq(member_result,ok_zero)
+  branch hashed append(hi,hw,hn,hd,hu,he,hidx,fixed_hash_row,rows_hash_row) hash_error()
+block append(ai:readbuf,aw:mutbuf,an:u64,ad:u64,au:u64,ae:u64,aidx:u64,fixed_append:u64,rows_append:u64)
+  after:u64 = call(aw,ae) {"function":"sb_append_digest"}
+  one:u64 = const() {"value":1}
+  next_done:u64 = int.add.wrap(ad,one)
+  bit:u64 = int.shl.checked(one,aidx)
+  next_used:u64 = bit.or(au,bit)
+  jump choose(ai,aw,an,next_done,next_used,after,fixed_append,rows_append)
+block hash_set(ti:readbuf,tw:mutbuf,tn:u64,te:u64,fixed_hash_set:u64)
+  set_start:u64 = const() {"value":2800}
+  tail_offset:u64 = const() {"value":160}
+  tail:u64 = int.add.wrap(fixed_hash_set,tail_offset)
+  tail_size:u64 = const() {"value":64}
+  end:u64 = call(ti,tw,tail,te,tail_size) {"function":"rac_copy"}
+  length:u64 = int.sub.wrap(end,set_start)
+  initialized:u64 = call(tw) {"function":"tr_sha_init"}
+  seed_zero:u64 = const() {"value":0}
+  seeded:bool = compare.eq(initialized,seed_zero)
+  branch seeded hash_transcript(tw,set_start,length) hash_error()
+block hash_transcript(sw2:mutbuf,sat:u64,sl:u64)
+  result:u64 = call(sw2,sat,sl) {"function":"sb_hash_transcript"}
+  digest_zero:u64 = const() {"value":0}
+  digested:bool = compare.eq(result,digest_zero)
+  branch digested ready() hash_error()
+block ready()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block hash_error()
+  helper_error:u32 = const() {"value":103}
+  ret(helper_error)
+end
+
+fn prov_row_at(index:u64,rows:u64) -> (u64) effects() entry(entry)
+block entry(index:u64,rows:u64)
+  width:u64 = const() {"value":578}
+  offset:u64 = int.mul.wrap(index,width)
+  begin:u64 = int.add.wrap(offset,rows)
+  ret(begin)
+end
+
+fn prov_well_formed(input:readbuf,row:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  zero:u64 = const() {"value":0}
+  n:u64 = call(input,row,zero) {"function":"sb_width"}
+  maximum:u64 = const() {"value":512}
+  valid:bool = compare.le(n,maximum)
+  ret(valid)
+end
+
+fn prov_fixed_valid_at(input:readbuf,count:u64,fixed:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,fixed:u64)
+  zero:u64 = const() {"value":0}
+  any_inputs:bool = compare.gt(count,zero)
+  extent:u64 = const() {"value":224}
+  stop:u64 = int.add.wrap(fixed,extent)
+  branch any_inputs check(input,fixed,stop) reject()
+block check(ci:readbuf,at:u64,stop_at:u64)
+  nonzero:bool = call(ci,at) {"function":"rac_nonzero_digest"}
+  branch nonzero next(ci,at,stop_at) reject()
+block next(ni:readbuf,prior:u64,end:u64)
+  width:u64 = const() {"value":32}
+  after:u64 = int.add.wrap(prior,width)
+  done:bool = compare.eq(after,end)
+  branch done accept() check(ni,after,end)
+block accept()
+  yes:bool = const() {"value":true}
+  ret(yes)
+block reject()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn prov_prefix_at(input:readbuf,work:mutbuf,count:u64,fixed:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,count:u64,fixed:u64)
+  p0:u64 = const() {"value":2800}
+  p1:u64 = const() {"value":2808}
+  p2:u64 = const() {"value":2816}
+  p3:u64 = const() {"value":2824}
+  p4:u64 = const() {"value":2832}
+  d0:u64 = const() {"value":7810774672474010228}
+  d1:u64 = const() {"value":7599087897667658085}
+  d2:u64 = const() {"value":8030604426050102380}
+  d3:u64 = const() {"value":3343187624124638582}
+  d4:u64 = const() {"value":12406}
+  _d0:u64 = call(work,p0,d0) {"function":"tr_put"}
+  _d1:u64 = call(work,p1,d1) {"function":"tr_put"}
+  _d2:u64 = call(work,p2,d2) {"function":"tr_put"}
+  _d3:u64 = call(work,p3,d3) {"function":"tr_put"}
+  _d4:u64 = call(work,p4,d4) {"function":"tr_put"}
+  fixed_pos:u64 = const() {"value":2834}
+  fixed_size:u64 = const() {"value":160}
+  count_pos:u64 = call(input,work,fixed,fixed_pos,fixed_size) {"function":"rac_copy"}
+  eight:u64 = const() {"value":8}
+  result:u64 = call(work,count_pos,count,eight) {"function":"rac_write_be"}
+  ret(result)
+end
+
+fn prov_select_at(input:readbuf,count:u64,used:u64,rows:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,used:u64,rows:u64)
+  start:u64 = const() {"value":0}
+  jump scan(input,count,used,start,count,rows)
+block scan(si:readbuf,sn:u64,su:u64,idx:u64,best:u64,rows_scan:u64)
+  end:bool = compare.eq(idx,sn)
+  branch end finish(best) available(si,sn,su,idx,best,rows_scan)
+block available(ai:readbuf,an:u64,au:u64,aidx:u64,abest:u64,rows_available:u64)
+  one:u64 = const() {"value":1}
+  bit:u64 = int.shl.checked(one,aidx)
+  bit_set:u64 = bit.and(au,bit)
+  zero:u64 = const() {"value":0}
+  skip:bool = compare.ne(bit_set,zero)
+  branch skip advance(ai,an,au,aidx,abest,rows_available) inspect(ai,an,au,aidx,abest,rows_available)
+block inspect(ii:readbuf,in_rows:u64,iu:u64,iidx:u64,ibest:u64,rows_inspect:u64)
+  no_best:bool = compare.eq(ibest,in_rows)
+  branch no_best advance(ii,in_rows,iu,iidx,iidx,rows_inspect) compare_rows(ii,in_rows,iu,iidx,ibest,rows_inspect)
+block compare_rows(ci:readbuf,cn:u64,cu:u64,cidx:u64,cbest:u64,rows_compare_rows:u64)
+  left:u64 = call(cidx,rows_compare_rows) {"function":"prov_row_at"}
+  right:u64 = call(cbest,rows_compare_rows) {"function":"prov_row_at"}
+  order:u64 = call(ci,left,right) {"function":"prov_ord"}
+  less:u64 = const() {"value":0}
+  earlier:bool = compare.eq(order,less)
+  chosen:u64 = select(earlier,cidx,cbest)
+  jump advance(ci,cn,cu,cidx,chosen,rows_compare_rows)
+block advance(ni:readbuf,nn:u64,nu:u64,nidx:u64,nbest:u64,rows_advance:u64)
+  step:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(nidx,step)
+  jump scan(ni,nn,nu,next,nbest,rows_advance)
+block finish(answer:u64)
+  ret(answer)
+end
+
+
+fn prov_cmp_name(input:readbuf,left:u64,right:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64)
+  zero:u64 = const() {"value":0}
+  pos:u64 = const() {"value":66}
+  n:u64 = call(input,left,zero) {"function":"sb_width"}
+  m:u64 = call(input,right,zero) {"function":"sb_width"}
+  order:u64 = call(input,left,right,pos,n,m) {"function":"sb_compare_field"}
+  ret(order)
+end
+
+fn prov_cmp_source(input:readbuf,left:u64,right:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64)
+  pos:u64 = const() {"value":2}
+  width:u64 = const() {"value":32}
+  order:u64 = call(input,left,right,pos,width,width) {"function":"sb_compare_field"}
+  ret(order)
+end
+
+fn prov_ord(input:readbuf,left:u64,right:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64)
+  name:u64 = call(input,left,right) {"function":"prov_cmp_name"}
+  same:u64 = const() {"value":1}
+  tied:bool = compare.eq(name,same)
+  branch tied source(input,left,right) done(name)
+block source(si:readbuf,sl:u64,sr:u64)
+  source_ord:u64 = call(si,sl,sr) {"function":"prov_cmp_source"}
+  source_same:u64 = const() {"value":1}
+  source_tied:bool = compare.eq(source_ord,source_same)
+  branch source_tied content(si,sl,sr) done(source_ord)
+block content(ci:readbuf,cl:u64,cr:u64)
+  pos:u64 = const() {"value":34}
+  width:u64 = const() {"value":32}
+  content_ord:u64 = call(ci,cl,cr,pos,width,width) {"function":"sb_compare_field"}
+  ret(content_ord)
+block done(order:u64)
+  ret(order)
+end
+
+fn prov_same_key(input:readbuf,left:u64,right:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,left:u64,right:u64)
+  name:u64 = call(input,left,right) {"function":"prov_cmp_name"}
+  same:u64 = const() {"value":1}
+  tied:bool = compare.eq(name,same)
+  branch tied check_source(input,left,right) different()
+block check_source(si:readbuf,sl:u64,sr:u64)
+  source_ord:u64 = call(si,sl,sr) {"function":"prov_cmp_source"}
+  source_same:u64 = const() {"value":1}
+  same_source:bool = compare.eq(source_ord,source_same)
+  ret(same_source)
+block different()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn prov_member_valid(input:readbuf,row:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(input:readbuf,row:u64)
+  zero:u64 = const() {"value":0}
+  n:u64 = call(input,row,zero) {"function":"sb_width"}
+  nonempty:bool = compare.gt(n,zero)
+  branch nonempty fields(input,row,n) invalid()
+block fields(fi:readbuf,fr:u64,fn_size:u64)
+  name:u64 = const() {"value":66}
+  src_offset:u64 = const() {"value":2}
+  content_offset:u64 = const() {"value":34}
+  name_at:u64 = int.add.wrap(fr,name)
+  name_end:u64 = int.add.wrap(name_at,fn_size)
+  source_at:u64 = int.add.wrap(fr,src_offset)
+  content_at:u64 = int.add.wrap(fr,content_offset)
+  readable:bool = call(fi,name_at,name_end) {"function":"rac_printable"}
+  src:bool = call(fi,source_at) {"function":"rac_nonzero_digest"}
+  content:bool = call(fi,content_at) {"function":"rac_nonzero_digest"}
+  digests:bool = bool.and(src,content)
+  valid:bool = bool.and(readable,digests)
+  ret(valid)
+block invalid()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn prov_membership_at(input:readbuf,count:u64,rows:u64) -> (u32) effects(read,trap) entry(entry)
+block entry(input:readbuf,count:u64,rows:u64)
+  zero:u64 = const() {"value":0}
+  jump restore_order(input,count,zero,rows)
+block restore_order(ri:readbuf,rc:u64,index:u64,rows_restore_order:u64)
+  done:bool = compare.eq(index,rc)
+  branch done accepted() validate(ri,rc,index,rows_restore_order)
+block validate(vi:readbuf,vc:u64,vindex:u64,rows_validate:u64)
+  row:u64 = call(vindex,rows_validate) {"function":"prov_row_at"}
+  valid:bool = call(vi,row) {"function":"prov_member_valid"}
+  zero_index:u64 = const() {"value":0}
+  branch valid prior_names(vi,vc,vindex,row,zero_index,rows_validate) invalid_member()
+block prior_names(pi:readbuf,pc:u64,pindex:u64,prow:u64,prior:u64,rows_prior_names:u64)
+  none_left:bool = compare.eq(prior,pindex)
+  branch none_left advance_row(pi,pc,pindex,rows_prior_names) compare_name(pi,pc,pindex,prow,prior,rows_prior_names)
+block compare_name(ci:readbuf,cc:u64,cindex:u64,crow:u64,cprior:u64,rows_compare_name:u64)
+  earlier_row:u64 = call(cprior,rows_compare_name) {"function":"prov_row_at"}
+  same_name:bool = call(ci,crow,earlier_row) {"function":"prov_same_key"}
+  same_code:u64 = const() {"value":1}
+  next_prior:u64 = int.add.wrap(cprior,same_code)
+  branch same_name duplicate() prior_names(ci,cc,cindex,crow,next_prior,rows_compare_name)
+block advance_row(ai:readbuf,ac:u64,aindex:u64,rows_advance_row:u64)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(aindex,one)
+  jump restore_order(ai,ac,next,rows_advance_row)
+block invalid_member()
+  bad_result:u32 = const() {"value":106}
+  ret(bad_result)
+block duplicate()
+  repeated_result:u32 = const() {"value":107}
+  ret(repeated_result)
+block accepted()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+end
+
+
+fn prov_digest_member(input:readbuf,work:mutbuf,row:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,work:mutbuf,row:u64)
+  initialized:u64 = call(work) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(initialized,zero)
+  branch ready transcript(input,work,row) refused(initialized)
+block transcript(ti:readbuf,tw:mutbuf,tr:u64)
+  start:u64 = const() {"value":1208}
+  domain_len:u64 = const() {"value":1945555039024054272}
+  _len:u64 = call(tw,start,domain_len) {"function":"tr_put"}
+  p0:u64 = const() {"value":1216}
+  p1:u64 = const() {"value":1224}
+  p2:u64 = const() {"value":1232}
+  p3:u64 = const() {"value":1240}
+  d0:u64 = const() {"value":7810774672474010228}
+  d1:u64 = const() {"value":7599087897667658085}
+  d2:u64 = const() {"value":8391737100188083308}
+  d3:u64 = const() {"value":3175982}
+  _d0:u64 = call(tw,p0,d0) {"function":"tr_put"}
+  _d1:u64 = call(tw,p1,d1) {"function":"tr_put"}
+  _d2:u64 = call(tw,p2,d2) {"function":"tr_put"}
+  _d3:u64 = call(tw,p3,d3) {"function":"tr_put"}
+  zero2:u64 = const() {"value":0}
+  name_at:u64 = const() {"value":66}
+  src_at:u64 = const() {"value":2}
+  content_at:u64 = const() {"value":34}
+  name_pos:u64 = int.add.wrap(tr,name_at)
+  src_pos:u64 = int.add.wrap(tr,src_at)
+  content_pos:u64 = int.add.wrap(tr,content_at)
+  n:u64 = call(ti,tr,zero2) {"function":"sb_width"}
+  first:u64 = const() {"value":1243}
+  name_end:u64 = call(ti,tw,name_pos,first,n) {"function":"rb_text"}
+  src_end:u64 = call(ti,tw,src_pos,name_end) {"function":"rb_part"}
+  end:u64 = call(ti,tw,content_pos,src_end) {"function":"rb_part"}
+  width:u64 = int.sub.wrap(end,start)
+  outcome:u64 = call(tw,start,width) {"function":"sb_hash_transcript"}
+  ret(outcome)
+block refused(error:u64)
+  ret(error)
+end

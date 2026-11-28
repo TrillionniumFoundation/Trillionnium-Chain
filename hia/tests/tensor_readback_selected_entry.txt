@@ -1,0 +1,38 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_tensor_reader_selected_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  physical0:usize = buffer.len(i)
+  physical:u64 = int.cast(physical0) {"mode":"wrap"}
+  two:u64 = const() {"value":2}
+  fullmax:u64 = const() {"value":4194561}
+  has_u16:bool = compare.le(two,physical)
+  extent_fit:bool = compare.le(physical,fullmax)
+  enough:bool = bool.and(has_u16,extent_fit)
+  branch enough parse(i,o,w,physical,two) envelope()
+block parse(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pt:u64)
+  trailer:u64 = int.sub.wrap(pn,pt)
+  qn:u64 = call(pi,trailer,pt) {"function":"rac_read_le"}
+  qfit:bool = compare.le(qn,trailer)
+  branch qfit compute(pi,po,pw,trailer,qn) envelope()
+block compute(ci:readbuf,co:mutbuf,cw:mutbuf,ct:u64,cn:u64)
+  qstart:u64 = int.sub.wrap(ct,cn)
+  split:bool = const() {"value":false}
+  saved:u64 = call(ci,qstart,cn,cw) {"function":"lt_save"}
+  rc:u32 = call(ci,co,cw,ci,ci,split,ci,ci,qstart) {"function":"sm_frame"}
+  ret(rc)
+block envelope()
+  bad:u32 = const() {"value":210}
+  ret(bad)
+end
+fn f1(i:readbuf,j:readbuf,b:readbuf,x:readbuf,y:readbuf,q:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,j:readbuf,b:readbuf,x:readbuf,y:readbuf,q:readbuf,o:mutbuf,w:mutbuf)
+  split:bool = const() {"value":true}
+  zs:u64 = const() {"value":0}
+  qn0:usize = buffer.len(q)
+  qn:u64 = int.cast(qn0) {"mode":"wrap"}
+  saved:u64 = call(q,zs,qn,w) {"function":"lt_save"}
+  n0:usize = buffer.len(i)
+  n:u64 = int.cast(n0) {"mode":"wrap"}
+  r:u32 = call(i,o,w,j,b,split,x,y,n) {"function":"sm_frame"}
+  ret(r)
+end

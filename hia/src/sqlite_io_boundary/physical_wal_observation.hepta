@@ -1,0 +1,268 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_sqlite_physical_wal
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  size:usize = buffer.len(raw)
+  exact:usize = const() {"value":440}
+  framed:bool = compare.eq(size,exact)
+  branch framed capacity(raw,out) malformed()
+block capacity(cr:readbuf,co:mutbuf)
+  oext:usize = buffer.len(co)
+  required:usize = const() {"value":112}
+  room:bool = compare.ge(oext,required)
+  branch room validate(cr,co) short()
+block validate(vr:readbuf,vo:mutbuf)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  first:u64 = const() {"value":8}
+  second:u64 = const() {"value":152}
+  third:u64 = const() {"value":296}
+  policy:u64 = call(vr,zero) {"function":"tr_read"}
+  p1:bool = compare.eq(policy,one)
+  p2:bool = compare.eq(policy,two)
+  enabled:bool = bool.or(p1,p2)
+  first_ok:bool = call(vr,first,p2) {"function":"mvp_snapshot"}
+  second_ok:bool = call(vr,second,p2) {"function":"mvp_snapshot"}
+  third_ok:bool = call(vr,third,p2) {"function":"mvp_snapshot"}
+  and0:bool = bool.and(enabled,first_ok)
+  and1:bool = bool.and(and0,second_ok)
+  and2:bool = bool.and(and1,third_ok)
+  branch and2 ordered(vr,vo,first,second,third,p2) malformed()
+block ordered(pr:readbuf,po:mutbuf,pa:u64,pb:u64,pc:u64,ph:bool)
+  edge1:bool = call(pr,pa,pb,ph) {"function":"mvp_pair"}
+  edge2:bool = call(pr,pb,pc,ph) {"function":"mvp_pair"}
+  both:bool = bool.and(edge1,edge2)
+  branch both emit(pr,po,pa,pb,pc) malformed()
+block emit(er:readbuf,eo:mutbuf,ea:u64,eb:u64,ec:u64)
+  i_gen:u64 = const() {"value":16}
+  gen:u64 = call(er,ea,i_gen) {"function":"mvp_get"}
+  i_device:u64 = const() {"value":24}
+  device:u64 = call(er,ea,i_device) {"function":"mvp_get"}
+  i_inode:u64 = const() {"value":32}
+  inode:u64 = call(er,ea,i_inode) {"function":"mvp_get"}
+  i_asize:u64 = const() {"value":40}
+  asize:u64 = call(er,ea,i_asize) {"function":"mvp_get"}
+  i_ablocks:u64 = const() {"value":48}
+  ablocks:u64 = call(er,ea,i_ablocks) {"function":"mvp_get"}
+  i_ahigh:u64 = const() {"value":88}
+  ahigh:u64 = call(er,ea,i_ahigh) {"function":"mvp_get"}
+  i_bsize:u64 = const() {"value":40}
+  bsize:u64 = call(er,eb,i_bsize) {"function":"mvp_get"}
+  i_bblocks:u64 = const() {"value":48}
+  bblocks:u64 = call(er,eb,i_bblocks) {"function":"mvp_get"}
+  i_bhigh:u64 = const() {"value":88}
+  bhigh:u64 = call(er,eb,i_bhigh) {"function":"mvp_get"}
+  i_csize:u64 = const() {"value":40}
+  csize:u64 = call(er,ec,i_csize) {"function":"mvp_get"}
+  i_cblocks:u64 = const() {"value":48}
+  cblocks:u64 = call(er,ec,i_cblocks) {"function":"mvp_get"}
+  i_chigh:u64 = const() {"value":88}
+  chigh:u64 = call(er,ec,i_chigh) {"function":"mvp_get"}
+  i_agrowth:u64 = const() {"value":128}
+  agrowth:u64 = call(er,ea,i_agrowth) {"function":"mvp_get"}
+  i_aops:u64 = const() {"value":112}
+  aops:u64 = call(er,ea,i_aops) {"function":"mvp_get"}
+  i_cgrowth:u64 = const() {"value":128}
+  cgrowth:u64 = call(er,ec,i_cgrowth) {"function":"mvp_get"}
+  i_cops:u64 = const() {"value":112}
+  cops:u64 = call(er,ec,i_cops) {"function":"mvp_get"}
+  growth_delta:u64 = int.sub.wrap(cgrowth,agrowth)
+  op_delta:u64 = int.sub.wrap(cops,aops)
+  o_gen:u64 = const() {"value":0}
+  w_gen:u64 = call(eo,o_gen,gen) {"function":"tr_put"}
+  o_device:u64 = const() {"value":8}
+  w_device:u64 = call(eo,o_device,device) {"function":"tr_put"}
+  o_inode:u64 = const() {"value":16}
+  w_inode:u64 = call(eo,o_inode,inode) {"function":"tr_put"}
+  o_asize:u64 = const() {"value":24}
+  w_asize:u64 = call(eo,o_asize,asize) {"function":"tr_put"}
+  o_bsize:u64 = const() {"value":32}
+  w_bsize:u64 = call(eo,o_bsize,bsize) {"function":"tr_put"}
+  o_csize:u64 = const() {"value":40}
+  w_csize:u64 = call(eo,o_csize,csize) {"function":"tr_put"}
+  o_ablocks:u64 = const() {"value":48}
+  w_ablocks:u64 = call(eo,o_ablocks,ablocks) {"function":"tr_put"}
+  o_bblocks:u64 = const() {"value":56}
+  w_bblocks:u64 = call(eo,o_bblocks,bblocks) {"function":"tr_put"}
+  o_cblocks:u64 = const() {"value":64}
+  w_cblocks:u64 = call(eo,o_cblocks,cblocks) {"function":"tr_put"}
+  o_ahigh:u64 = const() {"value":72}
+  w_ahigh:u64 = call(eo,o_ahigh,ahigh) {"function":"tr_put"}
+  o_bhigh:u64 = const() {"value":80}
+  w_bhigh:u64 = call(eo,o_bhigh,bhigh) {"function":"tr_put"}
+  o_chigh:u64 = const() {"value":88}
+  w_chigh:u64 = call(eo,o_chigh,chigh) {"function":"tr_put"}
+  o_growth_delta:u64 = const() {"value":96}
+  w_growth_delta:u64 = call(eo,o_growth_delta,growth_delta) {"function":"tr_put"}
+  o_op_delta:u64 = const() {"value":104}
+  w_op_delta:u64 = call(eo,o_op_delta,op_delta) {"function":"tr_put"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block malformed()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+block short()
+  short_status:u32 = const() {"value":102}
+  ret(short_status)
+end
+
+fn mvp_get(r:readbuf,p:u64,off:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,off:u64)
+  at:u64 = int.add.wrap(p,off)
+  got:u64 = call(r,at) {"function":"tr_read"}
+  ret(got)
+end
+
+fn mvp_snapshot(r:readbuf,p:u64,rounded:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,p:u64,rounded:bool)
+  i_root_dev:u64 = const() {"value":0}
+  root_dev:u64 = call(r,p,i_root_dev) {"function":"mvp_get"}
+  i_gen:u64 = const() {"value":16}
+  gen:u64 = call(r,p,i_gen) {"function":"mvp_get"}
+  i_dev:u64 = const() {"value":24}
+  dev:u64 = call(r,p,i_dev) {"function":"mvp_get"}
+  i_ino:u64 = const() {"value":32}
+  ino:u64 = call(r,p,i_ino) {"function":"mvp_get"}
+  i_size:u64 = const() {"value":40}
+  size:u64 = call(r,p,i_size) {"function":"mvp_get"}
+  i_blocks:u64 = const() {"value":48}
+  blocks:u64 = call(r,p,i_blocks) {"function":"mvp_get"}
+  i_receipt_dev:u64 = const() {"value":56}
+  receipt_dev:u64 = call(r,p,i_receipt_dev) {"function":"mvp_get"}
+  i_receipt_ino:u64 = const() {"value":64}
+  receipt_ino:u64 = call(r,p,i_receipt_ino) {"function":"mvp_get"}
+  i_receipt_size:u64 = const() {"value":72}
+  receipt_size:u64 = call(r,p,i_receipt_size) {"function":"mvp_get"}
+  i_receipt_blocks:u64 = const() {"value":80}
+  receipt_blocks:u64 = call(r,p,i_receipt_blocks) {"function":"mvp_get"}
+  i_high:u64 = const() {"value":88}
+  high:u64 = call(r,p,i_high) {"function":"mvp_get"}
+  i_ordinary:u64 = const() {"value":96}
+  ordinary:u64 = call(r,p,i_ordinary) {"function":"mvp_get"}
+  i_cleanup:u64 = const() {"value":104}
+  cleanup:u64 = call(r,p,i_cleanup) {"function":"mvp_get"}
+  i_bind:u64 = const() {"value":120}
+  bind:u64 = call(r,p,i_bind) {"function":"mvp_get"}
+  i_growth:u64 = const() {"value":128}
+  growth:u64 = call(r,p,i_growth) {"function":"mvp_get"}
+  i_kind:u64 = const() {"value":136}
+  kind:u64 = call(r,p,i_kind) {"function":"mvp_get"}
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  mask:u64 = const() {"value":65535}
+  file_cap:u64 = const() {"value":16777216}
+  ocap:u64 = const() {"value":1024}
+  ccap:u64 = const() {"value":256}
+  same_fs:bool = compare.eq(root_dev,dev)
+  same_dev:bool = compare.eq(dev,receipt_dev)
+  same_ino:bool = compare.eq(ino,receipt_ino)
+  same_size:bool = compare.eq(size,receipt_size)
+  same_blocks:bool = compare.eq(blocks,receipt_blocks)
+  within:bool = compare.le(size,high)
+  file_ok:bool = compare.le(high,file_cap)
+  o_ok:bool = compare.le(ordinary,ocap)
+  c_ok:bool = compare.le(cleanup,ccap)
+  one_bind:bool = compare.eq(bind,one)
+  growth_ok:bool = compare.le(growth,ordinary)
+  valid_kind:bool = compare.eq(kind,one)
+  known_gen:bool = compare.gt(gen,zero)
+  nonempty:bool = compare.gt(size,zero)
+  valid_ino:bool = compare.gt(ino,zero)
+  counted:u64 = int.add.wrap(bind,growth)
+  events_ok:bool = compare.le(counted,ordinary)
+  quantum_bits:u64 = bit.and(high,mask)
+  r_ok:bool = compare.eq(quantum_bits,zero)
+  e_ok:bool = compare.eq(high,size)
+  policy_ok:bool = select(rounded,r_ok,e_ok)
+  and0:bool = bool.and(same_fs,same_dev)
+  and1:bool = bool.and(and0,same_ino)
+  and2:bool = bool.and(and1,same_size)
+  and3:bool = bool.and(and2,same_blocks)
+  and4:bool = bool.and(and3,within)
+  and5:bool = bool.and(and4,file_ok)
+  and6:bool = bool.and(and5,o_ok)
+  and7:bool = bool.and(and6,c_ok)
+  and8:bool = bool.and(and7,one_bind)
+  and9:bool = bool.and(and8,growth_ok)
+  and10:bool = bool.and(and9,valid_kind)
+  and11:bool = bool.and(and10,known_gen)
+  and12:bool = bool.and(and11,nonempty)
+  and13:bool = bool.and(and12,valid_ino)
+  and14:bool = bool.and(and13,events_ok)
+  and15:bool = bool.and(and14,policy_ok)
+  ret(and15)
+end
+
+fn mvp_pair(r:readbuf,a:u64,b:u64,rounded:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,a:u64,b:u64,rounded:bool)
+  i_a_root_dev:u64 = const() {"value":0}
+  a_root_dev:u64 = call(r,a,i_a_root_dev) {"function":"mvp_get"}
+  i_b_root_dev:u64 = const() {"value":0}
+  b_root_dev:u64 = call(r,b,i_b_root_dev) {"function":"mvp_get"}
+  i_a_root_ino:u64 = const() {"value":8}
+  a_root_ino:u64 = call(r,a,i_a_root_ino) {"function":"mvp_get"}
+  i_b_root_ino:u64 = const() {"value":8}
+  b_root_ino:u64 = call(r,b,i_b_root_ino) {"function":"mvp_get"}
+  i_a_gen:u64 = const() {"value":16}
+  a_gen:u64 = call(r,a,i_a_gen) {"function":"mvp_get"}
+  i_b_gen:u64 = const() {"value":16}
+  b_gen:u64 = call(r,b,i_b_gen) {"function":"mvp_get"}
+  i_a_dev:u64 = const() {"value":24}
+  a_dev:u64 = call(r,a,i_a_dev) {"function":"mvp_get"}
+  i_b_dev:u64 = const() {"value":24}
+  b_dev:u64 = call(r,b,i_b_dev) {"function":"mvp_get"}
+  i_a_ino:u64 = const() {"value":32}
+  a_ino:u64 = call(r,a,i_a_ino) {"function":"mvp_get"}
+  i_b_ino:u64 = const() {"value":32}
+  b_ino:u64 = call(r,b,i_b_ino) {"function":"mvp_get"}
+  i_a_size:u64 = const() {"value":40}
+  a_size:u64 = call(r,a,i_a_size) {"function":"mvp_get"}
+  i_b_size:u64 = const() {"value":40}
+  b_size:u64 = call(r,b,i_b_size) {"function":"mvp_get"}
+  i_a_high:u64 = const() {"value":88}
+  a_high:u64 = call(r,a,i_a_high) {"function":"mvp_get"}
+  i_b_high:u64 = const() {"value":88}
+  b_high:u64 = call(r,b,i_b_high) {"function":"mvp_get"}
+  i_a_ord:u64 = const() {"value":96}
+  a_ord:u64 = call(r,a,i_a_ord) {"function":"mvp_get"}
+  i_b_ord:u64 = const() {"value":96}
+  b_ord:u64 = call(r,b,i_b_ord) {"function":"mvp_get"}
+  i_a_clean:u64 = const() {"value":104}
+  a_clean:u64 = call(r,a,i_a_clean) {"function":"mvp_get"}
+  i_b_clean:u64 = const() {"value":104}
+  b_clean:u64 = call(r,b,i_b_clean) {"function":"mvp_get"}
+  i_a_ops:u64 = const() {"value":112}
+  a_ops:u64 = call(r,a,i_a_ops) {"function":"mvp_get"}
+  i_b_ops:u64 = const() {"value":112}
+  b_ops:u64 = call(r,b,i_b_ops) {"function":"mvp_get"}
+  i_a_growth:u64 = const() {"value":128}
+  a_growth:u64 = call(r,a,i_a_growth) {"function":"mvp_get"}
+  i_b_growth:u64 = const() {"value":128}
+  b_growth:u64 = call(r,b,i_b_growth) {"function":"mvp_get"}
+  same_root_dev:bool = compare.eq(a_root_dev,b_root_dev)
+  same_root_ino:bool = compare.eq(a_root_ino,b_root_ino)
+  same_gen:bool = compare.eq(a_gen,b_gen)
+  same_dev:bool = compare.eq(a_dev,b_dev)
+  same_ino:bool = compare.eq(a_ino,b_ino)
+  progress_size:bool = compare.lt(a_size,b_size)
+  progress_ops:bool = compare.lt(a_ops,b_ops)
+  progress_ord:bool = compare.le(a_ord,b_ord)
+  progress_clean:bool = compare.le(a_clean,b_clean)
+  exact_growth:bool = compare.lt(a_growth,b_growth)
+  rounded_growth:bool = compare.eq(a_growth,b_growth)
+  policy_growth:bool = select(rounded,rounded_growth,exact_growth)
+  exact_high:bool = compare.lt(a_high,b_high)
+  rounded_high:bool = compare.eq(a_high,b_high)
+  policy_high:bool = select(rounded,rounded_high,exact_high)
+  and0:bool = bool.and(same_root_dev,same_root_ino)
+  and1:bool = bool.and(and0,same_gen)
+  and2:bool = bool.and(and1,same_dev)
+  and3:bool = bool.and(and2,same_ino)
+  and4:bool = bool.and(and3,progress_size)
+  and5:bool = bool.and(and4,progress_ops)
+  and6:bool = bool.and(and5,progress_ord)
+  and7:bool = bool.and(and6,progress_clean)
+  and8:bool = bool.and(and7,policy_growth)
+  and9:bool = bool.and(and8,policy_high)
+  ret(and9)
+end

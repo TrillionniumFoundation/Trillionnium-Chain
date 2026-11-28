@@ -1,0 +1,108 @@
+{
+  "schema": "trnm.hia.legacy-preparation-owner-abi.v1",
+  "scope": "Only internally constructed installed default legacy Config; actual prepare and its two observation boundaries",
+  "native_entry": {
+    "buffers": [
+      65536,
+      65536,
+      196608
+    ],
+    "private_scratch": 1048576,
+    "literal_mmap_bytes": 1376256
+  },
+  "canonical_roots": [
+    "src/node/settings_development.hepta",
+    "src/protocol/pnx1.hepta",
+    "src/crypto/sha256.hepta",
+    "src/crypto/ed25519_verify.hepta"
+  ],
+  "syscall_profile": [
+    0,
+    1,
+    5,
+    72
+  ],
+  "internal_dispatch": {
+    "4096": "Settings development(None)",
+    "4097": "complete PNX1 decode",
+    "4098": "SHA-256",
+    "4099": "strict Ed25519"
+  },
+  "bootstrap": {
+    "magic": "MPBOOT01",
+    "bytes": 64,
+    "fields": [
+      "magic",
+      "zero",
+      "GW",
+      "GR",
+      "zero",
+      "zero",
+      "zero",
+      "zero"
+    ]
+  },
+  "request": {
+    "magic": "MPREQ001",
+    "bytes": 64,
+    "fields": [
+      "magic",
+      "operation",
+      "sequence",
+      "height",
+      "body_bytes",
+      "expected_generation",
+      "zero",
+      "zero"
+    ],
+    "operations": {
+      "1": "PREPARE",
+      "2": "READ private current generation",
+      "3": "CLEAR",
+      "4": "CLOSE"
+    }
+  },
+  "result": {
+    "magic": "MPRESULT",
+    "bytes": 96,
+    "codes": {
+      "0": "OK",
+      "1": "ENCODING",
+      "2": "SERVICE_CONTRACT_PROFILE",
+      "3": "WORK_TASK_PROFILE",
+      "4": "PUBLIC_EVAL_PROFILE",
+      "5": "FACTOR_PROFILE",
+      "6": "EVOLUTION_PROFILE",
+      "7": "NETWORK",
+      "8": "EXPIRED",
+      "9": "SIGNATURE"
+    }
+  },
+  "progress": {
+    "magic": "MPPROG01",
+    "bytes": 32,
+    "boundaries": {
+      "1": "BeforePrepare",
+      "2": "AfterPrepare even after semantic rejection"
+    },
+    "reply_magic": "MPGO0001",
+    "reply_bytes": 24,
+    "classifications": {
+      "0": "continue",
+      "1": "cancel"
+    }
+  },
+  "closed_contexts": [
+    "Config::installed()",
+    "Settings::development(None)"
+  ],
+  "external_config_accepted": false,
+  "external_prepared_accepted": false,
+  "persistence_authority": false,
+  "external_expected_root": false,
+  "nondefault_config_qualified": false,
+  "pq_qualified": false,
+  "batch_qualified": false,
+  "native_child_seconds": 240,
+  "cleanup_seconds": 3
+}

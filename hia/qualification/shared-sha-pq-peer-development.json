@@ -1,0 +1,601 @@
+{
+  "base_commit": "ae23b0a745186262eb8c987f714b5e9b7231e737",
+  "base_tree": "a3f264efb5f6f924867d08380caae8fb62ead5e7",
+  "current_ci": {
+    "actual_bootstrap_cases": 196,
+    "actual_fake_zero_exit_reader_report_replacement_rejected": true,
+    "actual_integration_controls": 66,
+    "actual_local_observations": {
+      "fresh_committed_ci_executed": false,
+      "kind": "controls",
+      "stages": [
+        {
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "elapsed_ns": 114811307,
+          "exit_code": 0,
+          "label": "preflight",
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 155,
+            "sha256": "952d2b102c6d72c0bd57f58bbaf7c6a6134995b13aae4fb69dcd7088820c4b3c"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/ci",
+            "-p",
+            "test_hia_workflow_bootstrap.py",
+            "-v"
+          ],
+          "elapsed_ns": 20749682169,
+          "exit_code": 0,
+          "label": "bootstrap",
+          "stderr": {
+            "bytes": 721,
+            "sha256": "45a6e097509d8f47de7c19cdd5671d8cf64377437db0510b652fdd20767cc79c"
+          },
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "-m",
+            "unittest",
+            "-v",
+            "hia.tests.test_migration_inventory",
+            "hia.tests.test_composition",
+            "hia.tests.test_component_partition",
+            "hia.tests.test_observation_archive",
+            "hia.tests.test_task_ci",
+            "scripts.ci.test_additional_owner_binding"
+          ],
+          "elapsed_ns": 1168006575,
+          "exit_code": 0,
+          "label": "integration",
+          "stderr": {
+            "bytes": 11513,
+            "sha256": "adbbe59dae92c02bcc2d1dd698a0923a751c5a391336ec825d6fc6efbe9e3ee5"
+          },
+          "stdout": {
+            "bytes": 414,
+            "sha256": "e69e8b0fdd5163346cbebbe8e7a564d477a0fec778e73beb7a55916179a1e596"
+          }
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "elapsed_ns": 64815479,
+          "exit_code": 0,
+          "label": "whitespace",
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "status": "PASS",
+      "whole_chain_native": false
+    },
+    "complete_root_local_archive": {
+      "bytes": 661736,
+      "local_all_member_readback": true,
+      "mac_all_member_readback": true,
+      "mac_relative_path": "root-integrated-evidence-sha-pq-peer-v1.tar.xz",
+      "member_bytes": 13971473,
+      "members": 268,
+      "runtime_reexecuted_by_archive_reader": false,
+      "sha256": "c48231e9dd5fa3cce2ddaa277e41c83288d5715bc1a64d7315798de1c2d5f64a"
+    },
+    "discovery": {
+      "crypto_types": 95,
+      "discovery_is_execution": false,
+      "general": 464,
+      "methods": 625,
+      "ml_dsa": 37,
+      "oracle": 22,
+      "sha256": "e88ba4ca5212313ec7cea0863de0bc224b785e66be0af40702320e5635ed4fbd",
+      "state_root": 7
+    },
+    "expanded_job_count": 64,
+    "fresh_committed_execution": "PENDING",
+    "lexical_job_definitions": 61,
+    "local_source_check": {
+      "exit_code": 1,
+      "first_missing_path": "evidence/chain-incentive-counterexamples-20261112/MANIFEST.json",
+      "full_committed_checkout_check_required": true,
+      "retained_parent_tree_entry": "100644 blob 515fc99ea6fa4c23143aa03f87824b35977b5158\tevidence/chain-incentive-counterexamples-20261112/MANIFEST.json",
+      "status": "BLOCKED_BY_UNMATERIALIZED_UNCHANGED_HISTORICAL_BLOB",
+      "stderr": {
+        "bytes": 92,
+        "sha256": "772663a01a563e1a5a980319b8a6b80026b3975e83fcc9904154a251d6b79821"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "native_bootstrap_blocks": 49,
+    "new_matrix_component": "pq-auth",
+    "owner_matrix_components": [
+      "peer-unix",
+      "task-store",
+      "task-boundary",
+      "pq-auth"
+    ],
+    "peer_14_controls_and_seven_named_groups_required": true,
+    "per_job_minutes": 20,
+    "pq_counts_and_current_source_roster_required": true,
+    "public_source_input_count": 1481,
+    "qualification_report_locked_before_and_after_reader": true,
+    "runner_hard_termination_archive_completeness_guaranteed": false,
+    "sha_boundary_compiler_inputs_image_and_raw_are_archived": true
+  },
+  "current_commit_qualification": "REQUIRED_NOT_INFERRED_FROM_DEVELOPMENT",
+  "inventory": {
+    "hia_sources": 260,
+    "kernels": 60,
+    "native_foundations": 27,
+    "not_ported": 7,
+    "original_packages": 26,
+    "partially_ported": 19,
+    "retired": 0,
+    "whole_project_gates_open": 9
+  },
+  "node_shared_consumer": {
+    "actual_checked": {
+      "controls": 14,
+      "native_calls": 692,
+      "semantic_cases": 94
+    },
+    "actual_native_partitions": {
+      "boundary_controls": 68,
+      "capacity_controls": 5,
+      "cross_methods": 24,
+      "node_methods": 96,
+      "node_settings": 4,
+      "smoke_controls": 15
+    },
+    "actual_some": {
+      "controls": 13,
+      "native_calls": 619,
+      "semantic_cases": 82
+    },
+    "archive_status": "PASS_COMPLETE_REQUIRED_EVIDENCE_BOTH_HOSTS",
+    "build_reader_controls": 379,
+    "cli_controls": 10,
+    "complete_archive": {
+      "both_hosts_complete_readback": true,
+      "bytes": 1193817992,
+      "desktop_path": "/tmp/trnm-node-sha-word-final-v2-caga7oop/node-observations.tar.gz",
+      "excluded_regular_logical_bytes": 3041054424,
+      "excluded_regular_paths": 59,
+      "exclusion_scope": "Complete identities retained for reproducible Cargo intermediate/cache bytes and the original UNKNOWN partial archive. Those original paths remain; all required 8573 source/runtime inputs and 1406 compilation dependency/executable paths are embedded.",
+      "external_host_self_containment_claimed": false,
+      "external_runtime_paths": 95,
+      "logical_regular_bytes": 7657800374,
+      "mac_relative_path": "node-sha-word-final-v2-caga7oop/node-observations.tar.gz",
+      "manifest": {
+        "bytes": 13522723,
+        "sha256": "fbd8cce50f4a0aaccc2672bf3d95e91ca22bb2efc5f56f195040fd582eeef89f"
+      },
+      "members": 4684,
+      "metadata_paths": 24254,
+      "required_input_paths": 8573,
+      "retained_compiled_dependency_paths": 1406,
+      "scope": {
+        "all_cargo_cache_bytes_embedded": false,
+        "github_ci_pass": false,
+        "runtime_qualification_inferred_from_packaging": false,
+        "service_4s_16workers_qualified": false,
+        "special_objects_metadata_only": true,
+        "unknown_seal_partial_archive_embedded": false,
+        "whole_chain_qualified": false,
+        "whole_node_qualified": false
+      },
+      "sha256": "e4f2fb123ad66bca595f03f4ee7eb1d251b1ea4931ca2f966ea05403c5dbd6e9",
+      "successful_sealer_exit_code": 0,
+      "successful_sealer_job": "1a1f53706ec-ffbe-12ac",
+      "successful_sealer_state": "succeeded",
+      "unique_object_bytes": 4447024818,
+      "unique_objects": 4673,
+      "unknown_previous_partial_archive_bytes": 2154496000,
+      "unknown_previous_seal_job": "1a1f52076c1-ffbe-1278"
+    },
+    "composition": {
+      "bytes": 540216,
+      "sha256": "5dcdd44cbd19e508c140f336cd0a47b53529747bdbfb5239eabaa346acb0ac70"
+    },
+    "fresh_original_commitment": {
+      "checked_cases": 94,
+      "delta_cases": 2,
+      "image": {
+        "bytes": 91059120,
+        "sha256": "6bc9110bf684ebfa11b04a2745731b1bce39503853dca88f286159cc2fadbe54"
+      },
+      "logical_owners_after": 0,
+      "new_ignored": 0,
+      "original_ignored": 6,
+      "retained_tests": 36,
+      "seconds": 65.106389943,
+      "some_cases": 82
+    },
+    "fresh_original_m05": {
+      "histories": 11,
+      "image": {
+        "bytes": 603919736,
+        "sha256": "4f103ceeca301668e46d7169e98e73a7d977a913ead77099a3569b60abc780a3"
+      },
+      "methods": 122,
+      "retained_tests": 6,
+      "same_node_methods": 24,
+      "seconds": 230.367347348,
+      "validations": 58
+    },
+    "fresh_original_node": {
+      "histories": 4,
+      "image": {
+        "bytes": 573324896,
+        "sha256": "5ec4841ff68075b31f62f42944118d0345f11fb7b6911fa0857a512a009a6e54"
+      },
+      "methods": 96,
+      "retained_tests": 3,
+      "seconds": 233.838949462
+    },
+    "hash_cases": 78,
+    "large_capacities": {
+      "65536_wrapper_seconds": 129.889,
+      "65537_wrapper_seconds": 114.459,
+      "native_limit_seconds": 240,
+      "single_cleanup_seconds": 3
+    },
+    "max_functions": 114,
+    "max_ops": 7832,
+    "native_compiled_images": 27,
+    "native_emitter": 1,
+    "native_image": {
+      "bytes": 9405367,
+      "sha256": "26d3abd4d81a050f2251ae3bf44afa201a9ea0ea4f34a475e720b0449d7a8e58"
+    },
+    "preserved_failures": "Wrong capacity CLI argument, missing historical source include, and actual /tmp quota failures remain distinct failed observations; successful originals used /var/tmp with unchanged code and limits.",
+    "source_inputs": 223,
+    "source_set_sha256": "c5fa82b43509ddb6d24561b90691259dc36504cb0fd4774fdcb1439e526723f1"
+  },
+  "peer_unix": {
+    "archive": {
+      "both_hosts_complete_readback": true,
+      "bytes": 264851620,
+      "logical_regular_bytes": 2104442594,
+      "mac_relative_path": "peer-ci-inode-fix-complete-ixmw8nur/peer-unix-inode-fix-complete.tar.xz",
+      "members": 19556,
+      "sha256": "022b6379a26edefb6c1034c8d20e9a13238ddbe9117aa14faf1f6de363c245cf"
+    },
+    "fixture_change": "Pin the old pathname inode with O_PATH|O_NOFOLLOW|O_CLOEXEC while rebinding. Both identities remain simultaneously live; the reader recomputes bindings from actual path/device/inode/mode and checks all original/native raw responses.",
+    "payload_body_metadata_recovery_ack_and_node": "OPEN",
+    "preserved_failure_scopes": [
+      "original inode reuse assertion after matching Rust/HIA outputs",
+      "incomplete source preparation",
+      "long temporary Unix socket pathname"
+    ],
+    "product_hia_and_original_rust_changed": false,
+    "qualification": {
+      "elapsed_ns": 417889831680,
+      "group_keys": [
+        "cli",
+        "client",
+        "client-owner",
+        "codec",
+        "daemon",
+        "storage-faults",
+        "syscall-faults"
+      ],
+      "integrity_controls": 14,
+      "native_runtime_count": 4,
+      "original_outer_tests": 121,
+      "status": "PASS"
+    },
+    "qualification_report": {
+      "bytes": 594641,
+      "sha256": "8f5aa6a90006dda0aac9b8ba1bba40b1b6cc340401f18e27f9cc4d75cf8414f7"
+    },
+    "source_inputs": 1902,
+    "source_snapshot": {
+      "bytes": 7579992,
+      "sha256": "979c5015ca99bf3083fe46435d473c5b73feca2a9c3f313d08fef2948fa7dcf1"
+    }
+  },
+  "pq_public_owner": {
+    "archive": {
+      "all_required_original_ELFs_and_direct_rlibs_retained": true,
+      "both_hosts_complete_readback": true,
+      "bytes": 185690816,
+      "mac_relative_path": "pq-supervision-final-v3/pq-public-supervised-complete.tar.xz",
+      "members": 884,
+      "only_omitted_reproducible_directory": "qualification/original/target",
+      "raw_bytes": 1110809332,
+      "sha256": "8edde74b1449d4dceefe03ded53b4b58e31f52558e872054d49f0872613a04e7"
+    },
+    "counts": {
+      "actual_allocation_failures": 125,
+      "allocation_controls": 190,
+      "exports": 55,
+      "lifetime_abi_calls": 1329,
+      "native_abi_calls": 24671,
+      "native_original_pairs": 1609,
+      "native_partitions": 6,
+      "original_doctests": 2,
+      "original_retained": 343,
+      "parallel_readers": 8,
+      "reader_integrity_controls": 49,
+      "real_process_controls": 8
+    },
+    "execution": {
+      "all_formal_stages": 25,
+      "complete_qualification_seconds": 670.0643722309615,
+      "continuous_gate_and_readback_seconds": 687.4421763740247,
+      "full240_development_control_excluded": true,
+      "github_ci_not_run_for_this_new_graph": true,
+      "independent_readback_seconds": 17.375337509030942,
+      "job_id": "1a1f4f48404-ffbe-11cd",
+      "launcher_including_preparation_seconds": 691.2816871579853
+    },
+    "fresh_original_all_features_format_and_strict_clippy": true,
+    "fresh_original_retained_executables": 34,
+    "independent_readback": {
+      "bytes": 2917,
+      "files_read": 843,
+      "sha256": "c076821c39e7819c913c44f61bfe548cb7e26f717d7adb3af22da9336556034f"
+    },
+    "integrated_native_rebuild": {
+      "documentation_updated_after_build": true,
+      "exact_frozen_production_image_reproduced": true,
+      "full_original_gate_repeated_by_this_build": false,
+      "image": {
+        "bytes": 966824,
+        "sha256": "c5a3926113fb1d902b1b322c250d94290709aa80532f917b19a5b9bfb01e1b35"
+      },
+      "report": {
+        "bytes": 57246,
+        "sha256": "b692a87a93d5ec2fdbb79eb881847593ee96945c98a9c0efc2adf64758b76c92"
+      },
+      "seconds": 14.616226381993329,
+      "source_input_count": 58,
+      "source_set_sha256": "d5d08d6cf7797004c689ececbcaa35c91e65d9c525aeeec72007690444ae92c4",
+      "source_unchanged_during_build": true,
+      "status": "PASS"
+    },
+    "limits": {
+      "constant_time_qualified": false,
+      "foreign_arbitrary_pointer_gate_qualified": false,
+      "live_pointer_const_and_exclusive_budget_contract_required": true,
+      "openssl_owned_provider_ported": false,
+      "production_activation": false,
+      "register_stack_secret_erasure_qualified": false,
+      "tuf_ported": false,
+      "whole_chain_native": false,
+      "whole_crypto_crate_ported": false
+    },
+    "native_compiler_units": [
+      {
+        "functions": 125,
+        "name": "auth",
+        "ops": 6319
+      },
+      {
+        "functions": 40,
+        "name": "verify",
+        "ops": 1869
+      },
+      {
+        "functions": 89,
+        "name": "profile",
+        "ops": 6717
+      },
+      {
+        "functions": 15,
+        "name": "owned-emitter",
+        "ops": 8160
+      }
+    ],
+    "native_production_image": {
+      "bytes": 966824,
+      "sha256": "c5a3926113fb1d902b1b322c250d94290709aa80532f917b19a5b9bfb01e1b35"
+    },
+    "owned_files": 26,
+    "preserved_root_build_failure": "First invocation pointed at a nonexistent compiler path, failed before native compilation, and is retained. Corrected path used the same pinned compiler identity.",
+    "qualification_report": {
+      "bytes": 250891,
+      "desktop": "/tmp/trnm-pq-auth-20261119-ux77q_nb/public-formal-3/qualification/report.json",
+      "local": "/workspace/scratch/5cee04bf67f6/pq-auth-dev/public-final3-metadata/qualification/report.json",
+      "sha256": "038538004d34141114dea5e8e67f470b82e381454ee8ff38560bcce4d91e7ce7"
+    },
+    "scope": "Complete public pq_auth/pq_frame/pq_profile_auth owner, with source-bound original comparison and bounded process qualification. Not the entire crypto crate or native Node.",
+    "source_commit_observed": "41948f98b7b9fcb24a6ba7d638d5391a88e26de6",
+    "source_inputs": 212,
+    "source_set_sha256": "6b4db1793e40b340878192f0ad026546722f6a7ae949d24ebbc86e57d0e9a388",
+    "source_tree_observed": "a1ac8e48f7afd7af67b29909292ac14d4e9d7161",
+    "source_was_dirty": true
+  },
+  "predecessor_ci": {
+    "commit": "ae23b0a745186262eb8c987f714b5e9b7231e737",
+    "complete_task_and_peer_failure_archives_read_back_on_both_hosts": true,
+    "peer_unix_both": "FAIL_FIXTURE_INODE_REUSE_ASSERTION",
+    "pull_request_run": 44562227818,
+    "push_run": 44562193934,
+    "task_mechanical_boundaries_both": "PASS",
+    "task_store_both": "FAIL_ORIGINAL_180_SECOND_TEST_CONTROLLER",
+    "whole_workflow_success_claimed": false,
+    "work_jobs_success": 8
+  },
+  "remaining": [
+    "Task project C provider and ArchiveStore/StateImport",
+    "Complete Peer payload durable ownership and ACK recovery",
+    "Public Candidate and the remaining crypto/provider/TUF/TLS contract",
+    "Complete Settlement Engine and Store",
+    "Unique Node COMMIT/reorg/replay/outbox/ACK and same-request Paid/Host",
+    "Original service/W1 and cross-target acceptance",
+    "Independent model/research/economic gates",
+    "Complete equivalent native replacement, original acceptance, then original package retirement and final cleanup"
+  ],
+  "schema": "trnm.hia.shared-sha-pq-peer-development.v1",
+  "scope": {
+    "cross_target_qualified": false,
+    "old_stack_can_be_removed": false,
+    "original_service_budget_qualified": false,
+    "production_activation": false,
+    "whole_chain_native": false
+  },
+  "shared_sha": {
+    "actual_before_after_hash_cases": 25,
+    "actual_integrated_boundary_capture": {
+      "cases": 440,
+      "exit_code": 0,
+      "files": {
+        "compiler-input.hepta": {
+          "bytes": 7026,
+          "sha256": "12ec65baccc7d090a36c5866ac10702d4a1fe6f093269eb0449316e44c4f835a"
+        },
+        "fixture.hepta": {
+          "bytes": 934,
+          "sha256": "09b475e08222cef6afcd966a6ce1a5f0f1ee685b076ba7310ab0d1f0ebaa1328"
+        },
+        "module.so": {
+          "bytes": 17256,
+          "sha256": "6638d14f5bfa8a66934f27c9fbbb2bd2b4fc0a67dcdd00203e3e6cf8f1c84413"
+        },
+        "native-compiler": {
+          "bytes": 673903,
+          "sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
+        },
+        "native_support.py": {
+          "bytes": 10626,
+          "sha256": "2994f6ef96b121d424a42d3bd56b3a692f4338fe211059aeb432799970408803"
+        },
+        "production.hepta": {
+          "bytes": 47688,
+          "sha256": "1b1b24af00eed7bdb6df3cebad16ac252e9fe708a0304fa7cfee5efcb85a6d88"
+        },
+        "receipt.json": {
+          "bytes": 1885,
+          "sha256": "6874e998c4c1ff6e4c980c262c78af6af257b0d0f56f55d45b062b7cae970237"
+        },
+        "request.json": {
+          "bytes": 44280,
+          "sha256": "e80ad27665fbbe62fa40e587222803368cf5bebdcd2f691da604bf56987409b6"
+        },
+        "stderr.raw": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.raw": {
+          "bytes": 127459,
+          "sha256": "e779d91c9e608ab861358bf5c76579b5310e17ad7059b6a6088dd265ed218e8f"
+        },
+        "test.py": {
+          "bytes": 11010,
+          "sha256": "b5489b3e90da06b573e0837776e69ce98bc0b90da806a9c54e720099a507438a"
+        },
+        "toolchain.lock.json": {
+          "bytes": 221,
+          "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+        },
+        "toolchain.py": {
+          "bytes": 14157,
+          "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+        },
+        "worker.py": {
+          "bytes": 2407,
+          "sha256": "0a72027bcd3c9de8cbf7af1732c66dc72b261f38113faa46695d588c64fdd630"
+        }
+      },
+      "schema": "trnm.hia.sha256-word-boundary-capture.v1",
+      "source_unchanged": true
+    },
+    "actual_integrated_boundary_cases": 440,
+    "actual_integrated_test_methods": 1,
+    "after": {
+      "bytes": 47688,
+      "sha256": "1b1b24af00eed7bdb6df3cebad16ac252e9fe708a0304fa7cfee5efcb85a6d88"
+    },
+    "before": {
+      "bytes": 43871,
+      "sha256": "406c3e4cebc589c95ec94a00141bee89c2930c1adbab357f3430c77a6addd8d6"
+    },
+    "change": "Unroll the existing eight ordered byte accesses, retaining wrapped offsets, checked shifts, byte-access traps and observable partial writes.",
+    "changed_functions": [
+      "tr_get",
+      "tr_put"
+    ],
+    "complete_local_archive": {
+      "both_hosts_complete_readback": true,
+      "bytes": 21839628,
+      "mac_relative_path": "task-sha-word-candidate-v1-06_i3vme/local-observations.tar.xz",
+      "member_bytes": 235709540,
+      "members": 1674,
+      "sha256": "a2b6498fb036ed87881e61954a7a148e26593d5689038d86517443be182c5339"
+    },
+    "no_deadline_changes": true,
+    "unchanged_functions": 16
+  },
+  "task_store": {
+    "actual_complete_qualification_seconds": 241.318,
+    "allocator_controls": 112,
+    "complete_archive": {
+      "both_hosts_complete_readback": true,
+      "bytes": 447178037,
+      "logical_bytes": 1546011515,
+      "mac_relative_path": "task-sha-word-candidate-v1-06_i3vme/complete-observations.tar.gz",
+      "members": 12264,
+      "regular_members": 12263,
+      "sha256": "9b9293681742408275cb011a771f1104437daba4823edccfc7718e27b8217236"
+    },
+    "large_context_seconds": 14.564,
+    "original_format_and_strict_clippy": "PASS",
+    "original_retained_tests": 41,
+    "previous_large_context_seconds": 31.149,
+    "previous_records_native_original_seconds": 96.493,
+    "private_calls": 1390,
+    "public_abi_calls": 2290,
+    "public_cases": 445,
+    "reader_refusals": 37,
+    "records_native_original_seconds": 65.505,
+    "remaining": "Project C provider, ArchiveStore, StateImport and complete Node integration remain OPEN."
+  },
+  "unchanged_limits": {
+    "blocks_per_function": 256,
+    "compiler_blocks": 1536,
+    "compiler_functions": 128,
+    "compiler_ops": 8192,
+    "compiler_seconds": 30,
+    "native_seconds": 240,
+    "service_cpu": 0.25,
+    "service_live_pids": 256,
+    "service_memory_bytes": 2147483648,
+    "service_seconds": 4,
+    "service_swap_bytes": 0,
+    "single_cleanup_seconds": 3,
+    "workers": 16
+  }
+}
