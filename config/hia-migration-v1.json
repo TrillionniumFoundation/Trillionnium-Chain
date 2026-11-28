@@ -1971,6 +1971,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-cache-payload-cursor",
+      "node_integration_complete": false,
+      "scope": "Pure immutable TCM1, exact original CachePayloadReader mathematical SeekFrom and EOF/single checked-row span projection under no IO. No bytes, cache, deadline, ownership, authorization, system or deployment.",
+      "source": "hia/src/data_availability/cell_cache_payload_cursor.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_cache_payload_cursor.py",
+        "hia/tests/cache_payload_cursor_original.py",
+        "hia/tests/rust_cell_cache_payload_cursor_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-manifest",
       "node_integration_complete": false,
       "scope": "Pure original TCM1 CellManifestV1 immutable binary metadata decode and canonical byte projection, exact geometry and domain SHA-256, full original limits and Rust error order. No lookup, storage, release context authority, payload recovery or live integration.",

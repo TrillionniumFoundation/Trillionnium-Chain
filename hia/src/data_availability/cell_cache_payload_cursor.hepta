@@ -1,0 +1,125 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_cache_payload_cursor_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  p0:usize = buffer.len(i)
+  n:u64 = int.cast(p0) {"mode":"wrap"}
+  header:u64 = const() {"value":17}
+  cap:u64 = const() {"value":1048576}
+  minimum:bool = compare.le(header,n)
+  maximum:bool = compare.le(n,cap)
+  fit:bool = bool.and(minimum,maximum)
+  branch fit operation(i,o,n,header) envelope()
+block operation(i1:readbuf,o1:mutbuf,n1:u64,h1:u64)
+  zero:usize = const() {"value":0}
+  op:u8 = buffer.load(i1,zero)
+  opmax:u8 = const() {"value":3}
+  ok_op:bool = compare.le(op,opmax)
+  branch ok_op decode(i1,o1,n1,h1,op) envelope()
+block decode(i2:readbuf,o2:mutbuf,n2:u64,h2:u64,op2:u8)
+  mn:u64 = int.sub.wrap(n2,h2)
+  st:u32,rows:u64,count:u64 = call(i2,h2,mn) {"function":"cm_decode"}
+  ok_code:u32 = const() {"value":0}
+  ok:bool = compare.eq(st,ok_code)
+  branch ok args(i2,o2,op2,rows,count) error(st)
+block args(i3:readbuf,o3:mutbuf,op3:u8,rows3:u64,count3:u64)
+  off:u64 = const() {"value":1}
+  req:u64 = const() {"value":9}
+  eight:u64 = const() {"value":8}
+  size_dist:u64 = const() {"value":48}
+  size_pos:u64 = int.sub.wrap(rows3,size_dist)
+  size:u64 = call(i3,size_pos,eight) {"function":"ca_read_be"}
+  pos:u64 = call(i3,off,eight) {"function":"rac_read_le"}
+  word:u64 = call(i3,req,eight) {"function":"rac_read_le"}
+  reading_op:u8 = const() {"value":3}
+  reading:bool = compare.eq(op3,reading_op)
+  branch reading read_plan(i3,o3,size,pos,word,rows3,count3) seek(o3,size,pos,word,op3)
+block seek(so:mutbuf,ssize:u64,spos:u64,sarg:u64,sop:u8)
+  start_op:u8 = const() {"value":0}
+  start:bool = compare.eq(sop,start_op)
+  branch start seek_out(so,sarg) base(so,ssize,spos,sarg,sop)
+block base(bo:mutbuf,bs:u64,bp:u64,ba:u64,bop:u8)
+  end_op:u8 = const() {"value":1}
+  selected_end:bool = compare.eq(bop,end_op)
+  first:u64 = select(selected_end,bs,bp)
+  signed_max:u64 = const() {"value":9223372036854775807}
+  negative:bool = compare.gt(ba,signed_max)
+  branch negative sub(bo,first,ba) add(bo,first,ba)
+block sub(no:mutbuf,nb:u64,na:u64)
+  subzero:u64 = const() {"value":0}
+  magnitude:u64 = int.sub.wrap(subzero,na)
+  subtraction:u64 = int.sub.wrap(nb,magnitude)
+  in_lower:bool = compare.le(magnitude,nb)
+  branch in_lower seek_out(no,subtraction) range_error()
+block add(po:mutbuf,pb:u64,pa:u64)
+  max_pos:u64 = const() {"value":18446744073709551615}
+  left:u64 = int.sub.wrap(max_pos,pb)
+  addition:u64 = int.add.wrap(pb,pa)
+  in_upper:bool = compare.le(pa,left)
+  branch in_upper seek_out(po,addition) range_error()
+block seek_out(eo:mutbuf,ep:u64)
+  out8:usize = const() {"value":8}
+  sz:usize = buffer.len(eo)
+  adequate:bool = compare.le(out8,sz)
+  branch adequate seek_publish(eo,ep) capacity()
+block seek_publish(soo:mutbuf,sopos:u64)
+  at0:u64 = const() {"value":0}
+  wrote:u64 = call(soo,at0,sopos) {"function":"cp_put"}
+  jump success()
+block read_plan(ri:readbuf,ro:mutbuf,rs:u64,rp:u64,rn:u64,rr:u64,rc:u64)
+  rz:u64 = const() {"value":0}
+  nonempty:bool = compare.lt(rz,rn)
+  more:bool = compare.lt(rp,rs)
+  needed:bool = bool.and(nonempty,more)
+  branch needed chunk(ri,ro,rp,rn,rr,rc) read_out(ro,rz,rz,rz,rp)
+block chunk(ci:readbuf,co:mutbuf,cpos:u64,creq:u64,crows:u64,ccount:u64)
+  row_size_bytes:u64 = const() {"value":4}
+  width:u64 = call(ci,crows,row_size_bytes) {"function":"ca_read_be"}
+  index:u64 = int.div.checked(cpos,width)
+  within:bool = compare.lt(index,ccount)
+  off_in_chunk:u64 = int.rem.checked(cpos,width)
+  branch within read_count(ci,co,cpos,creq,crows,index,off_in_chunk) internal()
+block read_count(ki:readbuf,ko:mutbuf,kp:u64,kreq:u64,kr:u64,kindex:u64,koff:u64)
+  stride:u64 = const() {"value":36}
+  sizelen:u64 = const() {"value":4}
+  delta:u64 = int.mul.wrap(kindex,stride)
+  row:u64 = int.add.wrap(kr,delta)
+  got:u64 = call(ki,row,sizelen) {"function":"ca_read_be"}
+  valid_off:bool = compare.lt(koff,got)
+  left_chunk:u64 = int.sub.wrap(got,koff)
+  limited:bool = compare.le(kreq,left_chunk)
+  count_bytes:u64 = select(limited,kreq,left_chunk)
+  next:u64 = int.add.wrap(kp,count_bytes)
+  branch valid_off read_out(ko,kindex,koff,count_bytes,next) internal()
+block read_out(du:mutbuf,di:u64,doff:u64,dc:u64,dn:u64)
+  need:usize = const() {"value":32}
+  avail:usize = buffer.len(du)
+  fits:bool = compare.le(need,avail)
+  branch fits read_publish(du,di,doff,dc,dn) capacity()
+block read_publish(wout:mutbuf,wi:u64,wf:u64,wc:u64,wn:u64)
+  w0:u64 = const() {"value":0}
+  w8:u64 = const() {"value":8}
+  w16:u64 = const() {"value":16}
+  w24:u64 = const() {"value":24}
+  b0:u64 = call(wout,w0,wi) {"function":"cp_put"}
+  b1:u64 = call(wout,w8,wf) {"function":"cp_put"}
+  b2:u64 = call(wout,w16,wc) {"function":"cp_put"}
+  b3:u64 = call(wout,w24,wn) {"function":"cp_put"}
+  jump success()
+block success()
+  good:u32 = const() {"value":0}
+  ret(good)
+block envelope()
+  bad_envelope:u32 = const() {"value":100}
+  ret(bad_envelope)
+block range_error()
+  invalid_seek:u32 = const() {"value":246}
+  ret(invalid_seek)
+block capacity()
+  refusal:u32 = const() {"value":102}
+  ret(refusal)
+block internal()
+  mismatch:u32 = const() {"value":103}
+  ret(mismatch)
+block error(raw:u32)
+  ret(raw)
+end

@@ -7983,6 +7983,40 @@
         "source": "src/release_bundle/root_recovery_checkpoint_v3.hepta"
       }
     ],
+    "src/data_availability/cell_cache_payload_cursor.hepta": [
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_decode",
+          "cm_family_chars",
+          "cm_row_sizes"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_put"
+        ]
+      }
+    ],
     "src/data_availability/cell_manifest.hepta": [
       {
         "functions": [
