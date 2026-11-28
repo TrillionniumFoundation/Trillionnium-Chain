@@ -32,3 +32,22 @@ row supplies both the recorded ValueRef classes/bytes and original result.
 The original checked semantics are compared to the stock Direct and Selfhost
 memory entries. This does not exercise Node.db, real packets, history cursor
 selection, rollback, cancellation, commits, recovery or production authority.
+
+## Private same-statement linked caller
+
+In a second qualification, the same unchanged HIR1 Selfhost object is packed
+as a single import-free member in the named static fixture library
+libtrnm_history_inline_record_fixture.a. The pinned original fixture source
+is captured unchanged except for one scoped comparison call immediately
+before the row's final use and statement advancement. The observed Row is
+still live: original conversion and native comparison share its exact
+bounded HIR1 bytes, and the fixture obtains the same ValueRefs again before
+advancing. The native call returns its complete packed status; the caller
+checks output and both buffer canaries before recording any result.
+
+The qualifier reads the exact stock text back from the final linked x86-64 ELF
+at its unique f0 symbol, not merely from the static archive. This is a private
+linkage/ownership observation, not a native SQL engine, driver, path or
+Node.db integration. It runs only synthetic in-memory bound SELECT values.
+The earlier exported-row differential independently retains both stock
+backends; this linked observation is Selfhost only.

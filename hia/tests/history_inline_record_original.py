@@ -29,7 +29,13 @@ def extract():
             +part("lib.rs",b"pub(crate) fn ensure(",b"pub fn digest("))
 
 
-def original(directory):
+def original(directory, *, held_link=False):
+    link_options = []
+    if held_link:
+        from hia.tests.history_inline_record_held_link import prepare
+        driver_override, archive = prepare(directory)
+        archive_before = archive.read_bytes()
+        link_options = ["-L",f"native={directory}","-l","static=trnm_history_inline_record_fixture"]
     git = ["git","-C",ROOT]
     def check():
         if execute([*git,"rev-parse","HEAD:trillionnium"]).stdout.decode().strip()!=ORIGINAL:
@@ -43,7 +49,8 @@ def original(directory):
     (directory/"frozen_inline_record.rs").write_bytes(frozen)
     probe = directory/"reference.rs"
     driver = REFERENCE.read_bytes()
-    probe.write_bytes(driver)
+    submitted = driver_override if held_link else driver
+    probe.write_bytes(submitted)
     request = os.environ.get("TRNM_HIA_RUSTC","rustc")
     pinned = tomllib.loads((ROOT/"rust-toolchain.toml").read_text())["toolchain"]["channel"]
     version = execute([request,"--version"]).stdout
@@ -84,10 +91,15 @@ def original(directory):
     if not Path(link[7:]).resolve(strict=True).is_relative_to(target):
         raise ValueError("SQLite path outside private build target")
     binary=directory/"original-inline-record"
-    execute([rustc,"--edition=2021",probe,*artifacts,"-L",link,"-L",f"dependency={target/'debug/deps'}",
+    execute([rustc,"--edition=2021",probe,*artifacts,*link_options,"-L",link,"-L",f"dependency={target/'debug/deps'}",
              "-o",binary],env=env,timeout=90)
+    if held_link:
+        from hia.tests.history_inline_record_held_link import verify_linked
+        verify_linked(binary, archive, archive_before)
     actual=execute([binary])
     check()
-    if actual.stderr or extract()!=frozen or REFERENCE.read_bytes()!=driver:
+    if (actual.stderr or extract()!=frozen or REFERENCE.read_bytes()!=driver
+            or probe.read_bytes()!=submitted
+            or (held_link and archive.read_bytes()!=archive_before)):
         raise ValueError("Frozen original changed during execution")
     return actual.stdout

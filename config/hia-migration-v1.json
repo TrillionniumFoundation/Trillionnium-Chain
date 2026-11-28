@@ -1622,7 +1622,9 @@
       "state": "native-kernel-implemented",
       "tests": [
         "hia/tests/test_node_history_inline_record.py",
-        "hia/tests/rust_history_inline_record_reference.rs"
+        "hia/tests/rust_history_inline_record_reference.rs",
+        "hia/tests/test_node_history_inline_record_held_link.py",
+        "hia/tests/rust_history_inline_record_held_link.rs"
       ]
     },
     {
