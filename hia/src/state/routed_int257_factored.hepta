@@ -1,0 +1,286 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_routed_int257_factored
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  n:usize = buffer.len(r)
+  size:u64 = int.cast(n) {"mode":"wrap"}
+  first:u64 = const() {"value":40464}
+  enough:bool = compare.ge(size,first)
+  branch enough form(r,o,w,size,first) malformed()
+block form(r1:readbuf,o1:mutbuf,w1:mutbuf,size1:u64,first1:u64)
+  at1:u64 = const() {"value":40460}
+  n1:u64 = call(r1,at1) {"function":"daav_u32"}
+  stride1:u64 = const() {"value":1028}
+  rows1:u64 = int.mul.wrap(n1,stride1)
+  total1:u64 = int.add.wrap(first1,rows1)
+  enough1:bool = compare.eq(size1,total1)
+  branch enough1 model(r1,o1,w1,n1,first1) malformed()
+block model(r2:readbuf,o2:mutbuf,w2:mutbuf,n2:u64,first2:u64)
+  ok2:bool = call(r2) {"function":"rim_validate"}
+  branch ok2 factors(r2,o2,w2,n2,first2) bad_model()
+block factors(r3:readbuf,o3:mutbuf,w3:mutbuf,n3:u64,first3:u64)
+  code3:u32 = call(r3) {"function":"rif_prepare"}
+  z3:u32 = const() {"value":0}
+  ok3:bool = compare.eq(code3,z3)
+  branch ok3 batch(r3,o3,w3,n3,first3) refusal(code3)
+block batch(r4:readbuf,o4:mutbuf,w4:mutbuf,n4:u64,first4:u64)
+  lo4:u64 = const() {"value":1}
+  hi4:u64 = const() {"value":64}
+  a4:bool = compare.ge(n4,lo4)
+  b4:bool = compare.le(n4,hi4)
+  ok4:bool = bool.and(a4,b4)
+  branch ok4 features(r4,o4,w4,n4,first4) bad_batch()
+block features(r5:readbuf,o5:mutbuf,w5:mutbuf,n5:u64,first5:u64)
+  valid5:bool = call(r5,n5,first5) {"function":"rio_features"}
+  branch valid5 capacity(r5,o5,w5,n5,first5) bad_features()
+block capacity(r6:readbuf,o6:mutbuf,w6:mutbuf,n6:u64,first6:u64)
+  w_size6:usize = buffer.len(w6)
+  o_size6:usize = buffer.len(o6)
+  wu6:u64 = int.cast(w_size6) {"mode":"wrap"}
+  ou6:u64 = int.cast(o_size6) {"mode":"wrap"}
+  wh6:u64 = const() {"value":264}
+  oh6:u64 = const() {"value":88}
+  ws6:u64 = const() {"value":50}
+  os6:u64 = const() {"value":51}
+  roww6:u64 = int.mul.wrap(n6,ws6)
+  rowo6:u64 = int.mul.wrap(n6,os6)
+  w_need6:u64 = int.add.wrap(roww6,wh6)
+  o_need6:u64 = int.add.wrap(rowo6,oh6)
+  goodw6:bool = compare.ge(wu6,w_need6)
+  goodo6:bool = compare.ge(ou6,o_need6)
+  ok6:bool = bool.and(goodw6,goodo6)
+  branch ok6 init(r6,o6,w6,n6,first6,roww6) short()
+block init(r7:readbuf,o7:mutbuf,w7:mutbuf,n7:u64,first7:u64,roww7:u64)
+  z7:usize = const() {"value":0}
+  x7:usize = const() {"value":1}
+  y7:usize = const() {"value":2}
+  b7:u8 = const() {"value":0}
+  _ = buffer.store(w7,z7,b7)
+  _ = buffer.store(w7,x7,b7)
+  _ = buffer.store(w7,y7,b7)
+  zz7:u64 = const() {"value":0}
+  stage7:u64 = const() {"value":264}
+  jump row(r7,o7,w7,n7,first7,stage7,zz7,zz7,roww7)
+block row(r8:readbuf,o8:mutbuf,w8:mutbuf,n8:u64,first8:u64,stage8:u64,index8:u64,ranks8:u64,roww8:u64)
+  choice8:u64 = call(r8,w8,first8,stage8) {"function":"rix_row"}
+  max8:u64 = const() {"value":3}
+  valid8:bool = compare.lt(choice8,max8)
+  branch valid8 advance(r8,o8,w8,n8,first8,stage8,index8,ranks8,roww8,choice8) range_failure()
+block advance(r9:readbuf,o9:mutbuf,w9:mutbuf,n9:u64,first9:u64,stage9:u64,index9:u64,ranks9:u64,roww9:u64,choice9:u64)
+  slot9:u64 = call(choice9) {"function":"rix_slot"}
+  rank9:u64 = call(r9,slot9) {"function":"daav_u32"}
+  rs9:u64 = int.add.wrap(ranks9,rank9)
+  _grp9:u64 = call(w9,choice9,index9) {"function":"rid_index"}
+  one9:u64 = const() {"value":1}
+  step9:u64 = const() {"value":1028}
+  width9:u64 = const() {"value":50}
+  x9:u64 = int.add.wrap(first9,step9)
+  y9:u64 = int.add.wrap(stage9,width9)
+  next9:u64 = int.add.wrap(index9,one9)
+  done9:bool = compare.eq(next9,n9)
+  branch done9 publish(o9,w9,n9,rs9,roww9) row(r9,o9,w9,n9,x9,y9,next9,rs9,roww9)
+block publish(oa:mutbuf,wa:mutbuf,na:u64,ranksa:u64,rowwa:u64)
+  srca:u64 = const() {"value":264}
+  headera:u64 = const() {"value":48}
+  nexta:u64 = call(wa,oa,srca,headera,rowwa) {"function":"rid_copy"}
+  diagnostica:u64 = call(oa,wa,na,nexta) {"function":"rid_groups"}
+  _extraa:u64 = call(oa,diagnostica,na,ranksa) {"function":"rix_counts"}
+  gooda:u32 = const() {"value":0}
+  ret(gooda)
+block malformed()
+  bad:u32 = const() {"value":100}
+  ret(bad)
+block bad_model()
+  m:u32 = const() {"value":3}
+  ret(m)
+block bad_batch()
+  nbad:u32 = const() {"value":4}
+  ret(nbad)
+block bad_features()
+  fbad:u32 = const() {"value":7}
+  ret(fbad)
+block short()
+  no:u32 = const() {"value":102}
+  ret(no)
+block range_failure()
+  bnd:u32 = const() {"value":12}
+  ret(bnd)
+block refusal(code:u32)
+  ret(code)
+end
+
+fn rix_slot(expert:u64) -> (u64) effects() entry(entry)
+block entry(expert:u64)
+  k:u64 = const() {"value":8336}
+  base:u64 = const() {"value":15452}
+  off:u64 = int.mul.wrap(expert,k)
+  start:u64 = int.add.wrap(base,off)
+  ret(start)
+end
+
+fn rix_row(r:readbuf,w:mutbuf,x:u64,to:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,x:u64,to:u64)
+  zz:u64 = const() {"value":0}
+  nr:bool = const() {"value":false}
+  r0:u64 = const() {"value":3116}
+  r1:u64 = const() {"value":4144}
+  r2:u64 = const() {"value":5172}
+  s0:i64 = call(r,r0,zz,x,nr) {"function":"rio_dot"}
+  s1:i64 = call(r,r1,zz,x,nr) {"function":"rio_dot"}
+  s2:i64 = call(r,r2,zz,x,nr) {"function":"rio_dot"}
+  choice:u64 = call(s0,s1,s2) {"function":"rio_argmax"}
+  slot:u64 = call(choice) {"function":"rix_slot"}
+  rank:u64 = call(r,slot) {"function":"daav_u32"}
+  upoff:u64 = const() {"value":16}
+  downoff:u64 = const() {"value":112}
+  up:u64 = int.add.wrap(slot,upoff)
+  down:u64 = int.add.wrap(slot,downoff)
+  _h:u64 = call(r,w,down,x,rank) {"function":"rix_hidden"}
+  up_step:u64 = const() {"value":32}
+  up_two:u64 = const() {"value":64}
+  up1:u64 = int.add.wrap(up,up_step)
+  up2:u64 = int.add.wrap(up,up_two)
+  b0:u64 = const() {"value":32}
+  b1:u64 = const() {"value":1060}
+  b2:u64 = const() {"value":2088}
+  d0:i64 = call(r,w,up,rank) {"function":"rix_delta"}
+  d1:i64 = call(r,w,up1,rank) {"function":"rix_delta"}
+  d2:i64 = call(r,w,up2,rank) {"function":"rix_delta"}
+  y0:i64 = call(r,b0,zz,x,nr) {"function":"rio_dot"}
+  y1:i64 = call(r,b1,zz,x,nr) {"function":"rio_dot"}
+  y2:i64 = call(r,b2,zz,x,nr) {"function":"rio_dot"}
+  l0:i64 = int.add.wrap(y0,d0)
+  l1:i64 = int.add.wrap(y1,d1)
+  l2:i64 = int.add.wrap(y2,d2)
+  good0:bool = call(l0) {"function":"rix_valid"}
+  good1:bool = call(l1) {"function":"rix_valid"}
+  good2:bool = call(l2) {"function":"rix_valid"}
+  twook:bool = bool.and(good0,good1)
+  accept:bool = bool.and(twook,good2)
+  branch accept record(w,to,choice,s0,s1,s2,l0,l1,l2) refusal()
+block refusal()
+  xbad:u64 = const() {"value":3}
+  ret(xbad)
+block record(wr:mutbuf,tor:u64,route:u64,s0r:i64,s1r:i64,s2r:i64,l0r:i64,l1r:i64,l2r:i64)
+  pred:u64 = call(l0r,l1r,l2r) {"function":"rio_argmax"}
+  _bytes:u64 = call(wr,tor,route,pred,s0r,s1r,s2r,l0r,l1r,l2r) {"function":"rix_record"}
+  ret(route)
+end
+
+fn rix_hidden(r:readbuf,w:mutbuf,down:u64,x:u64,rank:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,down:u64,x:u64,rank:u64)
+  h:u64 = const() {"value":200}
+  jump row(r,w,down,x,rank,h)
+block row(r1:readbuf,w1:mutbuf,down1:u64,x1:u64,left1:u64,h1:u64)
+  z1:u64 = const() {"value":0}
+  single1:bool = const() {"value":false}
+  raw1:i64 = call(r1,down1,z1,x1,single1) {"function":"rio_dot"}
+  val1:u64 = int.cast(raw1) {"mode":"wrap"}
+  _put1:u64 = call(w1,h1,val1) {"function":"tr_put"}
+  one1:u64 = const() {"value":1}
+  stride1:u64 = const() {"value":1028}
+  cell1:u64 = const() {"value":8}
+  nextd1:u64 = int.add.wrap(down1,stride1)
+  nextw1:u64 = int.add.wrap(h1,cell1)
+  less1:u64 = int.sub.wrap(left1,one1)
+  stop1:bool = compare.eq(left1,one1)
+  branch stop1 done(z1) row(r1,w1,nextd1,x1,less1,nextw1)
+block done(z:u64)
+  ret(z)
+end
+
+fn rix_delta(r:readbuf,w:mutbuf,up:u64,rank:u64) -> (i64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,up:u64,rank:u64)
+  h:u64 = const() {"value":200}
+  z:i64 = const() {"value":0}
+  jump term(r,w,up,rank,h,z)
+block term(r1:readbuf,w1:mutbuf,up1:u64,left1:u64,h1:u64,sum1:i64)
+  b1:i64 = call(r1,up1) {"function":"rio_i32"}
+  raw1:u64 = call(w1,h1) {"function":"tr_get"}
+  hidden1:i64 = int.cast(raw1) {"mode":"wrap"}
+  p1:i64 = int.mul.wrap(b1,hidden1)
+  acc1:i64 = int.add.wrap(sum1,p1)
+  one1:u64 = const() {"value":1}
+  four1:u64 = const() {"value":4}
+  eight1:u64 = const() {"value":8}
+  nu1:u64 = int.add.wrap(up1,four1)
+  nh1:u64 = int.add.wrap(h1,eight1)
+  nl1:u64 = int.sub.wrap(left1,one1)
+  done1:bool = compare.eq(left1,one1)
+  branch done1 finish(acc1) term(r1,w1,nu1,nl1,nh1,acc1)
+block finish(result:i64)
+  ret(result)
+end
+
+fn rix_valid(x:i64) -> (bool) effects() entry(entry)
+block entry(x:i64)
+  lo:i64 = const() {"value":-134737904}
+  hi:i64 = const() {"value":134737904}
+  a:bool = compare.ge(x,lo)
+  b:bool = compare.le(x,hi)
+  valid:bool = bool.and(a,b)
+  ret(valid)
+end
+
+fn rix_counts(o:mutbuf,at:u64,n:u64,ranks:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,at:u64,n:u64,ranks:u64)
+  ordinary:u64 = const() {"value":771}
+  factor:u64 = const() {"value":260}
+  rows:u64 = const() {"value":3}
+  base:u64 = int.mul.wrap(n,ordinary)
+  adapter:u64 = int.mul.wrap(ranks,factor)
+  added:u64 = int.mul.wrap(n,rows)
+  doubled:u64 = int.add.wrap(base,base)
+  execution:u64 = int.add.wrap(doubled,adapter)
+  h1:u64 = const() {"value":8}
+  h2:u64 = const() {"value":16}
+  h3:u64 = const() {"value":24}
+  h4:u64 = const() {"value":32}
+  s1:u64 = int.add.wrap(at,h1)
+  s2:u64 = int.add.wrap(at,h2)
+  s3:u64 = int.add.wrap(at,h3)
+  s4:u64 = int.add.wrap(at,h4)
+  _r:u64 = call(o,at,base) {"function":"tr_put"}
+  _b:u64 = call(o,s1,base) {"function":"tr_put"}
+  _a:u64 = call(o,s2,adapter) {"function":"tr_put"}
+  _y:u64 = call(o,s3,added) {"function":"tr_put"}
+  z:u64 = call(o,s4,execution) {"function":"tr_put"}
+  ret(z)
+end
+
+fn rix_record(w:mutbuf,at:u64,route:u64,pred:u64,s0:i64,s1:i64,s2:i64,l0:i64,l1:i64,l2:i64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,at:u64,route:u64,pred:u64,s0:i64,s1:i64,s2:i64,l0:i64,l1:i64,l2:i64)
+  word0:u64 = int.cast(s0) {"mode":"wrap"}
+  _w0:u64 = call(w,at,word0) {"function":"tr_put"}
+  word1:u64 = int.cast(s1) {"mode":"wrap"}
+  step1:u64 = const() {"value":8}
+  at1:u64 = int.add.wrap(at,step1)
+  _w1:u64 = call(w,at1,word1) {"function":"tr_put"}
+  word2:u64 = int.cast(s2) {"mode":"wrap"}
+  step2:u64 = const() {"value":16}
+  at2:u64 = int.add.wrap(at,step2)
+  _w2:u64 = call(w,at2,word2) {"function":"tr_put"}
+  word3:u64 = int.cast(l0) {"mode":"wrap"}
+  step3:u64 = const() {"value":24}
+  at3:u64 = int.add.wrap(at,step3)
+  _w3:u64 = call(w,at3,word3) {"function":"tr_put"}
+  word4:u64 = int.cast(l1) {"mode":"wrap"}
+  step4:u64 = const() {"value":32}
+  at4:u64 = int.add.wrap(at,step4)
+  _w4:u64 = call(w,at4,word4) {"function":"tr_put"}
+  word5:u64 = int.cast(l2) {"mode":"wrap"}
+  step5:u64 = const() {"value":40}
+  at5:u64 = int.add.wrap(at,step5)
+  _w5:u64 = call(w,at5,word5) {"function":"tr_put"}
+  step48:u64 = const() {"value":48}
+  at48:u64 = int.add.wrap(at,step48)
+  index48:usize = int.cast(at48) {"mode":"wrap"}
+  value48:u8 = int.cast(route) {"mode":"wrap"}
+  _ = buffer.store(w,index48,value48)
+  step49:u64 = const() {"value":49}
+  at49:u64 = int.add.wrap(at,step49)
+  index49:usize = int.cast(at49) {"mode":"wrap"}
+  value49:u8 = int.cast(pred) {"mode":"wrap"}
+  _ = buffer.store(w,index49,value49)
+  z:u64 = const() {"value":0}
+  ret(z)
+end

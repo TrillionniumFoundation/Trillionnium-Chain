@@ -976,6 +976,18 @@
       ]
     },
     {
+      "id": "state/routed-int257-factored",
+      "node_integration_complete": false,
+      "scope": "Exact private Int257 factored arithmetic with same-frame fresh factor comparison, Product and diagnostic counts; no authority/proof/statement or runtime.",
+      "source": "hia/src/state/routed_int257_factored.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_routed_int257_factored.py",
+        "hia/tests/rust_routed_int257_factored_reference.rs",
+        "hia/tests/test_routed_int257_factor_preparation.py"
+      ]
+    },
+    {
       "id": "state/routed-int257-factor-preparation",
       "node_integration_complete": false,
       "scope": "Private exact Int257 factor rank, shape, ranges and original per-cell B\u00d7A delta comparison; original rank and position counts only.",
@@ -3264,6 +3276,7 @@
         "state/routed-int257-direct",
         "state/routed-int257-grouped",
         "state/routed-int257-batch-preparation",
+        "state/routed-int257-factored",
         "state/routed-int257-factor-preparation",
         "state/routed-int257-model-commitment"
       ],
