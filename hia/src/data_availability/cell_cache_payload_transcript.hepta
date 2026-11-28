@@ -1,0 +1,301 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_cache_payload_transcript_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  il:usize = buffer.len(i)
+  n:u64 = int.cast(il) {"mode":"wrap"}
+  min:u64 = const() {"value":12}
+  cap:u64 = const() {"value":1048576}
+  lo:bool = compare.le(min,n)
+  hi:bool = compare.le(n,cap)
+  fit:bool = bool.and(lo,hi)
+  branch fit frame(i,o,w,n) envelope()
+block frame(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_:u64)
+  z:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  twelve:u64 = const() {"value":12}
+  nine:u64 = const() {"value":9}
+  mn:u64 = call(fi,z,four) {"function":"rac_read_le"}
+  left:u64 = call(fi,four,four) {"function":"rac_read_le"}
+  count:u64 = call(fi,eight,four) {"function":"rac_read_le"}
+  nonzero:bool = compare.lt(z,count)
+  limited:bool = compare.le(count,eight)
+  bounded:bool = bool.and(nonzero,limited)
+  branch bounded extent(fi,fo,fw,fn_,mn,left,count,twelve,nine) envelope()
+block extent(ei:readbuf,eo:mutbuf,ew:mutbuf,en:u64,em:u64,el:u64,ec:u64,eh:u64,es:u64)
+  opbytes:u64 = int.mul.wrap(ec,es)
+  moff:u64 = int.add.wrap(eh,opbytes)
+  body:u64 = int.add.wrap(moff,em)
+  split:u64 = int.add.wrap(body,el)
+  fit2:bool = compare.le(split,en)
+  branch fit2 decode(ei,eo,ew,en,moff,em,body,split,ec) envelope()
+block decode(di:readbuf,do_:mutbuf,dw:mutbuf,dn:u64,dm:u64,dmn:u64,db:u64,ds:u64,dc:u64)
+  status:u32,rows:u64,rc:u64 = call(di,dm,dmn) {"function":"cm_decode"}
+  good:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,good)
+  branch valid roster(di,do_,dw,dn,dm,db,ds,dc,rows,rc) error(status)
+block roster(ri:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rm:u64,rb:u64,rs:u64,rcount:u64,rr:u64,rrc:u64)
+  two:u64 = const() {"value":2}
+  pair:bool = compare.eq(rrc,two)
+  branch pair precheck(ri,ro,rw,rn,rm,rb,rs,rcount,rr) envelope()
+block precheck(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pm:u64,pb:u64,ps:u64,pc:u64,pr:u64)
+  start:u64 = const() {"value":12}
+  ops:u64 = call(pi,start,pm) {"function":"ct_ops"}
+  one:u64 = const() {"value":1}
+  valid_ops:bool = compare.eq(ops,one)
+  branch valid_ops reserve(pi,po,pw,pn,pm,pb,ps,pc,pr,start) envelope()
+block reserve(vi:readbuf,vo:mutbuf,vw:mutbuf,vn:u64,vm:u64,vb:u64,vs:u64,vc:u64,vr:u64,vstart:u64)
+  slot:u64 = const() {"value":96}
+  fixed:u64 = const() {"value":1536}
+  out_n:u64 = int.mul.wrap(vc,slot)
+  work_n:u64 = int.add.wrap(fixed,out_n)
+  oh:usize = buffer.len(vo)
+  wh:usize = buffer.len(vw)
+  on:u64 = int.cast(oh) {"mode":"wrap"}
+  wn:u64 = int.cast(wh) {"mode":"wrap"}
+  ofit:bool = compare.le(out_n,on)
+  wfit:bool = compare.le(work_n,wn)
+  fit3:bool = bool.and(ofit,wfit)
+  branch fit3 run(vi,vo,vw,vn,vm,vb,vs,vr,vstart,fixed,out_n) capacity()
+block run(ti:readbuf,to:mutbuf,tw:mutbuf,tn:u64,tm:u64,tb:u64,ts:u64,tr:u64,tstart:u64,tbase:u64,tout:u64)
+  state:u64 = call(ti,tw,tn,tm,tb,ts,tr,tstart,tbase) {"function":"ct_execute"}
+  ok:u64 = const() {"value":0}
+  complete:bool = compare.eq(state,ok)
+  branch complete publish(to,tw,tbase,tout) internal()
+block publish(oo:mutbuf,ow:mutbuf,ob:u64,oc:u64)
+  z2:u64 = const() {"value":0}
+  done:u64 = call(ow,ob,oo,z2,oc) {"function":"cp_wout"}
+  s0:u32 = const() {"value":0}
+  ret(s0)
+block envelope()
+  s1:u32 = const() {"value":100}
+  ret(s1)
+block capacity()
+  s2:u32 = const() {"value":102}
+  ret(s2)
+block internal()
+  s3:u32 = const() {"value":103}
+  ret(s3)
+block error(e:u32)
+  ret(e)
+end
+
+fn ct_ops(i:readbuf,off:u64,end_:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,off:u64,end_:u64)
+  jump loop(i,off,end_)
+block loop(ii:readbuf,io:u64,ie:u64)
+  done:bool = compare.eq(io,ie)
+  branch done good() load(ii,io,ie)
+block load(li:readbuf,lp:u64,le:u64)
+  at:usize = int.cast(lp) {"mode":"wrap"}
+  op:u8 = buffer.load(li,at)
+  zero:u8 = const() {"value":0}
+  one:u8 = const() {"value":1}
+  next_step:u64 = const() {"value":9}
+  nxt:u64 = int.add.wrap(lp,next_step)
+  seek:bool = compare.eq(op,zero)
+  read:bool = compare.eq(op,one)
+  branch seek loop(li,nxt,le) read_op(li,lp,nxt,le,read)
+block read_op(qi:readbuf,qp:u64,qn:u64,qe:u64,qr:bool)
+  single:u64 = const() {"value":1}
+  word:u64 = const() {"value":8}
+  cap:u64 = const() {"value":64}
+  a:u64 = int.add.wrap(qp,single)
+  want:u64 = call(qi,a,word) {"function":"rac_read_le"}
+  valid:bool = compare.le(want,cap)
+  okay:bool = bool.and(valid,qr)
+  branch okay loop(qi,qn,qe) bad()
+block good()
+  y:u64 = const() {"value":1}
+  ret(y)
+block bad()
+  n:u64 = const() {"value":0}
+  ret(n)
+end
+
+fn ct_execute(i:readbuf,w:mutbuf,n:u64,end_:u64,body:u64,split:u64,rows:u64,op_at:u64,write_at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,n:u64,end_:u64,body:u64,split:u64,rows:u64,op_at:u64,write_at:u64)
+  zero:u64 = const() {"value":0}
+  slot_pos:u64 = const() {"value":1232}
+  cursor_pos:u64 = const() {"value":1240}
+  a0:u64 = call(w,slot_pos,zero) {"function":"cp_put"}
+  a1:u64 = call(w,cursor_pos,zero) {"function":"cp_put"}
+  rows_at:u64 = const() {"value":1248}
+  a2:u64 = call(w,rows_at,rows) {"function":"cp_put"}
+  jump loop(i,w,n,end_,body,split,rows,op_at,write_at)
+block loop(li:readbuf,lw:mutbuf,ln:u64,le:u64,lb:u64,ls:u64,lr:u64,la:u64,lo:u64)
+  done2:bool = compare.eq(la,le)
+  branch done2 good2() op2(li,lw,ln,le,lb,ls,lr,la,lo)
+block op2(oi:readbuf,ow:mutbuf,on:u64,oe:u64,ob:u64,os:u64,or_:u64,oa:u64,oo:u64)
+  state2:u64 = call(oi,ow,on,ob,os,or_,oa,oo) {"function":"ct_one"}
+  z:u64 = const() {"value":0}
+  pass:bool = compare.eq(state2,z)
+  nine2:u64 = const() {"value":9}
+  frame2:u64 = const() {"value":96}
+  next2:u64 = int.add.wrap(oa,nine2)
+  out2:u64 = int.add.wrap(oo,frame2)
+  branch pass loop(oi,ow,on,oe,ob,os,or_,next2,out2) bad2()
+block good2()
+  v:u64 = const() {"value":0}
+  ret(v)
+block bad2()
+  b:u64 = const() {"value":1}
+  ret(b)
+end
+
+fn ct_one(i:readbuf,w:mutbuf,n:u64,body:u64,split:u64,rows:u64,oa:u64,dst:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,n:u64,body:u64,split:u64,rows:u64,oa:u64,dst:u64)
+  op_at:usize = int.cast(oa) {"mode":"wrap"}
+  op:u8 = buffer.load(i,op_at)
+  z8:u8 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  eight1:u64 = const() {"value":8}
+  arg_a:u64 = int.add.wrap(oa,one)
+  arg:u64 = call(i,arg_a,eight1) {"function":"rac_read_le"}
+  slot_a:u64 = const() {"value":1232}
+  pos_a:u64 = const() {"value":1240}
+  resident:u64 = call(w,slot_a) {"function":"cp_get"}
+  pos:u64 = call(w,pos_a) {"function":"cp_get"}
+  is_seek:bool = compare.eq(op,z8)
+  branch is_seek seek(w,dst,arg,resident) read(i,w,n,body,split,rows,dst,arg,resident,pos)
+block seek(sw:mutbuf,sd:u64,sp:u64,sr:u64)
+  sz:u64 = const() {"value":0}
+  sr_:u64 = call(sw,sd,sz,sp,sr,sz) {"function":"ct_record"}
+  ret(sr_)
+block read(ri:readbuf,rw:mutbuf,rn:u64,rb:u64,rs:u64,rr:u64,rd:u64,rq:u64,rx:u64,rp:u64)
+  zq:u64 = const() {"value":0}
+  eight2:u64 = const() {"value":8}
+  dist:u64 = const() {"value":48}
+  size_at:u64 = int.sub.wrap(rr,dist)
+  size:u64 = call(ri,size_at,eight2) {"function":"ca_read_be"}
+  nonempty:bool = compare.lt(zq,rq)
+  before:bool = compare.lt(rp,size)
+  needed:bool = bool.and(nonempty,before)
+  branch needed plan(ri,rw,rn,rb,rs,rr,rd,rq,rx,rp) seek(rw,rd,rp,rx)
+block plan(pi:readbuf,pw:mutbuf,pn:u64,pb:u64,ps:u64,pr:u64,pd:u64,pq:u64,px:u64,pp:u64)
+  two:u64 = const() {"value":2}
+  row:u64,offset:u64,count:u64 = call(pi,pp,pq,pr,two) {"function":"ch_plan"}
+  first:bool = compare.eq(row,pr)
+  start:u64 = select(first,pb,ps)
+  end_:u64 = select(first,ps,pn)
+  held_n:u64 = int.sub.wrap(end_,start)
+  same:bool = compare.eq(row,px)
+  empty:u64 = const() {"value":0}
+  sane:bool = compare.lt(empty,count)
+  branch sane hit(pi,pw,pd,pp,row,start,held_n,offset,count,same) failed()
+block hit(hi:readbuf,hw:mutbuf,hd:u64,hp:u64,hr:u64,hb:u64,hn:u64,hf:u64,hc:u64,hits:bool)
+  branch hits copy(hi,hw,hd,hp,hr,hb,hf,hc) verify(hi,hw,hd,hp,hr,hb,hn,hf,hc)
+block verify(vi:readbuf,vw:mutbuf,vd:u64,vp:u64,vr:u64,vb:u64,vn:u64,vf:u64,vc:u64)
+  code:u64 = call(vi,vw,vr,vb,vn) {"function":"ct_verify"}
+  zero_v:u64 = const() {"value":0}
+  internal_code:u64 = const() {"value":103}
+  okay_v:bool = compare.eq(code,zero_v)
+  internal_v:bool = compare.eq(code,internal_code)
+  branch internal_v failed() checked(vi,vw,vd,vp,vr,vb,vf,vc,code,okay_v)
+block checked(ci:readbuf,cw:mutbuf,cd:u64,cp:u64,cr:u64,cb:u64,cf:u64,cc:u64,ce:u64,cok:bool)
+  branch cok copy(ci,cw,cd,cp,cr,cb,cf,cc) reject(cw,cd,cp,ce)
+block reject(ew:mutbuf,ed:u64,ep:u64,ec:u64)
+  nil:u64 = const() {"value":0}
+  err_r:u64 = call(ew,ed,ec,ep,nil,nil) {"function":"ct_record"}
+  ret(err_r)
+block copy(ki:readbuf,kw:mutbuf,kd:u64,kp:u64,kr:u64,kb:u64,kf:u64,kc:u64)
+  zero_k:u64 = const() {"value":0}
+  h:u64 = const() {"value":32}
+  a:u64 = int.add.wrap(kb,kf)
+  b:u64 = int.add.wrap(kd,h)
+  next:u64 = int.add.wrap(kp,kc)
+  r:u64 = call(kw,kd,zero_k,next,kr,kc) {"function":"ct_record"}
+  c:u64 = call(ki,a,kw,b,kc) {"function":"cp_copy"}
+  ret(r)
+block failed()
+  e:u64 = const() {"value":1}
+  ret(e)
+end
+
+fn ct_verify(i:readbuf,w:mutbuf,row:u64,at:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,row:u64,at:u64,n:u64)
+  z:u64 = const() {"value":0}
+  present:bool = compare.lt(z,n)
+  branch present hash(i,w,row,at,n) absent()
+block hash(hi:readbuf,hw:mutbuf,hr:u64,ha:u64,hn:u64)
+  init:u64 = call(hw) {"function":"tr_sha_init"}
+  v:u64 = call(hi,ha,hn,hw) {"function":"tr_sha_update"}
+  z2:u64 = const() {"value":0}
+  updated:bool = compare.eq(v,z2)
+  branch updated final(hi,hw,hr,hn) internal()
+block final(fi:readbuf,fw:mutbuf,fr:u64,fn_:u64)
+  finish:u64 = call(fw) {"function":"tr_sha_final"}
+  z3:u64 = const() {"value":0}
+  complete:bool = compare.eq(finish,z3)
+  branch complete equal(fi,fw,fr,fn_) internal()
+block equal(ei:readbuf,ew:mutbuf,er:u64,en:u64)
+  four:u64 = const() {"value":4}
+  digest:u64 = const() {"value":1168}
+  width:u64 = const() {"value":32}
+  ra:u64 = int.add.wrap(er,four)
+  raw:u64 = call(ei,ra,ew,digest,width) {"function":"ca_equal"}
+  one:u64 = const() {"value":1}
+  same:bool = compare.eq(raw,one)
+  branch same extent(ei,er,en,four) absent()
+block extent(xi:readbuf,xr:u64,xn:u64,xf:u64)
+  want:u64 = call(xi,xr,xf) {"function":"ca_read_be"}
+  fit:bool = compare.eq(xn,want)
+  branch fit good() length()
+block good()
+  a:u64 = const() {"value":0}
+  ret(a)
+block internal()
+  b:u64 = const() {"value":103}
+  ret(b)
+block absent()
+  c:u64 = const() {"value":247}
+  ret(c)
+block length()
+  d:u64 = const() {"value":248}
+  ret(d)
+end
+
+fn ct_record(w:mutbuf,at:u64,code:u64,position:u64,row:u64,count:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,at:u64,code:u64,position:u64,row:u64,count:u64)
+  prefix:u64 = const() {"value":32}
+  span:u64 = const() {"value":96}
+  p0:u64 = const() {"value":8}
+  r0:u64 = const() {"value":16}
+  c0:u64 = const() {"value":24}
+  sp:u64 = const() {"value":1232}
+  pp:u64 = const() {"value":1240}
+  p:u64 = int.add.wrap(at,p0)
+  r:u64 = int.add.wrap(at,r0)
+  c:u64 = int.add.wrap(at,c0)
+  a:u64 = int.add.wrap(at,prefix)
+  stop:u64 = int.add.wrap(at,span)
+  a0:u64 = call(w,at,code) {"function":"cp_put"}
+  a1:u64 = call(w,p,position) {"function":"cp_put"}
+  zero_r:u64 = const() {"value":0}
+  one_r:u64 = const() {"value":1}
+  two_r:u64 = const() {"value":2}
+  rows_at:u64 = const() {"value":1248}
+  first:u64 = call(w,rows_at) {"function":"cp_get"}
+  absent:bool = compare.eq(row,zero_r)
+  left:bool = compare.eq(row,first)
+  ordinal:u64 = select(left,one_r,two_r)
+  marker:u64 = select(absent,zero_r,ordinal)
+  a2:u64 = call(w,r,marker) {"function":"cp_put"}
+  a3:u64 = call(w,c,count) {"function":"cp_put"}
+  a4:u64 = call(w,sp,row) {"function":"cp_put"}
+  a5:u64 = call(w,pp,position) {"function":"cp_put"}
+  jump clear(w,a,stop)
+block clear(cw:mutbuf,ca:u64,ce:u64)
+  last:bool = compare.eq(ca,ce)
+  branch last done() set(cw,ca,ce)
+block set(sw:mutbuf,sa:u64,se:u64)
+  pos:usize = int.cast(sa) {"mode":"wrap"}
+  z:u8 = const() {"value":0}
+  _ = buffer.store(sw,pos,z)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(sa,one)
+  jump clear(sw,next,se)
+block done()
+  zero:u64 = const() {"value":0}
+  ret(zero)
+end

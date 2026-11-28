@@ -2035,6 +2035,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-cache-payload-transcript",
+      "node_integration_complete": false,
+      "scope": "Pure offline two-row verified held input, exact original absolute-seek and bounded one-chunk read transcript with one private resident slot. Single 1 MiB loan, no actual cache, clock, file, loader, authority or production.",
+      "source": "hia/src/data_availability/cell_cache_payload_transcript.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_cache_payload_transcript.py",
+        "hia/tests/cache_payload_transcript_original.py",
+        "hia/tests/rust_cell_cache_payload_transcript_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-cache-payload-held-read",
       "node_integration_complete": false,
       "scope": "Pure same immutable selected TCM1 row, original raw cache digest then exact declared length and one-chunk bytes/cursor readback, shared at most 1 MiB loan. No actual cache, SQL, clock, authority or production.",
