@@ -24,11 +24,38 @@ block shape(si:readbuf,so:mutbuf,sn:usize,sc:u64)
   input_payload:usize = int.mul.wrap(count2,rowbytes)
   input_extent:usize = int.add.wrap(input_payload,first)
   input_exact:bool = compare.eq(input_extent,sn)
-  branch input_exact check_rows(si,so,sn,first,count2) bad()
-block check_rows(ci:readbuf,co:mutbuf,cn:usize,cp:usize,cc:usize)
+  branch input_exact validate(si,so,sn,first,count2) bad()
+block validate(vi:readbuf,vo:mutbuf,ve:usize,vf:usize,vc:usize)
+  status:u32 = call(vi,vf,ve) {"function":"train_rows"}
+  nil:u32 = const() {"value":0}
+  good:bool = compare.eq(status,nil)
+  branch good buffers(vi,vo,ve,vc,vf) bad()
+block buffers(bi:readbuf,bo:mutbuf,bn:usize,bc:usize,bf:usize)
+  outbase:usize = const() {"value":30848}
+  outrow:usize = const() {"value":80}
+  row_payload:usize = int.mul.wrap(bc,outrow)
+  resultlen:usize = int.add.wrap(row_payload,outbase)
+  available:usize = buffer.len(bo)
+  fits:bool = compare.ge(available,resultlen)
+  branch fits compute(bi,bo,bf,bn) short()
+block compute(ci:readbuf,co:mutbuf,cf:usize,ce:usize)
+  compute_status:u32 = call(ci,co,cf,ce) {"function":"train_backward"}
+  ret(compute_status)
+block bad()
+  status_bad:u32 = const() {"value":1}
+  ret(status_bad)
+block short()
+  status_short:u32 = const() {"value":2}
+  ret(status_short)
+end
+
+fn train_rows(i:readbuf,first:usize,last:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,first:usize,last:usize)
+  jump check_rows(i,last,first)
+block check_rows(ci:readbuf,cn:usize,cp:usize)
   checks_done:bool = compare.eq(cn,cp)
-  branch checks_done buffers(ci,co,cn,cc) check_row(ci,co,cn,cp,cc)
-block check_row(ri:readbuf,ro:mutbuf,rn:usize,rp:usize,rc:usize)
+  branch checks_done good() check_row(ci,cn,cp)
+block check_row(ri:readbuf,rn:usize,rp:usize)
   route:u64 = call(ri,rp) {"function":"cw_read64"}
   label_at_offset:usize = const() {"value":8}
   label_at:usize = int.add.wrap(rp,label_at_offset)
@@ -74,8 +101,8 @@ block check_row(ri:readbuf,ro:mutbuf,rn:usize,rp:usize,rc:usize)
   feature_base:usize = int.add.wrap(rp,feature_base_offset)
   feature_end_offset:usize = const() {"value":2088}
   feature_end:usize = int.add.wrap(rp,feature_end_offset)
-  branch row_ok check_features(ri,ro,rn,rc,feature_base,feature_end,abs0) bad()
-block check_features(ki:readbuf,ko:mutbuf,kn:usize,kc:usize,kp:usize,ke:usize,ka:u64)
+  branch row_ok check_features(ri,rn,feature_base,feature_end,abs0) bad()
+block check_features(ki:readbuf,kn:usize,kp:usize,ke:usize,ka:u64)
   encoded:u64 = call(ki,kp) {"function":"cw_read64"}
   feature:i64 = int.cast(encoded) {"mode":"wrap"}
   min_feature:i64 = const() {"value":-8}
@@ -84,43 +111,46 @@ block check_features(ki:readbuf,ko:mutbuf,kn:usize,kc:usize,kp:usize,ke:usize,ka
   ge_min:bool = compare.ge(feature,min_feature)
   le_max:bool = compare.le(feature,max_feature)
   feature_range:bool = bool.and(ge_min,le_max)
-  branch feature_range sign(ki,ko,kn,kc,kp,ke,ka,feature,zero_feature) bad()
-block sign(ti:readbuf,to:mutbuf,tn:usize,tc:usize,tp:usize,te:usize,ta:u64,tf:i64,tz:i64)
+  branch feature_range sign(ki,kn,kp,ke,ka,feature,zero_feature) bad()
+block sign(ti:readbuf,tn:usize,tp:usize,te:usize,ta:u64,tf:i64,tz:i64)
   nonnegative:bool = compare.ge(tf,tz)
   nonneg:u64 = int.cast(tf) {"mode":"wrap"}
   negate:i64 = int.sub.wrap(tz,tf)
   negative:u64 = int.cast(negate) {"mode":"wrap"}
-  branch nonnegative feature_advance(ti,to,tn,tc,tp,te,ta,nonneg) feature_advance(ti,to,tn,tc,tp,te,ta,negative)
-block feature_advance(ui:readbuf,uo:mutbuf,un:usize,uc:usize,up:usize,ue:usize,ua:u64,um:u64)
+  branch nonnegative feature_advance(ti,tn,tp,te,ta,nonneg) feature_advance(ti,tn,tp,te,ta,negative)
+block feature_advance(ui:readbuf,un:usize,up:usize,ue:usize,ua:u64,um:u64)
   abs_sum:u64 = int.add.wrap(ua,um)
   token_cap:u64 = const() {"value":1024}
   within_tokens:bool = compare.le(abs_sum,token_cap)
-  branch within_tokens feature_next(ui,uo,un,uc,up,ue,abs_sum) bad()
-block feature_next(xi:readbuf,xo:mutbuf,xn:usize,xc:usize,xp:usize,xe:usize,xa:u64)
+  branch within_tokens feature_next(ui,un,up,ue,abs_sum) bad()
+block feature_next(xi:readbuf,xn:usize,xp:usize,xe:usize,xa:u64)
   next_feature_offset:usize = const() {"value":8}
   next_feature:usize = int.add.wrap(xp,next_feature_offset)
   next_header_offset:usize = const() {"value":8}
   next_header:usize = int.add.wrap(xe,next_header_offset)
   finished_features:bool = compare.eq(next_feature,xe)
-  branch finished_features check_rows(xi,xo,xn,next_header,xc) check_features(xi,xo,xn,xc,next_feature,xe,xa)
-block buffers(bi:readbuf,bo:mutbuf,bn:usize,bc:usize)
-  outbase:usize = const() {"value":30848}
-  outrow:usize = const() {"value":80}
-  row_payload:usize = int.mul.wrap(bc,outrow)
-  resultlen:usize = int.add.wrap(row_payload,outbase)
-  available:usize = buffer.len(bo)
-  clear0:usize = const() {"value":0}
-  fits:bool = compare.ge(available,resultlen)
-  branch fits clear(bi,bo,bn,clear0,outbase) short()
-block clear(ai:readbuf,ao:mutbuf,an:usize,ap:usize,ae:usize)
+  branch finished_features check_rows(xi,xn,next_header) check_features(xi,xn,next_feature,xe,xa)
+block good()
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block bad()
+  invalid:u32 = const() {"value":1}
+  ret(invalid)
+end
+
+fn train_backward(i:readbuf,work:mutbuf,first:usize,last:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,work:mutbuf,first:usize,last:usize)
+  zero:usize = const() {"value":0}
+  fixed:usize = const() {"value":30848}
+  jump clear(i,work,last,zero,fixed,first)
+block clear(ai:readbuf,ao:mutbuf,an:usize,ap:usize,ae:usize,af:usize)
   nil:u64 = const() {"value":0}
   _zero:u32 = call(ao,ap,nil) {"function":"cw_store64"}
   nextclear_offset:usize = const() {"value":8}
   nextclear:usize = int.add.wrap(ap,nextclear_offset)
   clear_done:bool = compare.eq(nextclear,ae)
-  branch clear_done start(ai,ao,an,ae) clear(ai,ao,an,nextclear,ae)
-block start(hi:readbuf,ho:mutbuf,hn:usize,he:usize)
-  first_row:usize = const() {"value":16}
+  branch clear_done start(ai,ao,an,ae,af) clear(ai,ao,an,nextclear,ae,af)
+block start(hi:readbuf,ho:mutbuf,hn:usize,he:usize,first_row:usize)
   initial_total:u64 = const() {"value":0}
   no_rows:bool = compare.eq(hn,first_row)
   branch no_rows done() row(hi,ho,hn,first_row,he,initial_total)
@@ -214,10 +244,4 @@ block result(zo:mutbuf,zt:u64)
 block done()
   status_done:u32 = const() {"value":0}
   ret(status_done)
-block bad()
-  status_bad:u32 = const() {"value":1}
-  ret(status_bad)
-block short()
-  status_short:u32 = const() {"value":2}
-  ret(status_short)
 end

@@ -1,0 +1,112 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_training_fused_v1
+fn f0(i:readbuf,o:mutbuf,a:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,a:mutbuf)
+  n:usize = buffer.len(i)
+  first:usize = const() {"value":74096}
+  header_present:bool = compare.le(first,n)
+  branch header_present frame(i,o,a,n,first) bad()
+block frame(fi:readbuf,fo:mutbuf,fa:mutbuf,fn_:usize,ff:usize)
+  z:usize = const() {"value":0}
+  count_at:usize = const() {"value":8}
+  reserved_at:usize = const() {"value":16}
+  pres_at:usize = const() {"value":24}
+  step_at:usize = const() {"value":32}
+  magic:u64 = call(fi,z) {"function":"cw_read64"}
+  count:u64 = call(fi,count_at) {"function":"cw_read64"}
+  reserved:u64 = call(fi,reserved_at) {"function":"cw_read64"}
+  presence:u64 = call(fi,pres_at) {"function":"cw_read64"}
+  old_step:u64 = call(fi,step_at) {"function":"cw_read64"}
+  tag:u64 = const() {"value":3616443484809090115}
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  max_count:u64 = const() {"value":64}
+  tag_ok:bool = compare.eq(magic,tag)
+  reserved_ok:bool = compare.eq(reserved,zero)
+  count_ok:bool = compare.le(count,max_count)
+  pres_ok:bool = compare.le(presence,one)
+  some:bool = compare.eq(presence,one)
+  step_zero:bool = compare.eq(old_step,zero)
+  canonical:bool = bool.or(some,step_zero)
+  prefix_ok:bool = bool.and(tag_ok,reserved_ok)
+  shape_ok:bool = bool.and(count_ok,pres_ok)
+  hdr0:bool = bool.and(prefix_ok,shape_ok)
+  hdr:bool = bool.and(hdr0,canonical)
+  branch hdr extent(fi,fo,fa,fn_,ff,count,presence,old_step) bad()
+block extent(ei:readbuf,eo:mutbuf,ea:mutbuf,en:usize,ef:usize,ec:u64,ep:u64,es:u64)
+  count_i:usize = int.cast(ec) {"mode":"wrap"}
+  row_bytes:usize = const() {"value":2096}
+  rows_n:usize = int.mul.wrap(count_i,row_bytes)
+  need:usize = int.add.wrap(ef,rows_n)
+  exact:bool = compare.eq(en,need)
+  branch exact rows(ei,eo,ea,en,ef,ec,ep,es,count_i) bad()
+block rows(ri:readbuf,ro:mutbuf,ra:mutbuf,rn:usize,rf:usize,rc:u64,rp:u64,rs:u64,r_count:usize)
+  status:u32 = call(ri,rf,rn) {"function":"train_rows"}
+  nil:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,nil)
+  branch valid policy(ri,ro,ra,rn,rf,rc,rp,rs,r_count) bad()
+block policy(pi:readbuf,po:mutbuf,pa:mutbuf,pn:usize,pf:usize,pc:u64,pp:u64,ps:u64,p_count:usize)
+  zero1:u64 = const() {"value":0}
+  internal_mode:u64 = const() {"value":1}
+  st:u32 = call(pi,pc,zero1,pp,internal_mode) {"function":"train_update_domain"}
+  zero_s:u32 = const() {"value":0}
+  setup:bool = compare.eq(st,zero_s)
+  branch setup step(pi,po,pa,pn,pf,pp,ps,p_count) bad()
+block step(si:readbuf,so:mutbuf,sa:mutbuf,sn:usize,sf:usize,sp:u64,ss:u64,s_count:usize)
+  zero2:usize = const() {"value":0}
+  applied0:u64 = const() {"value":0}
+  empty:bool = compare.eq(s_count,zero2)
+  branch empty capacity(si,so,sa,sn,sf,sp,ss,applied0,s_count) increment(si,so,sa,sn,sf,ss,s_count)
+block increment(ii:readbuf,io:mutbuf,ia:mutbuf,in_:usize,if_:usize,is_:u64,ic:usize)
+  max_step:u64 = const() {"value":18446744073709551615}
+  one2:u64 = const() {"value":1}
+  next_step:u64 = int.add.wrap(is_,one2)
+  full:bool = compare.eq(is_,max_step)
+  branch full step_overflow() capacity(ii,io,ia,in_,if_,one2,next_step,one2,ic)
+block capacity(ci:readbuf,co:mutbuf,ca:mutbuf,cn:usize,cf:usize,cp:u64,cs:u64,c_ap:u64,c_count:usize)
+  base0:usize = const() {"value":30848}
+  row_out:usize = const() {"value":80}
+  row_n:usize = int.mul.wrap(c_count,row_out)
+  base:usize = int.add.wrap(base0,row_n)
+  update_n:usize = const() {"value":123392}
+  total:usize = int.add.wrap(base,update_n)
+  scratch:usize = buffer.len(ca)
+  fit:bool = compare.le(total,scratch)
+  branch fit project(ci,co,ca,cn,cf,cp,cs,c_ap,base,total) short()
+block project(bi:readbuf,bo:mutbuf,ba:mutbuf,bn:usize,bf:usize,bp:u64,bs:u64,bap:u64,bb:usize,bt:usize)
+  lower:u32 = call(bi,ba,bf,bn) {"function":"train_backward"}
+  zero_b:u32 = const() {"value":0}
+  backward_ok:bool = compare.eq(lower,zero_b)
+  branch backward_ok update(bi,bo,ba,bp,bs,bap,bb,bt) failed(lower)
+block update(ui:readbuf,uo:mutbuf,ua:mutbuf,up:u64,us:u64,u_ap:u64,ub:usize,ut:usize)
+  mode:u64 = const() {"value":1}
+  result:u32 = call(ui,ua,ub,mode,up,us,u_ap) {"function":"train_update"}
+  zero_u:u32 = const() {"value":0}
+  good:bool = compare.eq(result,zero_u)
+  branch good publish(uo,ua,ut) failed(result)
+block publish(po2:mutbuf,pa2:mutbuf,pt:usize)
+  available:usize = buffer.len(po2)
+  ready:bool = compare.le(pt,available)
+  zero_p:usize = const() {"value":0}
+  branch ready emit(po2,pa2,zero_p,pt) short()
+block emit(emit_output:mutbuf,ea2:mutbuf,ep2:usize,et:usize)
+  v:u64 = call(ea2,ep2) {"function":"cw_load64"}
+  wrote:u32 = call(emit_output,ep2,v) {"function":"cw_store64"}
+  eight:usize = const() {"value":8}
+  next_out:usize = int.add.wrap(ep2,eight)
+  done:bool = compare.eq(next_out,et)
+  branch done ok() emit(emit_output,ea2,next_out,et)
+block ok()
+  done0:u32 = const() {"value":0}
+  ret(done0)
+block failed(code:u32)
+  ret(code)
+block bad()
+  bad0:u32 = const() {"value":100}
+  ret(bad0)
+block short()
+  short0:u32 = const() {"value":102}
+  ret(short0)
+block step_overflow()
+  step0:u32 = const() {"value":201}
+  ret(step0)
+end

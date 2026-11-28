@@ -29,8 +29,65 @@ block header(hi:readbuf,ho:mutbuf,ha:mutbuf)
   opt_header:bool = bool.and(presence_ok,canonical_step)
   typed_header:bool = bool.and(count_ok,opt_header)
   hdr_ok:bool = bool.and(magic_ok,typed_header)
-  branch hdr_ok policy(hi,ho,ha,count,total_loss,present,old_step) bad()
-block policy(pi:readbuf,po:mutbuf,pa:mutbuf,pc:u64,pl:u64,pp:u64,ps:u64)
+  branch hdr_ok verify_all(hi,ho,ha,count,total_loss,present,old_step) bad()
+block verify_all(vi:readbuf,vo:mutbuf,va:mutbuf,vc:u64,vl:u64,vp:u64,vs:u64)
+  mode:u64 = const() {"value":0}
+  checked:u32 = call(vi,vc,vl,vp,mode) {"function":"train_update_domain"}
+  z:u32 = const() {"value":0}
+  okay:bool = compare.eq(checked,z)
+  branch okay step(vi,vo,va,vc,vp,vs) bad()
+block step(si:readbuf,so:mutbuf,sa:mutbuf,sc:u64,sp:u64,ss:u64)
+  s_zero:u64 = const() {"value":0}
+  s_empty:bool = compare.eq(sc,s_zero)
+  branch s_empty scratch(si,so,sa,sp,ss,s_zero) increment(si,so,sa,ss)
+block increment(ni:readbuf,no:mutbuf,na:mutbuf,ns:u64)
+  step_limit:u64 = const() {"value":18446744073709551615}
+  n_one:u64 = const() {"value":1}
+  next_step:u64 = int.add.wrap(ns,n_one)
+  step_full:bool = compare.eq(ns,step_limit)
+  branch step_full step_overflow() scratch(ni,no,na,n_one,next_step,n_one)
+block scratch(xi:readbuf,xo:mutbuf,xa:mutbuf,xp:u64,xs:u64,xap:u64)
+  scratch_len:usize = buffer.len(xa)
+  scratch_need:usize = const() {"value":123392}
+  scratch_fits:bool = compare.le(scratch_need,scratch_len)
+  branch scratch_fits work(xi,xo,xa,xp,xs,xap,scratch_need) short()
+block work(wi:readbuf,wo:mutbuf,wa:mutbuf,wp:u64,ws:u64,wap:u64,we:usize)
+  zero:usize = const() {"value":0}
+  legacy:u64 = const() {"value":0}
+  status:u32 = call(wi,wa,zero,legacy,wp,ws,wap) {"function":"train_update"}
+  work_zero:u32 = const() {"value":0}
+  work_ok:bool = compare.eq(status,work_zero)
+  branch work_ok output_size(wo,wa,we) failure(status)
+block failure(f:u32)
+  ret(f)
+block output_size(bo:mutbuf,ba:mutbuf,be:usize)
+  out_len:usize = buffer.len(bo)
+  out_start:usize = const() {"value":0}
+  output_fits:bool = compare.le(be,out_len)
+  branch output_fits emit(bo,ba,out_start,be) short()
+block emit(eo:mutbuf,ea:mutbuf,ep:usize,ee:usize)
+  word:u64 = call(ea,ep) {"function":"cw_load64"}
+  _output:u32 = call(eo,ep,word) {"function":"cw_store64"}
+  out_next_offset:usize = const() {"value":8}
+  out_next:usize = int.add.wrap(ep,out_next_offset)
+  emit_done:bool = compare.eq(out_next,ee)
+  branch emit_done done() emit(eo,ea,out_next,ee)
+block done()
+  flag_done:u32 = const() {"value":0}
+  ret(flag_done)
+block bad()
+  flag_bad:u32 = const() {"value":100}
+  ret(flag_bad)
+block short()
+  flag_short:u32 = const() {"value":102}
+  ret(flag_short)
+block step_overflow()
+  flag_step_overflow:u32 = const() {"value":201}
+  ret(flag_step_overflow)
+end
+
+fn train_update_domain(pi:readbuf,pc:u64,pl:u64,pp:u64,pmode:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(pi:readbuf,pc:u64,pl:u64,pp:u64,pmode:u64)
   lrn_off:usize = const() {"value":40}
   lrn:u64 = call(pi,lrn_off) {"function":"cw_read64"}
   lrd_off:usize = const() {"value":48}
@@ -66,8 +123,8 @@ block policy(pi:readbuf,po:mutbuf,pa:mutbuf,pc:u64,pl:u64,pp:u64,ps:u64)
   gradient_per_row:u64 = const() {"value":2156068608}
   gradient_max:u64 = int.mul.wrap(pc,gradient_per_row)
   first_coord:usize = const() {"value":80}
-  branch policy_check6 verify(pi,po,pa,pc,pp,ps,lrn,lrd,mn,md,clip,gradient_max,first_coord) bad()
-block verify(vi:readbuf,vo:mutbuf,va:mutbuf,vc:u64,vp:u64,vs:u64,vn:u64,vd:u64,vmn:u64,vmd:u64,vl:u64,vg:u64,vx:usize)
+  branch policy_check6 verify(pi,pp,pmode,gradient_max,first_coord) bad()
+block verify(vi:readbuf,vp:u64,vmode:u64,vg:u64,vx:usize)
   w:u64 = call(vi,vx) {"function":"cw_read64"}
   m_at_offset:usize = const() {"value":24672}
   m_at:usize = int.add.wrap(vx,m_at_offset)
@@ -75,9 +132,7 @@ block verify(vi:readbuf,vo:mutbuf,va:mutbuf,vc:u64,vp:u64,vs:u64,vn:u64,vd:u64,v
   mask_at_offset:usize = const() {"value":49344}
   mask_at:usize = int.add.wrap(vx,mask_at_offset)
   mask:u64 = call(vi,mask_at) {"function":"cw_read64"}
-  gradient_at_offset:usize = const() {"value":74016}
-  gradient_at:usize = int.add.wrap(vx,gradient_at_offset)
-  gradient:u64 = call(vi,gradient_at) {"function":"cw_read64"}
+  gradient:u64 = call(vi,vx,vmode) {"function":"train_input_gradient"}
   wabs:u64,ws:bool = call(w) {"function":"opt_abs"}
   mabs:u64,ms:bool = call(m) {"function":"opt_abs"}
   gabs:u64,gs:bool = call(gradient) {"function":"opt_abs"}
@@ -99,42 +154,82 @@ block verify(vi:readbuf,vo:mutbuf,va:mutbuf,vc:u64,vp:u64,vs:u64,vn:u64,vd:u64,v
   fields:bool = bool.and(weights_and_moment,mask_and_gradient)
   domain_tail:bool = bool.and(canonical_m,valid_even)
   full_coord:bool = bool.and(fields,domain_tail)
-  branch full_coord verify_next(vi,vo,va,vc,vp,vs,vn,vd,vmn,vmd,vl,vg,vx) bad()
-block verify_next(ci:readbuf,co:mutbuf,ca:mutbuf,cc:u64,cp:u64,cs:u64,cn:u64,cd:u64,cmn:u64,cmd:u64,cl:u64,cg:u64,cx:usize)
+  branch full_coord verify_next(vi,vp,vmode,vg,vx) bad()
+block verify_next(ci:readbuf,cp:u64,cmode:u64,cg:u64,cx:usize)
   vnext_offset:usize = const() {"value":8}
   vnext:usize = int.add.wrap(cx,vnext_offset)
   verify_end:usize = const() {"value":24752}
   v_done:bool = compare.eq(vnext,verify_end)
-  branch v_done step(ci,co,ca,cc,cp,cs,cn,cd,cmn,cmd,cl) verify(ci,co,ca,cc,cp,cs,cn,cd,cmn,cmd,cl,cg,vnext)
-block step(si:readbuf,so:mutbuf,sa:mutbuf,sc:u64,sp:u64,ss:u64,sn:u64,sd:u64,smn:u64,smd:u64,sl:u64)
-  s_zero:u64 = const() {"value":0}
-  s_empty:bool = compare.eq(sc,s_zero)
-  branch s_empty scratch(si,so,sa,sp,ss,s_zero,sn,sd,smn,smd,sl) increment(si,so,sa,ss,sn,sd,smn,smd,sl)
-block increment(ni:readbuf,no:mutbuf,na:mutbuf,ns:u64,nn:u64,nd:u64,nmn:u64,nmd:u64,nl:u64)
-  step_limit:u64 = const() {"value":18446744073709551615}
-  n_one:u64 = const() {"value":1}
-  next_step:u64 = int.add.wrap(ns,n_one)
-  step_full:bool = compare.eq(ns,step_limit)
-  branch step_full step_overflow() scratch(ni,no,na,n_one,next_step,n_one,nn,nd,nmn,nmd,nl)
-block scratch(xi:readbuf,xo:mutbuf,xa:mutbuf,xp:u64,xs:u64,xap:u64,xn:u64,xd:u64,xmn:u64,xmd:u64,xl:u64)
-  scratch_len:usize = buffer.len(xa)
-  scratch_need:usize = const() {"value":123392}
-  scratch_fits:bool = compare.le(scratch_need,scratch_len)
-  branch scratch_fits init(xi,xo,xa,xp,xs,xap,xn,xd,xmn,xmd,xl) short()
-block init(ii:readbuf,io:mutbuf,ia:mutbuf,ip:u64,is_:u64,iap:u64,in_:u64,id:u64,imn:u64,imd:u64,il:u64)
+  branch v_done good() verify(ci,cp,cmode,cg,vnext)
+block good()
+  zero:u32 = const() {"value":0}
+  ret(zero)
+block bad()
+  envelope:u32 = const() {"value":100}
+  ret(envelope)
+end
+
+fn train_input_gradient(i:readbuf,at:usize,mode:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,at:usize,mode:u64)
+  zero:u64 = const() {"value":0}
+  legacy:bool = compare.eq(mode,zero)
+  branch legacy load(i,at) absent(zero)
+block load(li:readbuf,la:usize)
+  offset:usize = const() {"value":74016}
+  addr:usize = int.add.wrap(la,offset)
+  x:u64 = call(li,addr) {"function":"cw_read64"}
+  ret(x)
+block absent(z:u64)
+  ret(z)
+end
+
+fn train_gradient(i:readbuf,w:mutbuf,at:usize,mode:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,at:usize,mode:u64)
+  zero:u64 = const() {"value":0}
+  legacy:bool = compare.eq(mode,zero)
+  branch legacy input(i,at,mode) computed(w,at)
+block input(ii:readbuf,ia:usize,im:u64)
+  raw:u64 = call(ii,ia,im) {"function":"train_input_gradient"}
+  ret(raw)
+block computed(cw:mutbuf,ca:usize)
+  rel:usize = const() {"value":72}
+  addr:usize = int.sub.wrap(ca,rel)
+  value:u64 = call(cw,addr) {"function":"cw_load64"}
+  ret(value)
+end
+
+fn train_update(i:readbuf,w:mutbuf,base:usize,mode:u64,present:u64,step:u64,applied:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,base:usize,mode:u64,present:u64,step:u64,applied:u64)
+  lrn_off:usize = const() {"value":40}
+  lrn:u64 = call(i,lrn_off) {"function":"cw_read64"}
+  lrd_off:usize = const() {"value":48}
+  lrd:u64 = call(i,lrd_off) {"function":"cw_read64"}
+  mn_off:usize = const() {"value":56}
+  mn:u64 = call(i,mn_off) {"function":"cw_read64"}
+  md_off:usize = const() {"value":64}
+  md:u64 = call(i,md_off) {"function":"cw_read64"}
+  clip_off:usize = const() {"value":72}
+  clip:u64 = call(i,clip_off) {"function":"cw_read64"}
+  jump init(i,mode,w,present,step,applied,lrn,lrd,mn,md,clip,base)
+block init(ii:readbuf,io:u64,ia:mutbuf,ip:u64,is_:u64,iap:u64,in_:u64,id:u64,imn:u64,imd:u64,il:u64,ib:usize)
   changed_zero:u64 = const() {"value":0}
   presence_word:usize = const() {"value":0}
-  _presence:u32 = call(ia,presence_word,ip) {"function":"cw_store64"}
+  presence_at:usize = int.add.wrap(ib,presence_word)
+  _presence:u32 = call(ia,presence_at,ip) {"function":"cw_store64"}
   step_word:usize = const() {"value":8}
-  _step:u32 = call(ia,step_word,is_) {"function":"cw_store64"}
+  step_at:usize = int.add.wrap(ib,step_word)
+  _step:u32 = call(ia,step_at,is_) {"function":"cw_store64"}
   applied_word:usize = const() {"value":16}
-  _applied:u32 = call(ia,applied_word,iap) {"function":"cw_store64"}
+  applied_at:usize = int.add.wrap(ib,applied_word)
+  _applied:u32 = call(ia,applied_at,iap) {"function":"cw_store64"}
   changed_word:usize = const() {"value":24}
-  _changed:u32 = call(ia,changed_word,changed_zero) {"function":"cw_store64"}
+  changed_at0:usize = int.add.wrap(ib,changed_word)
+  _changed:u32 = call(ia,changed_at0,changed_zero) {"function":"cw_store64"}
   ix:usize = const() {"value":80}
-  iy:usize = const() {"value":32}
-  jump coordinate(ii,io,ia,iap,in_,id,imn,imd,il,ix,iy)
-block coordinate(ji:readbuf,jo:mutbuf,ja:mutbuf,jap:u64,jn:u64,jd:u64,jmn:u64,jmd:u64,jl:u64,jx:usize,jy:usize)
+  header_size:usize = const() {"value":32}
+  iy:usize = int.add.wrap(ib,header_size)
+  jump coordinate(ii,io,ia,iap,in_,id,imn,imd,il,ix,iy,ib)
+block coordinate(ji:readbuf,jo:u64,ja:mutbuf,jap:u64,jn:u64,jd:u64,jmn:u64,jmd:u64,jl:u64,jx:usize,jy:usize,jb:usize)
   weight:u64 = call(ji,jx) {"function":"cw_read64"}
   moment_at_offset:usize = const() {"value":24672}
   moment_at:usize = int.add.wrap(jx,moment_at_offset)
@@ -142,56 +237,35 @@ block coordinate(ji:readbuf,jo:mutbuf,ja:mutbuf,jap:u64,jn:u64,jd:u64,jmn:u64,jm
   mask2_at_offset:usize = const() {"value":49344}
   mask2_at:usize = int.add.wrap(jx,mask2_at_offset)
   mask2:u64 = call(ji,mask2_at) {"function":"cw_read64"}
-  raw2_at_offset:usize = const() {"value":74016}
-  raw2_at:usize = int.add.wrap(jx,raw2_at_offset)
-  raw2:u64 = call(ji,raw2_at) {"function":"cw_read64"}
+  raw2:u64 = call(ji,ja,jx,jo) {"function":"train_gradient"}
   active_mask:u64 = bit.and(mask2,jap)
   next_pos:u64 = int.cast(jy) {"mode":"wrap"}
   status:u32 = call(ja,next_pos,active_mask,weight,moment,raw2,jn,jd,jmn,jmd,jl) {"function":"opt_coordinate"}
   okay:u32 = const() {"value":0}
   good_coord:bool = compare.eq(status,okay)
-  branch good_coord check_change(ji,jo,ja,jap,jn,jd,jmn,jmd,jl,jx,jy,weight) failure(status)
-block failure(f:u32)
-  ret(f)
-block check_change(ui:readbuf,uo:mutbuf,ua:mutbuf,uap:u64,un:u64,ud:u64,umn:u64,umd:u64,ul:u64,ux:usize,uy:usize,uw:u64)
+  branch good_coord check_change(ji,jo,ja,jap,jn,jd,jmn,jmd,jl,jx,jy,weight,jb) failure(status)
+block check_change(ui:readbuf,uo:u64,ua:mutbuf,uap:u64,un:u64,ud:u64,umn:u64,umd:u64,ul:u64,ux:usize,uy:usize,uw:u64,ub:usize)
   produced_weight:u64 = call(ua,uy) {"function":"cw_load64"}
   weight_same:bool = compare.eq(uw,produced_weight)
-  branch weight_same advance(ui,uo,ua,uap,un,ud,umn,umd,ul,ux,uy) changed(ui,uo,ua,uap,un,ud,umn,umd,ul,ux,uy)
-block changed(fi:readbuf,fo:mutbuf,fa:mutbuf,fap:u64,fn_:u64,fd:u64,fmn:u64,fmd:u64,fl:u64,fx:usize,fy:usize)
-  changed_at:usize = const() {"value":24}
+  branch weight_same advance(ui,uo,ua,uap,un,ud,umn,umd,ul,ux,uy,ub) changed(ui,uo,ua,uap,un,ud,umn,umd,ul,ux,uy,ub)
+block changed(fi:readbuf,fo:u64,fa:mutbuf,fap:u64,fn_:u64,fd:u64,fmn:u64,fmd:u64,fl:u64,fx:usize,fy:usize,fb:usize)
+  changed_offset:usize = const() {"value":24}
+  changed_at:usize = int.add.wrap(fb,changed_offset)
   changed_yes:u64 = const() {"value":1}
   _changed_bit:u32 = call(fa,changed_at,changed_yes) {"function":"cw_store64"}
-  jump advance(fi,fo,fa,fap,fn_,fd,fmn,fmd,fl,fx,fy)
-block advance(zi:readbuf,zo:mutbuf,za:mutbuf,zap:u64,zn:u64,zd:u64,zmn:u64,zmd:u64,zl:u64,zx:usize,zy:usize)
+  jump advance(fi,fo,fa,fap,fn_,fd,fmn,fmd,fl,fx,fy,fb)
+block advance(zi:readbuf,zo:u64,za:mutbuf,zap:u64,zn:u64,zd:u64,zmn:u64,zmd:u64,zl:u64,zx:usize,zy:usize,zb:usize)
   nextx_offset:usize = const() {"value":8}
   nextx:usize = int.add.wrap(zx,nextx_offset)
   nexty_offset:usize = const() {"value":40}
   nexty:usize = int.add.wrap(zy,nexty_offset)
-  end_update:usize = const() {"value":123392}
+  update_extent:usize = const() {"value":123392}
+  end_update:usize = int.add.wrap(zb,update_extent)
   update_complete:bool = compare.eq(nexty,end_update)
-  branch update_complete output_size(zo,za,end_update) coordinate(zi,zo,za,zap,zn,zd,zmn,zmd,zl,nextx,nexty)
-block output_size(bo:mutbuf,ba:mutbuf,be:usize)
-  out_len:usize = buffer.len(bo)
-  out_start:usize = const() {"value":0}
-  output_fits:bool = compare.le(be,out_len)
-  branch output_fits emit(bo,ba,out_start,be) short()
-block emit(eo:mutbuf,ea:mutbuf,ep:usize,ee:usize)
-  word:u64 = call(ea,ep) {"function":"cw_load64"}
-  _output:u32 = call(eo,ep,word) {"function":"cw_store64"}
-  out_next_offset:usize = const() {"value":8}
-  out_next:usize = int.add.wrap(ep,out_next_offset)
-  emit_done:bool = compare.eq(out_next,ee)
-  branch emit_done done() emit(eo,ea,out_next,ee)
-block done()
-  flag_done:u32 = const() {"value":0}
-  ret(flag_done)
-block bad()
-  flag_bad:u32 = const() {"value":100}
-  ret(flag_bad)
-block short()
-  flag_short:u32 = const() {"value":102}
-  ret(flag_short)
-block step_overflow()
-  flag_step_overflow:u32 = const() {"value":201}
-  ret(flag_step_overflow)
+  branch update_complete good() coordinate(zi,zo,za,zap,zn,zd,zmn,zmd,zl,nextx,nexty,zb)
+block good()
+  zero:u32 = const() {"value":0}
+  ret(zero)
+block failure(f:u32)
+  ret(f)
 end

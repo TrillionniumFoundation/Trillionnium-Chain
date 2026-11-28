@@ -1148,6 +1148,16 @@
       ]
     },
     {
+      "id": "state/integer-training-fused",
+      "node_integration_complete": false,
+      "scope": "One immutable bounded Cell active row and old coordinate frame computing full original offline loss, backward and exact masked batch update without caller gradient/loss; stock dual/no production or proof, admission or owner.",
+      "source": "hia/src/state/integer_training_fused.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_integer_training_fused.py"
+      ]
+    },
+    {
       "id": "state/integer-training-batch-update",
       "node_integration_complete": false,
       "scope": "Immutable typed Cell train-stage optimizer batch over preceding integer gradients with shared coordinate arithmetic, ordered failure and all-or-none borrowed result; original full Rust and both native stocks; no live operation, model admission, adoption, proof or authority",
@@ -4443,6 +4453,7 @@
         "node/resource-snapshot-projection",
         "state/integer-training-backward",
         "state/integer-training-batch-update",
+        "state/integer-training-fused",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",
