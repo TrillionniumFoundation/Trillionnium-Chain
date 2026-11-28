@@ -13,8 +13,9 @@ import argparse
 import hashlib
 import json
 import math
-from pathlib import Path
+import os
 import re
+import stat
 import struct
 
 MODEL_FAMILY = "hcsn-pft-readout-research-v1"
@@ -191,10 +192,35 @@ def review_candidate(raw, expected):
 
 
 def read_bounded(path, maximum):
-    with Path(path).open("rb") as stream:
-        raw = stream.read(maximum + 1)
-    require(len(raw) <= maximum, "PFT_BYTE_LIMIT")
-    return raw
+    """Read one stable regular-file descriptor; final symlinks are refused.
+
+    O_NONBLOCK prevents a FIFO open from waiting for a writer. It does not
+    promise a hard deadline for arbitrary remote regular-file I/O. Independent
+    expected digests remain required; metadata stability is not authentication.
+    """
+    require(type(maximum) is int and maximum >= 0, "PFT_BYTE_LIMIT")
+    fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        before = os.fstat(fd)
+        require(stat.S_ISREG(before.st_mode), "PFT_FILE_TYPE")
+        require(before.st_size <= maximum, "PFT_BYTE_LIMIT")
+        chunks, remaining = [], maximum + 1
+        while remaining:
+            chunk = os.read(fd, min(remaining, 65536))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
+        after = os.fstat(fd)
+        require(len(raw) <= maximum, "PFT_BYTE_LIMIT")
+        attributes = ("st_dev", "st_ino", "st_mode", "st_size", "st_mtime_ns", "st_ctime_ns")
+        require(len(raw) == before.st_size and
+                all(getattr(before, name) == getattr(after, name) for name in attributes),
+                "PFT_FILE_CHANGED")
+        return raw
+    finally:
+        os.close(fd)
 
 
 def main():

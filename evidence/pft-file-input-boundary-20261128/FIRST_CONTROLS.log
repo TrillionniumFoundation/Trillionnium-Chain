@@ -1,0 +1,12 @@
+test_final_symlink_refuses_even_with_regular_target (test_pft_file_inputs.FileInputTests.test_final_symlink_refuses_even_with_regular_target) ... ok
+test_independent_candidate_digest_still_refuses_changed_bytes (test_pft_file_inputs.FileInputTests.test_independent_candidate_digest_still_refuses_changed_bytes) ... ok
+test_oversized_regular_file_refuses_before_data_read (test_pft_file_inputs.FileInputTests.test_oversized_regular_file_refuses_before_data_read) ... ok
+test_real_directory_refuses (test_pft_file_inputs.FileInputTests.test_real_directory_refuses) ... ok
+test_real_fifo_without_writer_refuses_in_owned_child (test_pft_file_inputs.FileInputTests.test_real_fifo_without_writer_refuses_in_owned_child) ... ok
+test_regular_exact_bound_and_empty_file (test_pft_file_inputs.FileInputTests.test_regular_exact_bound_and_empty_file) ... ok
+test_same_size_actual_rewrite_during_read_refuses (test_pft_file_inputs.FileInputTests.test_same_size_actual_rewrite_during_read_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.044s
+
+OK
