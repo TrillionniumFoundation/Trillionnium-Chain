@@ -16513,6 +16513,48 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "src/model/cell_state_value.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_word"
+        ]
+      },
+      {
+        "source": "src/state/json_string.hepta",
+        "functions": [
+          "json_short_escape"
+        ]
+      },
+      {
+        "source": "src/sqlite_io_boundary/lifecycle_json_emit.hepta",
+        "functions": [
+          "mje_string",
+          "mje_escape",
+          "mje_hex_digit"
+        ]
+      },
+      {
+        "source": "src/worker_agent/audit_report.hepta",
+        "functions": [
+          "wa_decimal",
+          "wa_word"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_wcopy"
+        ]
+      }
+    ],
     "src/model/cell_model_artifact.hepta": [
       {
         "functions": [

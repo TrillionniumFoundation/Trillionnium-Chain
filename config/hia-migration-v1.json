@@ -2438,6 +2438,17 @@
       ]
     },
     {
+      "id": "model/cell-state-value",
+      "node_integration_complete": false,
+      "scope": "Private original immutable CellState canonical JSON typed value for null optimizer and bounded ASCII/vector; no validation, installation, training or execution.",
+      "source": "hia/src/model/cell_state_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_state_value.py",
+        "hia/tests/rust_cell_state_value_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-model-artifact",
       "node_integration_complete": false,
       "scope": "Read-only original Cell Model exact canonical ASCII JSON typed shape and PoN-framed SHA-256 artifact ID on inert matrices. No inference, training, quality or model activation.",

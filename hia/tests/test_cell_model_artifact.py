@@ -25,7 +25,7 @@ PINS = {
 }
 
 
-def original(directory):
+def original(directory, reference=REFERENCE):
     git = ["git", "-C", ROOT]
     if execute([*git, "rev-parse", "HEAD:trillionnium"]).stdout.decode().strip() != ORIGINAL:
         raise ValueError("Wrong locked original workspace tree")
@@ -59,7 +59,7 @@ def original(directory):
     if not Path(rlib).is_relative_to(target):
         raise ValueError("Artifact is outside the checked private target")
     exe = directory / "original-cell-model"
-    execute([rustc, "--edition=2021", REFERENCE, "-L", f"dependency={target/'debug/deps'}",
+    execute([rustc, "--edition=2021", reference, "-L", f"dependency={target/'debug/deps'}",
              "--extern", f"trnm_pon_node={rlib}", "-o", exe], env=env, timeout=90)
     return execute([exe]).stdout
 
