@@ -1,0 +1,21 @@
+{
+  "schema": "trnm-pft-candidate-public-validation-v1",
+  "scope": "final public synthetic fixture; independent private-history integration reports remain separate",
+  "parent_commit": "46de309840c70b85012c1d8f77ec89a518302ac0",
+  "tests": 15,
+  "errors": 0,
+  "failures": 0,
+  "checked_historical_parents": 9,
+  "checked_historical_file_identities": 27,
+  "private_weights_or_training_shards_published": false,
+  "normal_equations_verified": false,
+  "independent_evaluation_verified": false,
+  "authorizes_native_adoption": false,
+  "authorizes_native_payment": false,
+  "execution_authority": false,
+  "production_activation": false,
+  "source_sha256": {
+    "scripts/pft_candidate_readback.py": "f6763f59cf205160b3b6935b66857447e31d15ef3ed4990bda2099d2ab1fb16d",
+    "scripts/test_pft_candidate_readback.py": "eaa1f3c0c61d388050c0f5aa9f49c9ad1c281a880134f91dd1ec52878ac83d5d"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "contract": {
+    "aggregation": "sum-f64-canonical-batch-id",
+    "dimension": 2,
+    "dtype": "float64",
+    "epoch": 0,
+    "feature_program_sha256": "f74afeb8af8de2dfb777c5e725f606d7bc67de65355df3e35ff9877603c08e75",
+    "model_family": "hcsn-pft-readout-research-v1",
+    "normalization_sha256": "00a168ce045f39ec514709f9a256b5282089f08528214a9199071afe84f5ad1e",
+    "objective_sha256": "c11b9851087c86fa9ec04a3b036eb58219a7ba5837fa0b63ff0b33019cfba3f2",
+    "outputs": 2,
+    "parent_model_sha256": "69e9ae46e33ab57ee3c7e615397a2cca66d3a0568852bbc1246190091e6bfa3b",
+    "regularizer": 0.2,
+    "schema": "pft-online-statistics-v1",
+    "statistics_validation": "augmented-psd-rtol-1e-10-v1",
+    "time_semantics_sha256": "6f46adfc435897bacb44eed94f5fae5f57885933b028e8676d8e1b42f5bb9acb"
+  },
+  "contract_canonical_json": "{\"aggregation\":\"sum-f64-canonical-batch-id\",\"dimension\":2,\"dtype\":\"float64\",\"epoch\":0,\"feature_program_sha256\":\"f74afeb8af8de2dfb777c5e725f606d7bc67de65355df3e35ff9877603c08e75\",\"model_family\":\"hcsn-pft-readout-research-v1\",\"normalization_sha256\":\"00a168ce045f39ec514709f9a256b5282089f08528214a9199071afe84f5ad1e\",\"objective_sha256\":\"c11b9851087c86fa9ec04a3b036eb58219a7ba5837fa0b63ff0b33019cfba3f2\",\"outputs\":2,\"parent_model_sha256\":\"69e9ae46e33ab57ee3c7e615397a2cca66d3a0568852bbc1246190091e6bfa3b\",\"regularizer\":0.2,\"schema\":\"pft-online-statistics-v1\",\"statistics_validation\":\"augmented-psd-rtol-1e-10-v1\",\"time_semantics_sha256\":\"6f46adfc435897bacb44eed94f5fae5f57885933b028e8676d8e1b42f5bb9acb\"}",
+  "contract_sha256": "5592c556a2cbb94f89b410bf7fa768cd7385f386f39ff347e98e9f0f375b53d7",
+  "count": 2,
+  "head": "5dd522d3edb47a163b358754dfd2bdae1ebd79556efc3ff8411def58d438288b",
+  "head_material_canonical_json": "{\"batches\":[[\"batch-a\",\"5d9b22064241935dd879e6cbab8150823432fddb2d09cec12057d6a7d675964d\"],[\"batch-b\",\"97592d9cb80c8d90fee92b0535daf3dd7a073c609fba1faa6ae204f87dc7b0cb\"]],\"contract_sha256\":\"5592c556a2cbb94f89b410bf7fa768cd7385f386f39ff347e98e9f0f375b53d7\"}",
+  "revision": 2,
+  "schema": "pft-online-candidate-v1",
+  "weight": [
+    [
+      1.0,
+      -2.5
+    ],
+    [
+      0.0,
+      -0.0
+    ]
+  ],
+  "weight_encoding": "float64-le-c-rowmajor",
+  "weight_sha256": "2f9f5cc0426bc1b216ef1dfca42387a516befcf0be43fde5f71708cf85c0c203",
+  "weight_shape": [
+    2,
+    2
+  ]
+}
