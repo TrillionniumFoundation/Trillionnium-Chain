@@ -20554,6 +20554,104 @@
         ]
       }
     ],
+    "src/checkpoint/tile_activation_runtime_sequence.hepta": [
+      {
+        "source": "src/checkpoint/tile_activation_composed.hepta",
+        "functions": [
+          "tac_run",
+          "tac_index",
+          "tac_at",
+          "tac_word",
+          "tac_literal",
+          "tac_literals",
+          "tac_semantics",
+          "tac_tokens",
+          "tac_static",
+          "tac_digest",
+          "tac_match_pin",
+          "tac_hex",
+          "tac_nibble"
+        ]
+      },
+      {
+        "source": "src/checkpoint/tile_activation_typed.hepta",
+        "functions": [
+          "tat_parse_private",
+          "tat_encode",
+          "tat_find",
+          "tat_field",
+          "tat_array",
+          "tat_keys",
+          "tat_sequence"
+        ]
+      },
+      {
+        "source": "src/checkpoint/tile_activation_raw.hepta",
+        "functions": [
+          "tar_preflight",
+          "tar_pin",
+          "tar_object",
+          "tar_string",
+          "tar_duplicate",
+          "tar_equal",
+          "tar_value",
+          "tar_primitive",
+          "tar_mark",
+          "tar_count"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_wcopy"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/oracle/serde_json.hepta",
+        "functions": [
+          "oj_ws",
+          "oj_peek",
+          "oj_utf8",
+          "oj_ident"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json.hepta",
+        "functions": [
+          "hj_uint"
+        ]
+      }
+    ],
     "src/checkpoint/tile_activation_composed.hepta": [
       {
         "source": "src/checkpoint/tile_activation_typed.hepta",
@@ -20563,7 +20661,8 @@
           "tat_find",
           "tat_field",
           "tat_array",
-          "tat_keys"
+          "tat_keys",
+          "tat_sequence"
         ]
       },
       {

@@ -1149,6 +1149,16 @@
       ]
     },
     {
+      "id": "checkpoint/tile_activation_runtime_sequence",
+      "node_integration_complete": false,
+      "scope": "Private bounded original composed activation from named root and positional Runtime, same held raw values; no root positional form, I/O, observer, provenance or authority.",
+      "source": "hia/src/checkpoint/tile_activation_runtime_sequence.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_activation_runtime_sequence.py"
+      ]
+    },
+    {
       "id": "checkpoint/tile_activation_composed",
       "node_integration_complete": false,
       "scope": "Private bounded same-raw named-object original activation semantic/bit projection, no numeric admission, observer, training, provenance, live state or authority.",

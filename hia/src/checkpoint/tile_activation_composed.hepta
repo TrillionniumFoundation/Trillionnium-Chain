@@ -1,6 +1,13 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_composed
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  named_only:bool = const() {"value":false}
+  status:u32 = call(r,o,w,named_only) {"function":"tac_run"}
+  ret(status)
+end
+
+fn tac_run(r:readbuf,o:mutbuf,w:mutbuf,sequence:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,sequence:bool)
   size:usize = buffer.len(r)
   n:u64 = int.cast(size) {"mode":"wrap"}
   min:u64 = const() {"value":72}
@@ -8,11 +15,11 @@ block entry(r:readbuf,o:mutbuf,w:mutbuf)
   a:bool = compare.le(min,n)
   b:bool = compare.le(n,max)
   good:bool = bool.and(a,b)
-  branch good parse(r,o,w,n) wire()
-block parse(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64)
+  branch good parse(r,o,w,n,sequence) wire()
+block parse(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64,ps:bool)
   suffix:u64 = const() {"value":32}
   raw_end:u64 = int.sub.wrap(pn,suffix)
-  status:u32,extent:u64 = call(pr,pw,raw_end) {"function":"tat_parse_private"}
+  status:u32,extent:u64 = call(pr,pw,raw_end,ps) {"function":"tat_parse_private"}
   z:u32 = const() {"value":0}
   pass:bool = compare.eq(status,z)
   branch pass directory(pr,po,pw,raw_end,extent) refusal(status)

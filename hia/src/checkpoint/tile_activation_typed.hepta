@@ -3,7 +3,8 @@ fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
   size:usize = buffer.len(r)
   n:u64 = int.cast(size) {"mode":"wrap"}
-  status:u32,end:u64 = call(r,w,n) {"function":"tat_parse_private"}
+  named_only:bool = const() {"value":false}
+  status:u32,end:u64 = call(r,w,n,named_only) {"function":"tat_parse_private"}
   zero:u32 = const() {"value":0}
   okay:bool = compare.eq(status,zero)
   branch okay capacity(o,w,end) failure(status)
@@ -26,27 +27,33 @@ block failure(code:u32)
   ret(code)
 end
 
-fn tat_parse_private(r:readbuf,w:mutbuf,n:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,n:u64)
+fn tat_parse_private(r:readbuf,w:mutbuf,n:u64,allow:bool) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,allow:bool)
   wn:usize = buffer.len(w)
   enough:usize = const() {"value":315000}
   room:bool = compare.le(enough,wn)
-  branch room preflight(r,w,n) short()
-block preflight(pr:readbuf,pw:mutbuf,pn:u64)
+  branch room preflight(r,w,n,allow) short()
+block preflight(pr:readbuf,pw:mutbuf,pn:u64,pa:bool)
   yes:bool = const() {"value":true}
   status:u32 = call(pr,pw,pn,yes) {"function":"tar_preflight"}
   zero:u32 = const() {"value":0}
   passed:bool = compare.eq(status,zero)
-  branch passed counts(pr,pw,pn) failure(status)
-block counts(cr:readbuf,cw:mutbuf,cn:u64)
+  branch passed counts(pr,pw,pn,pa) failure(status)
+block counts(cr:readbuf,cw:mutbuf,cn:u64,ca:bool)
   root_at:u64 = const() {"value":10432}
   root:u64 = call(cw,root_at) {"function":"tr_get"}
   rcount:u64 = const() {"value":13}
   root_ok:bool = compare.eq(root,rcount)
-  branch root_ok prepare(cr,cw,cn) fields()
-block prepare(ar:readbuf,aw:mutbuf,an:u64)
+  branch root_ok prepare(cr,cw,cn,ca) fields()
+block prepare(ar:readbuf,aw:mutbuf,an:u64,aa:bool)
   init:u64 = call(aw) {"function":"tat_keys"}
   z:u64 = const() {"value":0}
+  yes_a:u64 = const() {"value":1}
+  allows:u64 = select(aa,yes_a,z)
+  allow_at:u64 = const() {"value":11848}
+  seq_at:u64 = const() {"value":11856}
+  set_mode:u64 = call(aw,allow_at,allows) {"function":"tr_put"}
+  clear_sequence:u64 = call(aw,seq_at,z) {"function":"tr_put"}
   start:u64 = const() {"value":12000}
   end:u64 = call(ar,aw,an,z,start) {"function":"tat_encode"}
   cap_tag:u64 = const() {"value":18446744073709551614}
@@ -101,10 +108,27 @@ block setup(sr:readbuf,sw:mutbuf,sn:u64,si:u64,sd:u64)
   base:u64 = select(root,rbase,ibase)
   spans:u64 = select(root,rspan,ispan)
   count:u64 = select(root,rcount,icount)
-  at:u64 = call(sw,base,spans,count,key_at,key_len) {"function":"tat_find"}
+  seq_mode:u64 = const() {"value":11856}
+  using:u64 = call(sw,seq_mode) {"function":"tr_get"}
+  zero_mode:u64 = const() {"value":0}
+  positional:bool = compare.ne(using,zero_mode)
+  runtime:bool = bool.not(root)
+  use_seq:bool = bool.and(runtime,positional)
+  branch use_seq indexed(sr,sw,sn,si,sd,ty) keyed(sr,sw,sn,si,sd,ty,base,spans,count,key_at,key_len)
+block indexed(ir:readbuf,iw:mutbuf,in:u64,ii:u64,id:u64,it:u64)
+  root_fields:u64 = const() {"value":13}
+  seq_base:u64 = const() {"value":10176}
+  word:u64 = const() {"value":8}
+  j:u64 = int.sub.wrap(ii,root_fields)
+  off_i:u64 = int.mul.wrap(j,word)
+  slot:u64 = int.add.wrap(seq_base,off_i)
+  pos:u64 = call(iw,slot) {"function":"tr_get"}
+  jump translate(ir,iw,in,ii,id,pos,it)
+block keyed(kr:readbuf,kw:mutbuf,kn:u64,ki:u64,kd:u64,kt:u64,kb:u64,ks:u64,kc:u64,ka:u64,kl:u64)
+  at:u64 = call(kw,kb,ks,kc,ka,kl) {"function":"tat_find"}
   absent:u64 = const() {"value":0}
   found:bool = compare.ne(at,absent)
-  branch found translate(sr,sw,sn,si,sd,at,ty) bad()
+  branch found translate(kr,kw,kn,ki,kd,at,kt) bad()
 block translate(tr:readbuf,tw:mutbuf,tn:u64,ti:u64,td:u64,tp:u64,tt:u64)
   new:u64 = call(tr,tw,tp,tn,td,tt) {"function":"tat_field"}
   threshold:u64 = const() {"value":18446744073709551614}
@@ -205,7 +229,21 @@ block checked_object(or_:readbuf,ow:mutbuf,op:u64,on:u64,od:u64)
   mark:u64 = call(or_,op,on) {"function":"oj_peek"}
   bracket:u64 = const() {"value":91}
   positional:bool = compare.eq(mark,bracket)
-  branch positional unsupported() map(ow,mark,od)
+  branch positional sequence(or_,ow,op,on,od) map(ow,mark,od)
+block sequence(xr:readbuf,xw:mutbuf,xp:u64,xn:u64,xd:u64)
+  allow_slot:u64 = const() {"value":11848}
+  allowed:u64 = call(xw,allow_slot) {"function":"tr_get"}
+  zero_x:u64 = const() {"value":0}
+  profile:bool = compare.ne(allowed,zero_x)
+  branch profile collect(xr,xw,xp,xn,xd) unsupported()
+block collect(yr:readbuf,yw:mutbuf,yp:u64,yn:u64,yd:u64)
+  valid_seq:bool = call(yr,yw,yp,yn) {"function":"tat_sequence"}
+  branch valid_seq enabled(yw,yd) bad()
+block enabled(zw:mutbuf,zd:u64)
+  seq_slot:u64 = const() {"value":11856}
+  one_z:u64 = const() {"value":1}
+  saved:u64 = call(zw,seq_slot,one_z) {"function":"tr_put"}
+  ret(zd)
 block map(mw:mutbuf,mt:u64,md:u64)
   brace:u64 = const() {"value":123}
   object_begin:bool = compare.eq(mt,brace)
@@ -541,4 +579,49 @@ block entry(w:mutbuf)
   wrote81:u64 = call(w,p81,v81) {"function":"tr_put"}
   good:u64 = const() {"value":0}
   ret(good)
+end
+
+fn tat_sequence(r:readbuf,w:mutbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64)
+  one:u64 = const() {"value":1}
+  first:u64 = int.add.wrap(p,one)
+  begin:u64 = call(r,first,n) {"function":"oj_ws"}
+  slot:u64 = const() {"value":10176}
+  count:u64 = const() {"value":0}
+  jump scan(r,w,begin,n,slot,count)
+block scan(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,ss:u64,sk:u64)
+  tok:u64 = call(sr,sp,sn) {"function":"oj_peek"}
+  bracket:u64 = const() {"value":93}
+  empty:bool = compare.eq(tok,bracket)
+  branch empty no() value(sr,sw,sp,sn,ss,sk)
+block value(vr:readbuf,vw:mutbuf,vp:u64,vn:u64,vs:u64,vk:u64)
+  end:u64 = call(vr,vw,vp,vn) {"function":"tar_primitive"}
+  reserved:u64 = const() {"value":18446744073709551614}
+  valid:bool = compare.lt(end,reserved)
+  branch valid store(vr,vw,vp,vn,vs,vk,end) no()
+block store(tr:readbuf,tw:mutbuf,tp:u64,tn:u64,ts:u64,tk:u64,te:u64)
+  saved:u64 = call(tw,ts,tp) {"function":"tr_put"}
+  after:u64 = call(tr,te,tn) {"function":"oj_ws"}
+  sep:u64 = call(tr,after,tn) {"function":"oj_peek"}
+  right:u64 = const() {"value":93}
+  comma:u64 = const() {"value":44}
+  closing:bool = compare.eq(sep,right)
+  continued:bool = compare.eq(sep,comma)
+  one_t:u64 = const() {"value":1}
+  new_count:u64 = int.add.wrap(tk,one_t)
+  next:u64 = int.add.wrap(after,one_t)
+  following:u64 = call(tr,next,tn) {"function":"oj_ws"}
+  stride:u64 = const() {"value":8}
+  slot_next:u64 = int.add.wrap(ts,stride)
+  sixteen:u64 = const() {"value":16}
+  final:bool = compare.eq(new_count,sixteen)
+  more_fields:bool = bool.not(final)
+  loop_ok:bool = bool.and(continued,more_fields)
+  good:bool = bool.and(closing,final)
+  branch loop_ok scan(tr,tw,following,tn,slot_next,new_count) finish(good)
+block finish(okay:bool)
+  ret(okay)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
 end
