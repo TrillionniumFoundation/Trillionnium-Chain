@@ -2265,6 +2265,17 @@
       ]
     },
     {
+      "id": "release-bundle/root-release-intent-v3",
+      "node_integration_complete": false,
+      "scope": "Read-only canonical original ReleaseIntentV3 decode and exact borrowed bundle, contract and domain-bound SHA-512 artifact match for inert fixtures. No interpretation, installation, execution, signing or authorization.",
+      "source": "hia/src/release_bundle/root_release_intent_v3.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_root_release_intent.py",
+        "hia/tests/rust_root_release_intent_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/root-recovery-checkpoint-v3",
       "node_integration_complete": false,
       "scope": "Read-only typed RootRecovery V3 canonical dual-family roster/DER shape and original SHA-512 public identities/order, policy commitment and empty-only bootstrap checkpoint for generated fixture scope/time. No signatures, key expansion, operation admission, storage or authority.",

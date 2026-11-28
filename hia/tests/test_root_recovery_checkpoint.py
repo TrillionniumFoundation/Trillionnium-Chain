@@ -26,7 +26,7 @@ PINS = {
 }
 
 
-def original(directory):
+def original(directory, reference=REFERENCE):
     for name,digest in PINS.items():
         if sha256((BASE/name).read_bytes()).hexdigest()!=digest:
             raise ValueError(f"Original RootRecovery value source differs: {name}")
@@ -52,7 +52,7 @@ def original(directory):
         [rlib] = [x for x in event["filenames"] if x.endswith(".rlib")]
         extern.extend(["--extern",f"{name}={rlib}"])
     exe = directory/"original-root-values"
-    execute([rustc,"--edition=2021",REFERENCE,"-L",f"dependency={target/'debug/deps'}",
+    execute([rustc,"--edition=2021",reference,"-L",f"dependency={target/'debug/deps'}",
              *extern,"-o",exe],env=env,timeout=40)
     return execute([exe]).stdout
 
