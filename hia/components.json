@@ -23586,6 +23586,22 @@
         ]
       }
     ],
+    "src/model/cell_model_canonical.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_integer_size",
+          "value_integer_write",
+          "value_word"
+        ]
+      }
+    ],
     "src/model/cell_model_artifact.hepta": [
       {
         "functions": [

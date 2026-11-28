@@ -3471,6 +3471,17 @@
       ]
     },
     {
+      "id": "model/cell-model-canonical",
+      "node_integration_complete": false,
+      "scope": "Immutable typed Model canonical serialization using the original fixed schema and five signed matrices. No hashing, activation, adoption, proof, persistence or authority.",
+      "source": "hia/src/model/cell_model_canonical.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_model_canonical.py",
+        "hia/tests/rust_cell_model_canonical_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-model-artifact",
       "node_integration_complete": false,
       "scope": "Read-only original Cell Model exact canonical ASCII JSON typed shape and PoN-framed SHA-256 artifact ID on inert matrices. No inference, training, quality or model activation.",
@@ -4455,6 +4466,7 @@
         "node/resource-snapshot-projection",
         "state/integer-training-backward",
         "state/integer-training-batch-update",
+        "model/cell-model-canonical",
         "state/integer-training-fused",
         "consensus/work",
         "consensus/asert-target",
