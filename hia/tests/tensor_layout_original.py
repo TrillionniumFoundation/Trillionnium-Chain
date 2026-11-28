@@ -18,17 +18,18 @@ MAX_CAPTURE = 4 << 20
 MAX_PACKET = 192 << 20
 
 
-def real_layout(directory, stream, *, selected=False, window=False):
+def real_layout(directory, stream, *, selected=False, window=False, f32=False):
     # Only these tracked test-only witnesses can extend the isolated owner.
-    if selected and window:
+    if sum((selected, window, f32))>1:
         raise ValueError("Select only one original witness")
     fixture_path = FIXTURE.with_name("rust_da_cell_tensor_reader_selected_fixture.rs") if selected else FIXTURE
     marker = b"TRNM_DA_TENSOR_SELECTED_EXACT_V1" if selected else MARKER
     owner_path, owner_test = TENSOR, TEST
     owner_sha = TENSOR_SHA
-    if window:
-        fixture_path = FIXTURE.with_name("rust_da_cell_tensor_reader_window_fixture.rs")
-        marker = b"TRNM_DA_TENSOR_WINDOW_EXACT_V1"
+    if window or f32:
+        fixture_path = FIXTURE.with_name("rust_da_cell_tensor_reader_f32_fixture.rs" if f32 else
+                                         "rust_da_cell_tensor_reader_window_fixture.rs")
+        marker = b"TRNM_DA_TENSOR_F32_EXACT_V1" if f32 else b"TRNM_DA_TENSOR_WINDOW_EXACT_V1"
         owner_path = TENSOR.parent / "residency/tensor.rs"
         owner_sha = "183097dee2b18671da09bc9dce4079139e14aa240fb9c80cab9f36c0d781ec60"
         owner_test = "cell::residency::tensor::hia_da_tensor_layout_fixture::original_private_layout_observe"

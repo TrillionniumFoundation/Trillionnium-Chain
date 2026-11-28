@@ -2338,6 +2338,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-f32",
+      "node_integration_complete": false,
+      "scope": "4-MiB immutable selected Safetensors validation and the original exact F32 bits of a tensor-relative element index after name, dtype, and native full-file digest from same-loan checked data. No caller file coordinates, retained handle, storage, loading, training, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_f32.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_f32.py",
+        "hia/tests/tensor_readback_f32_derivation.py",
+        "hia/tests/tensor_layout_original.py",
+        "hia/tests/rust_da_cell_tensor_reader_f32_fixture.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-four",
       "node_integration_complete": false,
       "scope": "Immutable 4-MiB total Safetensors readback, full original 16384 tensors/1024 metadata/1-MiB JSON, five fixed Direct read loans / Selfhost contiguous, native ordered container SHA across complete data. No live streaming I/O, storage, or authority.",
