@@ -14,8 +14,10 @@ on:
       - scripts/pft_normal_equation_readback.py
       - scripts/pft_normal_equation_historical_readback.py
       - scripts/test_pft_normal_equation_readback.py
+      - scripts/test_pft_file_inputs.py
       - evidence/pft-candidate-readback-20261128/**
       - evidence/pft-normal-equation-readback-20261128/**
+      - evidence/pft-file-input-boundary-20261128/**
       - .github/workflows/chain-paired-acceptance.yml
 
 permissions:
@@ -42,6 +44,7 @@ jobs:
             evidence/cell-inline-source-preflight-20261123
             evidence/pft-candidate-readback-20261128
             evidence/pft-normal-equation-readback-20261128
+            evidence/pft-file-input-boundary-20261128
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
@@ -58,4 +61,8 @@ jobs:
       - name: Check conditional PFT normal-equation consistency
         run: python3 -B -m unittest discover -s scripts -p 'test_pft_normal_equation_readback.py' -v
       - name: Check source stayed unchanged after numerical controls
+        run: git diff --exit-code
+      - name: Check PFT regular-file input boundaries
+        run: python3 -B -m unittest discover -s scripts -p 'test_pft_file_inputs.py' -v
+      - name: Check source stayed unchanged after input controls
         run: git diff --exit-code

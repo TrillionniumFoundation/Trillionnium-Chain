@@ -1,0 +1,29 @@
+{
+  "activation": false,
+  "arbitrary_remote_regular_file_hard_deadline": false,
+  "base_commit": "0a415445326ed74d1dc816a2cd3070ad3f5f81ab",
+  "distinct_regression_controls_passed": 38,
+  "existing_identity_and_numerical_functions_ast_unchanged": true,
+  "expected_digest_authentication_still_separate": true,
+  "file_sha256": {
+    ".github/workflows/chain-paired-acceptance.yml": "9e4e56ad2535d5b5ea7ed8c7442e389bba43e1f0d38c4609aa39520de8f88131",
+    "evidence/pft-file-input-boundary-20261128/FIRST_CONTROLS.log": "ebdfc28047f74ebcb88ea52682dd27b157e858503a32d2e1d0c1e4492526f23e",
+    "evidence/pft-file-input-boundary-20261128/FIRST_FAILURE.json": "342d9f14576458f11cccb0eb47ee2a1a880531d962e607c8d7bfe14d74d23ea9",
+    "evidence/pft-file-input-boundary-20261128/FIRST_OBSERVATIONS.json": "cfdd17b77b3e24e815a6a54a6c5cebecaf9b8ab65a338b7bd195c880db455ed7",
+    "evidence/pft-file-input-boundary-20261128/PFT_REGRESSION.log": "918af41a8b82b6954d93a2a8a82b6f9a2747b3708f934414654179ca2528b5b5",
+    "evidence/pft-file-input-boundary-20261128/README.md": "fbb8df669115de092d967044c0e942f5ffeddbc2e4f4e36ce95c99892bd9f875",
+    "scripts/pft_candidate_readback.py": "8ed1008234333b09310662bbcae6921fd2b2c01d5dedbd744b474f731b8e627b",
+    "scripts/test_pft_file_inputs.py": "d0230b8962f30ba6deb0354beada5fd8182402802ddf83650a63edf6e5225662"
+  },
+  "final_component_symlinks_refused": true,
+  "first_failure_retained": true,
+  "first_fifo_refusal_process_wall_ns": 40018896,
+  "first_filesystem_controls_passed": 7,
+  "full_native_rust_gates_run": false,
+  "full_worktree_materialized": false,
+  "normal_equation_source_bytes_unchanged": true,
+  "old_workflow_steps_permissions_pins_and_timeout_unchanged": true,
+  "parent_directory_confinement": false,
+  "schema": "trnm-pft-file-input-validation-v1",
+  "serialized_schemas_and_thresholds_unchanged": true
+}
