@@ -1595,6 +1595,16 @@
       ]
     },
     {
+      "id": "node/resource-vector-value",
+      "node_integration_complete": false,
+      "scope": "Immutable ResourcesV1 full-width checked addition, containment, optional subtraction and separate unit ceiling against the exact frozen Rust relation; no owner or authority",
+      "source": "hia/src/node/resource_vector.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_resource_vector.py"
+      ]
+    },
+    {
       "id": "consensus/work-schedule-profile",
       "node_integration_complete": false,
       "scope": "Immutable research metadata validation and exact PoN ID of original Profile::new(ProfileInputs), including fixed and anchored policies; no node settings, history, proof or admission",
@@ -4296,6 +4306,7 @@
         "node/settings-development",
         "node/resource-profile-value",
         "node/resource-request-value",
+        "node/resource-vector-value",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",
