@@ -2265,6 +2265,17 @@
       ]
     },
     {
+      "id": "model/cell-model-artifact",
+      "node_integration_complete": false,
+      "scope": "Read-only original Cell Model exact canonical ASCII JSON typed shape and PoN-framed SHA-256 artifact ID on inert matrices. No inference, training, quality or model activation.",
+      "source": "hia/src/model/cell_model_artifact.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_model_artifact.py",
+        "hia/tests/rust_cell_model_artifact_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/root-successor-identity-v3",
       "node_integration_complete": false,
       "scope": "Read-only canonical original RootStatementV3 successor action value and operation identity for Rotate, Recover and PolicyChange. No signing, authorization, application, state change or production routing.",
