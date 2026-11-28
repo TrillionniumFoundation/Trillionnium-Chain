@@ -41,13 +41,32 @@ block header(hr:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
   extra:u64 = int.add.wrap(se,suffix_min)
   exists:bool = compare.le(extra,hn)
   admissible:bool = bool.and(shapes,exists)
-  branch admissible text(hr,ho,hw,hn,p,s,sa,se) bad()
+  branch admissible run(hr,ho,hw,hn,sa,se) bad()
+block run(ar:readbuf,ao:mutbuf,aw:mutbuf,an:u64,aa:u64,ae:u64)
+  rc:u32 = call(ar,ao,aw,an,aa,ae) {"function":"generation_window"}
+  ret(rc)
+block bad()
+  bad_rc:u32 = const() {"value":100}
+  ret(bad_rc)
+block short()
+  small_rc:u32 = const() {"value":102}
+  ret(small_rc)
+end
+
+fn generation_window(r:readbuf,o:mutbuf,w:mutbuf,n:u64,sa:u64,se:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,n:u64,sa:u64,se:u64)
+  origin:u64 = call(sa) {"function":"generation_offset"}
+  actual_len:u64 = int.sub.wrap(se,origin)
+  gen_zero:u64 = const() {"value":0}
+  input_policy_width:u64 = call(r,gen_zero) {"function":"tr_read"}
+  jump text(r,o,w,n,input_policy_width,actual_len,sa,se)
 block text(tr:readbuf,to:mutbuf,tw:mutbuf,tn:u64,tp:u64,ts:u64,ta:u64,te:u64)
   at:u64 = const() {"value":16}
   p0:u64 = const() {"value":114}
   s0:u64 = const() {"value":294}
   pt:bool = call(tr,at,tp,p0) {"function":"ar_multi_text"}
-  st:bool = call(tr,ta,ts,s0) {"function":"ar_multi_text"}
+  base_s:u64 = call(ta) {"function":"generation_offset"}
+  st:bool = call(tr,base_s,ts,s0) {"function":"ar_multi_text"}
   good:bool = bool.and(pt,st)
   branch good stored_count(tr,to,tw,tn,ta,te) canon()
 block stored_count(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sa0:u64,se0:u64)
@@ -75,7 +94,8 @@ block stored_finish(fr:readbuf,fo:mutbuf,fw:mutbuf,fn0:u64,fa:u64,fe:u64,fi:u64)
   suffix_ok:bool = compare.le(available,fn0)
   branch suffix_ok seal_shape(fr,fo,fw,fn0,fa,fe,fi,available) bad()
 block seal_shape(yr:readbuf,yo_9:mutbuf,yw_9:mutbuf,yn:u64,ya:u64,ye:u64,yi:u64,yb:u64)
-  seal_ver:bool = call(yr,ya) {"function":"archive_batch_schema"}
+  seal_start:u64 = call(ya) {"function":"generation_offset"}
+  seal_ver:bool = call(yr,seal_start) {"function":"archive_batch_schema"}
   tail:u64 = const() {"value":60}
   count_at:u64 = int.sub.wrap(ye,tail)
   c0:u64 = call(yr,count_at) {"function":"archive_u32"}
@@ -84,8 +104,9 @@ block seal_shape(yr:readbuf,yo_9:mutbuf,yw_9:mutbuf,yn:u64,ya:u64,ye:u64,yi:u64,
   typed:bool = bool.and(seal_ver,not_empty)
   branch typed seal_digest(yr,yo_9,yw_9,yn,ya,ye,yi,yb) schema()
 block seal_digest(dr:readbuf,do0:mutbuf,dw:mutbuf,dn:u64,da:u64,de:u64,di:u64,db:u64)
-  snative:u64 = int.sub.wrap(de,da)
-  digested:bool = call(dr,dw,da,snative) {"function":"store_seal_digest"}
+  digest_start:u64 = call(da) {"function":"generation_offset"}
+  snative:u64 = int.sub.wrap(de,digest_start)
+  digested:bool = call(dr,dw,digest_start,snative) {"function":"store_seal_digest"}
   branch digested seal_binding(dr,do0,dw,dn,da,de,di,db) internal()
 block seal_binding(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,ba:u64,be:u64,bi:u64,bb:u64)
   sq:u64 = call(br,bi) {"function":"tr_read"}
@@ -103,7 +124,15 @@ block seal_binding(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,ba:u64,be:u64,bi:u64,bb
   digest_at:u64 = int.add.wrap(bi,off_digest)
   match_digest:bool = call(br,bw,digest_at) {"function":"archive_digest_match"}
   bound:bool = bool.and(id_seq,match_digest)
-  branch bound acquired_count(br,bo,bw,bn,ba,be,bi,bb) tamper()
+  branch bound linked(br,bo,bw,bn,ba,be,bi,bb,sq) tamper()
+block linked(lr1:readbuf,lo1:mutbuf,lw1:mutbuf,ln1:u64,la1:u64,le1:u64,li1:u64,lb1:u64,lq1:u64)
+  profile:bool = call(la1) {"function":"generation_audit_mode"}
+  branch profile audit_binding(lr1,lo1,lw1,ln1,la1,le1,li1,lb1,lq1) acquired_count(lr1,lo1,lw1,ln1,la1,le1,li1,lb1)
+block audit_binding(rr1:readbuf,ro1:mutbuf,rw1:mutbuf,rn1:u64,ra1:u64,re1:u64,ri1:u64,rb1:u64,rq1:u64)
+  link:u32 = call(rr1,rw1,re1,ri1,rq1) {"function":"generation_chain_link"}
+  success0:u32 = const() {"value":0}
+  proceed:bool = compare.eq(link,success0)
+  branch proceed acquired_count(rr1,ro1,rw1,rn1,ra1,re1,ri1,rb1) status(link)
 block acquired_count(qr:readbuf,qo:mutbuf,qw:mutbuf,qn:u64,qa:u64,qe:u64,qi:u64,qb:u64)
   nc_off:u64 = const() {"value":8}
   nc_at:u64 = int.add.wrap(qi,nc_off)
@@ -163,9 +192,13 @@ block policy(pr:readbuf,po:mutbuf,pw:mutbuf,pa:u64,pe:u64,pc:u64)
   version:bool = call(pr,policy_at) {"function":"archive_batch_schema"}
   branch version policy_bounds(pr,po,pw,pa,pe,pc) schema()
 block policy_bounds(zr:readbuf,zo:mutbuf,zw:mutbuf,za:u64,ze:u64,zc:u64)
-  okay_p:bool = call(zr,za) {"function":"archive_batch_policy_bounds"}
+  ph_zero:u64 = const() {"value":0}
+  ph_len:u64 = call(zr,ph_zero) {"function":"tr_read"}
+  ph_start:u64 = const() {"value":16}
+  base_p:u64 = int.add.wrap(ph_len,ph_start)
+  okay_p:bool = call(zr,base_p) {"function":"archive_batch_policy_bounds"}
   back:u64 = const() {"value":20}
-  count_max_at:u64 = int.sub.wrap(za,back)
+  count_max_at:u64 = int.sub.wrap(base_p,back)
   count_max:u64 = call(zr,count_max_at) {"function":"archive_u32"}
   zero_bound:u64 = const() {"value":0}
   nonzero:bool = compare.gt(zc,zero_bound)
@@ -174,14 +207,15 @@ block policy_bounds(zr:readbuf,zo:mutbuf,zw:mutbuf,za:u64,ze:u64,zc:u64)
   ok_bounds:bool = bool.and(okay_p,bounds0)
   branch ok_bounds batch_header(zr,zo,zw,za,ze,zc) bounds()
 block batch_header(rr:readbuf,ro:mutbuf,rw:mutbuf,ra:u64,re:u64,rc:u64)
-  prefix:u64 = const() {"value":16}
-  p_len:u64 = int.sub.wrap(ra,prefix)
-  s_len:u64 = int.sub.wrap(re,ra)
+  zero_policy:u64 = const() {"value":0}
+  real_at:u64 = call(ra) {"function":"generation_offset"}
+  p_len:u64 = call(rr,zero_policy) {"function":"tr_read"}
+  s_len:u64 = int.sub.wrap(re,real_at)
   p_fixed:u64 = const() {"value":114}
   s_fixed:u64 = const() {"value":294}
   p_ctx:u64 = int.sub.wrap(p_len,p_fixed)
   s_ctx:u64 = int.sub.wrap(s_len,s_fixed)
-  checked:u32 = call(rr,rw,ra,re,p_len,p_ctx,s_ctx,rc) {"function":"archive_batch_seal"}
+  checked:u32 = call(rr,rw,real_at,re,p_len,p_ctx,s_ctx,rc) {"function":"archive_batch_seal"}
   zstatus:u32 = const() {"value":0}
   passed:bool = compare.eq(checked,zstatus)
   branch passed validate(rr,ro,rw,ra,re,rc,p_ctx) status(checked)
@@ -190,7 +224,11 @@ block validate(wr:readbuf,wo:mutbuf,ww:mutbuf,wa:u64,we:u64,wc:u64,wp:u64)
   indirect:u64 = const() {"value":1024}
   mode:u64 = int.add.wrap(wp,indirect)
   unused:u64 = const() {"value":0}
-  verdict:u32 = call(wr,ww,wa,we,unused,wc,mode) {"function":"ar_multi_admit"}
+  pol_z:u64 = const() {"value":0}
+  pol_n:u64 = call(wr,pol_z) {"function":"tr_read"}
+  pol_base:u64 = const() {"value":16}
+  pol_end:u64 = int.add.wrap(pol_base,pol_n)
+  verdict:u32 = call(wr,ww,pol_end,we,unused,wc,mode) {"function":"ar_multi_admit"}
   OK:u32 = const() {"value":0}
   reviewed:bool = compare.eq(verdict,OK)
   branch reviewed membership(wr,wo,ww,wa,we,wc) status(verdict)
@@ -203,7 +241,15 @@ block equality(ir:readbuf,io:mutbuf,iw:mutbuf,ia:u64,ie:u64,ic:u64)
   cursor:u64 = int.add.wrap(ie,four_count)
   zidx:u64 = const() {"value":0}
   same:bool = call(ir,iw,cursor,ic,zidx) {"function":"generation_equal"}
-  branch same publish(ir,io,iw,ia) tamper()
+  branch same verified(ir,io,iw,ia,ic) tamper()
+block verified(vr0:readbuf,vo0:mutbuf,vw0:mutbuf,va_new:u64,vc0:u64)
+  held:bool = call(va_new) {"function":"generation_audit_mode"}
+  branch held retained(vw0,vc0) publish(vr0,vo0,vw0,va_new)
+block retained(lw0:mutbuf,lc0:u64)
+  row_count_at:u64 = const() {"value":1792}
+  _store_count:u64 = call(lw0,row_count_at,lc0) {"function":"tr_put"}
+  good_rc:u32 = const() {"value":0}
+  ret(good_rc)
 block publish(fr0:readbuf,fo0:mutbuf,fw0:mutbuf,fa0:u64)
   journal_at:u64 = const() {"value":1784}
   stop:u64 = call(fw0,journal_at) {"function":"tr_get"}
@@ -221,9 +267,6 @@ block status(s_rc:u32)
 block bad()
   malformed:u32 = const() {"value":100}
   ret(malformed)
-block short()
-  capacity:u32 = const() {"value":102}
-  ret(capacity)
 block canon()
   noncanonical:u32 = const() {"value":2}
   ret(noncanonical)
@@ -372,4 +415,72 @@ block yes()
 block no()
   nval:bool = const() {"value":false}
   ret(nval)
+end
+
+fn generation_offset(tag:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(tag:u64)
+  mask:u64 = const() {"value":1048575}
+  at:u64 = bit.and(tag,mask)
+  ret(at)
+end
+fn generation_audit_mode(tag:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(tag:u64)
+  flag:u64 = const() {"value":1048576}
+  yes:bool = compare.ge(tag,flag)
+  ret(yes)
+end
+fn generation_chain_link(r:readbuf,w:mutbuf,end_at:u64,footer:u64,seq:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,end_at:u64,footer:u64,seq:u64)
+  ex:u64 = const() {"value":1808}
+  gv:u64 = const() {"value":1816}
+  expected:u64 = call(w,ex) {"function":"tr_get"}
+  generation:u64 = call(w,gv) {"function":"tr_get"}
+  limit:u64 = const() {"value":9223372036854775807}
+  natural:bool = compare.le(generation,limit)
+  branch natural order(r,w,end_at,footer,seq,expected,generation) schema()
+block order(or0:readbuf,ow:mutbuf,oe:u64,of:u64,os:u64,ox:u64,og:u64)
+  seq_ok:bool = compare.eq(os,ox)
+  gen_ok:bool = compare.eq(og,ox)
+  prior:u64 = const() {"value":1824}
+  stored:u64 = call(ow,prior) {"function":"tr_get"}
+  back:u64 = const() {"value":172}
+  prev_at:u64 = int.sub.wrap(oe,back)
+  prev_ok:bool = call(or0,prev_at,stored) {"function":"store_link"}
+  order0:bool = bool.and(seq_ok,gen_ok)
+  order1:bool = bool.and(order0,prev_ok)
+  branch order1 roots(or0,ow,of) tamper()
+block roots(rr:readbuf,rw:mutbuf,rf:u64)
+  b_slot:u64 = const() {"value":1840}
+  a_slot:u64 = const() {"value":1848}
+  before:u64 = call(rw,b_slot) {"function":"tr_get"}
+  after:u64 = call(rw,a_slot) {"function":"tr_get"}
+  bz:bool = call(rr,before) {"function":"store_zero32"}
+  az:bool = call(rr,after) {"function":"store_zero32"}
+  one_zero:bool = bool.or(bz,az)
+  branch one_zero tamper() check(rr,rw,rf,before,after)
+block check(cr:readbuf,cw:mutbuf,cf:u64,cb:u64,ca:u64)
+  slot:u64 = const() {"value":1832}
+  root:u64 = call(cw,slot) {"function":"tr_get"}
+  z:u64 = const() {"value":0}
+  initial:bool = compare.eq(root,z)
+  branch initial persist(cw,cf,ca) linked(cr,cw,cf,cb,ca,root)
+block linked(lr:readbuf,lw:mutbuf,lf:u64,lb:u64,la:u64,lp:u64)
+  span:u64 = const() {"value":32}
+  agree:bool = call(lr,lb,lp,span) {"function":"archive_equal"}
+  branch agree persist(lw,lf,la) tamper()
+block persist(pw:mutbuf,pf:u64,pa:u64)
+  hs:u64 = const() {"value":1824}
+  rs:u64 = const() {"value":1832}
+  bias:u64 = const() {"value":16}
+  digest:u64 = int.add.wrap(pf,bias)
+  _h:u64 = call(pw,hs,digest) {"function":"tr_put"}
+  _r:u64 = call(pw,rs,pa) {"function":"tr_put"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block schema()
+  fail:u32 = const() {"value":22}
+  ret(fail)
+block tamper()
+  mismatch:u32 = const() {"value":23}
+  ret(mismatch)
 end

@@ -426,3 +426,32 @@ validation. The held fixture collects all generations in one read-only
 SQLite snapshot and runs this kernel on each. This projection does not
 own SQLite, schema, inventory/chain audit, durability, deletion or
 production authorization.
+
+### One-call original typed archive-store audit
+
+`src/task_kernel/archive_store_audit.hepta` composes the original audit over
+immutable exact typed rows captured in one held read-only SQLite fixture
+transaction. Native admission checks stored policy identity and current live
+rows/root before the journal. For each generation it checks its exact stored
+seal digest, ordered predecessor/generation and rooted continuity, then
+validates independently reacquired records and their complete equality to
+the retained Borsh batch. It uses those same admitted record spans for global
+task identity and original before/after inventory reconstruction, and publishes
+only the 32-byte current root after terminal metadata and history agree.
+There are no caller-supplied intermediate acceptance flags or derived roots.
+
+The private bounded packet starts with little-endian u64 policy byte length
+and count of seal rows, then exact Borsh policy. Metadata is
+`{schema: i64, generation: i64, sequence: i64, head_hash[32],
+live_root[32], policy_hash[32], live_count: u64}`, followed by exact live
+rows `{body_length: u64, task_id[32], record_hash[32], body}`. Each journal
+frame starts with `{frame_length: u64, seal_length: u64, generation: i64,
+before_root[32], after_root[32]}`, followed by the complete persisted Borsh
+batch, SQL sequence (i64), reacquired count (u64), stored seal hash (32 bytes)
+and the exact independently reacquired row frames. The ABI admits at most
+16 total records and eight generations, with a disjoint 32-byte output and
+2,400-byte scratch. Previous public-private component packet formats remain
+unchanged. Fixture comparison uses the immutable full original cold Rust
+audit and both native emitters. No path, SQLite connection/DDL/header/table
+ownership, production admission, repair, deletion or storage writes are
+moved by this scope.
