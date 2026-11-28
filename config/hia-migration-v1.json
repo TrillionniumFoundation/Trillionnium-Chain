@@ -2095,6 +2095,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-wide",
+      "node_integration_complete": false,
+      "scope": "Wide 2-MiB immutable Safetensors readback with unchanged ordered layout and real final digest; stock Direct two loans / stock Selfhost private contiguous; no storage or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_wide.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_wide.py",
+        "hia/tests/tensor_readback_wide_derivation.py",
+        "hia/tests/rust_cell_tensor_reader_readback_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-view-bytes",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable dense bytes: exact CellResidentTensorV1 segment projection, checked copy and F32 little-endian bits. Receives raw backing plus bounded view coordinates only; no admission, loader, store, keys, network, execution or production.",
