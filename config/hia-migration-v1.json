@@ -1895,6 +1895,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-content-lookup",
+      "node_integration_complete": false,
+      "scope": "Original bounded TCV2 immutable declared file lookup; same-loan TCV2 validation before query and atomic output of native-selected manifest/payload/chunk SHA-512 declarations. Total supported <=1 MiB, no actual content, owner pin, store, loader, network, business permission or production.",
+      "source": "hia/src/data_availability/cell_version_content_lookup.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_content_lookup.py",
+        "hia/tests/rust_cell_version_content_lookup_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-content-lineage",
       "node_integration_complete": false,
       "scope": "Bounded canonical TCV3 declared lineage decode and exact content commitment; same-loan real TCV2 and TMR IDs before complete canonical root/alias/parent/reachability checks. Shared <=1 MiB and original 16-version bound. No actual content, owner pin, store, lineage authority, loader, network or production.",
