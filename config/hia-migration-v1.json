@@ -2242,6 +2242,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-spans",
+      "node_integration_complete": false,
+      "scope": "Complete immutable Safetensors value readback from 1-MiB JSON with original 16384 tensor and 1024 metadata limits, checked same-header compact spans, bounded interval sorting and actual native container SHA, \u22642-MiB logical frame. No live reader, storage, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_spans.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_spans.py",
+        "hia/tests/tensor_readback_spans_derivation.py",
+        "hia/tests/rust_cell_tensor_reader_readback_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-three",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable original Safetensors declaration, full-height 1-MiB header, layout and native final container SHA; stock Direct three separate capped loans / stock Selfhost private contiguous, logical frame at most 2 MiB and unchanged 128/64 roster. No live reader, storage, trust, or authority.",
