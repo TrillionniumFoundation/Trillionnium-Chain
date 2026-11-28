@@ -18728,6 +18728,15 @@
         ]
       }
     ],
+    "src/checkpoint/tile_quantize.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_put"
+        ]
+      }
+    ],
     "src/checkpoint/tile_policy_value.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

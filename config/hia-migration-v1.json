@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_quantize",
+      "node_integration_complete": false,
+      "scope": "Private exact frozen checkpoint BF16 weight and F32LE activation quantization arithmetic and diagnostics only; no checkpoint open, verified material, model/W1 execution or authority.",
+      "source": "hia/src/checkpoint/tile_quantize.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_quantize.py",
+        "hia/tests/rust_checkpoint_tile_quantize_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_policy_value",
       "node_integration_complete": false,
       "scope": "Private canonical immutable context-free checkpoint tile maintenance policy and exact original value ID; no material, proof, training, install, authority, W1 or production.",
