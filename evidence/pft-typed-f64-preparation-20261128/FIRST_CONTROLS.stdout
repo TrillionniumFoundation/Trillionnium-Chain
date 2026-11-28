@@ -1,0 +1,16 @@
+
+running 11 tests
+test tests::all_shape_boundaries_and_exact_byte_lengths_are_enforced ... ok
+test tests::feature_contract_request_row_order_and_source_are_pinned ... ok
+test tests::final_range_and_signed_zero_are_explicit ... ok
+test tests::known_ieee_octets_and_row_major_orientation ... ok
+test tests::large_cancellation_and_intermediate_overflow_are_exact ... ok
+test tests::nonfinite_and_subnormal_inputs_refuse_before_prediction ... ok
+test tests::ordering_does_not_lose_small_remainders ... ok
+test tests::owned_bytes_and_instance_binding_prevent_later_substitution ... ok
+test tests::product_rounding_is_separate_from_exact_sum ... ok
+test tests::schema_family_profile_and_comparison_pins_are_separate ... ok
+test tests::small_tail_and_halfway_ties_are_nearest_even ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+

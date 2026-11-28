@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-pft-typed-f64-controls-observation-v1",
+  "attempt": 1,
+  "passed": 11,
+  "failed": 0,
+  "native_original_receipt_sha256": "ede8391cfe93768c1bc433b8f31c8b41bb4492fc66ce391b681dc1a5995847b1",
+  "compiler": ["rustc 1.95.0 (59807616e 2026-04-14)","binary: rustc","commit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860","commit-date: 2026-04-14","host: x86_64-unknown-linux-gnu","release: 1.95.0","LLVM version: 22.1.2"],
+  "full_crate_verified": false,
+  "source_authentication": false,
+  "native_adoption": false,
+  "quality_improved": false,
+  "current_permission": false,
+  "final_use": false,
+  "reward": false,
+  "settlement": false,
+  "consensus": false,
+  "production_activation": false,
+  "original_receipt": {"schema":"trnm-pft-typed-f64-first-controls-v1","started_at":"2026-11-28T02:03:10.395677+00:00","source_sha256":{"trillionnium/crates/trnm-pon-node/src/pft_readout_f64_v1.rs":"19225693c81e035384bc63c1b19c7958305b3872614b45f807f00679470cc86f","trillionnium/crates/trnm-pon-node/src/pft_readout_f64_v1/tests.rs":"d130c661d74bef1ccabd2d1a67d6cc245cd9add4dab80ea8921b3468e74fce32"},"protocol_sha256":"035cbb78fc79a2d2f8024b26a55774f8d9ee336448cf0ecd7bcccbf1d4ab53f4","engineering_deadline_seconds":120,"full_crate_build":false,"native_adoption":false,"scientific_experiment_completed":false,"commands":[{"name":"version","argv":["/home/qian-qi/.cargo/bin/rustc","--version","--verbose"],"exit_code":0,"timed_out":false,"wall_ns":32382884,"stdout_sha256":"4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},{"name":"compile","argv":["/home/qian-qi/.cargo/bin/rustc","--edition=2021","--test","-D","warnings","/tmp/hepta-chain-6523704f97df-native-f64-tests-attempt-1/trillionnium/crates/trnm-pon-node/src/pft_readout_f64_v1.rs","-o","/tmp/hepta-chain-6523704f97df-native-f64-tests-attempt-1/controls"],"exit_code":0,"timed_out":false,"wall_ns":1366811309,"stdout_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},{"name":"controls","argv":["/tmp/hepta-chain-6523704f97df-native-f64-tests-attempt-1/controls","--test-threads=1"],"exit_code":0,"timed_out":false,"wall_ns":364787290,"stdout_sha256":"ecf1206f47b61ee51d511ae10f25fb48261b1c99db4f82cce48be27911735c16","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}],"source_unchanged_after":true,"finished_at":"2026-11-28T02:03:12.162119+00:00"}
+}
