@@ -108,18 +108,45 @@ block seal_gate(jr:readbuf,jw:mutbuf,jp:u64,jsa:u64,jsb:u64,jf:u64,jc:u64)
   seal_status:u32 = call(jr,jw,jsa,jsb,jp,pctx,sctx,jc) {"function":"archive_batch_seal"}
   pass_status:u32 = const() {"value":0}
   s_ok:bool = compare.eq(seal_status,pass_status)
-  initial:u64 = const() {"value":0}
-  branch s_ok admit_rows(jr,jw,jsa,jsb,jf,jc,pctx,initial,initial,initial,initial) done(seal_status)
+  branch s_ok run(jr,jw,jsa,jsb,jf,jc,pctx) done(seal_status)
+block run(vr1:readbuf,vw1:mutbuf,vs1:u64,ve1:u64,vf1:u64,vc1:u64,vp1:u64)
+  result:u32 = call(vr1,vw1,vs1,ve1,vf1,vc1,vp1) {"function":"ar_multi_admit"}
+  ret(result)
+block done(d:u32)
+  ret(d)
+block bounds()
+  bounds_status:u32 = const() {"value":1}
+  ret(bounds_status)
+block schema_bad()
+  schema_bad_status:u32 = const() {"value":22}
+  ret(schema_bad_status)
+block malformed()
+  malformed_status:u32 = const() {"value":100}
+  ret(malformed_status)
+block short()
+  short_status:u32 = const() {"value":102}
+  ret(short_status)
+end
+
+fn ar_multi_admit(r:readbuf,w:mutbuf,sa:u64,sb:u64,first:u64,c:u64,ctx:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,sa:u64,sb:u64,first:u64,c:u64,ctx:u64)
+  z:u64 = const() {"value":0}
+  jump admit_rows(r,w,sa,sb,first,c,ctx,z,z,z,z)
 block admit_rows(mr:readbuf,mw:mutbuf,msa:u64,msb:u64,ma:u64,mc:u64,mctx:u64,mi:u64,mt:u64,ml:u64,mh:u64)
   tab:u64 = call(mi) {"function":"ar_multi_row_at"}
   me:u64 = call(mw,tab) {"function":"tr_get"}
-  rowlen:u64 = int.sub.wrap(me,ma)
+  mode:u64 = const() {"value":1024}
+  alternate:bool = compare.ge(mctx,mode)
+  actual_start:u64 = call(mw,mi,ma,alternate) {"function":"ar_multi_start"}
+  mask:u64 = const() {"value":1023}
+  clean_ctx:u64 = bit.and(mctx,mask)
+  rowlen:u64 = int.sub.wrap(me,actual_start)
   record_base:u64 = const() {"value":250}
   rctx:u64 = int.sub.wrap(rowlen,record_base)
-  row_status:u32 = call(mr,mw,me,msa,msb,ma,mctx,rctx) {"function":"archive_batch_record"}
+  row_status:u32 = call(mr,mw,me,msa,msb,actual_start,clean_ctx,rctx) {"function":"archive_batch_record"}
   clear0:u32 = const() {"value":0}
   row_ok:bool = compare.eq(row_status,clear0)
-  branch row_ok order(mr,mw,msa,msb,ma,me,mc,mctx,mi,mt,ml,mh) done(row_status)
+  branch row_ok order(mr,mw,msa,msb,actual_start,me,mc,mctx,mi,mt,ml,mh) done(row_status)
 block order(orr:readbuf,ow:mutbuf,osa:u64,osb:u64,oa:u64,oe:u64,oc:u64,oct:u64,oi:u64,ot:u64,ol:u64,oh:u64)
   ordered:bool = call(orr,ow,oe,oi) {"function":"ar_multi_order"}
   branch ordered aggregate(orr,ow,osa,osb,oa,oe,oc,oct,oi,ot,ol,oh) noncanonical()
@@ -184,9 +211,6 @@ block done(d:u32)
 block success()
   success_status:u32 = const() {"value":0}
   ret(success_status)
-block bounds()
-  bounds_status:u32 = const() {"value":1}
-  ret(bounds_status)
 block noncanonical()
   noncanonical_status:u32 = const() {"value":2}
   ret(noncanonical_status)
@@ -196,18 +220,28 @@ block invalid()
 block overflow()
   overflow_status:u32 = const() {"value":20}
   ret(overflow_status)
-block schema_bad()
-  schema_bad_status:u32 = const() {"value":22}
-  ret(schema_bad_status)
-block malformed()
-  malformed_status:u32 = const() {"value":100}
-  ret(malformed_status)
-block short()
-  short_status:u32 = const() {"value":102}
-  ret(short_status)
 block internal()
   internal_status:u32 = const() {"value":103}
   ret(internal_status)
+end
+
+fn ar_multi_start(w:mutbuf,i:u64,fallback:u64,indirect:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,i:u64,fallback:u64,indirect:bool)
+  branch indirect selected(w,i) conventional(fallback)
+block selected(yw:mutbuf,yi:u64)
+  slot:u64 = call(yi) {"function":"ar_multi_start_at"}
+  loaded:u64 = call(yw,slot) {"function":"tr_get"}
+  ret(loaded)
+block conventional(at:u64)
+  ret(at)
+end
+fn ar_multi_start_at(i:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:u64)
+  base:u64 = const() {"value":1720}
+  eight:u64 = const() {"value":8}
+  delta:u64 = int.mul.wrap(i,eight)
+  at:u64 = int.add.wrap(base,delta)
+  ret(at)
 end
 
 fn ar_multi_text(raw:readbuf,at:u64,size:u64,base:u64) -> (bool) effects(read,write,trap) entry(entry)

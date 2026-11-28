@@ -56,6 +56,13 @@ fn create_inventory(root: &Path) {
     let store = TaskArchiveStoreV1::initialize(root.join("inventory-full.sqlite"), p.clone()).unwrap();
     let facts: Vec<_> = (0..16).map(|i| shared::record(&p.context, i)).collect();
     store.install_live_records_v1(&facts, 50).unwrap();
+    let large = TaskArchiveStoreV1::initialize(root.join("inventory-wide.sqlite"), p.clone()).unwrap();
+    large.install_live_records_v1(&facts[..9], 50).unwrap();
+    let planned = plan_task_archive_pruning_v1(&p, &facts[..9], &BTreeSet::new(), 51, 1,
+             Hash32V1([0;32])).unwrap();
+    let saved_batch = planned.archive_batch().unwrap();
+    assert_eq!(saved_batch.records.len(),8);
+    large.archive_and_delete_v1(saved_batch).unwrap();
     let mut offset = 0;
     let mut previous = Hash32V1([0; 32]);
     for (i, size) in [3, 2, 1, 1, 1, 1, 1, 1].into_iter().enumerate() {
@@ -94,6 +101,7 @@ fn read(path: &Path, count: u64) {
                 AgentMarketErrorCodeV1::SchemaMismatch => 22,
                 AgentMarketErrorCodeV1::InvalidBounds => 1,
                 AgentMarketErrorCodeV1::InvalidState => 13,
+                AgentMarketErrorCodeV1::NonCanonical => 2,
                 other => panic!("unexpected original archive store admission: {other:?}"),
             };
             out.write_all(&status.to_le_bytes()).unwrap();
@@ -112,9 +120,28 @@ fn wrong_link() {
     out.write_all(&borsh::to_vec(&batch).unwrap()).unwrap();
 }
 
+fn revised_value(full_batch: bool) {
+    let mut raw = Vec::new();
+    io::stdin().read_to_end(&mut raw).unwrap();
+    let mut out = io::stdout().lock();
+    if full_batch {
+        let mut batch: TaskArchiveBatchV1 = borsh::from_slice(&raw).unwrap();
+        batch.records[0].task_revision += 1;
+        out.write_all(&borsh::to_vec(&batch).unwrap()).unwrap();
+    } else {
+        let mut record: trnm_task_kernel::TerminalTaskArchiveRecordV1 = borsh::from_slice(&raw).unwrap();
+        record.task_revision += 1;
+        out.write_all(&record.record_hash().unwrap().0).unwrap();
+        out.write_all(&borsh::to_vec(&record).unwrap()).unwrap();
+    }
+}
+
 fn main() {
     let args: Vec<_> = std::env::args_os().collect();
     match args[1].to_str().unwrap() {
+        "policy" => io::stdout().write_all(&borsh::to_vec(&policy()).unwrap()).unwrap(),
+        "changed-batch" => revised_value(true),
+        "changed-row" => revised_value(false),
         "wrong-link" => wrong_link(),
         "create-inventory" => create_inventory(Path::new(&args[2])),
         "create" => create(Path::new(&args[2])),

@@ -400,3 +400,29 @@ region; a refusal does not publish. The test harness captures all columns
 from one read-only SQLite transaction on genuine original disposable stores.
 This does not check sealed-batch equality, operate SQLite, replace the full
 store audit, mutate state, or establish production authority.
+
+### Original archived generation reacquisition
+
+`src/task_kernel/archive_store_generation.hepta` verifies one complete
+generation from the original SQLite archive schema. It shape-decodes the
+original stored Borsh batch, recomputes the exact seal hash, and admits each
+actual independently reacquired archive row against its original typed
+record digest and SQL task-ID key. It sorts those acquired spans by
+`(terminal_height, task_id)` in HIA, validates the reconstructed batch
+under the saved seal and exact policy, then checks every retained record
+body for exact equality. A changed retained body with valid reacquired rows
+is a different refusal from a correctly rehashed changed SQL row whose
+reconstructed batch no longer matches the seal.
+
+The private input contains two little-endian u64 lengths (policy and seal),
+the canonical Borsh policy and complete actual stored Borsh batch, then SQL
+sequence (u64), reacquired count (u64), the stored 32-byte seal hash and each
+reacquired frame `{body_length: u64, task_id[32], record_hash[32], body}`.
+It supports eight records and 512 context bytes. With a disjoint
+6,914-byte output and 1,800-byte scratch, it returns the little-endian u64
+batch length and unchanged Borsh batch only after full admission. No
+caller-provided derived digest or sorted membership substitutes for native
+validation. The held fixture collects all generations in one read-only
+SQLite snapshot and runs this kernel on each. This projection does not
+own SQLite, schema, inventory/chain audit, durability, deletion or
+production authorization.

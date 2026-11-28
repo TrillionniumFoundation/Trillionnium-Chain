@@ -247,6 +247,17 @@
       ]
     },
     {
+      "id": "task_kernel/archive_store_generation",
+      "node_integration_complete": false,
+      "scope": "Private bounded exact original archive generation: recomputed persisted seal hash, independent typed SQL record/key/hash admission, native canonical reorder, exact reacquired batch verification and equality to the complete retained Borsh body. Held original SQLite fixture snapshots only; no SQL ownership, full-store replacement, mutation or production authority.",
+      "source": "hia/src/task_kernel/archive_store_generation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_task_archive_store_generation.py",
+        "hia/tests/rust_task_archive_store_seal_chain_reference.rs"
+      ]
+    },
+    {
       "id": "task_kernel/archive_store_inventory",
       "node_integration_complete": false,
       "scope": "Private bounded original archive live-row and archive-row key/hash binding with canonical sorted inventory-root reconstruction at every historical before/after and current metadata boundary. Uses actual held disposable original store bytes; no SQLite ownership, full sealed-batch equality, mutation or production authority.",
@@ -2825,7 +2836,8 @@
         "task_kernel/archive_typed_selection",
         "task_kernel/archive_sealed_plan",
         "task_kernel/archive_store_seal_chain",
-        "task_kernel/archive_store_inventory"
+        "task_kernel/archive_store_inventory",
+        "task_kernel/archive_store_generation"
       ],
       "legacy_path": "trillionnium/crates/trnm-task-kernel",
       "module": "M10",
