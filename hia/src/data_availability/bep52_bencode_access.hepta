@@ -1,0 +1,297 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_bep52_bencode_access_v1
+fn f0(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_o:mutbuf,entry_w:mutbuf)
+  entry_n_:usize = buffer.len(entry_r)
+  entry_n:u64 = int.cast(entry_n_) {"mode":"wrap"}
+  entry_cap:u64 = const() {"value":1048576}
+  entry_five:u64 = const() {"value":5}
+  entry_min:bool = compare.ge(entry_n,entry_five)
+  entry_max:bool = compare.le(entry_n,entry_cap)
+  entry_ok:bool = bool.and(entry_min,entry_max)
+  branch entry_ok frame(entry_r,entry_o,entry_w,entry_n) bad_profile()
+block frame(frame_r:readbuf,frame_o:mutbuf,frame_w:mutbuf,frame_n:u64)
+  frame_one:u64 = const() {"value":1}
+  frame_five:u64 = const() {"value":5}
+  frame_trailer:u64 = int.sub.wrap(frame_n,frame_five)
+  frame_mode_at:u64 = int.sub.wrap(frame_n,frame_one)
+  frame_mode_at_:usize = int.cast(frame_mode_at) {"mode":"wrap"}
+  frame_mode_:u8 = buffer.load(frame_r,frame_mode_at_)
+  frame_mode:u64 = int.cast(frame_mode_) {"mode":"wrap"}
+  frame_max:u64 = const() {"value":6}
+  frame_bound:bool = compare.le(frame_mode,frame_max)
+  frame_root_extent:u64 = call(frame_r,frame_trailer) {"function":"bacc_read32"}
+  frame_extent_ok:bool = compare.le(frame_root_extent,frame_trailer)
+  frame_structurally_ok:bool = bool.and(frame_bound,frame_extent_ok)
+  branch frame_structurally_ok key_scope(frame_r,frame_o,frame_w,frame_root_extent,frame_trailer,frame_mode) bad_profile()
+block key_scope(key_scope_r:readbuf,key_scope_o:mutbuf,key_scope_w:mutbuf,key_scope_n:u64,key_scope_key_end:u64,key_scope_mode:u64)
+  key_scope_first:u64 = const() {"value":1}
+  key_scope_last:u64 = const() {"value":3}
+  key_scope_key_first:bool = compare.ge(key_scope_mode,key_scope_first)
+  key_scope_key_last:bool = compare.le(key_scope_mode,key_scope_last)
+  key_scope_keyed:bool = bool.and(key_scope_key_first,key_scope_key_last)
+  key_scope_no_key:bool = compare.eq(key_scope_n,key_scope_key_end)
+  key_scope_ok:bool = bool.or(key_scope_keyed,key_scope_no_key)
+  branch key_scope_ok capacity(key_scope_r,key_scope_o,key_scope_w,key_scope_n,key_scope_key_end,key_scope_mode,key_scope_keyed) bad_profile()
+block capacity(capacity_r:readbuf,capacity_o:mutbuf,capacity_w:mutbuf,capacity_n:u64,capacity_key_end:u64,capacity_mode:u64,capacity_keyed:bool)
+  capacity_w_:usize = buffer.len(capacity_w)
+  capacity_o_:usize = buffer.len(capacity_o)
+  capacity_wn:u64 = int.cast(capacity_w_) {"mode":"wrap"}
+  capacity_on:u64 = int.cast(capacity_o_) {"mode":"wrap"}
+  capacity_guard:u64 = const() {"value":81}
+  capacity_out:u64 = const() {"value":32}
+  capacity_work_ok:bool = compare.ge(capacity_wn,capacity_guard)
+  capacity_out_ok:bool = compare.ge(capacity_on,capacity_out)
+  capacity_ok:bool = bool.and(capacity_work_ok,capacity_out_ok)
+  branch capacity_ok validate(capacity_r,capacity_o,capacity_w,capacity_n,capacity_key_end,capacity_mode,capacity_keyed) short()
+block validate(validate_r:readbuf,validate_o:mutbuf,validate_w:mutbuf,validate_n:u64,validate_key_end:u64,validate_mode:u64,validate_keyed:bool)
+  validate_z:u64 = const() {"value":0}
+  validate_ok_s:u32 = const() {"value":0}
+  validate_status:u32,validate_consumed:u64,validate_summary:u64 = call(validate_r,validate_w,validate_n,validate_z) {"function":"benc_scan"}
+  validate_7:u64 = const() {"value":7}
+  validate_kind:u64 = bit.and(validate_summary,validate_7)
+  validate_ok:bool = compare.eq(validate_ok_s,validate_status)
+  branch validate_ok select_mode(validate_r,validate_o,validate_w,validate_n,validate_key_end,validate_mode,validate_keyed,validate_consumed,validate_kind) fail(validate_status)
+block select_mode(select_mode_r:readbuf,select_mode_o:mutbuf,select_mode_w:mutbuf,select_mode_n:u64,select_mode_key_end:u64,select_mode_mode:u64,select_mode_keyed:bool,select_mode_stop:u64,select_mode_kind:u64)
+  select_mode_z:u64 = const() {"value":0}
+  select_mode_six:u64 = const() {"value":6}
+  select_mode_dict:bool = compare.eq(select_mode_mode,select_mode_z)
+  select_mode_list:bool = compare.eq(select_mode_mode,select_mode_six)
+  select_mode_container:bool = bool.or(select_mode_dict,select_mode_list)
+  select_mode_walk:bool = bool.or(select_mode_container,select_mode_keyed)
+  branch select_mode_walk check_kind(select_mode_r,select_mode_o,select_mode_w,select_mode_n,select_mode_key_end,select_mode_mode,select_mode_keyed,select_mode_stop,select_mode_kind,select_mode_list) scalar_root(select_mode_r,select_mode_o,select_mode_n,select_mode_mode,select_mode_stop,select_mode_kind)
+block check_kind(check_kind_r:readbuf,check_kind_o:mutbuf,check_kind_w:mutbuf,check_kind_n:u64,check_kind_key_end:u64,check_kind_mode:u64,check_kind_keyed:bool,check_kind_stop:u64,check_kind_kind:u64,check_kind_list:bool)
+  check_kind_three:u64 = const() {"value":3}
+  check_kind_four:u64 = const() {"value":4}
+  check_kind_expected:u64 = select(check_kind_list,check_kind_three,check_kind_four)
+  check_kind_ok:bool = compare.eq(check_kind_kind,check_kind_expected)
+  branch check_kind_ok walk(check_kind_r,check_kind_o,check_kind_w,check_kind_n,check_kind_key_end,check_kind_mode,check_kind_keyed,check_kind_stop,check_kind_kind,check_kind_list) collection_wrong(check_kind_list)
+block walk(walk_r:readbuf,walk_o:mutbuf,walk_w:mutbuf,walk_n:u64,walk_key_end:u64,walk_mode:u64,walk_keyed:bool,walk_stop:u64,walk_kind:u64,walk_list:bool)
+  walk_dict:bool = bool.not(walk_list)
+  walk_z:u64 = const() {"value":0}
+  walk_s0:u32 = const() {"value":0}
+  walk_status:u32,walk_span:u64,walk_summary:u64 = call(walk_r,walk_w,walk_stop,walk_n,walk_key_end,walk_dict,walk_keyed) {"function":"bacc_walk"}
+  walk_21:u64 = const() {"value":21}
+  walk_span_mask:u64 = const() {"value":2097151}
+  walk_3:u64 = const() {"value":3}
+  walk_kind_mask:u64 = const() {"value":7}
+  walk_a:u64 = int.shr.checked(walk_span,walk_21)
+  walk_end_at:u64 = bit.and(walk_span,walk_span_mask)
+  walk_actual:u64 = bit.and(walk_summary,walk_kind_mask)
+  walk_count:u64 = int.shr.checked(walk_summary,walk_3)
+  walk_ok:bool = compare.eq(walk_status,walk_s0)
+  branch walk_ok walk_output(walk_r,walk_o,walk_mode,walk_keyed,walk_stop,walk_kind,walk_a,walk_end_at,walk_actual,walk_count,walk_z) fail(walk_status)
+block walk_output(walk_output_r:readbuf,walk_output_o:mutbuf,walk_output_mode:u64,walk_output_keyed:bool,walk_output_stop:u64,walk_output_kind:u64,walk_output_a:u64,walk_output_end_at:u64,walk_output_actual:u64,walk_output_count:u64,walk_output_z:u64)
+  branch walk_output_keyed selection(walk_output_r,walk_output_o,walk_output_mode,walk_output_a,walk_output_end_at,walk_output_actual,walk_output_z) publish(walk_output_o,walk_output_kind,walk_output_z,walk_output_stop,walk_output_count)
+block selection(selection_r:readbuf,selection_o:mutbuf,selection_mode:u64,selection_a:u64,selection_end_at:u64,selection_kind:u64,selection_z:u64)
+  selection_one:u64 = const() {"value":1}
+  selection_missing:bool = compare.eq(selection_kind,selection_z)
+  selection_optional:bool = compare.eq(selection_mode,selection_one)
+  branch selection_missing missing_key(selection_o,selection_optional,selection_z) found(selection_r,selection_o,selection_mode,selection_kind,selection_a,selection_end_at,selection_z)
+block missing_key(missing_key_o:mutbuf,missing_key_optional:bool,missing_key_z:u64)
+  branch missing_key_optional publish(missing_key_o,missing_key_z,missing_key_z,missing_key_z,missing_key_z) required()
+block found(found_r:readbuf,found_o:mutbuf,found_mode:u64,found_kind:u64,found_a:u64,found_end_at:u64,found_z:u64)
+  found_three:u64 = const() {"value":3}
+  found_number:bool = compare.eq(found_mode,found_three)
+  branch found_number integer(found_r,found_o,found_kind,found_a,found_end_at) publish(found_o,found_kind,found_a,found_end_at,found_z)
+block scalar_root(scalar_root_r:readbuf,scalar_root_o:mutbuf,scalar_root_n:u64,scalar_root_mode:u64,scalar_root_stop:u64,scalar_root_kind:u64)
+  scalar_root_four:u64 = const() {"value":4}
+  scalar_root_z:u64 = const() {"value":0}
+  scalar_root_number:bool = compare.eq(scalar_root_mode,scalar_root_four)
+  branch scalar_root_number integer(scalar_root_r,scalar_root_o,scalar_root_kind,scalar_root_z,scalar_root_stop) bytes_kind(scalar_root_r,scalar_root_o,scalar_root_n,scalar_root_kind,scalar_root_z)
+block bytes_kind(bytes_kind_r:readbuf,bytes_kind_o:mutbuf,bytes_kind_n:u64,bytes_kind_kind:u64,bytes_kind_z:u64)
+  bytes_kind_one:u64 = const() {"value":1}
+  bytes_kind_ok:bool = compare.eq(bytes_kind_kind,bytes_kind_one)
+  branch bytes_kind_ok bytes_value(bytes_kind_r,bytes_kind_o,bytes_kind_n,bytes_kind_kind,bytes_kind_z) wrong_bytes()
+block bytes_value(bytes_value_r:readbuf,bytes_value_o:mutbuf,bytes_value_n:u64,bytes_value_kind:u64,bytes_value_z:u64)
+  bytes_value_status:u32,bytes_value_a:u64,bytes_value_stop:u64 = call(bytes_value_r,bytes_value_n,bytes_value_z) {"function":"benc_string"}
+  bytes_value_s0:u32 = const() {"value":0}
+  bytes_value_ok:bool = compare.eq(bytes_value_status,bytes_value_s0)
+  branch bytes_value_ok publish(bytes_value_o,bytes_value_kind,bytes_value_a,bytes_value_stop,bytes_value_z) fail(bytes_value_status)
+block integer(integer_r:readbuf,integer_o:mutbuf,integer_kind:u64,integer_a:u64,integer_stop:u64)
+  integer_two:u64 = const() {"value":2}
+  integer_ok:bool = compare.eq(integer_kind,integer_two)
+  branch integer_ok sign(integer_r,integer_o,integer_kind,integer_a,integer_stop) wrong_integer()
+block sign(sign_r:readbuf,sign_o:mutbuf,sign_kind:u64,sign_a:u64,sign_stop:u64)
+  sign_one:u64 = const() {"value":1}
+  sign_d:u64 = int.add.wrap(sign_a,sign_one)
+  sign_end_digits:u64 = int.sub.wrap(sign_stop,sign_one)
+  sign_at:usize = int.cast(sign_d) {"mode":"wrap"}
+  sign_c:u8 = buffer.load(sign_r,sign_at)
+  sign_minus:u8 = const() {"value":45}
+  sign_neg:bool = compare.eq(sign_c,sign_minus)
+  branch sign_neg wrong_integer() integer_value(sign_r,sign_o,sign_kind,sign_a,sign_stop,sign_d,sign_end_digits)
+block integer_value(integer_value_r:readbuf,integer_value_o:mutbuf,integer_value_kind:u64,integer_value_a:u64,integer_value_stop:u64,integer_value_d:u64,integer_value_end_digits:u64)
+  integer_value_val:u64 = call(integer_value_r,integer_value_d,integer_value_end_digits) {"function":"bacc_digits"}
+  jump publish(integer_value_o,integer_value_kind,integer_value_a,integer_value_stop,integer_value_val)
+block publish(publish_o:mutbuf,publish_kind:u64,publish_a:u64,publish_stop:u64,publish_val:u64)
+  publish_zero:u64 = const() {"value":0}
+  publish_eight:u64 = const() {"value":8}
+  publish_sixteen:u64 = const() {"value":16}
+  publish_end_at:u64 = const() {"value":24}
+  _ = call(publish_o,publish_zero,publish_kind) {"function":"benc_put64"}
+  _ = call(publish_o,publish_eight,publish_a) {"function":"benc_put64"}
+  _ = call(publish_o,publish_sixteen,publish_stop) {"function":"benc_put64"}
+  _ = call(publish_o,publish_end_at,publish_val) {"function":"benc_put64"}
+  publish_s:u32 = const() {"value":0}
+  ret(publish_s)
+block collection_wrong(collection_wrong_list:bool)
+  collection_wrong_d:u32 = const() {"value":40}
+  collection_wrong_l:u32 = const() {"value":43}
+  collection_wrong_s:u32 = select(collection_wrong_list,collection_wrong_l,collection_wrong_d)
+  ret(collection_wrong_s)
+block fail(fail_status:u32)
+  ret(fail_status)
+block wrong_integer()
+  wrong_integer_s:u32 = const() {"value":41}
+  ret(wrong_integer_s)
+block wrong_bytes()
+  wrong_bytes_s:u32 = const() {"value":42}
+  ret(wrong_bytes_s)
+block required()
+  required_s:u32 = const() {"value":44}
+  ret(required_s)
+block bad_profile()
+  bad_profile_s:u32 = const() {"value":100}
+  ret(bad_profile_s)
+block short()
+  short_s:u32 = const() {"value":102}
+  ret(short_s)
+end
+
+fn bacc_walk(entry_r:readbuf,entry_w:mutbuf,entry_end_at:u64,entry_key_a:u64,entry_key_b:u64,entry_dict:bool,entry_keyed:bool) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_w:mutbuf,entry_end_at:u64,entry_key_a:u64,entry_key_b:u64,entry_dict:bool,entry_keyed:bool)
+  entry_one:u64 = const() {"value":1}
+  entry_z:u64 = const() {"value":0}
+  entry_edge:u64 = int.sub.wrap(entry_end_at,entry_one)
+  jump loop(entry_r,entry_w,entry_edge,entry_key_a,entry_key_b,entry_dict,entry_keyed,entry_one,entry_z)
+block loop(loop_r:readbuf,loop_w:mutbuf,loop_edge:u64,loop_key_a:u64,loop_key_b:u64,loop_dict:bool,loop_keyed:bool,loop_p:u64,loop_count:u64)
+  loop_done:bool = compare.eq(loop_p,loop_edge)
+  branch loop_done exhausted(loop_count) next_entry(loop_r,loop_w,loop_edge,loop_key_a,loop_key_b,loop_dict,loop_keyed,loop_p,loop_count)
+block next_entry(next_entry_r:readbuf,next_entry_w:mutbuf,next_entry_edge:u64,next_entry_key_a:u64,next_entry_key_b:u64,next_entry_dict:bool,next_entry_keyed:bool,next_entry_p:u64,next_entry_count:u64)
+  next_entry_no:bool = const() {"value":false}
+  branch next_entry_dict read_key(next_entry_r,next_entry_w,next_entry_edge,next_entry_key_a,next_entry_key_b,next_entry_dict,next_entry_keyed,next_entry_p,next_entry_count) child(next_entry_r,next_entry_w,next_entry_edge,next_entry_key_a,next_entry_key_b,next_entry_dict,next_entry_keyed,next_entry_p,next_entry_count,next_entry_no)
+block read_key(read_key_r:readbuf,read_key_w:mutbuf,read_key_edge:u64,read_key_key_a:u64,read_key_key_b:u64,read_key_dict:bool,read_key_keyed:bool,read_key_p:u64,read_key_count:u64)
+  read_key_s0:u32 = const() {"value":0}
+  read_key_status:u32,read_key_a:u64,read_key_end_at:u64 = call(read_key_r,read_key_edge,read_key_p) {"function":"benc_string"}
+  read_key_ok:bool = compare.eq(read_key_status,read_key_s0)
+  branch read_key_ok select_key(read_key_r,read_key_w,read_key_edge,read_key_key_a,read_key_key_b,read_key_dict,read_key_keyed,read_key_end_at,read_key_count,read_key_a) internal()
+block select_key(select_key_r:readbuf,select_key_w:mutbuf,select_key_edge:u64,select_key_key_a:u64,select_key_key_b:u64,select_key_dict:bool,select_key_keyed:bool,select_key_p:u64,select_key_count:u64,select_key_a:u64)
+  select_key_no:bool = const() {"value":false}
+  branch select_key_keyed key_extent(select_key_r,select_key_w,select_key_edge,select_key_key_a,select_key_key_b,select_key_dict,select_key_keyed,select_key_p,select_key_count,select_key_a) child(select_key_r,select_key_w,select_key_edge,select_key_key_a,select_key_key_b,select_key_dict,select_key_keyed,select_key_p,select_key_count,select_key_no)
+block key_extent(key_extent_r:readbuf,key_extent_w:mutbuf,key_extent_edge:u64,key_extent_key_a:u64,key_extent_key_b:u64,key_extent_dict:bool,key_extent_keyed:bool,key_extent_p:u64,key_extent_count:u64,key_extent_a:u64)
+  key_extent_al:u64 = int.sub.wrap(key_extent_p,key_extent_a)
+  key_extent_bl:u64 = int.sub.wrap(key_extent_key_b,key_extent_key_a)
+  key_extent_eq:bool = compare.eq(key_extent_al,key_extent_bl)
+  key_extent_no:bool = const() {"value":false}
+  branch key_extent_eq key_compare(key_extent_r,key_extent_w,key_extent_edge,key_extent_key_a,key_extent_key_b,key_extent_dict,key_extent_keyed,key_extent_p,key_extent_count,key_extent_a) child(key_extent_r,key_extent_w,key_extent_edge,key_extent_key_a,key_extent_key_b,key_extent_dict,key_extent_keyed,key_extent_p,key_extent_count,key_extent_no)
+block key_compare(key_compare_r:readbuf,key_compare_w:mutbuf,key_compare_edge:u64,key_compare_key_a:u64,key_compare_key_b:u64,key_compare_dict:bool,key_compare_keyed:bool,key_compare_p:u64,key_compare_count:u64,key_compare_a:u64)
+  key_compare_eq:bool = call(key_compare_r,key_compare_a,key_compare_p,key_compare_key_a) {"function":"bacc_equal"}
+  jump child(key_compare_r,key_compare_w,key_compare_edge,key_compare_key_a,key_compare_key_b,key_compare_dict,key_compare_keyed,key_compare_p,key_compare_count,key_compare_eq)
+block child(child_r:readbuf,child_w:mutbuf,child_edge:u64,child_key_a:u64,child_key_b:u64,child_dict:bool,child_keyed:bool,child_p:u64,child_count:u64,child_match:bool)
+  child_s0:u32 = const() {"value":0}
+  child_status:u32,child_stop:u64,child_summary:u64 = call(child_r,child_w,child_edge,child_p) {"function":"benc_scan"}
+  child_mask:u64 = const() {"value":7}
+  child_kind:u64 = bit.and(child_summary,child_mask)
+  child_ok:bool = compare.eq(child_status,child_s0)
+  branch child_ok after_child(child_r,child_w,child_edge,child_key_a,child_key_b,child_dict,child_keyed,child_p,child_count,child_match,child_stop,child_kind) internal()
+block after_child(after_child_r:readbuf,after_child_w:mutbuf,after_child_edge:u64,after_child_key_a:u64,after_child_key_b:u64,after_child_dict:bool,after_child_keyed:bool,after_child_p:u64,after_child_count:u64,after_child_match:bool,after_child_stop:u64,after_child_kind:u64)
+  after_child_one:u64 = const() {"value":1}
+  after_child_count1:u64 = int.add.wrap(after_child_count,after_child_one)
+  branch after_child_match found(after_child_p,after_child_stop,after_child_kind) loop(after_child_r,after_child_w,after_child_edge,after_child_key_a,after_child_key_b,after_child_dict,after_child_keyed,after_child_stop,after_child_count1)
+block found(found_p:u64,found_stop:u64,found_kind:u64)
+  found_s:u32 = const() {"value":0}
+  found_shift:u64 = const() {"value":21}
+  found_hi:u64 = int.shl.checked(found_p,found_shift)
+  found_span:u64 = int.add.wrap(found_hi,found_stop)
+  ret(found_s,found_span,found_kind)
+block exhausted(exhausted_count:u64)
+  exhausted_s:u32 = const() {"value":0}
+  exhausted_z:u64 = const() {"value":0}
+  exhausted_shift:u64 = const() {"value":3}
+  exhausted_summary:u64 = int.shl.checked(exhausted_count,exhausted_shift)
+  ret(exhausted_s,exhausted_z,exhausted_summary)
+block internal()
+  internal_s:u32 = const() {"value":103}
+  internal_z:u64 = const() {"value":0}
+  ret(internal_s,internal_z,internal_z)
+end
+
+fn bacc_equal(entry_r:readbuf,entry_a:u64,entry_stop:u64,entry_b:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(entry_r:readbuf,entry_a:u64,entry_stop:u64,entry_b:u64)
+  jump loop(entry_r,entry_a,entry_stop,entry_b)
+block loop(loop_r:readbuf,loop_a:u64,loop_stop:u64,loop_b:u64)
+  loop_done:bool = compare.eq(loop_a,loop_stop)
+  branch loop_done yes() compare(loop_r,loop_a,loop_stop,loop_b)
+block compare(compare_r:readbuf,compare_a:u64,compare_stop:u64,compare_b:u64)
+  compare_ap:usize = int.cast(compare_a) {"mode":"wrap"}
+  compare_bp:usize = int.cast(compare_b) {"mode":"wrap"}
+  compare_av:u8 = buffer.load(compare_r,compare_ap)
+  compare_bv:u8 = buffer.load(compare_r,compare_bp)
+  compare_one:u64 = const() {"value":1}
+  compare_na:u64 = int.add.wrap(compare_a,compare_one)
+  compare_nb:u64 = int.add.wrap(compare_b,compare_one)
+  compare_eq:bool = compare.eq(compare_av,compare_bv)
+  branch compare_eq loop(compare_r,compare_na,compare_stop,compare_nb) no()
+block yes()
+  yes_v:bool = const() {"value":true}
+  ret(yes_v)
+block no()
+  no_v:bool = const() {"value":false}
+  ret(no_v)
+end
+
+fn bacc_digits(entry_r:readbuf,entry_a:u64,entry_stop:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(entry_r:readbuf,entry_a:u64,entry_stop:u64)
+  entry_z:u64 = const() {"value":0}
+  jump loop(entry_r,entry_a,entry_stop,entry_z)
+block loop(loop_r:readbuf,loop_a:u64,loop_stop:u64,loop_v:u64)
+  loop_pos:usize = int.cast(loop_a) {"mode":"wrap"}
+  loop_ch:u8 = buffer.load(loop_r,loop_pos)
+  loop_cv:u64 = int.cast(loop_ch) {"mode":"wrap"}
+  loop_zero:u64 = const() {"value":48}
+  loop_ten:u64 = const() {"value":10}
+  loop_one:u64 = const() {"value":1}
+  loop_d:u64 = int.sub.wrap(loop_cv,loop_zero)
+  loop_old:u64 = int.mul.wrap(loop_v,loop_ten)
+  loop_value:u64 = int.add.wrap(loop_old,loop_d)
+  loop_next:u64 = int.add.wrap(loop_a,loop_one)
+  loop_more:bool = compare.lt(loop_next,loop_stop)
+  branch loop_more loop(loop_r,loop_next,loop_stop,loop_value) finish(loop_value)
+block finish(finish_v:u64)
+  ret(finish_v)
+end
+
+fn bacc_read32(entry_r:readbuf,entry_a:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(entry_r:readbuf,entry_a:u64)
+  entry_acc0:u64 = const() {"value":0}
+  entry_shift:u64 = const() {"value":8}
+  entry_i0:u64 = const() {"value":0}
+  entry_at0:u64 = int.add.wrap(entry_a,entry_i0)
+  entry_p0:usize = int.cast(entry_at0) {"mode":"wrap"}
+  entry_c0:u8 = buffer.load(entry_r,entry_p0)
+  entry_u0:u64 = int.cast(entry_c0) {"mode":"wrap"}
+  entry_l0:u64 = int.shl.checked(entry_acc0,entry_shift)
+  entry_acc1:u64 = int.add.wrap(entry_l0,entry_u0)
+  entry_i1:u64 = const() {"value":1}
+  entry_at1:u64 = int.add.wrap(entry_a,entry_i1)
+  entry_p1:usize = int.cast(entry_at1) {"mode":"wrap"}
+  entry_c1:u8 = buffer.load(entry_r,entry_p1)
+  entry_u1:u64 = int.cast(entry_c1) {"mode":"wrap"}
+  entry_l1:u64 = int.shl.checked(entry_acc1,entry_shift)
+  entry_acc2:u64 = int.add.wrap(entry_l1,entry_u1)
+  entry_i2:u64 = const() {"value":2}
+  entry_at2:u64 = int.add.wrap(entry_a,entry_i2)
+  entry_p2:usize = int.cast(entry_at2) {"mode":"wrap"}
+  entry_c2:u8 = buffer.load(entry_r,entry_p2)
+  entry_u2:u64 = int.cast(entry_c2) {"mode":"wrap"}
+  entry_l2:u64 = int.shl.checked(entry_acc2,entry_shift)
+  entry_acc3:u64 = int.add.wrap(entry_l2,entry_u2)
+  entry_i3:u64 = const() {"value":3}
+  entry_at3:u64 = int.add.wrap(entry_a,entry_i3)
+  entry_p3:usize = int.cast(entry_at3) {"mode":"wrap"}
+  entry_c3:u8 = buffer.load(entry_r,entry_p3)
+  entry_u3:u64 = int.cast(entry_c3) {"mode":"wrap"}
+  entry_l3:u64 = int.shl.checked(entry_acc3,entry_shift)
+  entry_acc4:u64 = int.add.wrap(entry_l3,entry_u3)
+  ret(entry_acc4)
+end

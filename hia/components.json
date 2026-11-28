@@ -18035,6 +18035,20 @@
         ]
       }
     ],
+    "src/data_availability/bep52_bencode_access.hepta": [
+      {
+        "source": "src/data_availability/bep52_bencode_prefix.hepta",
+        "functions": [
+          "benc_scan",
+          "benc_string",
+          "benc_integer",
+          "benc_strict_lex",
+          "benc_put32",
+          "benc_put64",
+          "benc_get32"
+        ]
+      }
+    ],
     "src/data_availability/bep52_magnet_value.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

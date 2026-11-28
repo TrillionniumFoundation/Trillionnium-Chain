@@ -22,10 +22,10 @@ OUT = bytes([0xa5]) * 32
 WORK = bytes([0x5c]) * 89
 
 
-def original(target, rows):
+def original_capture(target, rows, witness=WITNESS):
     rustc = os.environ.get("TRNM_HIA_RUSTC") or os.environ.get("RUSTC", "rustc")
     cargo = os.environ.get("CARGO", "cargo")
-    paths = (LOCK, MANIFEST, CELL, PARSER, WITNESS)
+    paths = (LOCK, MANIFEST, CELL, PARSER, witness)
     before = {p.name: sha(p.read_bytes()) for p in paths}
     env = {**os.environ, "RUSTC": rustc, "CARGO_BUILD_JOBS": "2",
            "CARGO_INCREMENTAL": "0", "CARGO_PROFILE_DEV_DEBUG": "0"}
@@ -52,7 +52,7 @@ def original(target, rows):
     include.write_bytes(require)
     env["HIA_BENCODE_ORIGINAL_REQUIRE"] = str(include)
     elf = target / "frozen-bencode-prefix"
-    compile_observation = subprocess.run([rustc, "--edition=2024", "-O", "-Dwarnings", str(WITNESS), "--extern",
+    compile_observation = subprocess.run([rustc, "--edition=2024", "-O", "-Dwarnings", str(witness), "--extern",
                     f"trnm_data_availability={rlib}", "-L", f"dependency={target / 'debug/deps'}",
                     "-o", str(elf)], check=False, capture_output=True, env=env, timeout=35)
     if compile_observation.returncode or compile_observation.stderr:
@@ -62,25 +62,31 @@ def original(target, rows):
                                env=env, timeout=45)
     if execution.stderr or before != {p.name: sha(p.read_bytes()) for p in paths} or rlib_sha != sha(rlib.read_bytes()):
         raise ValueError("original source changed or witness emitted diagnostics")
+    proof = dict(original_inputs=before, original_require_sha256=sha(require),
+                 original_elf_sha256=sha(elf.read_bytes()), original_rlib_sha256=rlib_sha,
+                 original_rows=len(rows), framed_inputs_sha256=sha(data),
+                 original_stdout_sha256=sha(execution.stdout))
+    return execution.stdout, proof
+
+
+def original(target, rows):
+    stdout, proof = original_capture(target, rows)
     result = []
     at = 0
     for row in rows:
-        code = execution.stdout[at]
+        code = stdout[at]
         at += 1
         payload = b""
         if code == 0:
-            payload = execution.stdout[at:at+24]
+            payload = stdout[at:at+24]
             kind, consumed, count = struct.unpack(">QQQ", payload)
             if not (1 <= kind <= 4 and 0 < consumed <= len(row) and 1 <= count <= 128):
                 raise ValueError("original witness observation is outside the expected frame")
             at += 24
         result.append((code, payload))
-    if at != len(execution.stdout):
+    if at != len(stdout):
         raise ValueError("original output extent mismatch")
-    print(json.dumps(dict(original_inputs=before, original_require_sha256=sha(require),
-                          original_elf_sha256=sha(elf.read_bytes()), original_rlib_sha256=rlib_sha,
-                          original_rows=len(result), status_counts=Counter(x[0] for x in result),
-                          framed_inputs_sha256=sha(data), original_stdout_sha256=sha(execution.stdout)),
+    print(json.dumps(dict(proof, status_counts=Counter(x[0] for x in result)),
                      sort_keys=True), flush=True)
     return result
 
