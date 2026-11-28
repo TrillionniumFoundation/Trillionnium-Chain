@@ -1529,6 +1529,17 @@
       ]
     },
     {
+      "id": "data-availability/rs46-committed-slot",
+      "node_integration_complete": false,
+      "scope": "Pure one-slot byte readback matching the original private verifier: validate immutable TCM1/CRC1 pins and all six identities, then rederive the exact supplied CRS1 canonical ID and match every original fixed field and the separately requested slot. No repair, custody, retrieval, storage, or authorization.",
+      "source": "hia/src/data_availability/rs46_committed_slot.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_rs46_committed_slot.py",
+        "hia/tests/rust_da_rs46_committed_slot_harness.rs"
+      ]
+    },
+    {
       "id": "data-availability/rs46-shard-value",
       "node_integration_complete": false,
       "scope": "Pure immutable original standalone CRS1 decode and canonical header plus borrowed payload, exact shard ID on both stock through full original extent (split immutable Direct loans). No coding, recovery, authority, network, storage or custody.",
@@ -3588,6 +3599,7 @@
         "data-availability/rs46",
         "data-availability/rs46-shard-value",
         "data-availability/rs46-codeword-value",
+        "data-availability/rs46-committed-slot",
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",

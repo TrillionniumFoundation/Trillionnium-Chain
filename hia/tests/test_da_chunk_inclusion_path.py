@@ -88,7 +88,16 @@ def observed_artifact(build, temporary, testing):
 
 
 def unchanged_original_observation(directory, *, harness=HARNESS, marker=MARKER, test=TEST,
-                                   capture_limit=65536):
+                                   capture_limit=65536, owner="retrieval"):
+    if owner == "retrieval":
+        original_path, append, fixture_name = ORIGINAL, APPEND, "hia_da_chunk_path_fixture.rs"
+    elif owner == "rs46-committed-slot":
+        original_path = "trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs"
+        fixture_name = "hia_da_rs46_committed_slot_fixture.rs"
+        append = (b'\n#[cfg(test)]\n#[path = "hia_da_rs46_committed_slot_fixture.rs"]\n'
+                  b"mod hia_da_rs46_committed_slot_fixture;\n")
+    else:
+        raise ValueError("Unknown private DA witness owner")
     if not 0 < capture_limit <= 4 * 1024 * 1024:
         raise ValueError("Invalid private synthetic capture bound")
     cargo = os.environ.get("TRNM_HIA_CARGO", "cargo")
@@ -112,17 +121,19 @@ def unchanged_original_observation(directory, *, harness=HARNESS, marker=MARKER,
               "--lib", "--target-dir", str(directory / "target"), "--message-format=json"]
     clean = observed_artifact(_run([cargo, "build", *common], env=env), directory, False)
     original_rlib = clean.read_bytes()
+    if Path(original_path) not in blobs:
+        raise ValueError("Incomplete tracked private owner")
     fixture = unlinked_path(harness).read_bytes()
-    retrieval = directory / ORIGINAL
+    retrieval = directory / original_path
     original = retrieval.read_bytes()
-    private_fixture = retrieval.parent / "hia_da_chunk_path_fixture.rs"
+    private_fixture = retrieval.parent / fixture_name
     capture = directory / "generated.bin"
     with private_fixture.open("xb") as out:
         out.write(fixture)
     try:
-        retrieval.write_bytes(original + APPEND)
-        if retrieval.read_bytes() != original + APPEND or git_blob(original) != blobs[Path(ORIGINAL)]:
-            raise ValueError("Private original retrieval body changed")
+        retrieval.write_bytes(original + append)
+        if retrieval.read_bytes() != original + append or git_blob(original) != blobs[Path(original_path)]:
+            raise ValueError("Private original source body changed")
         executable = observed_artifact(_run([cargo, "test", *common, "--no-run"], env=env),
                                        directory, True)
         if marker not in executable.read_bytes() or clean.read_bytes() != original_rlib:
@@ -131,7 +142,7 @@ def unchanged_original_observation(directory, *, harness=HARNESS, marker=MARKER,
                       env={**env, "TRNM_DA_PRIVATE_PATH_FIXTURE": str(capture)}, timeout=30)
         if result.stderr or b"1 passed" not in result.stdout or test.encode() not in result.stdout:
             raise ValueError("No actual private original Rust call")
-        if retrieval.read_bytes() != original + APPEND or private_fixture.read_bytes() != fixture:
+        if retrieval.read_bytes() != original + append or private_fixture.read_bytes() != fixture:
             raise ValueError("Private test copy changed during the exact selector")
     finally:
         retrieval.write_bytes(original)
