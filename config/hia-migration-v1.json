@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_assemble",
+      "node_integration_complete": false,
+      "scope": "Private exact original assembled BF16/F32LE numerical tile, full nonfinite scan, clipped counts and both canonical field-residue matrices; no material, checkpoint IO, task/W1 or authority.",
+      "source": "hia/src/checkpoint/tile_assemble.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_assemble.py",
+        "hia/tests/rust_checkpoint_tile_assemble_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_quantize",
       "node_integration_complete": false,
       "scope": "Private exact frozen checkpoint BF16 weight and F32LE activation quantization arithmetic and diagnostics only; no checkpoint open, verified material, model/W1 execution or authority.",

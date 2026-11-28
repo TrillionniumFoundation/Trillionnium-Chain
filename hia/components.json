@@ -18804,6 +18804,28 @@
         ]
       }
     ],
+    "src/checkpoint/tile_assemble.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/service_settlement/codec.hepta",
+        "functions": [
+          "cs_put_integer"
+        ]
+      },
+      {
+        "source": "src/checkpoint/tile_quantize.hepta",
+        "functions": [
+          "tq_quant"
+        ]
+      }
+    ],
     "src/checkpoint/tile_quantize.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

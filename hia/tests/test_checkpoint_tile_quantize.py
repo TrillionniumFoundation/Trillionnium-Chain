@@ -30,7 +30,7 @@ pub(super) fn quantize_witness(bits: u32, profile: u8) -> MaterialResult<(i64, b
 """
 
 
-def original(directory, stimulus):
+def original(directory, stimulus, *, reference=REFERENCE, witness=None):
     git = ['git','-C',ROOT]
     if execute([*git,'rev-parse','HEAD:trillionnium']).stdout.decode().strip() != ORIGINAL:
         raise ValueError("Wrong frozen Rust tree")
@@ -74,13 +74,14 @@ def original(directory, stimulus):
             raise ValueError("Original library outside private target")
         extern+=["--extern",f"{name}={lib}"]
     frozen=directory/"frozen_tile_material.rs"
-    frozen.write_bytes(original_source+WITNESS)
+    appended=WITNESS if witness is None else witness(original_source)
+    frozen.write_bytes(original_source+appended)
     adapter=directory/"quantize_reference.rs"
-    adapter.write_bytes(REFERENCE.read_bytes())
+    adapter.write_bytes(reference.read_bytes())
     exe=directory/"quantize_reference"
     execute([rustc,"--edition=2021",adapter,"-L",f"dependency={target/'debug/deps'}",
              *extern,"-o",exe],env=env,timeout=90)
-    if frozen.read_bytes()!=original_source+WITNESS or MATERIAL.read_bytes()!=original_source:
+    if frozen.read_bytes()!=original_source+appended or MATERIAL.read_bytes()!=original_source:
         raise ValueError("Frozen original source changed")
     return execute([exe],input=stimulus).stdout
 
