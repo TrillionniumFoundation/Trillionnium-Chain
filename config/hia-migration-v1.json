@@ -1703,6 +1703,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-loader-pin-value",
+      "node_integration_complete": false,
+      "scope": "Original immutable typed loader-context-to-pin role normalization and exact direction-dependent field projection, not policy validation, loader or authority",
+      "source": "hia/src/data_availability/cell_version_loader_pin_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_loader_pin_value.py",
+        "hia/tests/rust_da_cell_version_loader_pin_value_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-catalog-anchor-value",
       "node_integration_complete": false,
       "scope": "Original immutable CVA3 anchor wire decode/encode and generation/declared commitment only; no independent authentication, catalog writes, owner or retention operations",
@@ -3280,6 +3291,7 @@
         "data-availability/cell-manifest-binding",
         "data-availability/cell-periodic-snapshot-policy",
         "data-availability/cell-chunk-delta-value",
+        "data-availability/cell-version-loader-pin-value",
         "data-availability/cell-version-catalog-anchor-value",
         "data-availability/cell-declared-recovery-placement",
         "data-availability/cell-recovery-placement-policy-value",
