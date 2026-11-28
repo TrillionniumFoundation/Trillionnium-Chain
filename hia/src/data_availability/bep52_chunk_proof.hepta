@@ -194,58 +194,16 @@ end
 
 fn cbp_decode(a_r:readbuf,a_o:mutbuf,a_w:mutbuf,a_n:u64) -> (u32) effects(read,write,trap) entry(entry)
 block entry(a_r:readbuf,a_o:mutbuf,a_w:mutbuf,a_n:u64)
-  a_min:u64 = const() {"value":77}
-  a_max:u64 = const() {"value":525}
-  a_lo:bool = compare.ge(a_n,a_min)
-  a_hi:bool = compare.le(a_n,a_max)
-  a_ok:bool = bool.and(a_lo,a_hi)
-  branch a_ok tag(a_r,a_o,a_w,a_n) bad_size()
-block tag(b_r:readbuf,b_o:mutbuf,b_w:mutbuf,b_n:u64)
-  b_zero:u64 = const() {"value":0}
-  b_four:u64 = const() {"value":4}
-  b_tag:u64 = call(b_r,b_zero,b_four) {"function":"ca_read_be"}
-  b_expected:u64 = const() {"value":1128419377}
-  b_ok:bool = compare.eq(b_tag,b_expected)
-  branch b_ok leaves(b_r,b_o,b_w,b_n) bad_tag()
-block leaves(c_r:readbuf,c_o:mutbuf,c_w:mutbuf,c_n:u64)
-  c_at:u64 = const() {"value":72}
-  c_four:u64 = const() {"value":4}
-  c_count:u64 = call(c_r,c_at,c_four) {"function":"ca_read_be"}
-  c_one:u64 = const() {"value":1}
-  c_cap:u64 = const() {"value":16384}
-  c_lo:bool = compare.ge(c_count,c_one)
-  c_hi:bool = compare.le(c_count,c_cap)
-  c_ok:bool = bool.and(c_lo,c_hi)
-  branch c_ok index(c_r,c_o,c_w,c_n,c_count) bad_count()
-block index(d_r:readbuf,d_o:mutbuf,d_w:mutbuf,d_n:u64,d_count:u64)
-  d_at:u64 = const() {"value":68}
-  d_four:u64 = const() {"value":4}
-  d_i:u64 = call(d_r,d_at,d_four) {"function":"ca_read_be"}
-  d_ok:bool = compare.lt(d_i,d_count)
-  branch d_ok depth(d_r,d_o,d_w,d_n,d_count,d_i) bad_index()
-block depth(e_r:readbuf,e_o:mutbuf,e_w:mutbuf,e_n:u64,e_count:u64,e_i:u64)
-  e_unused:u64,e_depth:u64 = call(e_count) {"function":"cbp_geometry"}
-  e_at:u64 = const() {"value":76}
-  e_one:u64 = const() {"value":1}
-  e_hdr:u64 = const() {"value":77}
-  e_n32:u64 = const() {"value":32}
-  e_size:u64 = int.mul.wrap(e_depth,e_n32)
-  e_wire:u64 = int.add.wrap(e_hdr,e_size)
-  e_want:u64 = call(e_r,e_at,e_one) {"function":"ca_read_be"}
-  e_depth_ok:bool = compare.eq(e_depth,e_want)
-  e_n_ok:bool = compare.eq(e_n,e_wire)
-  e_ok:bool = bool.and(e_depth_ok,e_n_ok)
-  branch e_ok scratch(e_r,e_o,e_w,e_n,e_count,e_i) bad_depth()
-block scratch(f_r:readbuf,f_o:mutbuf,f_w:mutbuf,f_n:u64,f_count:u64,f_i:u64)
-  f_min:usize = const() {"value":1344}
-  f_actual:usize = buffer.len(f_w)
-  f_accept:bool = compare.ge(f_actual,f_min)
-  branch f_accept padding(f_r,f_o,f_w,f_n,f_count,f_i) short()
-block padding(g_r:readbuf,g_o:mutbuf,g_w:mutbuf,g_n:u64,g_count:u64,g_i:u64)
-  g_s:u32 = call(g_r,g_w,g_n,g_count,g_i) {"function":"cbp_padding"}
-  g_zero:u32 = const() {"value":0}
-  g_ok:bool = compare.eq(g_s,g_zero)
-  branch g_ok output(g_r,g_o,g_n) fail(g_s)
+  a_zero:u64 = const() {"value":0}
+  a_s:u32 = call(a_r,a_w,a_zero,a_n) {"function":"cbp_check_at"}
+  a_z:u32 = const() {"value":0}
+  a_ok:bool = compare.eq(a_s,a_z)
+  branch a_ok output(a_r,a_o,a_n) fail(a_s)
+block short()
+  x_s:u32 = const() {"value":102}
+  ret(x_s)
+block fail(y_s:u32)
+  ret(y_s)
 block output(h_r:readbuf,h_o:mutbuf,h_n:u64)
   h_len_:usize = buffer.len(h_o)
   h_len:u64 = int.cast(h_len_) {"mode":"wrap"}
@@ -256,6 +214,67 @@ block publish(i_r:readbuf,i_o:mutbuf,i_n:u64)
   i_off:u64 = call(i_r,i_zero,i_o,i_zero,i_n) {"function":"cs_copy"}
   i_val:u32 = const() {"value":0}
   ret(i_val)
+end
+
+fn cbp_check_at(a_r:readbuf,a_w:mutbuf,a_offset:u64,a_n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_w:mutbuf,a_offset:u64,a_n:u64)
+  a_min:u64 = const() {"value":77}
+  a_max:u64 = const() {"value":525}
+  a_lo:bool = compare.ge(a_n,a_min)
+  a_hi:bool = compare.le(a_n,a_max)
+  a_ok:bool = bool.and(a_lo,a_hi)
+  branch a_ok tag(a_r,a_w,a_offset,a_n) bad_size()
+block tag(b_r:readbuf,b_w:mutbuf,b_offset:u64,b_n:u64)
+  b_zero:u64 = const() {"value":0}
+  b_zero_abs:u64 = int.add.wrap(b_offset,b_zero)
+  b_four:u64 = const() {"value":4}
+  b_tag:u64 = call(b_r,b_zero_abs,b_four) {"function":"ca_read_be"}
+  b_expected:u64 = const() {"value":1128419377}
+  b_ok:bool = compare.eq(b_tag,b_expected)
+  branch b_ok leaves(b_r,b_w,b_offset,b_n) bad_tag()
+block leaves(c_r:readbuf,c_w:mutbuf,c_offset:u64,c_n:u64)
+  c_at:u64 = const() {"value":72}
+  c_at_abs:u64 = int.add.wrap(c_offset,c_at)
+  c_four:u64 = const() {"value":4}
+  c_count:u64 = call(c_r,c_at_abs,c_four) {"function":"ca_read_be"}
+  c_one:u64 = const() {"value":1}
+  c_cap:u64 = const() {"value":16384}
+  c_lo:bool = compare.ge(c_count,c_one)
+  c_hi:bool = compare.le(c_count,c_cap)
+  c_ok:bool = bool.and(c_lo,c_hi)
+  branch c_ok index(c_r,c_w,c_offset,c_n,c_count) bad_count()
+block index(d_r:readbuf,d_w:mutbuf,d_offset:u64,d_n:u64,d_count:u64)
+  d_at:u64 = const() {"value":68}
+  d_at_abs:u64 = int.add.wrap(d_offset,d_at)
+  d_four:u64 = const() {"value":4}
+  d_i:u64 = call(d_r,d_at_abs,d_four) {"function":"ca_read_be"}
+  d_ok:bool = compare.lt(d_i,d_count)
+  branch d_ok depth(d_r,d_w,d_offset,d_n,d_count,d_i) bad_index()
+block depth(e_r:readbuf,e_w:mutbuf,e_offset:u64,e_n:u64,e_count:u64,e_i:u64)
+  e_unused:u64,e_depth:u64 = call(e_count) {"function":"cbp_geometry"}
+  e_at:u64 = const() {"value":76}
+  e_at_abs:u64 = int.add.wrap(e_offset,e_at)
+  e_one:u64 = const() {"value":1}
+  e_hdr:u64 = const() {"value":77}
+  e_n32:u64 = const() {"value":32}
+  e_size:u64 = int.mul.wrap(e_depth,e_n32)
+  e_wire:u64 = int.add.wrap(e_hdr,e_size)
+  e_want:u64 = call(e_r,e_at_abs,e_one) {"function":"ca_read_be"}
+  e_depth_ok:bool = compare.eq(e_depth,e_want)
+  e_n_ok:bool = compare.eq(e_n,e_wire)
+  e_ok:bool = bool.and(e_depth_ok,e_n_ok)
+  branch e_ok scratch(e_r,e_w,e_offset,e_n,e_count,e_i) bad_depth()
+block scratch(f_r:readbuf,f_w:mutbuf,f_offset:u64,f_n:u64,f_count:u64,f_i:u64)
+  f_min:usize = const() {"value":1344}
+  f_actual:usize = buffer.len(f_w)
+  f_accept:bool = compare.ge(f_actual,f_min)
+  branch f_accept padding(f_r,f_w,f_offset,f_n,f_count,f_i) short()
+block padding(g_r:readbuf,g_w:mutbuf,g_at:u64,g_n:u64,g_count:u64,g_i:u64)
+  g_end:u64 = int.add.wrap(g_at,g_n)
+  g_hdr:u64 = const() {"value":77}
+  g_start:u64 = int.add.wrap(g_at,g_hdr)
+  g_status:u32 = call(g_r,g_w,g_start,g_end,g_count,g_i) {"function":"cbp_padding"}
+  ret(g_status)
 block bad_size()
   j_s:u32 = const() {"value":31}
   ret(j_s)
@@ -274,28 +293,25 @@ block bad_depth()
 block short()
   o_s:u32 = const() {"value":102}
   ret(o_s)
-block fail(p_s:u32)
-  ret(p_s)
 end
 
-fn cbp_padding(a_r:readbuf,a_w:mutbuf,a_end:u64,a_count:u64,a_i:u64) -> (u32) effects(read,write,trap) entry(entry)
-block entry(a_r:readbuf,a_w:mutbuf,a_end:u64,a_count:u64,a_i:u64)
+fn cbp_padding(a_r:readbuf,a_w:mutbuf,a_first:u64,a_end:u64,a_count:u64,a_i:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_w:mutbuf,a_first:u64,a_end:u64,a_count:u64,a_i:u64)
   a_base:u64 = const() {"value":1280}
   a_stop:u64 = const() {"value":1344}
-  jump init(a_r,a_w,a_end,a_count,a_i,a_base,a_stop)
-block init(b_r:readbuf,b_w:mutbuf,b_end:u64,b_count:u64,b_i:u64,b_zero_at:u64,b_stop:u64)
+  jump init(a_r,a_w,a_first,a_end,a_count,a_i,a_base,a_stop)
+block init(b_r:readbuf,b_w:mutbuf,b_first:u64,b_end:u64,b_count:u64,b_i:u64,b_zero_at:u64,b_stop:u64)
   b_ok:bool = compare.lt(b_zero_at,b_stop)
-  branch b_ok zero(b_r,b_w,b_end,b_count,b_i,b_zero_at,b_stop) start(b_r,b_w,b_end,b_count,b_i)
-block zero(c_r:readbuf,c_w:mutbuf,c_end:u64,c_count:u64,c_i:u64,c_zero_at:u64,c_stop:u64)
+  branch b_ok zero(b_r,b_w,b_first,b_end,b_count,b_i,b_zero_at,b_stop) start(b_r,b_w,b_first,b_end,b_count,b_i)
+block zero(c_r:readbuf,c_w:mutbuf,c_first:u64,c_end:u64,c_count:u64,c_i:u64,c_zero_at:u64,c_stop:u64)
   c_v:u64 = const() {"value":0}
   c_width:u64 = const() {"value":8}
   c_s:u64 = call(c_w,c_zero_at,c_v) {"function":"tr_put"}
   c_after:u64 = int.add.wrap(c_zero_at,c_width)
-  jump init(c_r,c_w,c_end,c_count,c_i,c_after,c_stop)
-block start(d_r:readbuf,d_w:mutbuf,d_end:u64,d_count:u64,d_i:u64)
-  d_at:u64 = const() {"value":77}
+  jump init(c_r,c_w,c_first,c_end,c_count,c_i,c_after,c_stop)
+block start(d_r:readbuf,d_w:mutbuf,d_first:u64,d_end:u64,d_count:u64,d_i:u64)
   d_level:u64 = const() {"value":0}
-  jump row(d_r,d_w,d_end,d_count,d_i,d_at,d_level)
+  jump row(d_r,d_w,d_end,d_count,d_i,d_first,d_level)
 block row(e_r:readbuf,e_w:mutbuf,e_end:u64,e_count:u64,e_i:u64,e_at:u64,e_level:u64)
   e_more:bool = compare.lt(e_at,e_end)
   branch e_more coordinate(e_r,e_w,e_end,e_count,e_i,e_at,e_level) done()

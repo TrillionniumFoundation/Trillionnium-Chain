@@ -1551,6 +1551,17 @@
       ]
     },
     {
+      "id": "data-availability/bep52-piece-compare",
+      "node_integration_complete": false,
+      "scope": "Pure immutable single-piece comparison matching frozen BEP52 verify_chunk: complete native original TCM1 and context, canonical info and proof shape pins, physical piece length and SHA-256, bottom-up sibling relation to the independently calculated declared root. No file, transport, possession or authority.",
+      "source": "hia/src/data_availability/bep52_piece_compare.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_bep52_piece_compare.py",
+        "hia/tests/rust_da_bep52_piece_compare_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/rs46-codeword-value",
       "node_integration_complete": false,
       "scope": "Pure standalone CRC1 decode and exact canonical wire/domain digest against independently supplied pins, revalidating complete borrowed TCM1 and its selected original chunk, with six nonzero unique slots. No repair, source retrieval, storage, custody or authority.",
@@ -3693,6 +3704,7 @@
         "data-availability/rs46-committed-slot",
         "data-availability/bep52-binding-value",
         "data-availability/bep52-chunk-proof-value",
+        "data-availability/bep52-piece-compare",
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",
