@@ -651,3 +651,22 @@ author schema, capacity, or internal errors. Neither the input nor result
 buffer is modified. Non-schema-1 statements are outside this private contract.
 Verification does not provide policy authorization, certificate verification,
 voting authority, custody, or a signing interface.
+
+## DA standard offline availability verification
+
+The [private verifier](availability_certificate_verify.hepta) admits one
+immutable loan: canonical Borsh committee, standard schema-1 Borsh
+availability certificate, then the committee extent as LE `u32`. It checks
+the exact committee and envelope, verifies a standard signed author, then
+individually verifies each attestation before matching its original envelope
+commitments and validating strictly increasing distinct attestors. Actual
+committee member weights are accumulated with checked two-limb arithmetic
+and compared to the committee's native-validated threshold. A successful
+result then requires exact outer round-trip fields and the original
+recomputed Borsh certificate ID.
+
+The private profile uses at most 64 KiB of input, 32 members and 32
+attestations, 262,912 scratch bytes, and one bounded native-owned copy of an
+existing exact verification frame at a time. Output is a status only, never
+a signing interface, node admission, deployment, or live voting authority.
+Only the standard schema-1 signed author is admitted.

@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_da_batch_author_verify
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  evidence:u32 = call(r,w) {"function":"dabv_verify_frame"}
+  ret(evidence)
+end
+
+fn dabv_verify_frame(r:readbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf)
   extent:usize = buffer.len(r)
   n:u64 = int.cast(extent) {"mode":"wrap"}
   min:u64 = const() {"value":486}

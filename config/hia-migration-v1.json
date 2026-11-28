@@ -60,6 +60,19 @@
   ],
   "components": [
     {
+      "id": "data-availability/availability-certificate-verify",
+      "node_integration_complete": false,
+      "scope": "Bounded offline standard schema-1 DA certificate verification, original canonical envelope and signed author, full strict ordered attestor binding, checked committee threshold and reconstructed original identity. Not live authorization or voting.",
+      "source": "hia/src/data_availability/availability_certificate_verify.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_availability_certificate_verify.py",
+        "hia/tests/rust_da_availability_certificate_verify_reference.rs",
+        "hia/tests/test_da_batch_author_verify.py",
+        "hia/tests/test_da_attestation_verify.py"
+      ]
+    },
+    {
       "id": "data-availability/batch-author-verify",
       "node_integration_complete": false,
       "scope": "Bounded standard schema-1 signed DA batch author verification on an immutable canonical envelope/author loan, with original verified signing transcript. Private status only, not policy authorization.",

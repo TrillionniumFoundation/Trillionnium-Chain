@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_da_attestation_verify
 fn f0(b0_r:readbuf,b0_o:mutbuf,b0_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(b0_r:readbuf,b0_o:mutbuf,b0_w:mutbuf)
+  evidence:u32 = call(b0_r,b0_w) {"function":"dav_verify_frame"}
+  ret(evidence)
+end
+
+fn dav_verify_frame(b0_r:readbuf,b0_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(b0_r:readbuf,b0_w:mutbuf)
   b0_width:usize = buffer.len(b0_r)
   b0_n:u64 = int.cast(b0_width) {"mode":"wrap"}
   b0_min:u64 = const() {"value":480}
