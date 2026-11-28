@@ -64,3 +64,19 @@ and recurrent memory/remaining, not action, checkpoint, or authority
 state.
 
     python3 -B -m unittest -v hia.tests.test_cell_held_train
+
+The independent x86-64 Linux static-link test installs the exact
+import- and relocation-free stock Selfhost object in a private test
+executable. It checks the executable segment at the actual `f0`
+symbol against the pinned object text before and after execution. A
+temporary, source-bound wrapper retains its real typed synthetic model,
+policy, features, and held product lanes while unchanged Rust
+`execute(Some)` consumes identical value copies. Before publishing
+each fixture observation, the wrapper constructs the native frame from
+those live values, checks it against the fixture input, and compares
+native status, report, and prepared-row bytes with the original. Only
+immutable and disjoint mutable byte buffers enter HIA. The linked
+Rust fixture has no runtime install, actual task, or production caller;
+both independent stock runners remain covered by the test above.
+
+    python3 -B -m unittest -v hia.tests.test_cell_held_train_held_link

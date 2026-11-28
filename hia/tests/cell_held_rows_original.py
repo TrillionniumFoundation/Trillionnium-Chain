@@ -26,7 +26,7 @@ def exactly(pattern,src):
     return value
 
 
-def execute_source():
+def execute_source(harness=None):
     sources={p:p.read_bytes() for p in PINS}
     if {p:sha(b) for p,b in sources.items()}!=PINS:
         raise ValueError("Frozen Cell execution source/root lock changed")
@@ -52,7 +52,8 @@ def execute_source():
     checked+=end(rb"pub\(crate\) fn ensure",lib)+end(b"pub fn digest",lib)+end(b"pub fn hash",wire)
     constants+=exactly(rb"^pub type Hash = [^\n]+\n",wire)
     prepared=exactly(rb"^pub\(super\) struct PreparedInputs \{.*?^\}\n",src)
-    harness=HARNESS.read_bytes()
+    if harness is None:
+        harness=HARNESS.read_bytes()
     marker=b"// EXACT_OWNER_DECLARATIONS"
     if harness.count(marker)!=1:
         raise ValueError("Missing unique authority-free fixture insertion point")
@@ -65,8 +66,9 @@ def run(argv, *, data=None, env=None, timeout=15, cwd=None):
     return subprocess.run(argv,cwd=cwd,input=data,env=env,timeout=timeout,check=True,capture_output=True).stdout
 
 
-def locked_original(directory,stream):
-    sources=execute_source()
+def locked_original(directory,stream,*,harness=None,link=None):
+    """Optional private fixture linkage, never used by the existing dual runners."""
+    sources=execute_source(harness)
     src=directory/"src"
     src.mkdir()
     for name,data in sources.items():
@@ -102,8 +104,11 @@ sha2 = "=0.10.9"
            for x in selected if x["name"]!=PKG}
     if not graph or not graph<=allowed or any(not x[3] for x in graph):
         raise ValueError("Original tiny dependency graph not wholly checksum-locked to workspace")
-    result=run([cargo,"build","--offline","--locked","--message-format=json"],
-               cwd=directory,env=env,timeout=90)
+    command=[cargo,"build" if link is None else "rustc","--offline","--locked","--message-format=json"]
+    if link is not None:
+        search,verify=link
+        command.extend(["--","-L",f"native={search}","-l","static=trnm_held_train_fixture"])
+    result=run(command,cwd=directory,env=env,timeout=90)
     events=list(map(json.loads,result.splitlines()))
     if events[-1]!={"reason":"build-finished","success":True}:
         raise ValueError("Original tiny Cargo build did not succeed")
@@ -122,10 +127,14 @@ sha2 = "=0.10.9"
     [exe]=[Path(a["executable"]) for a in artifacts if a.get("executable") and a["target"]["name"]==PKG]
     if not exe.is_relative_to(target):
         raise ValueError("Original witness outside its private target")
+    if link is not None:
+        verify(exe)
     inert=directory/"inert"
     inert.mkdir()
     out=run([str(exe)],data=stream,env={},cwd=inert,timeout=30)
-    if list(inert.iterdir()) or execute_source()!=sources or (directory/"Cargo.lock").read_bytes()!=lock or any(
+    if link is not None:
+        verify(exe)
+    if list(inert.iterdir()) or execute_source(harness)!=sources or (directory/"Cargo.lock").read_bytes()!=lock or any(
         (src/n).read_bytes()!=b for n,b in sources.items()):
         raise ValueError("Original execute source was not immutable or fixture attempted IO")
     return out,dict(compilers=tools,source={n:sha(b) for n,b in sources.items()},locked=sorted(graph),
