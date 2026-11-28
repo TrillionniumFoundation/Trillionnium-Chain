@@ -1,5 +1,119 @@
 {
   "includes": {
+    "src/data_availability/batch_author_verify.hepta": [
+      {
+        "source": "src/data_availability/committee_definition.hepta",
+        "functions": [
+          "dac_same32"
+        ]
+      },
+      {
+        "source": "src/research_protocol/command.hepta",
+        "functions": [
+          "rc_copy",
+          "rc_public_decode",
+          "rc_zero",
+          "rc_verify"
+        ]
+      },
+      {
+        "source": "src/crypto/ed25519_group.hepta",
+        "functions": [
+          "ed_compare",
+          "ed_copy",
+          "ed_fe_add",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_fe_sub",
+          "ed_init",
+          "ed_is_weak",
+          "ed_load64",
+          "ed_normalize",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_store64",
+          "ed_unpack",
+          "ed_zero",
+          "ed_point_equal",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ]
+      },
+      {
+        "source": "src/data_availability/author_authority_value.hepta",
+        "functions": [
+          "daav_u32",
+          "daav_copy"
+        ]
+      },
+      {
+        "source": "src/data_availability/batch_author_transcript.hepta",
+        "functions": [
+          "dab_ascii",
+          "dab_number",
+          "dab_shape",
+          "dab_hashes",
+          "dab_domain"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/data_availability/batch_content_root.hepta",
+        "functions": [
+          "dct_equal"
+        ]
+      },
+      {
+        "source": "src/research_protocol/canonical.hepta",
+        "functions": [
+          "research_utf8"
+        ]
+      },
+      {
+        "source": "src/crypto/ed25519_sign.hepta",
+        "functions": [
+          "es_hash"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_arena.hepta",
+        "functions": [
+          "sha512_arena",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_state_init",
+          "sha512_store64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ]
+      },
+      {
+        "source": "src/state_import/incremental_delta_commitment.hepta",
+        "functions": [
+          "dc_copy"
+        ]
+      }
+    ],
     "src/data_availability/attestation_verify.hepta": [
       {
         "source": "src/data_availability/committee_id.hepta",

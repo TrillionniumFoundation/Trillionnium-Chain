@@ -633,3 +633,21 @@ The pinned original Rust qualification creates deterministic isolated toy
 signatures, checks actual valid and invalid typed cases, and compares both
 stock HIA producers. It does not sign in HIA or admit a production vote,
 certificate, live identity, or attestation into the network.
+
+## DA standard signed batch author
+
+The [private author verifier](batch_author_verify.hepta) accepts one immutable
+loan: canonical Borsh envelope, canonical schema-1 Borsh signed author, then
+the envelope extent as LE `u32`. It validates the standard envelope, binds the
+author statement and native-derived BatchId, derives the original standard
+signing transcript, and verifies the supplied signature strictly against its
+supplied public key. The original Rust byte comparison and both pinned native
+backends use disposable fixture identities only.
+
+The complete loan is at most 1 MiB, with 262,784 scratch bytes. The result is a
+status only: 0 for success, 2–6 for original envelope errors, 201 for original
+invalid-signature class, and 100/101/102/103 for private framing, unsupported
+author schema, capacity, or internal errors. Neither the input nor result
+buffer is modified. Non-schema-1 statements are outside this private contract.
+Verification does not provide policy authorization, certificate verification,
+voting authority, custody, or a signing interface.

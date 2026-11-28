@@ -1,0 +1,209 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_da_batch_author_verify
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  extent:usize = buffer.len(r)
+  n:u64 = int.cast(extent) {"mode":"wrap"}
+  min:u64 = const() {"value":486}
+  max:u64 = const() {"value":1048576}
+  low:bool = compare.ge(n,min)
+  high:bool = compare.le(n,max)
+  good:bool = bool.and(low,high)
+  branch good split(r,w,n) malformed()
+block split(r1:readbuf,w1:mutbuf,n1:u64)
+  four:u64 = const() {"value":4}
+  result_end:u64 = int.sub.wrap(n1,four)
+  e:u64 = call(r1,result_end) {"function":"daav_u32"}
+  min_env:u64 = const() {"value":283}
+  min_role:u64 = const() {"value":199}
+  top:u64 = int.sub.wrap(result_end,min_role)
+  enough:bool = compare.ge(e,min_env)
+  within:bool = compare.le(e,top)
+  shape:bool = bool.and(enough,within)
+  branch shape env_chain(r1,w1,result_end,e,min_env,top) malformed()
+block env_chain(r2:readbuf,w2:mutbuf,end2:u64,e2:u64,floor2:u64,top2:u64)
+  coff:u64 = const() {"value":36}
+  c:u64 = call(r2,coff) {"function":"daav_u32"}
+  fit:u64 = int.sub.wrap(e2,floor2)
+  ok:bool = compare.le(c,fit)
+  branch ok env_exact(r2,w2,end2,e2,top2,c,fit) malformed()
+block env_exact(r3:readbuf,w3:mutbuf,end3:u64,e3:u64,top3:u64,c3:u64,fit3:u64)
+  ao:u64 = const() {"value":117}
+  apos:u64 = int.add.wrap(c3,ao)
+  a:u64 = call(r3,apos) {"function":"daav_u32"}
+  avail:u64 = int.sub.wrap(fit3,c3)
+  good3:bool = compare.eq(a,avail)
+  branch good3 role_chain(r3,w3,end3,e3,top3,c3,a) malformed()
+block role_chain(r4:readbuf,w4:mutbuf,end4:u64,e4:u64,top4:u64,c4:u64,a4:u64)
+  coff4:u64 = const() {"value":36}
+  cp:u64 = int.add.wrap(e4,coff4)
+  rc:u64 = call(r4,cp) {"function":"daav_u32"}
+  room:u64 = int.sub.wrap(top4,e4)
+  cf:bool = compare.le(rc,room)
+  branch cf role_author(r4,w4,end4,e4,c4,a4,rc,room) malformed()
+block role_author(r5:readbuf,w5:mutbuf,end5:u64,e5:u64,c5:u64,a5:u64,rc5:u64,room5:u64)
+  abase:u64 = const() {"value":117}
+  p0:u64 = int.add.wrap(e5,abase)
+  p1:u64 = int.add.wrap(p0,rc5)
+  ra:u64 = call(r5,p1) {"function":"daav_u32"}
+  avail5:u64 = int.sub.wrap(room5,rc5)
+  okay5:bool = compare.le(ra,avail5)
+  branch okay5 role_size(r5,w5,end5,e5,c5,a5,rc5,ra) malformed()
+block role_size(r6:readbuf,w6:mutbuf,end6:u64,e6:u64,c6:u64,a6:u64,rc6:u64,ra6:u64)
+  fixed:u64 = const() {"value":161}
+  v0:u64 = int.add.wrap(e6,fixed)
+  v1:u64 = int.add.wrap(v0,rc6)
+  scheme_at:u64 = int.add.wrap(v1,ra6)
+  lenoff:u64 = const() {"value":34}
+  sigoff:u64 = const() {"value":38}
+  lenpos:u64 = int.add.wrap(scheme_at,lenoff)
+  sigpos:u64 = int.add.wrap(scheme_at,sigoff)
+  sl:u64 = call(r6,lenpos) {"function":"daav_u32"}
+  actual:u64 = int.sub.wrap(end6,sigpos)
+  exact6:bool = compare.eq(actual,sl)
+  branch exact6 utf8(r6,w6,e6,c6,a6,rc6,scheme_at,sigpos,sl) malformed()
+block utf8(r7:readbuf,w7:mutbuf,e7:u64,c7:u64,a7:u64,rc7:u64,scheme7:u64,sig7:u64,len7:u64)
+  utf_at:u64 = const() {"value":40}
+  role_at:u64 = int.add.wrap(e7,utf_at)
+  er:u64 = call(r7,utf_at,c7) {"function":"research_utf8"}
+  ar:u64 = call(r7,role_at,rc7) {"function":"research_utf8"}
+  one:u64 = const() {"value":1}
+  good_e:bool = compare.eq(er,one)
+  good_a:bool = compare.eq(ar,one)
+  both:bool = bool.and(good_e,good_a)
+  branch both role_schema(r7,w7,e7,c7,a7,scheme7,sig7,len7) malformed()
+block role_schema(r8:readbuf,w8:mutbuf,e8:u64,c8:u64,a8:u64,scheme8:u64,sig8:u64,len8:u64)
+  m:u64 = const() {"value":65535}
+  one8:u64 = const() {"value":1}
+  found:u64 = call(r8,e8,m) {"function":"dab_number"}
+  admitted:bool = compare.eq(found,one8)
+  branch admitted ctx_versions(r8,w8,e8,c8,a8,scheme8,sig8,len8) unsupported()
+block ctx_versions(r9:readbuf,w9:mutbuf,e9:u64,c9:u64,a9:u64,scheme9:u64,sig9:u64,len9:u64)
+  fixed9:u64 = const() {"value":40}
+  proto_pos:u64 = int.add.wrap(c9,fixed9)
+  two9:u64 = const() {"value":2}
+  mask9:u64 = const() {"value":65535}
+  schema9:u64 = call(r9,two9,mask9) {"function":"dab_number"}
+  proto9:u64 = call(r9,proto_pos) {"function":"daav_u32"}
+  one9:u64 = const() {"value":1}
+  yes1:bool = compare.eq(schema9,one9)
+  yes2:bool = compare.eq(proto9,one9)
+  ok9:bool = bool.and(yes1,yes2)
+  branch ok9 ctx_chain(r9,w9,e9,c9,a9,scheme9,sig9,len9) invalid_version()
+block ctx_chain(r10:readbuf,w10:mutbuf,e10:u64,c10:u64,a10:u64,scheme10:u64,sig10:u64,len10:u64)
+  one10:u64 = const() {"value":1}
+  cap10:u64 = const() {"value":128}
+  nex:bool = compare.ge(c10,one10)
+  fin:bool = compare.le(c10,cap10)
+  lim:bool = bool.and(nex,fin)
+  branch lim ctx_ascii(r10,w10,e10,c10,a10,scheme10,sig10,len10) invalid_chain()
+block ctx_ascii(r11:readbuf,w11:mutbuf,e11:u64,c11:u64,a11:u64,scheme11:u64,sig11:u64,len11:u64)
+  p11:u64 = const() {"value":40}
+  yes11:bool = call(r11,p11,c11) {"function":"dab_ascii"}
+  branch yes11 ns(r11,w11,e11,c11,a11,scheme11,sig11,len11) invalid_chain()
+block ns(r12:readbuf,w12:mutbuf,e12:u64,c12:u64,a12:u64,scheme12:u64,sig12:u64,len12:u64)
+  bias:u64 = const() {"value":76}
+  nsat:u64 = int.add.wrap(c12,bias)
+  i:usize = int.cast(nsat) {"mode":"wrap"}
+  tag:u8 = buffer.load(r12,i)
+  z:u8 = const() {"value":0}
+  tx:bool = compare.eq(tag,z)
+  branch tx envelope(r12,w12,e12,c12,a12,scheme12,sig12,len12) bad_namespace(tag)
+block envelope(r13:readbuf,w13:mutbuf,e13:u64,c13:u64,a13:u64,scheme13:u64,sig13:u64,len13:u64)
+  ok13:bool = call(r13,c13,a13) {"function":"dab_shape"}
+  branch ok13 bind_role(r13,w13,e13,c13,a13,scheme13,sig13,len13) invalid_envelope()
+block bind_role(r14:readbuf,w14:mutbuf,e14:u64,c14:u64,a14:u64,scheme14:u64,sig14:u64,len14:u64)
+  zero14:u64 = const() {"value":0}
+  pf:u64 = const() {"value":129}
+  prefix0:u64 = int.add.wrap(pf,c14)
+  prefix:u64 = int.add.wrap(prefix0,a14)
+  bsz:u64 = const() {"value":32}
+  batch_at:u64 = int.sub.wrap(scheme14,bsz)
+  size:u64 = int.sub.wrap(batch_at,e14)
+  mask14:u64 = const() {"value":65535}
+  sch:u64 = call(r14,scheme14,mask14) {"function":"dab_number"}
+  sig_width:u64 = const() {"value":64}
+  bind_scheme:bool = compare.eq(sch,zero14)
+  bind_shape:bool = compare.eq(size,prefix)
+  sig_width_ok:bool = compare.eq(len14,sig_width)
+  gooda:bool = bool.and(bind_scheme,bind_shape)
+  goodb:bool = bool.and(gooda,sig_width_ok)
+  branch goodb compare_prefix(r14,w14,e14,prefix,batch_at,scheme14,sig14) signature_error()
+block compare_prefix(r15:readbuf,w15:mutbuf,e15:u64,prefix15:u64,batch15:u64,scheme15:u64,sig15:u64)
+  zero15:u64 = const() {"value":0}
+  exact:bool = call(r15,zero15,e15,prefix15) {"function":"dct_equal"}
+  branch exact scratch(r15,w15,e15,prefix15,batch15,scheme15,sig15) signature_error()
+block scratch(r16:readbuf,w16:mutbuf,e16:u64,prefix16:u64,batch16:u64,scheme16:u64,sig16:u64)
+  have:usize = buffer.len(w16)
+  need:usize = const() {"value":262784}
+  space:bool = compare.ge(have,need)
+  branch space digest(r16,w16,e16,prefix16,batch16,scheme16,sig16) short()
+block digest(r17:readbuf,w17:mutbuf,e17:u64,prefix17:u64,batch17:u64,scheme17:u64,sig17:u64)
+  derived:bool = call(r17,w17,e17,prefix17) {"function":"dab_hashes"}
+  branch derived batch_bind(r17,w17,batch17,scheme17,sig17) internal()
+block batch_bind(r18:readbuf,w18:mutbuf,batch18:u64,scheme18:u64,sig18:u64)
+  want:u64 = const() {"value":1264}
+  bmatch:bool = call(r18,batch18,w18,want) {"function":"dac_same32"}
+  branch bmatch crypt(r18,w18,scheme18,sig18) signature_error()
+block crypt(r19:readbuf,w19:mutbuf,scheme19:u64,sig19:u64)
+  d:u64 = const() {"value":1168}
+  msg:u64 = const() {"value":262656}
+  pk:u64 = const() {"value":262688}
+  s:u64 = const() {"value":262720}
+  two:u64 = const() {"value":2}
+  keyat:u64 = int.add.wrap(scheme19,two)
+  keyi:usize = int.cast(keyat) {"mode":"wrap"}
+  sigi:usize = int.cast(sig19) {"mode":"wrap"}
+  pki:usize = int.cast(pk) {"mode":"wrap"}
+  si:usize = int.cast(s) {"mode":"wrap"}
+  len:u64 = const() {"value":32}
+  pkn:usize = const() {"value":32}
+  sn:usize = const() {"value":64}
+  _m:u64 = call(w19,msg,d,len) {"function":"rc_copy"}
+  _p:u64 = call(r19,w19,keyi,pki,pkn) {"function":"daav_copy"}
+  _s:u64 = call(r19,w19,sigi,si,sn) {"function":"daav_copy"}
+  crypto_status:u64 = call(w19,msg,len,pk,s) {"function":"rc_verify"}
+  base:u64 = const() {"value":0}
+  pass:bool = compare.eq(crypto_status,base)
+  branch pass verified() rejected(crypto_status)
+block rejected(rc20:u64)
+  bad_key:u64 = const() {"value":205}
+  bad_sig:u64 = const() {"value":206}
+  c1:bool = compare.eq(rc20,bad_key)
+  c2:bool = compare.eq(rc20,bad_sig)
+  match:bool = bool.or(c1,c2)
+  branch match signature_error() internal()
+block malformed()
+  val:u32 = const() {"value":100}
+  ret(val)
+block unsupported()
+  val1:u32 = const() {"value":101}
+  ret(val1)
+block short()
+  val2:u32 = const() {"value":102}
+  ret(val2)
+block internal()
+  val3:u32 = const() {"value":103}
+  ret(val3)
+block invalid_version()
+  val4:u32 = const() {"value":2}
+  ret(val4)
+block invalid_chain()
+  val5:u32 = const() {"value":3}
+  ret(val5)
+block bad_namespace(t:u8)
+  one_t:u8 = const() {"value":1}
+  artifact:bool = compare.eq(t,one_t)
+  val6:u32 = const() {"value":4}
+  val7:u32 = const() {"value":5}
+  val_ns:u32 = select(artifact,val6,val7)
+  ret(val_ns)
+block invalid_envelope()
+  val8:u32 = const() {"value":6}
+  ret(val8)
+block signature_error()
+  val9:u32 = const() {"value":201}
+  ret(val9)
+block verified()
+  val10:u32 = const() {"value":0}
+  ret(val10)
+end

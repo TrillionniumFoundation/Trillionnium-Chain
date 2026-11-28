@@ -60,6 +60,18 @@
   ],
   "components": [
     {
+      "id": "data-availability/batch-author-verify",
+      "node_integration_complete": false,
+      "scope": "Bounded standard schema-1 signed DA batch author verification on an immutable canonical envelope/author loan, with original verified signing transcript. Private status only, not policy authorization.",
+      "source": "hia/src/data_availability/batch_author_verify.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_batch_author_verify.py",
+        "hia/tests/rust_da_batch_author_verify_reference.rs",
+        "hia/tests/test_da_batch_author_transcript.py"
+      ]
+    },
+    {
       "id": "data-availability/attestation-verify",
       "node_integration_complete": false,
       "scope": "Bounded original strict typed DA attestation verification binding the signed body to its genuine committee and member on one immutable loan; private status only, no vote or production authority.",
