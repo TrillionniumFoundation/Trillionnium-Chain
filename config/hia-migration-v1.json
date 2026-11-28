@@ -2300,6 +2300,17 @@
       ]
     },
     {
+      "id": "release-bundle/builder-provenance-ordered-256",
+      "node_integration_complete": false,
+      "scope": "Separate read-only original V0 typed provenance canonical digest at 0–256 private slots, using bounded native index heapsort and original member transcript. No validation, authority, signing or production routing; old 64-slot modes unchanged.",
+      "source": "hia/src/release_bundle/builder_provenance_ordered_256.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_provenance_ordered_256.py",
+        "hia/tests/rust_release_provenance_ordered_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/artifact-set-ordered-256",
       "node_integration_complete": false,
       "scope": "Separate read-only original V0 typed artifact sorted aggregate at 0–256 private slots, sharing bounded mergesort with SBOM and reusing original canonical member hashing. No membership admission or verification; existing 64-slot ABIs unchanged.",
