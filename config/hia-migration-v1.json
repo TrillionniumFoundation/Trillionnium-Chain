@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_activation_composed",
+      "node_integration_complete": false,
+      "scope": "Private bounded same-raw named-object original activation semantic/bit projection, no numeric admission, observer, training, provenance, live state or authority.",
+      "source": "hia/src/checkpoint/tile_activation_composed.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_activation_composed.py",
+        "hia/tests/rust_checkpoint_tile_activation_composed_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_activation_typed",
       "node_integration_complete": false,
       "scope": "Private native same-byte bounded original concrete Activation/Runtime serde field projection; no semantic activation, provenance, observer or material.",

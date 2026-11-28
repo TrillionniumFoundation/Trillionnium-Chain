@@ -2,19 +2,23 @@ hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_raw
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
   no_capture:bool = const() {"value":false}
-  status:u32 = call(r,w,no_capture) {"function":"tar_preflight"}
+  input_extent:usize = buffer.len(r)
+  input_end:u64 = int.cast(input_extent) {"mode":"wrap"}
+  status:u32 = call(r,w,input_end,no_capture) {"function":"tar_preflight"}
   ret(status)
 end
 
-fn tar_preflight(r:readbuf,w:mutbuf,capture:bool) -> (u32) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,capture:bool)
+fn tar_preflight(r:readbuf,w:mutbuf,n:u64,capture:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64,capture:bool)
   len:usize = buffer.len(r)
-  n:u64 = int.cast(len) {"mode":"wrap"}
+  available:u64 = int.cast(len) {"mode":"wrap"}
+  loan:bool = compare.le(n,available)
   header:u64 = const() {"value":40}
   upper:u64 = const() {"value":1048576}
   low:bool = compare.le(header,n)
   high:bool = compare.le(n,upper)
-  fits:bool = bool.and(low,high)
+  valid_extent:bool = bool.and(low,high)
+  fits:bool = bool.and(valid_extent,loan)
   branch fits identify(r,w,n,capture) frame()
 block identify(ir:readbuf,iw:mutbuf,in:u64,ic:bool)
   z:u64 = const() {"value":0}

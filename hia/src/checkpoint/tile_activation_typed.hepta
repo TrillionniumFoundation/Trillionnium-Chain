@@ -1,36 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_typed
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
-  wn:usize = buffer.len(w)
-  enough:usize = const() {"value":315000}
-  room:bool = compare.le(enough,wn)
-  branch room preflight(r,o,w) short()
-block preflight(pr:readbuf,po:mutbuf,pw:mutbuf)
-  yes:bool = const() {"value":true}
-  status:u32 = call(pr,pw,yes) {"function":"tar_preflight"}
+  size:usize = buffer.len(r)
+  n:u64 = int.cast(size) {"mode":"wrap"}
+  status:u32,end:u64 = call(r,w,n) {"function":"tat_parse_private"}
   zero:u32 = const() {"value":0}
-  passed:bool = compare.eq(status,zero)
-  branch passed counts(pr,po,pw) failure(status)
-block counts(cr:readbuf,co:mutbuf,cw:mutbuf)
-  root_at:u64 = const() {"value":10432}
-  root:u64 = call(cw,root_at) {"function":"tr_get"}
-  rcount:u64 = const() {"value":13}
-  root_ok:bool = compare.eq(root,rcount)
-  branch root_ok prepare(cr,co,cw) fields()
-block prepare(ar:readbuf,ao:mutbuf,aw:mutbuf)
-  init:u64 = call(aw) {"function":"tat_keys"}
-  z:u64 = const() {"value":0}
-  bytes:usize = buffer.len(ar)
-  n:u64 = int.cast(bytes) {"mode":"wrap"}
-  start:u64 = const() {"value":12000}
-  end:u64 = call(ar,aw,n,z,start) {"function":"tat_encode"}
-  cap_tag:u64 = const() {"value":18446744073709551614}
-  field_tag:u64 = const() {"value":18446744073709551615}
-  cap:bool = compare.eq(end,cap_tag)
-  ill:bool = compare.eq(end,field_tag)
-  branch cap outside() check(ao,aw,end,ill)
-block check(bo:mutbuf,bw:mutbuf,be:u64,bad:bool)
-  branch bad fields() capacity(bo,bw,be)
+  okay:bool = compare.eq(status,zero)
+  branch okay capacity(o,w,end) failure(status)
 block capacity(ko:mutbuf,kw:mutbuf,ke:u64)
   begin:u64 = const() {"value":12000}
   len:u64 = int.sub.wrap(ke,begin)
@@ -43,17 +19,58 @@ block publish(oo:mutbuf,ow:mutbuf,ob:u64,ol:u64)
   copied:u64 = call(ow,ob,oo,zero_out,ol) {"function":"cs_wcopy"}
   done:u32 = const() {"value":0}
   ret(done)
-block fields()
-  no_fields:u32 = const() {"value":3}
-  ret(no_fields)
-block outside()
-  out_scope:u32 = const() {"value":103}
-  ret(out_scope)
 block short()
   no_room:u32 = const() {"value":102}
   ret(no_room)
 block failure(code:u32)
   ret(code)
+end
+
+fn tat_parse_private(r:readbuf,w:mutbuf,n:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64)
+  wn:usize = buffer.len(w)
+  enough:usize = const() {"value":315000}
+  room:bool = compare.le(enough,wn)
+  branch room preflight(r,w,n) short()
+block preflight(pr:readbuf,pw:mutbuf,pn:u64)
+  yes:bool = const() {"value":true}
+  status:u32 = call(pr,pw,pn,yes) {"function":"tar_preflight"}
+  zero:u32 = const() {"value":0}
+  passed:bool = compare.eq(status,zero)
+  branch passed counts(pr,pw,pn) failure(status)
+block counts(cr:readbuf,cw:mutbuf,cn:u64)
+  root_at:u64 = const() {"value":10432}
+  root:u64 = call(cw,root_at) {"function":"tr_get"}
+  rcount:u64 = const() {"value":13}
+  root_ok:bool = compare.eq(root,rcount)
+  branch root_ok prepare(cr,cw,cn) fields()
+block prepare(ar:readbuf,aw:mutbuf,an:u64)
+  init:u64 = call(aw) {"function":"tat_keys"}
+  z:u64 = const() {"value":0}
+  start:u64 = const() {"value":12000}
+  end:u64 = call(ar,aw,an,z,start) {"function":"tat_encode"}
+  cap_tag:u64 = const() {"value":18446744073709551614}
+  field_tag:u64 = const() {"value":18446744073709551615}
+  cap:bool = compare.eq(end,cap_tag)
+  ill:bool = compare.eq(end,field_tag)
+  branch cap outside() check(end,ill)
+block check(be:u64,bad:bool)
+  branch bad fields() complete(be)
+block complete(e:u64)
+  success:u32 = const() {"value":0}
+  ret(success,e)
+block fields()
+  no_fields:u32 = const() {"value":3}
+  jump failure(no_fields)
+block outside()
+  out_scope:u32 = const() {"value":103}
+  jump failure(out_scope)
+block short()
+  no_room:u32 = const() {"value":102}
+  jump failure(no_room)
+block failure(code:u32)
+  empty:u64 = const() {"value":0}
+  ret(code,empty)
 end
 
 fn tat_encode(r:readbuf,w:mutbuf,n:u64,i:u64,d:u64) -> (u64) effects(read,write,trap) entry(entry)
