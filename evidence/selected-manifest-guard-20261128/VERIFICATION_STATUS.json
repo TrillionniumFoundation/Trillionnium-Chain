@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-selected-manifest-guard-verification-v1",
+  "source_reviewed": true,
+  "rustfmt_exit_code": 0,
+  "added_real_sqlite_repository_tests": 2,
+  "real_sqlite_tests_status": "pending exact-source complete-crate CI",
+  "local_native_typecheck_performed": false,
+  "local_repository_sqlite_tests_executed": false,
+  "mock_owner_substituted": false,
+  "prior_loader_or_arithmetic_controls_rerun": false,
+  "full_crate_verified": false,
+  "permission_granted": false,
+  "native_adoption_completed": false,
+  "final_use_completed": false,
+  "production_activation": false
+}

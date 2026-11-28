@@ -378,6 +378,26 @@ impl CellAdoptionOwnerV1 {
         current_execution: &CellExecutionBoundaryV1,
         consume: impl FnOnce() -> CellResultV1<T>,
     ) -> CellResultV1<T> {
+        self.with_selected_manifest_guard(expected, commitment, current_execution, |_| consume())
+    }
+
+    /// Borrow the complete manifest actually read from this owner's selected
+    /// catalog entry while its existing SQLite writer reservation is held.
+    /// The expected snapshot and commitment remain comparison identities; no
+    /// caller-supplied manifest replaces the selected database bytes.
+    ///
+    /// This preserves the existing execution-boundary, lease and CAS checks.
+    /// The borrow cannot escape the callback, but copied metadata is only an
+    /// observation and may immediately become stale. It grants no execution,
+    /// withdrawal, resource, FinalUse or settlement permission. The consumer
+    /// must continue to hold its original guards around any external effect.
+    pub fn with_selected_manifest_guard<T>(
+        &mut self,
+        expected: &CellAdoptionSnapshotV1,
+        commitment: CellVersionCommitmentV1,
+        current_execution: &CellExecutionBoundaryV1,
+        consume: impl FnOnce(&CellVersionManifestV1) -> CellResultV1<T>,
+    ) -> CellResultV1<T> {
         self.policy.boundary.verify_execution(current_execution)?;
         self.lease.check()?;
         let transaction =
@@ -394,7 +414,7 @@ impl CellAdoptionOwnerV1 {
             .ok_or(CellErrorV1::Invalid("adoption selected metadata missing"))?;
         self.policy.boundary.verify_version(&selected.version)?;
         self.lease.check()?;
-        let value = consume()?;
+        let value = consume(&selected.version)?;
         self.lease.check()?;
         transaction.commit()?;
         Ok(value)
