@@ -1,4 +1,5 @@
 """Actual fixed native descriptor transport compared from the same held bytes."""
+import hashlib
 from pathlib import Path
 import struct
 import tempfile
@@ -6,6 +7,7 @@ import unittest
 
 from hia.platform.cell_cache_windowed_native.build import CARRIER, STOCK, build
 from hia.tests.cache_payload_held_original import original
+from hia.tests.test_cell_manifest import wire
 from hia.tests.test_da_cell_cache_payload_held_read import (
     ABSENT, LENGTH, MAX, canonical, copied, data, request,
 )
@@ -77,3 +79,54 @@ class DaCellCachePayloadWindowedNativeFd(unittest.TestCase):
                     self.assertEqual((result.returncode,result.stdout,at),(74,b"",len(fixture)))
                     self.assertEqual(held,fixture)
             self.assertEqual(check_nonpipe_sink(img,tiny)["status"],75)
+
+    def test_synthetic_65_row_geometry_at_last_full_row_tail_and_eof(self):
+        # Only the aggregate geometry comes from the published declarations.
+        # All declared row digests and all bytes exercised here are synthetic.
+        tail_start = 64 * CHUNK
+        end = tail_start + 625_096
+        self.assertEqual(end, 269_060_552)
+        names = b"synthetic_geometry"
+        full = data(CHUNK)
+        tail = bytes(b ^ 0x5a for b in data(end - tail_start))
+        entries = [
+            hashlib.sha256(b"unmaterialized synthetic row " + bytes([i])).digest()
+            for i in range(63)
+        ] + [hashlib.sha256(full).digest(), hashlib.sha256(tail).digest()]
+        self.assertEqual(len(set(entries)), 65)
+        manifest = bytearray(wire(names, end, CHUNK))
+        first = 213 + len(names)
+        for i, digest in enumerate(entries):
+            at = first + i * 36 + 4
+            manifest[at:at+32] = digest
+        manifest = bytes(manifest)
+        self.assertEqual(len(manifest), first + 65 * 36)
+
+        cases = (
+            (tail_start-1, WINDOW, full, full[-1:]),
+            (tail_start, WINDOW, tail, tail[:WINDOW]),
+            (tail_start+WINDOW-1, WINDOW, tail, tail[WINDOW-1:2*WINDOW-1]),
+            (end-1, WINDOW, tail, tail[-1:]),
+            (end, WINDOW, b"", b""),
+        )
+        with tempfile.TemporaryDirectory(prefix="trnm-synthetic-tail-cache-window-") as tmp:
+            root = Path(tmp)
+            image, proof = build(root/"native")
+            self.assertEqual((proof["elf"]["sha256"], proof["carrier_sha256"]), (IMAGE, CARRIER))
+            self.assertEqual(proof["kernel"]["artifact_sha256"], STOCK[0])
+            frames, expected = bytearray(), bytearray()
+            for pos, want, body, value in cases:
+                with self.subTest(position=pos):
+                    frame = request(manifest, body, pos, want)
+                    result, held, cursor = observed(image, frame)
+                    exact = copied(pos, value)
+                    self.assertEqual((result.returncode, result.stdout, cursor), (0, exact, len(frame)))
+                    self.assertEqual(held, frame)
+                    frames.extend(struct.pack("<I", len(held)))
+                    frames.extend(held)
+                    expected.extend(b"\0" + exact)
+            locked = root/"locked_original"
+            locked.mkdir()
+            oracle, pin = original(locked, bytes(frames))
+            self.assertEqual(oracle, expected)
+            self.assertEqual(len(pin), 64)
