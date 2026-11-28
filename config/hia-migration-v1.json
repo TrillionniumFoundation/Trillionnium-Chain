@@ -1595,6 +1595,17 @@
       ]
     },
     {
+      "id": "node/history-inline-record",
+      "node_integration_complete": false,
+      "scope": "Private original fixed-column SQLite storage-class and width projection of immutable already-held synthetic values. No Node database, history traversal, custody or authority.",
+      "source": "hia/src/node/history_inline_record.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_history_inline_record.py",
+        "hia/tests/rust_history_inline_record_reference.rs"
+      ]
+    },
+    {
       "id": "node/resource-profile-value",
       "node_integration_complete": false,
       "scope": "Exact immutable typed local resource profile validation and Serde JSON ID from public original ResourceProfileV1; not admission, owner issuance, or resource accounting",

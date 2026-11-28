@@ -141,6 +141,8 @@ def sources():
     paths += [cell_owner / name for name in (
         "cell_native_v1.rs", "cell_native_v1/execution.rs",
         "cell_native_v1/source.rs", "cell_native_v1/work.rs")]
+    # Bind the exact full private inline history-row method and its Record.
+    paths += [cell_owner / "store/history_page.rs", cell_owner / "store.rs"]
     # Local resource metadata oracle compiles the exact original public methods.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
               ROOT / "hia/src/node/RESOURCE_PROFILE.md"]

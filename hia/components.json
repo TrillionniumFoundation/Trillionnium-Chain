@@ -1,5 +1,20 @@
 {
   "includes": {
+    "src/node/history_inline_record.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_put"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_copy"
+        ]
+      }
+    ],
     "src/consensus/asert_target.hepta": [
       {
         "source": "src/consensus/work.hepta",
