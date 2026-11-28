@@ -4636,6 +4636,18 @@
       ]
     },
     {
+      "id": "data-availability/cache-windowed-native-sealed-fixture",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Linux x86-64 private HIA-emitted static fixture verifies one supplied synthetic row via 64 KiB windows on a fresh immutable sealed stdin and anonymous pipe. Exact stock continuation, EOF and close before output; no production OS owner, live cache, general descriptors or authority.",
+      "sources": [
+        "hia/platform/cell_cache_windowed_native/emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_da_cell_cache_payload_windowed_native_fd.py"
+      ]
+    },
+    {
       "id": "data-availability/cache-held-sealed-descriptor",
       "node_integration_complete": false,
       "retirement_accepted": false,

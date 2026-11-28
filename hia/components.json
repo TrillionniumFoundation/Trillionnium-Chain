@@ -27492,6 +27492,14 @@
         "source": "platform/worker_journal_audit_stdin/emitter.hepta"
       }
     ],
+    "platform/cell_cache_windowed_native/emitter.hepta": [
+      {
+        "source": "platform/worker_journal_audit_stdin/emitter.hepta",
+        "functions": [
+          "put_le64"
+        ]
+      }
+    ],
     "platform/cell_cache_held_sealed/emitter.hepta": [
       {
         "functions": [
