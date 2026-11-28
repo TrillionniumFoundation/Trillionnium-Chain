@@ -42,6 +42,9 @@ pub mod pft_native_loader_v1;
 pub mod pft_readout_f64_v1;
 /// Selected catalog metadata inspection only; no executable handle or authority.
 pub mod pft_selected_inspection_v1;
+
+/// Pinned research prediction under the original SQLite selected-owner fence.
+pub mod pft_selected_readout_v1;
 pub mod pq_application_v6;
 pub mod pq_rollback_witness;
 pub mod public_submit;

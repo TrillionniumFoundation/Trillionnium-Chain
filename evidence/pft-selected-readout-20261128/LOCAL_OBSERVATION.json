@@ -1,0 +1,84 @@
+{
+  "clippy": {
+    "exit_code": 0,
+    "source_files_unchanged": 6546,
+    "targets": [
+      "lib",
+      "tests"
+    ],
+    "total_elapsed_seconds": 136.248777649,
+    "warnings_denied": true
+  },
+  "current_source": {
+    "declared_paths": 2642,
+    "exit_code": 0,
+    "frozen_original_paths": 2613,
+    "reviewed_additions": 29,
+    "reviewed_replacements": 53,
+    "source_files_unchanged": 6546,
+    "source_revision_bound": false,
+    "status": "HOLD",
+    "total_elapsed_seconds": 2.205402735
+  },
+  "format_all_exit_code": 0,
+  "independent_source_review": {
+    "finding": "The original cancellation test refused before the first product rather than during arithmetic.",
+    "new_code_blockers_reported": 0,
+    "resolution": "Refuse at check 6 after a completed output and check 10 after all arithmetic; also test raw candidate byte substitution.",
+    "reviewer": "research_training"
+  },
+  "limitations": [
+    "The exact source observations precede this evidence envelope and final documentation pin refresh; they do not attest a later commit.",
+    "The tests use public synthetic PFT data with actual SQLite selection, original loader and real arithmetic.",
+    "Caller checks are cooperative; host permission, metering, revocation, external effects and FinalUse remain the original owners.",
+    "No speedup over BP, model-quality improvement, learned routing, WAN retrieval or foundation-model equivalence is measured."
+  ],
+  "metadata": {
+    "existing_fixed_named_controls": 131,
+    "old_frozen_inputs_changed": false,
+    "passed": 131,
+    "total_elapsed_seconds": 415.096259468
+  },
+  "native_baseline": {
+    "passed": 4,
+    "source_files_unchanged": 5244,
+    "test_body_seconds": 0.02,
+    "tests": 4,
+    "total_elapsed_seconds": 686.210791735
+  },
+  "native_changed_source": {
+    "cold": false,
+    "max_rss_kib": 3751744,
+    "new_controls": 4,
+    "passed": 34,
+    "source_files_unchanged": 5272,
+    "test_body_seconds": 0.12,
+    "tests": 34,
+    "total_elapsed_seconds": 502.531419561
+  },
+  "native_inventory": {
+    "after": 1766,
+    "before": 1753,
+    "check_exit_code": 0
+  },
+  "offline_locked_cargo_graph_exit_code": 0,
+  "parent_commit": "7e83e547e5acc3f56ff0daf4c4e5f97d0a8a07e1",
+  "prior_source_failure": {
+    "commit": "7e83e547e5acc3f56ff0daf4c4e5f97d0a8a07e1",
+    "job": 140877169345,
+    "retained": true,
+    "workflow_run": 46111934261
+  },
+  "profile": "trnm.pft.selected-research-readout.v1",
+  "qualification": {
+    "actual_lifetime_failure_bound": null,
+    "independent_cross_user_learning_verified": false,
+    "original_180_240_second_failures_superseded": false,
+    "original_four_second_service_target_met": false,
+    "original_hepta_final_use_integrated": false,
+    "production_activation": false,
+    "useful_learning_verified": false,
+    "whole_chain_pq_qualified": false
+  },
+  "schema": "chain-selected-pft-engineering-observation-v1"
+}
