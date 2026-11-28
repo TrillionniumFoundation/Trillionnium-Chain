@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_policy_value",
+      "node_integration_complete": false,
+      "scope": "Private canonical immutable context-free checkpoint tile maintenance policy and exact original value ID; no material, proof, training, install, authority, W1 or production.",
+      "source": "hia/src/checkpoint/tile_policy_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_policy_value.py",
+        "hia/tests/rust_checkpoint_tile_policy_value_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/value_v2",
       "node_integration_complete": false,
       "scope": "complete V2 checkpoint canonical value, SHA-256 binding, watermark and successor checks; no store/CAS authority",
