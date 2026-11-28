@@ -1616,6 +1616,16 @@
       ]
     },
     {
+      "id": "node/resource-snapshot-projection",
+      "node_integration_complete": false,
+      "scope": "Inert typed State::snapshot three-lane resource-accounting projection; no replay, timing, identity, owner, or admission decision",
+      "source": "hia/src/node/resource_snapshot_fold.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_resource_snapshot_fold.py"
+      ]
+    },
+    {
       "id": "consensus/work-schedule-profile",
       "node_integration_complete": false,
       "scope": "Immutable research metadata validation and exact PoN ID of original Profile::new(ProfileInputs), including fixed and anchored policies; no node settings, history, proof or admission",
@@ -4343,6 +4353,7 @@
         "node/resource-profile-value",
         "node/resource-request-value",
         "node/resource-vector-value",
+        "node/resource-snapshot-projection",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",

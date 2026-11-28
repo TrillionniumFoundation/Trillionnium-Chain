@@ -19913,6 +19913,16 @@
         ]
       }
     ],
+    "src/node/resource_snapshot_fold.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_load64",
+          "cw_store64"
+        ]
+      }
+    ],
     "src/protocol/pnx1.hepta": [
       {
         "functions": [
