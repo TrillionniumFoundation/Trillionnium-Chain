@@ -1159,7 +1159,9 @@
         "hia/tests/test_cell_held_train_held_link.py",
         "hia/tests/rust_cell_held_train_held_link.rs",
         "hia/tests/test_cell_trained_ctrx_model_held_forward.py",
-        "hia/tests/rust_cell_model_forward_canonical_reference.rs"
+        "hia/tests/rust_cell_model_forward_canonical_reference.rs",
+        "hia/tests/test_cell_source_products_held_fixture.py",
+        "hia/tests/rust_cell_source_products_held_fixture.rs"
       ]
     },
     {
