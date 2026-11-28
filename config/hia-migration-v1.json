@@ -3318,6 +3318,18 @@
       ]
     },
     {
+      "id": "model/cell-training-coordinate",
+      "node_integration_complete": false,
+      "scope": "Private exact masked one-coordinate Cell training arithmetic with active step, clipping, momentum and trained weight; frozen train differential, no gradient production, model loading, admission or training loop.",
+      "source": "hia/src/model/cell_training_coordinate.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_training_coordinate.py",
+        "hia/tests/cell_training_coordinate_original.py",
+        "hia/tests/rust_cell_training_coordinate_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-state-optimizer-value",
       "node_integration_complete": false,
       "scope": "Private original canonical CellState with fixed 3x257 momentum optimizer matrices and signed integers; no state validation, installation or training.",

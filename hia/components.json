@@ -23428,6 +23428,15 @@
         ]
       }
     ],
+    "src/model/cell_training_coordinate.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_read",
+          "cp_put"
+        ]
+      }
+    ],
     "src/model/cell_state_optimizer.hepta": [
       {
         "functions": [

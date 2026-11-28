@@ -1,0 +1,212 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_training_coordinate_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  n:usize = buffer.len(i)
+  exact:usize = const() {"value":80}
+  shape:bool = compare.eq(n,exact)
+  branch shape bounds(i,o) domain()
+block bounds(bi:readbuf,bo:mutbuf)
+  v:u64 = call(bi) {"function":"opt_bound"}
+  one:u64 = const() {"value":1}
+  okay:bool = compare.eq(v,one)
+  branch okay step(bi,bo,one) domain()
+block step(si:readbuf,so:mutbuf,sone:u64)
+  byte8:u64 = const() {"value":8}
+  old_step:u64 = call(si,byte8) {"function":"cp_read"}
+  max:u64 = const() {"value":18446744073709551615}
+  room:bool = compare.lt(old_step,max)
+  next_step:u64 = int.add.wrap(old_step,sone)
+  branch room mask(si,so,next_step) step_overflow()
+block mask(mi:readbuf,mo:mutbuf,ms:u64)
+  mask_at:u64 = const() {"value":0}
+  weight_at:u64 = const() {"value":16}
+  moment_at:u64 = const() {"value":24}
+  mask_:u64 = call(mi,mask_at) {"function":"cp_read"}
+  weight:u64 = call(mi,weight_at) {"function":"cp_read"}
+  moment:u64 = call(mi,moment_at) {"function":"cp_read"}
+  frozen:bool = compare.eq(mask_,mask_at)
+  branch frozen output(mo,ms,weight,moment,mask_at,mask_at,mask_at) clip(mi,mo,ms,weight,moment)
+block clip(ci:readbuf,co:mutbuf,cs:u64,cw:u64,cm:u64)
+  raw_at:u64 = const() {"value":32}
+  clip_at:u64 = const() {"value":72}
+  raw:u64 = call(ci,raw_at) {"function":"cp_read"}
+  mx:u64 = call(ci,clip_at) {"function":"cp_read"}
+  r_abs:u64,r_sign:bool = call(raw) {"function":"opt_abs"}
+  trunc:bool = compare.lt(mx,r_abs)
+  g_abs:u64 = select(trunc,mx,r_abs)
+  clipped:u64 = call(g_abs,r_sign) {"function":"opt_signed"}
+  old_abs:u64,old_sign:bool = call(cm) {"function":"opt_abs"}
+  mnum_at:u64 = const() {"value":56}
+  mden_at:u64 = const() {"value":64}
+  mnum:u64 = call(ci,mnum_at) {"function":"cp_read"}
+  mden:u64 = call(ci,mden_at) {"function":"cp_read"}
+  quot:u64 = int.div.checked(old_abs,mden)
+  rem:u64 = int.rem.checked(old_abs,mden)
+  whole:u64 = int.mul.wrap(quot,mnum)
+  before_div:u64 = int.mul.wrap(rem,mnum)
+  part:u64 = int.div.checked(before_div,mden)
+  scaled:u64 = int.add.wrap(whole,part)
+  next_abs:u64,next_sign:bool = call(scaled,old_sign,g_abs,r_sign) {"function":"opt_add"}
+  max_next:u64 = const() {"value":9223372036854775807}
+  next_fit:bool = compare.le(next_abs,max_next)
+  branch next_fit learn(ci,co,cs,cw,raw,clipped,next_abs,next_sign) moment_overflow()
+block learn(li:readbuf,lo:mutbuf,ls:u64,lw:u64,lr:u64,lc:u64,la:u64,ln:bool)
+  lr_at:u64 = const() {"value":40}
+  num:u64 = call(li,lr_at) {"function":"cp_read"}
+  zero:u64 = const() {"value":0}
+  no_update:bool = compare.eq(num,zero)
+  moment_next:u64 = call(la,ln) {"function":"opt_signed"}
+  branch no_update output(lo,ls,lw,moment_next,lr,lc,zero) check_weight(li,lo,ls,lw,lr,lc,la,ln,num,moment_next)
+block check_weight(ki:readbuf,ko:mutbuf,ks:u64,kw:u64,kr:u64,kc:u64,ka:u64,kn:bool,knum:u64,km:u64)
+  bound:u64 = const() {"value":32767}
+  one2:u64 = const() {"value":1}
+  den_pos:u64 = const() {"value":48}
+  den:u64 = call(ki,den_pos) {"function":"cp_read"}
+  head_negative:u64 = int.sub.wrap(bound,kw)
+  head_positive:u64 = int.add.wrap(bound,kw)
+  head:u64 = select(kn,head_negative,head_positive)
+  after_one:u64 = int.add.wrap(head,one2)
+  ceil_product:u64 = int.mul.wrap(after_one,den)
+  below:u64 = int.sub.wrap(ceil_product,one2)
+  largest:u64 = int.div.checked(below,knum)
+  admissible:bool = compare.le(ka,largest)
+  branch admissible exact_delta(ko,ks,kw,kr,kc,ka,kn,knum,km,den) weight_range()
+block exact_delta(eo:mutbuf,es:u64,ew:u64,er:u64,ec:u64,ea:u64,en:bool,enu:u64,em:u64,ed:u64)
+  prod:u64 = int.mul.wrap(ea,enu)
+  ch:u64 = int.div.checked(prod,ed)
+  delta:u64 = call(ch,en) {"function":"opt_signed"}
+  new_weight:u64 = int.sub.wrap(ew,delta)
+  jump output(eo,es,new_weight,em,er,ec,delta)
+block output(oo:mutbuf,os:u64,ow:u64,om:u64,or_:u64,oc:u64,od:u64)
+  avail:usize = buffer.len(oo)
+  need:usize = const() {"value":48}
+  fits:bool = compare.le(need,avail)
+  branch fits write(oo,os,ow,om,or_,oc,od) capacity()
+block write(xo:mutbuf,xs:u64,xw:u64,xm:u64,xr:u64,xc:u64,xd:u64)
+  b0:u64 = const() {"value":0}
+  b1:u64 = const() {"value":8}
+  b2:u64 = const() {"value":16}
+  b3:u64 = const() {"value":24}
+  b4:u64 = const() {"value":32}
+  b5:u64 = const() {"value":40}
+  r0:u64 = call(xo,b0,xs) {"function":"cp_put"}
+  r1:u64 = call(xo,b1,xw) {"function":"cp_put"}
+  r2:u64 = call(xo,b2,xm) {"function":"cp_put"}
+  r3:u64 = call(xo,b3,xr) {"function":"cp_put"}
+  r4:u64 = call(xo,b4,xc) {"function":"cp_put"}
+  r5:u64 = call(xo,b5,xd) {"function":"cp_put"}
+  okay_:u32 = const() {"value":0}
+  ret(okay_)
+block domain()
+  malformed:u32 = const() {"value":100}
+  ret(malformed)
+block capacity()
+  too_short:u32 = const() {"value":102}
+  ret(too_short)
+block step_overflow()
+  step_err:u32 = const() {"value":201}
+  ret(step_err)
+block moment_overflow()
+  moment_err:u32 = const() {"value":202}
+  ret(moment_err)
+block weight_range()
+  weight_err:u32 = const() {"value":203}
+  ret(weight_err)
+end
+
+fn opt_abs(v:u64) -> (u64,bool) effects(read,write,trap) entry(entry)
+block entry(v:u64)
+  zero:u64 = const() {"value":0}
+  max:u64 = const() {"value":9223372036854775807}
+  sign:bool = compare.gt(v,max)
+  opposite:u64 = int.sub.wrap(zero,v)
+  result:u64 = select(sign,opposite,v)
+  ret(result,sign)
+end
+
+fn opt_signed(v:u64,neg:bool) -> (u64) effects(read,write,trap) entry(entry)
+block entry(v:u64,neg:bool)
+  z:u64 = const() {"value":0}
+  inverse:u64 = int.sub.wrap(z,v)
+  value:u64 = select(neg,inverse,v)
+  ret(value)
+end
+
+fn opt_add(x:u64,xn:bool,y:u64,yn:bool) -> (u64,bool) effects(read,write,trap) entry(entry)
+block entry(x:u64,xn:bool,y:u64,yn:bool)
+  same:bool = compare.eq(xn,yn)
+  branch same add(x,xn,y) subtract(x,xn,y,yn)
+block add(ax:u64,an:bool,ay:u64)
+  sum:u64 = int.add.wrap(ax,ay)
+  ret(sum,an)
+block subtract(bx:u64,bxn:bool,by:u64,byn:bool)
+  large_x:bool = compare.ge(bx,by)
+  high:u64 = select(large_x,bx,by)
+  low:u64 = select(large_x,by,bx)
+  sign:bool = select(large_x,bxn,byn)
+  diff:u64 = int.sub.wrap(high,low)
+  ret(diff,sign)
+end
+
+fn opt_bound(i:readbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf)
+  zero:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  wa:u64 = const() {"value":16}
+  ma:u64 = const() {"value":24}
+  ga:u64 = const() {"value":32}
+  wmax:u64 = const() {"value":32767}
+  mmax:u64 = const() {"value":9223372036854775807}
+  gmax:u64 = const() {"value":137988390912}
+  mask:u64 = call(i,zero) {"function":"cp_read"}
+  weight:u64 = call(i,wa) {"function":"cp_read"}
+  moment:u64 = call(i,ma) {"function":"cp_read"}
+  gradient:u64 = call(i,ga) {"function":"cp_read"}
+  w:u64,ws:bool = call(weight) {"function":"opt_abs"}
+  m:u64,ms:bool = call(moment) {"function":"opt_abs"}
+  g:u64,gs:bool = call(gradient) {"function":"opt_abs"}
+  wm:bool = compare.le(w,wmax)
+  mm:bool = compare.le(m,mmax)
+  gm:bool = compare.le(g,gmax)
+  mask_fit:bool = compare.le(mask,one)
+  low:u64 = bit.and(g,one)
+  even:bool = compare.eq(low,zero)
+  coords:bool = bool.and(wm,mm)
+  typed:bool = bool.and(gm,even)
+  merged:bool = bool.and(coords,typed)
+  all_:bool = bool.and(mask_fit,merged)
+  branch all_ policy(i,zero,one) bad()
+block policy(pi:readbuf,pz:u64,po:u64)
+  n_at:u64 = const() {"value":40}
+  d_at:u64 = const() {"value":48}
+  mn_at:u64 = const() {"value":56}
+  md_at:u64 = const() {"value":64}
+  c_at:u64 = const() {"value":72}
+  n:u64 = call(pi,n_at) {"function":"cp_read"}
+  d:u64 = call(pi,d_at) {"function":"cp_read"}
+  mn:u64 = call(pi,mn_at) {"function":"cp_read"}
+  md:u64 = call(pi,md_at) {"function":"cp_read"}
+  c:u64 = call(pi,c_at) {"function":"cp_read"}
+  n_max:u64 = const() {"value":1048576}
+  d_max:u64 = const() {"value":4294967296}
+  md_max:u64 = const() {"value":65536}
+  c_max:u64 = const() {"value":1099511627776}
+  n_fit:bool = compare.le(n,n_max)
+  d_lo:bool = compare.le(po,d)
+  d_hi:bool = compare.le(d,d_max)
+  md_fit:bool = compare.le(md,md_max)
+  decay:bool = compare.lt(mn,md)
+  c_lo:bool = compare.le(po,c)
+  c_hi:bool = compare.le(c,c_max)
+  d_fit:bool = bool.and(d_lo,d_hi)
+  lr:bool = bool.and(n_fit,d_fit)
+  mom:bool = bool.and(md_fit,decay)
+  clip:bool = bool.and(c_lo,c_hi)
+  both:bool = bool.and(lr,mom)
+  valid:bool = bool.and(both,clip)
+  result:u64 = select(valid,po,pz)
+  ret(result)
+block bad()
+  z2:u64 = const() {"value":0}
+  ret(z2)
+end
