@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_activation_value",
+      "node_integration_complete": false,
+      "scope": "Private ordered post-JSON checkpoint activation shape/token/hidden-hex decoding against genuine frozen original under inert test pins; no runtime, provenance, material or authority.",
+      "source": "hia/src/checkpoint/tile_activation_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_activation_value.py",
+        "hia/tests/rust_checkpoint_tile_activation_value_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_assemble",
       "node_integration_complete": false,
       "scope": "Private exact original assembled BF16/F32LE numerical tile, full nonfinite scan, clipped counts and both canonical field-residue matrices; no material, checkpoint IO, task/W1 or authority.",

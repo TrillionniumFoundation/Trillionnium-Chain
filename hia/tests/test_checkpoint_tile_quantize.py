@@ -100,7 +100,7 @@ class CheckpointTileQuantizeTests(unittest.TestCase):
         rng=random.Random(0x51554e54)
         f32 += [rng.getrandbits(32) for _ in range(1024)]
         # Exact half-step ties and one representable float on either side.
-        for k in [0,1,2,3,126,127,128,129]:
+        for k in range(130):
             for s in (1,-1):
                 b=struct.unpack("<I",struct.pack("<f",s*(k+0.5)/16))[0]
                 f32.extend((b-1,b,b+1))
