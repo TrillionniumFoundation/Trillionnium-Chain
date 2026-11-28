@@ -26,6 +26,7 @@ pub enum PftErrorV1 {
     SumOverflow,
     SumUnderflow,
     Capacity,
+    ResourceBoundary,
 }
 
 /// Comparison labels only. Callers controlling expected and actual can forge both.
@@ -202,6 +203,20 @@ impl PreparedPftReadoutV1 {
 
     /// Pure bounded readout. This does not select a model, authorize use or act.
     pub fn predict(&self, input: &PreparedPftInputV1) -> Result<PftPredictionV1> {
+        self.predict_checked(input, || true)
+    }
+
+    /// Same arithmetic with caller-owned live checks before, during and after it.
+    /// A false check discards all output. This callback is neither an authority
+    /// credential nor preemption, metering or a hard CPU/memory budget.
+    pub fn predict_checked(
+        &self,
+        input: &PreparedPftInputV1,
+        mut check_current: impl FnMut() -> bool,
+    ) -> Result<PftPredictionV1> {
+        if !check_current() {
+            return Err(PftErrorV1::ResourceBoundary);
+        }
         if input.model != self.descriptor || !Arc::ptr_eq(&input.weights, &self.weights) {
             return Err(PftErrorV1::InputConsistency);
         }
@@ -210,10 +225,16 @@ impl PreparedPftReadoutV1 {
         let rows = input.descriptor.rows as usize;
         let mut values = Vec::with_capacity(rows * m);
         for row in 0..rows {
+            if !check_current() {
+                return Err(PftErrorV1::ResourceBoundary);
+            }
             for col in 0..m {
                 let mut positive = [0; LIMBS];
                 let mut negative = [0; LIMBS];
                 for k in 0..d {
+                    if k % 256 == 0 && !check_current() {
+                        return Err(PftErrorV1::ResourceBoundary);
+                    }
                     let a = input.features[row * d + k];
                     let b = self.weights[k * m + col];
                     // No floating add exists to contract with this multiplication.
@@ -235,6 +256,9 @@ impl PreparedPftReadoutV1 {
                 }
                 values.push(rounded_difference(positive, negative)?);
             }
+        }
+        if !check_current() {
+            return Err(PftErrorV1::ResourceBoundary);
         }
         Ok(PftPredictionV1 {
             rows: input.descriptor.rows,

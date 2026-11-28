@@ -53,6 +53,14 @@ impl LoadedPftReadoutV1 {
     pub fn predict(&self) -> std::result::Result<core::PftPredictionV1, core::PftErrorV1> {
         self.model.predict(&self.input)
     }
+
+    /// Keeps the caller's live resource/withdrawal checks inside numeric work.
+    pub fn predict_checked(
+        &self,
+        check_current: impl FnMut() -> bool,
+    ) -> std::result::Result<core::PftPredictionV1, core::PftErrorV1> {
+        self.model.predict_checked(&self.input, check_current)
+    }
 }
 
 /// Parses immutable borrowed bytes, then retains owned typed weights/features.

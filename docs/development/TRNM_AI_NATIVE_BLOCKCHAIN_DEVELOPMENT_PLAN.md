@@ -1,3 +1,53 @@
+# 2026-11-28 — Selected PFT research computation and current source repair
+
+This isolated candidate starts from #1028 at
+`7e83e547e5acc3f56ff0daf4c4e5f97d0a8a07e1`. A local exact Rust 1.95
+original-graph run executed all four existing SQLite selected-owner inspection
+controls: four passed, zero skipped, in 0.02 seconds of test execution. The
+unchanged Cargo test profile needed 686.210791735 seconds including its cold
+build; all 5,244 materialized tracked source files were unchanged. This new
+900-second engineering observation preserves the prior 180/240-second failures
+and does not qualify the original service or pressure deadlines.
+
+The fresh `trnm.pft.selected-research-readout.v1` profile connects the actual
+selected catalog to the existing pinned f64 loader and exact arithmetic. The
+original SQLite writer fence spans candidate/input validation and prediction;
+caller-owned live checks occur before parsing, throughout bounded arithmetic
+blocks and after the final output. A refusal returns no prediction. The result
+contains the observed selection revision, complete version, model and input
+identities, with no executable model handle or settlement authority. The old
+inspection-only profile keeps its previous meaning. Original host permission,
+resource enforcement and FinalUse remain the caller's owners.
+
+Four new real-owner controls cover exact bytes and cold reopening, candidate
+and input substitution, stale selection, concurrent adoption, and refusal after
+partial or complete arithmetic. Independent source review found and corrected
+an early test checkpoint that had not yet reached the first product. Actual
+new-source native execution passed all 34 PFT controls, including the four new
+controls, in 502.531419561 seconds including incremental compilation; the test
+body took 0.12 seconds. Strict native library/test Clippy passed in
+136.248777649 seconds. The 131 unchanged named metadata controls passed in
+415.096259468 seconds, and actual current-source correspondence passed in
+2.205402735 seconds. Whole-workspace formatting and the locked offline Cargo
+graph also passed. Source snapshots were unchanged throughout each command.
+
+The official #1028 current-source job 140877169345 already failed after its
+131 metadata controls passed: `src/lib.rs` drifted from the frozen source and
+the embedded native inventory omitted recently added modules. This candidate
+repairs the reviewed current overlay and generated inventory: 53 reviewed
+replacements and 29 additions declare 2,642 paths; the unchanged native
+inventory rule adds 13 paths, from 1,753 to 1,766. All 2,613 frozen blob
+identities, original checker bytes, HOLD/false/null qualification fields and
+historical failures remain. The 32 original raw observations, source snapshots
+and prior CI failure log are preserved under
+`evidence/pft-selected-readout-20261128/`; its readback reconstructs every exact
+raw byte sequence without launching work. These observations precede the final
+evidence/documentation pin refresh and do not attest a later commit. The
+cross-user consumer, original Hepta FinalUse, independent useful-learning
+evidence, four-second confirmation and whole-chain PQ bounds remain open.
+
+The complete preceding sole plan follows unchanged below.
+
 # 2026-11-25 — Borrowed Response signing bytes and current source bindings
 
 This isolated engineering candidate starts from the actual reviewed Chain

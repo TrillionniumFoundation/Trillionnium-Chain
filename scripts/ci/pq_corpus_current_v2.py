@@ -26,8 +26,8 @@ MAX_SOURCE_BYTES = 4 * 1024 * 1024
 MAX_MAP_BYTES = 64 * 1024
 MAX_REPORT_BYTES = 64 * 1024
 EXPECTED_FROZEN_PIN_COUNT = 2613
-EXPECTED_MAP_SHA256 = "6b474507caabe94a5f08543e273cdd43cb2052c90ec8db3aa932830061aaf53e"
-EXPECTED_CURRENT_BLOBS_SHA256 = "a17255da424849bb88945a3550065c60478a2b6a1c2187e190ad9b788b18830d"
+EXPECTED_MAP_SHA256 = "a9c24994d101245c9244da474a49afebb1ab4541ca640e78b75921fd6f6c7a2b"
+EXPECTED_CURRENT_BLOBS_SHA256 = "526183c5f25fc633573c4f45422456cea788d2e2d7a3f862fdc36e775efecc64"
 FROZEN_INPUTS_SHA256 = {
     "config/pon/pq-cross-branch-corpus-v1.json": "ceb3f8d7adb519e4d2cfa5644f7686d61bd3c4976245e069e0a9d7a04068f176",
     "scripts/ci/check_pq_research_integration.py": "912314a9c13ce8d882ec88ee52926de9aa02613b5f8225b3aa09f5b59885221f",
@@ -78,6 +78,7 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_tls_cli_witness.rs",
@@ -90,12 +91,32 @@ EXPECTED_REPLACEMENT_PATHS = frozenset((
 ))
 EXPECTED_ADDED_PATHS = frozenset((
     ".github/workflows/pon-throughput-evidence.yml",
+    "evidence/pft-candidate-readback-20261128/SYNTHETIC_CANDIDATE.json",
+    "evidence/pft-native-loader-20261128/SYNTHETIC_EXPECTED.json",
+    "evidence/pft-native-loader-20261128/SYNTHETIC_FEATURES.json",
+    "evidence/pft-selected-inspection-20261128/SYNTHETIC_BINDING_EXPECTED.json",
+    "evidence/pft-selected-owner-controls-20261128/SYNTHETIC_OWNER_FIXTURE.json",
+    "evidence/pft-selected-readout-20261128/SYNTHETIC_OWNER_FIXTURE.json",
+    "evidence/pft-selected-readout-20261128/build_fixture.py",
     "scripts/ci/cpq1_current_gate.py",
     "scripts/ci/test_cpq1_current_gate.py",
     "scripts/test_pon_history_kernel_cpu_observation.py",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/noise_frame.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/adoption/tests/selected_manifest.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/history_import/kernel_cpu_observation.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/response_signing_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_native_loader_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_native_loader_v1/adversarial_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_native_loader_v1/json.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_native_loader_v1/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_readout_f64_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_readout_f64_v1/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_selected_inspection_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_selected_inspection_v1/binding.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_selected_inspection_v1/binding_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_selected_inspection_v1/owner_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_selected_readout_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/pft_selected_readout_v1/tests.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/development_observation.rs",
     "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests/failure_observation.rs",
 ))
