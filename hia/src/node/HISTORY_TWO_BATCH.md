@@ -39,3 +39,25 @@ the decision moved to a shared helper. HPF source and old static
 qualification are untouched. No live SQL, Node, packets or authority.
 
     python3 -B -m unittest -v hia.tests.test_node_history_page_two_batch hia.tests.test_history_page_cutoff
+
+## Static qualification with the same held projections
+
+A separate private qualification links the exact stock Selfhost object
+into the unchanged source-bound two-batch Rust witness. After the two
+recursive SELECT projections, original folds, and literal original
+cutoff loop, the native entry receives that exact immutable projected
+frame before the same owned in-memory SQLite read transaction rolls
+back. SQLite reports Read on both sides of the call. The fixture checks
+that capture, comparison, and rollback cause no row changes. No SQLite
+handle or file path crosses the ABI.
+
+The four successful projections, including all 128 links and both
+800,000-byte boundary and first-record rules, and the original second
+batch refusal match exactly. The fixture checks disjoint output and
+scratch canaries and unchanged input, an exact one-member archive with
+no imports or relocations, and the complete stock text in the linked
+executable. The result qualifies an offline link with held byte
+projections, not packet length acquisition, production history I/O,
+or SQLite ownership in HIA.
+
+    python3 -B -m unittest -v hia.tests.test_node_history_page_two_batch_held_link

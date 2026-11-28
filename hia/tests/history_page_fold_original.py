@@ -105,8 +105,12 @@ rusqlite = {{ version = "=0.41.1", features = ["bundled", "fallible_uint", "hook
     command=[cargo,"build","--offline","--locked","--message-format=json"]
     if link is not None:
         archive,verify=link
+        names={"libtrnm_history_page_fold_fixture.a",
+               "libtrnm_history_two_batch_fixture.a"}
+        if archive.name not in names:
+            raise ValueError("Unexpected private native history test archive")
         command[1]="rustc"
-        command.extend(["--","-L",f"native={archive.parent}","-l","static=trnm_history_page_fold_fixture"])
+        command.extend(["--","-L",f"native={archive.parent}","-l",f"static={archive.stem[3:]}"])
     tree=run(command,cwd=where,env=env,timeout=120)
     events=[json.loads(x) for x in tree.splitlines()]
     if events[-1]!={"reason":"build-finished","success":True}:

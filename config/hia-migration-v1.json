@@ -1690,7 +1690,9 @@
       "tests": [
         "hia/tests/test_node_history_page_two_batch.py",
         "hia/tests/rust_history_page_two_batch_reference.rs",
-        "hia/tests/test_history_page_cutoff.py"
+        "hia/tests/test_history_page_cutoff.py",
+        "hia/tests/test_node_history_page_two_batch_held_link.py",
+        "hia/tests/rust_history_page_two_batch_held_link.rs"
       ]
     },
     {
