@@ -342,6 +342,58 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertEqual((fail.returncode,fail.stdout,fail.stderr),(2,b"",REPEAT),args)
         self.assertFalse(self.run_path.exists())
 
+    def test_ordinary_mixed_hot_default_policies_no_file(self):
+        # Both policy words reach the unchanged real scheduler. Keep the actual
+        # Rust decision/dispatch, workload order and replay as the independent
+        # reference, including the small/full and sampled AutoAdaptive cases.
+        cases = (
+            (0,0,0,0,1),(1,7,8,0,1),(31,1,8,1,2),(64,64,8,64,2),
+            (65,1,8,7,1),(64,65,8,64,1),(255,7,8,255,1),(256,7,8,256,1),
+            (511,1,3,1,0),(512,1,3,1,1),(2047,7,0,2047,0),(2048,7,8,2048,0),
+            (2049,7,8,2049,1),(4095,1,8,7,1),(4095,79,8,4095,1),
+            (20000,1,8,1,0),(20000,1,8,7,1),(20000,2000,8,20000,1),
+        )
+        def ceiling():
+            resource.setrlimit(resource.RLIMIT_AS, (256<<20,256<<20))
+        for kind,name in ((b"mixed",b"Mixed"),(b"hot-streak",b"HotStreak")):
+            for key,policy in ((b"auto-adaptive",b"AutoAdaptive"),(b"aggressive-greedy",b"AggressiveGreedy")):
+                prefix=(b"--workload="+kind,b"--strategy="+key)
+                tag=f"ordinary-policy-{kind.decode()}-{key.decode()}"
+                for i,(n,k,r,e,repeat) in enumerate(cases):
+                    args=(*prefix,f"--txs={n}".encode(),f"--keys={k}".encode(),
+                          f"--read-fanout={r}".encode(),f"--write-every={e}".encode(),
+                          f"--determinism-repeats={repeat}".encode())
+                    old,old_ns=self.actual(f"{tag}-{i}-rust",self.original,args,prepare=ceiling)
+                    new,new_ns=self.actual(f"{tag}-{i}-hia",self.native,args,prepare=ceiling)
+                    self.assertEqual((old.returncode,new.returncode,old.stderr,new.stderr),(0,0,b"",b""),args)
+                    self.assertEqual(stdout_observation(old.stdout,old_ns)[1],
+                                     stdout_observation(new.stdout,new_ns)[1],args)
+                    fields=dict(line.split(b"=",1) for line in new.stdout.splitlines() if b"=" in line)
+                    self.assertEqual((fields[b"workload"],fields[b"strategy"]),(name,policy))
+                    self.assertEqual(fields[b"determinism.replay_match"],b"true" if repeat else b"not-requested")
+                    self.assertNotIn(b"profile.",new.stdout)
+                    self.assertNotIn(b"schedule_semantics",new.stdout)
+                good=(*prefix,b"--txs=65",b"--keys=1",b"--read-fanout=8")
+                fences=(
+                    (good+(b"--profile",),{}),(good+(b"--persist-profile",),{}),
+                    (good+(b"--reader-high-water-v1",),{}),
+                    (good+(b"--determinism-repeats=2",),{}),
+                    (good,{b"LANG":b"C"}),(good,{b"TRNM_AGGR_DEEP_SCAN":b"1"}),
+                    (good,{b"TRNM_AUTO_MIN_BATCH_LEN":b"64"}),
+                    ((*prefix,b"--txs=20001",b"--keys=1"),{}),
+                    ((*prefix,b"--txs=65",b"--keys=2001",b"--write-every=65"),{}),
+                    ((*prefix,b"--txs=65",b"--keys=2",b"--write-every=64"),{}),
+                    ((*prefix,b"--txs=65",b"--keys=1",b"--read-fanout=9"),{}),
+                )
+                for i,(args,env) in enumerate(fences):
+                    fail,_=self.actual(f"{tag}-fence-{i}",self.native,args,env=env)
+                    self.assertEqual((fail.returncode,fail.stdout,fail.stderr),(2,b"",OUTSIDE),args)
+                for owner,image in (("rust",self.original),("hia",self.native)):
+                    args=good+(b"--determinism-repeats=1001",)
+                    fail,_=self.actual(f"{tag}-over-{owner}",image,args)
+                    self.assertEqual((fail.returncode,fail.stdout,fail.stderr),(2,b"",REPEAT),args)
+        self.assertFalse(self.run_path.exists())
+
     def test_ordinary_classic_footprint_desc_default_direct_process(self):
         strategy = (b"--strategy=footprint-desc",)
         explicit = (*strategy, b"--workload=classic", b"--txs=20000", b"--keys=2000")
@@ -1569,8 +1621,8 @@ class NativeBenchMain(unittest.TestCase):
         strategy = (b"--strategy", b"aggressive-greedy", b"--txs=4")
         rows = (
             ((b"--profile",), (b"LANG=C",)), ((b"--profile", b"--persist-profile"), (b"TRNM_AGGR_DEEP_SCAN=1",)),
-            ((b"--workload=mixed", b"--keys=1"), ()),
-            ((b"--workload=hot-streak", b"--keys=1"), ()),
+            ((b"--workload=mixed", b"--keys=2"), ()),
+            ((b"--workload=hot-streak", b"--keys=1", b"--profile"), ()),
             ((b"--reader-high-water-v1",), ()), ((), (b"TRNM_AGGR_DEEP_SCAN=1",)),
             ((), (b"TRNM_AGGR_DEEP_SCAN=0",)), ((), (b"TRNM_AGGR_SCAN_WINDOW=1",)),
             ((), (b"TRNM_HOT_BUCKETS=8",)), ((), (b"LANG=C",)),

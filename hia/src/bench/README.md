@@ -111,8 +111,8 @@ python3 -B -m hia.tests.qualify_bench_named_target --output "$base/smoke"
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
 x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
-process, ordinary Classic AutoAdaptive, [Classic AggressiveGreedy fast path](#ordinary-classic-aggressivegreedy-fast-path), explicitly corrected Mixed FootprintDesc, and a bounded no-file ordinary
-Mixed/HotStreak FootprintDesc path. It reads real argv at
+process, ordinary Classic AutoAdaptive, [Classic AggressiveGreedy fast path](#ordinary-classic-aggressivegreedy-fast-path), explicitly corrected Mixed FootprintDesc, and bounded no-file Mixed/HotStreak lanes for FootprintDesc
+and [both original default policies](#ordinary-mixed-and-hotstreak-default-policies-without-files). It reads real argv at
 `_start`. Startup accepts either the [passive launcher names](#passive-classic-launcher-environment)
 for ordinary no-profile Classic Original, or the separate HotBucketInterleave
 [single-variable startup policy](#hot-bucket-startup-environment). This is an isolated candidate, not an activated general replacement
@@ -125,8 +125,9 @@ or equals form, plus one bare `--persist-profile` and, when privately bound,
 one bare `--profile`. Strategy values are `original` (default) and
 `write-first`, `write-last` or `hot-bucket-interleave`; ordinary Classic with
 an empty environment also admits `auto-adaptive` and `aggressive-greedy`.
-Explicit persistence retains
-the original true default.
+The same two values admit the single-key/single-writer Mixed and HotStreak
+subset with no profile flags. Explicit persistence retains the original true
+default where the profile flags are admitted.
 [The HIA argument policy](main_cli.hepta) parses full-width unsigned ASCII
 decimal with one optional plus and rejects overflow, duplicates, missing
 values and malformed text. Zero numeric workload counts retain the original
@@ -288,8 +289,8 @@ sample sees only one key. The real decision selects the hot-bucket strategy and
 changes ordered membership versus Original on the same workload digest.
 The locked original and HIA agree on both orders, the exact adaptive fields
 and persisted file fixed points. The existing limits remain; nonempty startup
-environments, AutoAdaptive on Mixed/HotStreak, the explicit corrected marker
-with AutoAdaptive are not admitted here.
+environments and the explicit corrected marker with AutoAdaptive are not
+admitted here. The no-file Mixed/HotStreak subset is described below.
 
 ### Ordinary Classic AggressiveGreedy fast path
 
@@ -309,8 +310,30 @@ dependency checks/hits and zero deep-scan stage counters, with full stdout
 and the file extent fixed point checked against the locked original. The
 profile path, filename, clocks, file guards and write contract are unchanged;
 an unbound image still refuses profile execution. Deep scan and its tunables,
-nonempty environments, corrected mode, Mixed and HotStreak remain outside
-this candidate scope. There is no new file destination or fallback.
+nonempty environments and corrected mode remain outside this candidate
+scope. There is no new file destination or fallback.
+
+### Ordinary Mixed and HotStreak default policies without files
+
+With an empty process environment, unmarked Mixed and HotStreak can select
+the original AutoAdaptive policy or the default AggressiveGreedy fast path
+when the normalized workload uses one key or has only one writer. These
+invoke the existing strategy words 5 and 6, not a relabelled Original run.
+For a single normalized key, placement cannot lower the reader group on that
+key as it follows the latest writer; with a single writer, all readers before
+it have group zero and no later writer can observe any reader-group difference.
+This invariant holds in either AutoAdaptive order, so neither policy bypasses
+the corrected reader high-water implementation. The correction marker is not
+admitted on these policies.
+
+The no-file gate shares the existing ordinary FootprintDesc bounds for these
+shapes: at most 20,000 transactions, 2,000 keys and read fanout 8. Above the
+small 64-transaction / 64-key shape, the ordinary no-file mode allows zero or one
+deterministic replay. Both profile flags are refused, so no profile owner,
+file effect or deep-scan tuning is added. The actual locked Rust CLI and native
+HIA are compared across full arena, sampling and policy boundaries, including
+ordered membership and replay digests. Only independently measured elapsed
+time is normalized.
 
 ### Corrected workload qualification
 
@@ -401,8 +424,8 @@ compatibility claim. Other names fail closed before workload or file work.
 
 ### Hot bucket startup environment
 
-WriteFirst, WriteLast, AutoAdaptive, and Original outside the passive slice
-continue to refuse nonempty environments without dereferencing their values.
+WriteFirst, WriteLast, AutoAdaptive, AggressiveGreedy, and Original outside
+the passive slice continue to refuse nonempty environments without dereferencing their values.
 The corrected mode and plain diagnostics keep their existing empty-environment
 fences. HotBucketInterleave admits an
 empty environment or at most 64 actual Linux environment entries, each
