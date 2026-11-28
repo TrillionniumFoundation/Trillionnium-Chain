@@ -2718,6 +2718,17 @@
       ]
     },
     {
+      "id": "model/source-v6-values",
+      "node_integration_complete": false,
+      "scope": "Private detached original Source V6 allocation-root and release ID over bounded supplied inert digests, exact pair-local ordering and hash framing; no payments, admission, signing or production.",
+      "source": "hia/src/model/source_v6_values.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_model_source_v6_values.py",
+        "hia/tests/rust_model_source_v6_values_reference.rs"
+      ]
+    },
+    {
       "id": "model/tasks-root",
       "node_integration_complete": false,
       "scope": "Private original model tasks root over immutable validated inert source snapshot, exact ASCII signed token features/row hashes and JSON root; no admission, W1, training, signing, I/O or trust.",
