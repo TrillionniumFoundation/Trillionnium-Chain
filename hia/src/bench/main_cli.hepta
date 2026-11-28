@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v14
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v15
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -509,10 +509,21 @@ block ordinary_footprint(op_o:mutbuf,op_classic:bool,op_seen:u64)
   op_txs_ok:bool = compare.le(op_txs,op_limit)
   op_keys_ok:bool = compare.le(op_keys,op_limit)
   op_small:bool = bool.and(op_txs_ok,op_keys_ok)
-  op_mode:bool = bool.and(op_no_profile,op_classic)
-  branch op_mode ordinary_footprint_shape(op_o,op_small,op_txs,op_keys) fail()
-block ordinary_footprint_shape(fs_o:mutbuf,fs_small:bool,fs_txs:u64,fs_keys:u64)
-  branch fs_small repeat_bound(fs_o) ordinary_footprint_default(fs_o,fs_txs,fs_keys)
+  branch op_no_profile ordinary_footprint_shape(op_o,op_small,op_classic,op_txs,op_keys) fail()
+block ordinary_footprint_shape(fs_o:mutbuf,fs_small:bool,fs_classic:bool,fs_txs:u64,fs_keys:u64)
+  branch fs_small ordinary_footprint_small(fs_o,fs_classic) ordinary_footprint_large(fs_o,fs_classic,fs_txs,fs_keys)
+block ordinary_footprint_small(ft_o:mutbuf,ft_classic:bool)
+  branch ft_classic repeat_bound(ft_o) ordinary_footprint_parity(ft_o)
+block ordinary_footprint_parity(fp_o2:mutbuf)
+  fan_at_fp:u64 = const() {"value":32}
+  fan_limit_fp:u64 = const() {"value":8}
+  fan_fp:u64 = call(fp_o2,fan_at_fp) {"function":"bench_get"}
+  fan_ok_fp:bool = compare.le(fan_fp,fan_limit_fp)
+  shape_fp:bool = call(fp_o2) {"function":"bc_parity_shape"}
+  admitted_fp:bool = bool.and(fan_ok_fp,shape_fp)
+  branch admitted_fp repeat_bound(fp_o2) fail()
+block ordinary_footprint_large(large_o:mutbuf,large_classic:bool,large_txs:u64,large_keys:u64)
+  branch large_classic ordinary_footprint_default(large_o,large_txs,large_keys) fail()
 block ordinary_footprint_default(fd_o:mutbuf,fd_txs:u64,fd_keys:u64)
   fd_default_txs:u64 = const() {"value":20000}
   fd_default_keys:u64 = const() {"value":2000}
@@ -605,6 +616,22 @@ block corrected_footprint(cf_admitted:bool)
 block corrected_compat(cc_o:mutbuf,cc_fanout:bool,cc_admitted:bool)
   branch cc_admitted success() parity_domain(cc_o,cc_fanout)
 block parity_domain(pd_o:mutbuf,pd_fanout:bool)
+  shape_pd:bool = call(pd_o) {"function":"bc_parity_shape"}
+  fits_pd:bool = bool.and(shape_pd,pd_fanout)
+  branch fits_pd success() fail()
+block success()
+  st0:u32 = const() {"value":0}
+  ret(st0)
+block fail()
+  st1:u32 = const() {"value":1}
+  ret(st1)
+block exceed()
+  st2:u32 = const() {"value":2}
+  ret(st2)
+end
+
+fn bc_parity_shape(pd_o:mutbuf) -> (bool) effects(read,write,trap) entry(entry)
+block entry(pd_o:mutbuf)
   pd_keys_at:u64 = const() {"value":8}
   pd_stride_at:u64 = const() {"value":40}
   pd_txs_at:u64 = const() {"value":0}
@@ -617,17 +644,7 @@ block parity_domain(pd_o:mutbuf,pd_fanout:bool)
   single_writer:bool = compare.ge(raw_stride,raw_txs)
   one_writer:bool = bool.or(small_batch,single_writer)
   parity:bool = bool.or(same_key,one_writer)
-  fits:bool = bool.and(parity,pd_fanout)
-  branch fits success() fail()
-block success()
-  st0:u32 = const() {"value":0}
-  ret(st0)
-block fail()
-  st1:u32 = const() {"value":1}
-  ret(st1)
-block exceed()
-  st2:u32 = const() {"value":2}
-  ret(st2)
+  ret(parity)
 end
 
 fn bc_end(i:readbuf,p:u64,n:u64) -> (u64) effects(read,trap) entry(entry)

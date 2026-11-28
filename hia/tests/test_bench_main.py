@@ -246,6 +246,56 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
                 self.assertFalse(self.run_path.exists())
 
+    def test_ordinary_mixed_and_hot_footprint_parity_no_file(self):
+        # Exhaust the small dimension/fanout grid at the one-writer boundary.
+        # Add one-key repeated writers and exact edges of the 64-by-64 scope.
+        grid = {(n,k,r,max(n,1),0) for n in range(7) for k in range(7) for r in range(9)}
+        grid.update((n,k,r,e,1) for n in (0,1,2,3,6) for k in (0,1) for r in (1,3,8)
+                    for e in (0,1,2,5))
+        edges = ((15,2,8,15,3),(16,7,8,16,2),(17,64,8,17,2),(31,1,8,2,3),
+                 (32,64,8,33,2),(63,7,0,63,2),(64,64,8,64,3),(64,1,8,1,3),
+                 (64,0,8,3,2),(3,1,8,1,1000),(3,7,8,3,1000))
+        cases=sorted(grid.union(edges))
+        index=0
+        for kind, name in ((b"mixed",b"Mixed"),(b"hot-streak",b"HotStreak")):
+            mode=(b"--workload="+kind,b"--strategy=footprint-desc")
+            for n,k,r,e,repeat in cases:
+                args=(*mode,f"--txs={n}".encode(),f"--keys={k}".encode(),f"--read-fanout={r}".encode(),
+                      f"--write-every={e}".encode(),f"--determinism-repeats={repeat}".encode())
+                old, old_ns=self.actual(f"ordinary-footprint-{index}-rust",self.original,args)
+                new, new_ns=self.actual(f"ordinary-footprint-{index}-hia",self.native,args)
+                self.assertEqual((old.returncode,new.returncode,old.stderr,new.stderr),(0,0,b"",b""),args)
+                self.assertEqual(stdout_observation(old.stdout,old_ns)[1],
+                                 stdout_observation(new.stdout,new_ns)[1],args)
+                fields=dict(line.split(b"=",1) for line in new.stdout.splitlines() if b"=" in line)
+                self.assertEqual((fields[b"workload"],fields[b"strategy"]),(name,b"FootprintDesc"))
+                self.assertEqual(fields[b"determinism.replay_match"],b"true" if repeat else b"not-requested")
+                self.assertNotIn(b"profile.",new.stdout)
+                self.assertNotIn(b"schedule_semantics",new.stdout)
+                index+=1
+            ordinary=(*mode,b"--txs=32",b"--keys=5",b"--write-every=32",b"--read-fanout=8")
+            fences=(
+                ((*ordinary,b"--profile"),{}),((*ordinary,b"--persist-profile"),{}),
+                (ordinary,{b"HIA_BENCH_TEST_ONLY":b"synthetic"}),(ordinary,{b"LANG":b"C"}),
+                (ordinary,{b"TRNM_HOT_BUCKETS":b"8"}),
+                ((*mode,b"--txs=65",b"--keys=1"),{}),
+                ((*mode,b"--txs=32",b"--keys=65",b"--write-every=32"),{}),
+                ((*mode,b"--txs=32",b"--keys=1",b"--read-fanout=9"),{}),
+                ((*mode,b"--txs=32",b"--keys=2",b"--write-every=31"),{}),
+                ((*mode,b"--txs=32",b"--keys=2",b"--write-every=31",b"--determinism-repeats=1001"),{}),
+                ((*mode,b"--txs=20000",b"--keys=2000",b"--write-every=20000"),{}),
+                ((*ordinary,b"--reader-high-water-v1"),{}),
+            )
+            for j,(args,env) in enumerate(fences):
+                fail,_=self.actual(f"ordinary-footprint-denied-{kind.decode()}-{j}",self.native,args,env=env)
+                self.assertEqual((fail.returncode,fail.stdout,fail.stderr),(2,b"",OUTSIDE),args)
+            args=(*ordinary,b"--determinism-repeats=1001")
+            for owner,image in (("rust",self.original),("hia",self.native)):
+                fail,_=self.actual(f"ordinary-footprint-replay-oob-{kind.decode()}-{owner}",image,args)
+                self.assertEqual((fail.returncode,fail.stdout,fail.stderr),(2,b"",REPEAT),args)
+        self.assertEqual(index,2*len(cases))
+        self.assertFalse(self.run_path.exists())
+
     def test_ordinary_classic_footprint_desc_default_direct_process(self):
         strategy = (b"--strategy=footprint-desc",)
         explicit = (*strategy, b"--workload=classic", b"--txs=20000", b"--keys=2000")

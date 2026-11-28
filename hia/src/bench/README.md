@@ -111,7 +111,8 @@ python3 -B -m hia.tests.qualify_bench_named_target --output "$base/smoke"
 
 The [native build](../../platform/bench/main_build.py) produces a static Linux
 x86-64 ELF for the **bounded Original / WriteFirst / WriteLast / HotBucketInterleave**
-process, ordinary Classic AutoAdaptive, [Classic AggressiveGreedy fast path](#ordinary-classic-aggressivegreedy-fast-path), and explicitly corrected Mixed FootprintDesc. It reads real argv at
+process, ordinary Classic AutoAdaptive, [Classic AggressiveGreedy fast path](#ordinary-classic-aggressivegreedy-fast-path), explicitly corrected Mixed FootprintDesc, and a bounded no-file ordinary
+Mixed/HotStreak FootprintDesc path. It reads real argv at
 `_start`. Startup accepts either the [passive launcher names](#passive-classic-launcher-environment)
 for ordinary no-profile Classic Original, or the separate HotBucketInterleave
 [single-variable startup policy](#hot-bucket-startup-environment). This is an isolated candidate, not an activated general replacement
@@ -343,8 +344,20 @@ oracle and the native ELF produce a different ordered grouping from Original
 and WriteFirst for the same workload digest. The [whole process
 differential](../../tests/test_bench_footprint.py) checks the independent graph,
 profile bytes and real file effects, separate clocks, replay, and refusal of
-all unmarked, nonexact, and nonempty-environment FootprintDesc invocations.
-This is not support for ordinary FootprintDesc or its other workload shapes.
+unmarked 20,000-transaction defaults, nonexact corrected shapes, and nonempty
+environments. This corrected path is distinct from the bounded ordinary path.
+
+For ordinary Mixed/HotStreak FootprintDesc the CLI admits no more than 64
+transactions and 64 keys, with the existing fanout limit of eight and the
+original one-key or one-writer compatibility predicate described above.
+Output is unmarked, the environment must be empty and neither `--profile` nor
+`--persist-profile` is admitted. The existing Classic and corrected-mode
+paths are unchanged. Footprint ordering does not affect the compatibility
+proof: prior reads before the sole writer are at group zero, and no later
+writer can consult a reader counter on a different object. With one key,
+reader groups do not regress. The bounded actual test compares the original
+and native stdout, both digests and replay status, including zero
+normalizations, one-key writer repeats, edge dimensions and scope refusals.
 
 The same ELF takes real clocks, runs the real native scheduler and replay,
 renders `schedule_semantics=reader-high-water-v1` in stdout and the
