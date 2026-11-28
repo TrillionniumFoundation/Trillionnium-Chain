@@ -132,6 +132,9 @@ def sources():
               ROOT / "hia/src/consensus/ASERT_TARGET.md",
               ROOT / "hia/src/consensus/WORK_SCHEDULE_PROFILE.md",
               ROOT / "hia/src/consensus/README.md"]
+    # Local resource metadata oracle compiles the exact original public methods.
+    paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
+              ROOT / "hia/src/node/RESOURCE_PROFILE.md"]
     # Exact original data/owner bodies and their complete native contracts.
     paths += [ROOT / name for name in (
         "trillionnium/crates/trnm-audit-events/src/lib.rs",

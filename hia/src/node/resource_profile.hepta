@@ -1,0 +1,544 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_local_resource_profile_v1
+fn f0(input:readbuf,output:mutbuf,arena:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,arena:mutbuf)
+  ilen:usize = buffer.len(input)
+  exact:usize = const() {"value":128}
+  sized:bool = compare.eq(ilen,exact)
+  branch sized mark(input,output,arena) frame()
+block mark(mi:readbuf,mo:mutbuf,ma:mutbuf)
+  p:usize = const() {"value":0}
+  marker:u64 = call(mi,p) {"function":"cw_read64"}
+  expect:u64 = const() {"value":3544385890636812878}
+  typed:bool = compare.eq(marker,expect)
+  branch typed owner(mi,mo,ma) frame()
+block owner(oi:readbuf,oo:mutbuf,oa:mutbuf)
+  off0:usize = const() {"value":8}
+  off1:usize = const() {"value":16}
+  off2:usize = const() {"value":24}
+  off3:usize = const() {"value":32}
+  a:u64 = call(oi,off0) {"function":"cw_read64"}
+  b:u64 = call(oi,off1) {"function":"cw_read64"}
+  c:u64 = call(oi,off2) {"function":"cw_read64"}
+  d:u64 = call(oi,off3) {"function":"cw_read64"}
+  ab:u64 = bit.or(a,b)
+  cd:u64 = bit.or(c,d)
+  abcd:u64 = bit.or(ab,cd)
+  empty:u64 = const() {"value":0}
+  has_id:bool = compare.ne(abcd,empty)
+  idx:usize = const() {"value":0}
+  branch has_id grants(oi,oo,oa,idx,empty) bad_id()
+block grants(gi:readbuf,go:mutbuf,ga:mutbuf,gix:usize,total:u64)
+  lanes:usize = const() {"value":3}
+  more:bool = compare.lt(gix,lanes)
+  branch more units(gi,go,ga,gix,total) subtotal(gi,go,ga,total)
+block units(ui:readbuf,uo:mutbuf,ua:mutbuf,uix:usize,ut:u64)
+  pair:usize = const() {"value":16}
+  start:usize = const() {"value":40}
+  second:usize = const() {"value":8}
+  part:usize = int.mul.wrap(uix,pair)
+  cpu_at:usize = int.add.wrap(start,part)
+  io_at:usize = int.add.wrap(cpu_at,second)
+  cpu:u64 = call(ui,cpu_at) {"function":"cw_read64"}
+  bytes:u64 = call(ui,io_at) {"function":"cw_read64"}
+  max:u64 = const() {"value":1152921504606846976}
+  cpu_ok:bool = compare.le(cpu,max)
+  io_ok:bool = compare.le(bytes,max)
+  bounded:bool = bool.and(cpu_ok,io_ok)
+  branch bounded nonempty(ui,uo,ua,uix,ut,cpu,bytes) bad_units()
+block nonempty(ni:readbuf,no:mutbuf,na:mutbuf,nix:usize,nt:u64,ncpu:u64,nbytes:u64)
+  nzero:u64 = const() {"value":0}
+  some_cpu:bool = compare.gt(ncpu,nzero)
+  some_io:bool = compare.gt(nbytes,nzero)
+  both:bool = bool.and(some_cpu,some_io)
+  branch both slots(ni,no,na,nix,nt) bad_grant()
+block slots(si:readbuf,so:mutbuf,sa:mutbuf,six:usize,st:u64)
+  span:usize = const() {"value":4}
+  op_base:usize = const() {"value":88}
+  in_base:usize = const() {"value":100}
+  lane:usize = int.mul.wrap(six,span)
+  op_at:usize = int.add.wrap(op_base,lane)
+  in_at:usize = int.add.wrap(in_base,lane)
+  ops:u64 = call(si,op_at) {"function":"rp_le32"}
+  inflight:u64 = call(si,in_at) {"function":"rp_le32"}
+  least:u64 = const() {"value":1}
+  most:u64 = const() {"value":16}
+  min_ok:bool = compare.ge(inflight,least)
+  max_ok:bool = compare.le(inflight,most)
+  enough:bool = compare.ge(ops,inflight)
+  below:bool = bool.and(min_ok,max_ok)
+  lane_ok:bool = bool.and(below,enough)
+  aggregate:u64 = int.add.wrap(st,ops)
+  u32_max:u64 = const() {"value":4294967295}
+  aggregate_ok:bool = compare.le(aggregate,u32_max)
+  checked:bool = bool.and(lane_ok,aggregate_ok)
+  one:usize = const() {"value":1}
+  next:usize = int.add.wrap(six,one)
+  branch checked grants(si,so,sa,next,aggregate) bad_slots()
+block subtotal(ti:readbuf,to:mutbuf,ta:mutbuf,tt:u64)
+  cap:u64 = const() {"value":1024}
+  size_ok:bool = compare.le(tt,cap)
+  branch size_ok overshoot(ti,to,ta) bad_slots()
+block overshoot(ai:readbuf,ao:mutbuf,aa:mutbuf)
+  cpu_offset:usize = const() {"value":112}
+  bytes_offset:usize = const() {"value":120}
+  ocpu:u64 = call(ai,cpu_offset) {"function":"cw_read64"}
+  obytes:u64 = call(ai,bytes_offset) {"function":"cw_read64"}
+  upper:u64 = const() {"value":1152921504606846976}
+  over_cpu_ok:bool = compare.le(ocpu,upper)
+  over_io_ok:bool = compare.le(obytes,upper)
+  safe:bool = bool.and(over_cpu_ok,over_io_ok)
+  branch safe require_cpu(ai,ao,aa,ocpu) bad_units()
+block require_cpu(ri:readbuf,ro:mutbuf,ra:mutbuf,rc:u64)
+  z:u64 = const() {"value":0}
+  required:bool = compare.gt(rc,z)
+  branch required capacity(ri,ro,ra) bad_overshoot()
+block capacity(ci:readbuf,co:mutbuf,ca:mutbuf)
+  outlen:usize = buffer.len(co)
+  thirtytwo:usize = const() {"value":32}
+  out_ok:bool = compare.ge(outlen,thirtytwo)
+  branch out_ok scratch(ci,co,ca) bad_output()
+block scratch(xi:readbuf,xo:mutbuf,xa:mutbuf)
+  alen:usize = buffer.len(xa)
+  amin:usize = const() {"value":132256}
+  has_arena:bool = compare.ge(alen,amin)
+  branch has_arena encode(xi,xo,xa) bad_scratch()
+block encode(ei:readbuf,eo:mutbuf,ea:mutbuf)
+  base:u64 = const() {"value":0}
+  json_start:u64 = call(ea,base) {"function":"rp_piece_0"}
+  first:usize = const() {"value":0}
+  jump owner_digits(ei,eo,ea,first,json_start)
+block owner_digits(odi:readbuf,odo:mutbuf,oda:mutbuf,odidx:usize,odp:u64)
+  n:usize = const() {"value":32}
+  more_digits:bool = compare.lt(odidx,n)
+  branch more_digits owner_digit(odi,odo,oda,odidx,odp) body(odi,odo,oda,odp)
+block owner_digit(bi:readbuf,bo:mutbuf,ba:mutbuf,bidx:usize,bp:u64)
+  q:usize = const() {"value":8}
+  own_index:usize = int.add.wrap(bidx,q)
+  byte_value:u8 = buffer.load(bi,own_index)
+  value:u64 = int.cast(byte_value) {"mode":"wrap"}
+  width:u64 = const() {"value":0}
+  size:u64 = call(ba,bp,value,width) {"function":"bt_u64"}
+  digit_end:u64 = int.add.wrap(bp,size)
+  n31:usize = const() {"value":31}
+  last:bool = compare.eq(bidx,n31)
+  branch last body(bi,bo,ba,digit_end) comma(bi,bo,ba,bidx,digit_end)
+block comma(ki:readbuf,ko:mutbuf,ka:mutbuf,kidx:usize,kp:u64)
+  off:usize = int.cast(kp) {"mode":"wrap"}
+  separator:u8 = const() {"value":44}
+  _ = buffer.store(ka,off,separator)
+  onepos:u64 = const() {"value":1}
+  oneidx:usize = const() {"value":1}
+  next_pos:u64 = int.add.wrap(kp,onepos)
+  next_idx:usize = int.add.wrap(kidx,oneidx)
+  jump owner_digits(ki,ko,ka,next_idx,next_pos)
+block body(ri2:readbuf,ro2:mutbuf,ra2:mutbuf,rp:u64)
+  no_pad:u64 = const() {"value":0}
+  pos1:u64 = call(ra2,rp) {"function":"rp_piece_1"}
+  when1:usize = const() {"value":40}
+  value1:u64 = call(ri2,when1) {"function":"cw_read64"}
+  width1:u64 = call(ra2,pos1,value1,no_pad) {"function":"bt_u64"}
+  cur1:u64 = int.add.wrap(pos1,width1)
+  pos2:u64 = call(ra2,cur1) {"function":"rp_piece_2"}
+  when2:usize = const() {"value":48}
+  value2:u64 = call(ri2,when2) {"function":"cw_read64"}
+  width2:u64 = call(ra2,pos2,value2,no_pad) {"function":"bt_u64"}
+  cur2:u64 = int.add.wrap(pos2,width2)
+  pos3:u64 = call(ra2,cur2) {"function":"rp_piece_3"}
+  when3:usize = const() {"value":56}
+  value3:u64 = call(ri2,when3) {"function":"cw_read64"}
+  width3:u64 = call(ra2,pos3,value3,no_pad) {"function":"bt_u64"}
+  cur3:u64 = int.add.wrap(pos3,width3)
+  pos4:u64 = call(ra2,cur3) {"function":"rp_piece_2"}
+  when4:usize = const() {"value":64}
+  value4:u64 = call(ri2,when4) {"function":"cw_read64"}
+  width4:u64 = call(ra2,pos4,value4,no_pad) {"function":"bt_u64"}
+  cur4:u64 = int.add.wrap(pos4,width4)
+  pos5:u64 = call(ra2,cur4) {"function":"rp_piece_3"}
+  when5:usize = const() {"value":72}
+  value5:u64 = call(ri2,when5) {"function":"cw_read64"}
+  width5:u64 = call(ra2,pos5,value5,no_pad) {"function":"bt_u64"}
+  cur5:u64 = int.add.wrap(pos5,width5)
+  pos6:u64 = call(ra2,cur5) {"function":"rp_piece_2"}
+  when6:usize = const() {"value":80}
+  value6:u64 = call(ri2,when6) {"function":"cw_read64"}
+  width6:u64 = call(ra2,pos6,value6,no_pad) {"function":"bt_u64"}
+  cur6:u64 = int.add.wrap(pos6,width6)
+  pos7:u64 = call(ra2,cur6) {"function":"rp_piece_4"}
+  when7:usize = const() {"value":88}
+  value7:u64 = call(ri2,when7) {"function":"rp_le32"}
+  width7:u64 = call(ra2,pos7,value7,no_pad) {"function":"bt_u64"}
+  cur7:u64 = int.add.wrap(pos7,width7)
+  pos8:u64 = call(ra2,cur7) {"function":"rp_piece_5"}
+  when8:usize = const() {"value":92}
+  value8:u64 = call(ri2,when8) {"function":"rp_le32"}
+  width8:u64 = call(ra2,pos8,value8,no_pad) {"function":"bt_u64"}
+  cur8:u64 = int.add.wrap(pos8,width8)
+  pos9:u64 = call(ra2,cur8) {"function":"rp_piece_5"}
+  when9:usize = const() {"value":96}
+  value9:u64 = call(ri2,when9) {"function":"rp_le32"}
+  width9:u64 = call(ra2,pos9,value9,no_pad) {"function":"bt_u64"}
+  cur9:u64 = int.add.wrap(pos9,width9)
+  pos10:u64 = call(ra2,cur9) {"function":"rp_piece_6"}
+  when10:usize = const() {"value":100}
+  value10:u64 = call(ri2,when10) {"function":"rp_le32"}
+  width10:u64 = call(ra2,pos10,value10,no_pad) {"function":"bt_u64"}
+  cur10:u64 = int.add.wrap(pos10,width10)
+  pos11:u64 = call(ra2,cur10) {"function":"rp_piece_5"}
+  when11:usize = const() {"value":104}
+  value11:u64 = call(ri2,when11) {"function":"rp_le32"}
+  width11:u64 = call(ra2,pos11,value11,no_pad) {"function":"bt_u64"}
+  cur11:u64 = int.add.wrap(pos11,width11)
+  pos12:u64 = call(ra2,cur11) {"function":"rp_piece_5"}
+  when12:usize = const() {"value":108}
+  value12:u64 = call(ri2,when12) {"function":"rp_le32"}
+  width12:u64 = call(ra2,pos12,value12,no_pad) {"function":"bt_u64"}
+  cur12:u64 = int.add.wrap(pos12,width12)
+  pos13:u64 = call(ra2,cur12) {"function":"rp_piece_7"}
+  when13:usize = const() {"value":112}
+  value13:u64 = call(ri2,when13) {"function":"cw_read64"}
+  width13:u64 = call(ra2,pos13,value13,no_pad) {"function":"bt_u64"}
+  cur13:u64 = int.add.wrap(pos13,width13)
+  pos14:u64 = call(ra2,cur13) {"function":"rp_piece_2"}
+  when14:usize = const() {"value":120}
+  value14:u64 = call(ri2,when14) {"function":"cw_read64"}
+  width14:u64 = call(ra2,pos14,value14,no_pad) {"function":"bt_u64"}
+  cur14:u64 = int.add.wrap(pos14,width14)
+  pos15:u64 = call(ra2,cur14) {"function":"rp_piece_8"}
+  used:usize = int.cast(pos15) {"mode":"wrap"}
+
+  res:u32 = call(ra2,used) {"function":"sha256_arena"}
+  count:u32 = const() {"value":32}
+  okay:bool = compare.eq(res,count)
+  first_digest:usize = const() {"value":0}
+  branch okay publish(ro2,ra2,first_digest) internal()
+block publish(po:mutbuf,pa:mutbuf,pi:usize)
+  stop:usize = const() {"value":32}
+  left:bool = compare.lt(pi,stop)
+  branch left byte(po,pa,pi) ok()
+block byte(bo2:mutbuf,ba2:mutbuf,bx:usize)
+  digest_at:usize = const() {"value":131136}
+  index:usize = int.add.wrap(digest_at,bx)
+  digest_byte:u8 = buffer.load(ba2,index)
+  _ = buffer.store(bo2,bx,digest_byte)
+  step:usize = const() {"value":1}
+  advance:usize = int.add.wrap(bx,step)
+  jump publish(bo2,ba2,advance)
+block ok()
+  s_ok:u32 = const() {"value":0}
+  ret(s_ok)
+block frame()
+  s_frame:u32 = const() {"value":1}
+  ret(s_frame)
+block bad_output()
+  s_bad_output:u32 = const() {"value":2}
+  ret(s_bad_output)
+block bad_scratch()
+  s_bad_scratch:u32 = const() {"value":3}
+  ret(s_bad_scratch)
+block bad_id()
+  s_bad_id:u32 = const() {"value":32}
+  ret(s_bad_id)
+block bad_units()
+  s_bad_units:u32 = const() {"value":33}
+  ret(s_bad_units)
+block bad_grant()
+  s_bad_grant:u32 = const() {"value":34}
+  ret(s_bad_grant)
+block bad_slots()
+  s_bad_slots:u32 = const() {"value":35}
+  ret(s_bad_slots)
+block bad_overshoot()
+  s_bad_overshoot:u32 = const() {"value":36}
+  ret(s_bad_overshoot)
+block internal()
+  s_internal:u32 = const() {"value":255}
+  ret(s_internal)
+end
+
+fn rp_le32(input:readbuf,base:usize) -> (u64) effects(read,trap) entry(entry)
+block entry(input:readbuf,base:usize)
+  z:usize = const() {"value":0}
+  v:u64 = const() {"value":0}
+  jump loop(input,base,z,v)
+block loop(li:readbuf,lb:usize,lx:usize,lv:u64)
+  four:usize = const() {"value":4}
+  more:bool = compare.lt(lx,four)
+  branch more step(li,lb,lx,lv) done(lv)
+block step(si:readbuf,sb:usize,sx:usize,sv:u64)
+  at:usize = int.add.wrap(sb,sx)
+  b:u8 = buffer.load(si,at)
+  wider:u64 = int.cast(b) {"mode":"wrap"}
+  digit:u64 = int.cast(sx) {"mode":"wrap"}
+  eight:u64 = const() {"value":8}
+  shift:u64 = int.mul.wrap(digit,eight)
+  packed:u64 = int.shl.checked(wider,shift)
+  next:u64 = bit.or(sv,packed)
+  one:usize = const() {"value":1}
+  nx:usize = int.add.wrap(sx,one)
+  jump loop(si,sb,nx,next)
+block done(result:u64)
+  ret(result)
+end
+
+fn rp_piece_0(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":7017575154782728048}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u64 = const() {"value":8247620834012835180}
+  w8:u32 = call(arena,a8,v8) {"function":"cw_store64"}
+  o16:u64 = const() {"value":16}
+  p16:u64 = int.add.wrap(pos,o16)
+  a16:usize = int.cast(p16) {"mode":"wrap"}
+  v16:u64 = const() {"value":8243116152216970595}
+  w16:u32 = call(arena,a16,v16) {"function":"cw_store64"}
+  o24:u64 = const() {"value":24}
+  p24:u64 = int.add.wrap(pos,o24)
+  a24:usize = int.cast(p24) {"mode":"wrap"}
+  v24:u64 = const() {"value":7959953060287051309}
+  w24:u32 = call(arena,a24,v24) {"function":"cw_store64"}
+  o32:u64 = const() {"value":32}
+  p32:u64 = int.add.wrap(pos,o32)
+  a32:usize = int.cast(p32) {"mode":"wrap"}
+  v32:u64 = const() {"value":6573604420760597093}
+  w32:u32 = call(arena,a32,v32) {"function":"cw_store64"}
+  advance:u64 = const() {"value":40}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_1(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":8389750299822271581}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u64 = const() {"value":8098354468149142131}
+  w8:u32 = call(arena,a8,v8) {"function":"cw_store64"}
+  o16:u64 = const() {"value":16}
+  p16:u64 = int.add.wrap(pos,o16)
+  a16:usize = int.cast(p16) {"mode":"wrap"}
+  v16:u8 = const() {"value":117}
+  _ = buffer.store(arena,a16,v16)
+  o17:u64 = const() {"value":17}
+  p17:u64 = int.add.wrap(pos,o17)
+  a17:usize = int.cast(p17) {"mode":"wrap"}
+  v17:u8 = const() {"value":95}
+  _ = buffer.store(arena,a17,v17)
+  o18:u64 = const() {"value":18}
+  p18:u64 = int.add.wrap(pos,o18)
+  a18:usize = int.cast(p18) {"mode":"wrap"}
+  v18:u8 = const() {"value":110}
+  _ = buffer.store(arena,a18,v18)
+  o19:u64 = const() {"value":19}
+  p19:u64 = int.add.wrap(pos,o19)
+  a19:usize = int.cast(p19) {"mode":"wrap"}
+  v19:u8 = const() {"value":115}
+  _ = buffer.store(arena,a19,v19)
+  o20:u64 = const() {"value":20}
+  p20:u64 = int.add.wrap(pos,o20)
+  a20:usize = int.cast(p20) {"mode":"wrap"}
+  v20:u8 = const() {"value":34}
+  _ = buffer.store(arena,a20,v20)
+  o21:u64 = const() {"value":21}
+  p21:u64 = int.add.wrap(pos,o21)
+  a21:usize = int.cast(p21) {"mode":"wrap"}
+  v21:u8 = const() {"value":58}
+  _ = buffer.store(arena,a21,v21)
+  advance:u64 = const() {"value":22}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_2(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":8392847542612206124}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u8 = const() {"value":101}
+  _ = buffer.store(arena,a8,v8)
+  o9:u64 = const() {"value":9}
+  p9:u64 = int.add.wrap(pos,o9)
+  a9:usize = int.cast(p9) {"mode":"wrap"}
+  v9:u8 = const() {"value":115}
+  _ = buffer.store(arena,a9,v9)
+  o10:u64 = const() {"value":10}
+  p10:u64 = int.add.wrap(pos,o10)
+  a10:usize = int.cast(p10) {"mode":"wrap"}
+  v10:u8 = const() {"value":34}
+  _ = buffer.store(arena,a10,v10)
+  o11:u64 = const() {"value":11}
+  p11:u64 = int.add.wrap(pos,o11)
+  a11:usize = int.cast(p11) {"mode":"wrap"}
+  v11:u8 = const() {"value":58}
+  _ = buffer.store(arena,a11,v11)
+  advance:u64 = const() {"value":12}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_3(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":6878527576960871549}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u8 = const() {"value":110}
+  _ = buffer.store(arena,a8,v8)
+  o9:u64 = const() {"value":9}
+  p9:u64 = int.add.wrap(pos,o9)
+  a9:usize = int.cast(p9) {"mode":"wrap"}
+  v9:u8 = const() {"value":115}
+  _ = buffer.store(arena,a9,v9)
+  o10:u64 = const() {"value":10}
+  p10:u64 = int.add.wrap(pos,o10)
+  a10:usize = int.cast(p10) {"mode":"wrap"}
+  v10:u8 = const() {"value":34}
+  _ = buffer.store(arena,a10,v10)
+  o11:u64 = const() {"value":11}
+  p11:u64 = int.add.wrap(pos,o11)
+  a11:usize = int.cast(p11) {"mode":"wrap"}
+  v11:u8 = const() {"value":58}
+  _ = buffer.store(arena,a11,v11)
+  advance:u64 = const() {"value":12}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_4(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":6879355552161095037}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u64 = const() {"value":8028075772644520047}
+  w8:u32 = call(arena,a8,v8) {"function":"cw_store64"}
+  o16:u64 = const() {"value":16}
+  p16:u64 = int.add.wrap(pos,o16)
+  a16:usize = int.cast(p16) {"mode":"wrap"}
+  v16:u8 = const() {"value":110}
+  _ = buffer.store(arena,a16,v16)
+  o17:u64 = const() {"value":17}
+  p17:u64 = int.add.wrap(pos,o17)
+  a17:usize = int.cast(p17) {"mode":"wrap"}
+  v17:u8 = const() {"value":115}
+  _ = buffer.store(arena,a17,v17)
+  o18:u64 = const() {"value":18}
+  p18:u64 = int.add.wrap(pos,o18)
+  a18:usize = int.cast(p18) {"mode":"wrap"}
+  v18:u8 = const() {"value":34}
+  _ = buffer.store(arena,a18,v18)
+  o19:u64 = const() {"value":19}
+  p19:u64 = int.add.wrap(pos,o19)
+  a19:usize = int.cast(p19) {"mode":"wrap"}
+  v19:u8 = const() {"value":58}
+  _ = buffer.store(arena,a19,v19)
+  o20:u64 = const() {"value":20}
+  p20:u64 = int.add.wrap(pos,o20)
+  a20:usize = int.cast(p20) {"mode":"wrap"}
+  v20:u8 = const() {"value":91}
+  _ = buffer.store(arena,a20,v20)
+  advance:u64 = const() {"value":21}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_5(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u8 = const() {"value":44}
+  _ = buffer.store(arena,a0,v0)
+  advance:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_6(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":7592919856608062557}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u64 = const() {"value":2482724087947617902}
+  w8:u32 = call(arena,a8,v8) {"function":"cw_store64"}
+  o16:u64 = const() {"value":16}
+  p16:u64 = int.add.wrap(pos,o16)
+  a16:usize = int.cast(p16) {"mode":"wrap"}
+  v16:u8 = const() {"value":58}
+  _ = buffer.store(arena,a16,v16)
+  o17:u64 = const() {"value":17}
+  p17:u64 = int.add.wrap(pos,o17)
+  a17:usize = int.cast(p17) {"mode":"wrap"}
+  v17:u8 = const() {"value":91}
+  _ = buffer.store(arena,a17,v17)
+  advance:u64 = const() {"value":18}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_7(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u64 = const() {"value":8318823021051784285}
+  w0:u32 = call(arena,a0,v0) {"function":"cw_store64"}
+  o8:u64 = const() {"value":8}
+  p8:u64 = int.add.wrap(pos,o8)
+  a8:usize = int.cast(p8) {"mode":"wrap"}
+  v8:u64 = const() {"value":2484643539081719656}
+  w8:u32 = call(arena,a8,v8) {"function":"cw_store64"}
+  o16:u64 = const() {"value":16}
+  p16:u64 = int.add.wrap(pos,o16)
+  a16:usize = int.cast(p16) {"mode":"wrap"}
+  v16:u64 = const() {"value":4189037521293111395}
+  w16:u32 = call(arena,a16,v16) {"function":"cw_store64"}
+  advance:u64 = const() {"value":24}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end
+
+fn rp_piece_8(arena:mutbuf,pos:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(arena:mutbuf,pos:u64)
+  o0:u64 = const() {"value":0}
+  p0:u64 = int.add.wrap(pos,o0)
+  a0:usize = int.cast(p0) {"mode":"wrap"}
+  v0:u8 = const() {"value":125}
+  _ = buffer.store(arena,a0,v0)
+  o1:u64 = const() {"value":1}
+  p1:u64 = int.add.wrap(pos,o1)
+  a1:usize = int.cast(p1) {"mode":"wrap"}
+  v1:u8 = const() {"value":125}
+  _ = buffer.store(arena,a1,v1)
+  advance:u64 = const() {"value":2}
+  next:u64 = int.add.wrap(pos,advance)
+  ret(next)
+end

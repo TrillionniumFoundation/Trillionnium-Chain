@@ -1342,6 +1342,17 @@
       ]
     },
     {
+      "id": "node/resource-profile-value",
+      "node_integration_complete": false,
+      "scope": "Exact immutable typed local resource profile validation and Serde JSON ID from public original ResourceProfileV1; not admission, owner issuance, or resource accounting",
+      "source": "hia/src/node/resource_profile.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_resource_profile.py",
+        "hia/tests/rust_node_resource_profile_reference.rs"
+      ]
+    },
+    {
       "id": "consensus/work-schedule-profile",
       "node_integration_complete": false,
       "scope": "Immutable research metadata validation and exact PoN ID of original Profile::new(ProfileInputs), including fixed and anchored policies; no node settings, history, proof or admission",
@@ -3327,6 +3338,7 @@
         "transport/authenticated-response",
         "transport/signed-response",
         "node/settings-development",
+        "node/resource-profile-value",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",

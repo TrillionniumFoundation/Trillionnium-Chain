@@ -14649,6 +14649,31 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "src/node/resource_profile.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_store64"
+        ]
+      },
+      {
+        "source": "src/bench/text.hepta",
+        "functions": [
+          "bt_u64"
+        ]
+      },
+      {
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ],
+        "source": "src/crypto/sha256_arena.hepta"
+      }
+    ],
     "src/protocol/pnx1.hepta": [
       {
         "functions": [
