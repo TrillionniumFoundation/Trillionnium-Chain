@@ -1,0 +1,174 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_tile_model_binding
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  nn:usize = buffer.len(r)
+  n:u64 = int.cast(nn) {"mode":"wrap"}
+  min:u64 = const() {"value":32920}
+  max:u64 = const() {"value":1048576}
+  a:bool = compare.le(min,n)
+  b:bool = compare.le(n,max)
+  fits:bool = bool.and(a,b)
+  branch fits bounds(r,o,w,n) frame()
+block bounds(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64)
+  size:u64 = const() {"value":32832}
+  m:u64 = int.sub.wrap(bn,size)
+  eight:u64 = const() {"value":8}
+  overhead:u64 = const() {"value":88}
+  at:u64 = int.sub.wrap(m,eight)
+  act:u64 = call(br,at) {"function":"tr_read"}
+  cap:u64 = int.sub.wrap(m,overhead)
+  valid:bool = compare.le(act,cap)
+  branch valid capacity(br,bo,bw,m) frame()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
+  os:usize = buffer.len(co)
+  ws:usize = buffer.len(cw)
+  omin:usize = const() {"value":64}
+  wmin:usize = const() {"value":500000}
+  oa:bool = compare.le(omin,os)
+  wa:bool = compare.le(wmin,ws)
+  ok:bool = bool.and(oa,wa)
+  branch ok numeric(cr,co,cw,cn) short()
+block numeric(nr:readbuf,no:mutbuf,nw:mutbuf,nn_:u64)
+  status:u32 = call(nr,nw,nn_) {"function":"tmn_private"}
+  z:u32 = const() {"value":0}
+  valid_n:bool = compare.eq(status,z)
+  branch valid_n replay(nr,no,nw,nn_) refuse(status)
+block replay(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64)
+  first:u64 = const() {"value":463016}
+  count:u64 = const() {"value":4096}
+  exact:bool = call(rr,rw,rn,first,count) {"function":"tmb_equal"}
+  branch exact hashes(rr,ro,rw,rn) replay_error()
+block hashes(hr:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
+  first_h:u64 = const() {"value":463016}
+  second_h:u64 = const() {"value":479400}
+  offset:u64 = const() {"value":32768}
+  model:u64 = int.add.wrap(hn,offset)
+  btag:bool = const() {"value":false}
+  aok:bool = call(hr,hw,model,first_h,btag) {"function":"tmb_hash"}
+  branch aok input(hr,ho,hw,model,second_h) material()
+block input(ir:readbuf,io:mutbuf,iw:mutbuf,im:u64,ib:u64)
+  tag:bool = const() {"value":true}
+  delta:u64 = const() {"value":32}
+  pin:u64 = int.add.wrap(im,delta)
+  bok:bool = call(ir,iw,pin,ib,tag) {"function":"tmb_hash"}
+  branch bok publish(io,iw) material()
+block publish(po:mutbuf,pw:mutbuf)
+  pos:u64 = const() {"value":499900}
+  z_p:u64 = const() {"value":0}
+  n_p:u64 = const() {"value":64}
+  copied:u64 = call(pw,pos,po,z_p,n_p) {"function":"cs_wcopy"}
+  result:u32 = const() {"value":0}
+  ret(result)
+block frame()
+  a_f:u32 = const() {"value":100}
+  ret(a_f)
+block short()
+  a_q:u32 = const() {"value":102}
+  ret(a_q)
+block replay_error()
+  a_r:u32 = const() {"value":40}
+  ret(a_r)
+block material()
+  a_m:u32 = const() {"value":41}
+  ret(a_m)
+block refuse(s:u32)
+  ret(s)
+end
+
+fn tmb_equal(r:readbuf,w:mutbuf,p:u64,q:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,q:u64,n:u64)
+  jump loop(r,w,p,q,n)
+block loop(lr:readbuf,lw:mutbuf,lp:u64,lq:u64,ln:u64)
+  a:u64 = call(lr,lp) {"function":"tr_read"}
+  b:u64 = call(lw,lq) {"function":"tr_get"}
+  eq:bool = compare.eq(a,b)
+  branch eq next(lr,lw,lp,lq,ln) no()
+block next(nr:readbuf,nw:mutbuf,np:u64,nq:u64,nn:u64)
+  step:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  pp:u64 = int.add.wrap(np,step)
+  qq:u64 = int.add.wrap(nq,step)
+  left:u64 = int.sub.wrap(nn,one)
+  done:bool = compare.eq(nn,one)
+  branch done yes() loop(nr,nw,pp,qq,left)
+block yes()
+  y:bool = const() {"value":true}
+  ret(y)
+block no()
+  n_:bool = const() {"value":false}
+  ret(n_)
+end
+
+fn tmb_hash(r:readbuf,w:mutbuf,p:u64,m:u64,b:bool) -> (bool) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,m:u64,b:bool)
+  branch b prefix_b(r,w,p,m) prefix_a(r,w,p,m)
+block prefix_a(ar:readbuf,aw:mutbuf,ap:u64,am:u64)
+  pos_a0:u64 = const() {"value":1400}
+  val_a0:u64 = const() {"value":5642817013619249748}
+  put_a0:u64 = call(aw,pos_a0,val_a0) {"function":"tr_put"}
+  pos_a8:u64 = const() {"value":1408}
+  val_a8:u64 = const() {"value":7598824232218787889}
+  put_a8:u64 = call(aw,pos_a8,val_a8) {"function":"tr_put"}
+  pos_a16:u64 = const() {"value":1416}
+  val_a16:u64 = const() {"value":70370696847718}
+  put_a16:u64 = call(aw,pos_a16,val_a16) {"function":"tr_put"}
+  len_a:u64 = const() {"value":24}
+  dst_a:u64 = const() {"value":499900}
+  jump hash(ar,aw,ap,am,len_a,dst_a)
+block prefix_b(br:readbuf,bw:mutbuf,bp:u64,bm:u64)
+  pos_b0:u64 = const() {"value":1400}
+  val_b0:u64 = const() {"value":5642817013619249748}
+  put_b0:u64 = call(bw,pos_b0,val_b0) {"function":"tr_put"}
+  pos_b8:u64 = const() {"value":1408}
+  val_b8:u64 = const() {"value":7809652357030412337}
+  put_b8:u64 = call(bw,pos_b8,val_b8) {"function":"tr_put"}
+  pos_b16:u64 = const() {"value":1416}
+  val_b16:u64 = const() {"value":7022287628198831721}
+  put_b16:u64 = call(bw,pos_b16,val_b16) {"function":"tr_put"}
+  pos_b24:u64 = const() {"value":1424}
+  val_b24:u64 = const() {"value":8391737100188085107}
+  put_b24:u64 = call(bw,pos_b24,val_b24) {"function":"tr_put"}
+  pos_b32:u64 = const() {"value":1432}
+  val_b32:u64 = const() {"value":274881148461}
+  put_b32:u64 = call(bw,pos_b32,val_b32) {"function":"tr_put"}
+  len_b:u64 = const() {"value":39}
+  dst_b:u64 = const() {"value":499932}
+  jump hash(br,bw,bp,bm,len_b,dst_b)
+block hash(hr:readbuf,hw:mutbuf,hp:u64,hm:u64,hn:u64,hd:u64)
+  start:u64 = const() {"value":1400}
+  count:u64 = const() {"value":16384}
+  limit:u64 = const() {"value":16423}
+  init:u64 = call(hw) {"function":"tr_sha_init"}
+  prefix:u64 = call(hw,start,hn,limit) {"function":"tr_sha_update_work_limit"}
+  feed:u64 = call(hw,hm,count,limit) {"function":"tr_sha_update_work_limit"}
+  final:u64 = call(hw,limit) {"function":"tr_sha_final_limit"}
+  e1:u64 = bit.or(init,prefix)
+  e2:u64 = bit.or(feed,final)
+  all:u64 = bit.or(e1,e2)
+  zero:u64 = const() {"value":0}
+  okay:bool = compare.eq(all,zero)
+  branch okay compare(hr,hw,hp,hd) no()
+block compare(cr:readbuf,cw:mutbuf,cp:u64,cd:u64)
+  digest:u64 = const() {"value":1168}
+  match_:bool = call(cr,cw,cp,digest) {"function":"tac_match_pin"}
+  branch match_ keep(cw,digest,cd) no()
+block keep(kw:mutbuf,ks:u64,kd:u64)
+  words:u64 = const() {"value":4}
+  jump copy(kw,ks,kd,words)
+block copy(cw_:mutbuf,cs:u64,cd_:u64,cn:u64)
+  byte:u64 = call(cw_,cs) {"function":"tr_get"}
+  sent:u64 = call(cw_,cd_,byte) {"function":"tr_put"}
+  step:u64 = const() {"value":8}
+  one:u64 = const() {"value":1}
+  next_s:u64 = int.add.wrap(cs,step)
+  next_d:u64 = int.add.wrap(cd_,step)
+  left:u64 = int.sub.wrap(cn,one)
+  done:bool = compare.eq(cn,one)
+  branch done yes() copy(cw_,next_s,next_d,left)
+block yes()
+  y:bool = const() {"value":true}
+  ret(y)
+block no()
+  n_:bool = const() {"value":false}
+  ret(n_)
+end

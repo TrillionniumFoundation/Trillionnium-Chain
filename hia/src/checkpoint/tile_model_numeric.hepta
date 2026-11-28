@@ -3,13 +3,60 @@ fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
   extent:usize = buffer.len(r)
   n:u64 = int.cast(extent) {"mode":"wrap"}
+  out_extent:usize = buffer.len(o)
+  work_extent:usize = buffer.len(w)
+  out_min:usize = const() {"value":32784}
+  work_min:usize = const() {"value":500000}
+  out_ok:bool = compare.le(out_min,out_extent)
+  work_ok:bool = compare.le(work_min,work_extent)
+  exact:bool = bool.and(out_ok,work_ok)
   min:u64 = const() {"value":88}
   max:u64 = const() {"value":1048576}
   low:bool = compare.le(min,n)
   high:bool = compare.le(n,max)
   good:bool = bool.and(low,high)
-  branch good bounds(r,o,w,n) frame()
-block bounds(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64)
+  branch good bounds(r,o,w,n,exact) frame()
+block bounds(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,be:bool)
+  eight:u64 = const() {"value":8}
+  overhead:u64 = const() {"value":88}
+  at:u64 = int.sub.wrap(bn,eight)
+  act:u64 = call(br,at) {"function":"tr_read"}
+  cap:u64 = int.sub.wrap(bn,overhead)
+  fits:bool = compare.le(act,cap)
+  branch fits capacity(br,bo,bw,bn,be) frame()
+block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64,ce:bool)
+  branch ce numeric(cr,co,cw,cn) short()
+block numeric(nr:readbuf,no:mutbuf,nw:mutbuf,nn:u64)
+  status:u32 = call(nr,nw,nn) {"function":"tmn_private"}
+  zero:u32 = const() {"value":0}
+  numeric_ok:bool = compare.eq(status,zero)
+  branch numeric_ok publish(no,nw) refused(status)
+block publish(po:mutbuf,pw:mutbuf)
+  at_a:u64 = const() {"value":463000}
+  output_start:u64 = const() {"value":0}
+  output_n:u64 = const() {"value":32784}
+  completed:u64 = call(pw,at_a,po,output_start,output_n) {"function":"cs_wcopy"}
+  ok:u32 = const() {"value":0}
+  ret(ok)
+block frame()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block short()
+  bad_span:u32 = const() {"value":102}
+  ret(bad_span)
+block refused(value:u32)
+  ret(value)
+end
+
+fn tmn_private(r:readbuf,w:mutbuf,n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,n:u64)
+  min:u64 = const() {"value":88}
+  max:u64 = const() {"value":1048576}
+  low:bool = compare.le(min,n)
+  high:bool = compare.le(n,max)
+  good:bool = bool.and(low,high)
+  branch good bounds(r,w,n) frame()
+block bounds(br:readbuf,bw:mutbuf,bn:u64)
   suffix:u64 = const() {"value":48}
   footer:u64 = int.sub.wrap(bn,suffix)
   aclen_at:u64 = const() {"value":8}
@@ -19,31 +66,22 @@ block bounds(br:readbuf,bo:mutbuf,bw:mutbuf,bn:u64)
   max_act:u64 = int.sub.wrap(footer,root)
   fits:bool = compare.le(act_len,max_act)
   act_end:u64 = int.add.wrap(act_len,root)
-  branch fits capacity(br,bo,bw,act_end,footer) frame()
-block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,ce:u64,cf:u64)
-  out_extent:usize = buffer.len(co)
-  work_extent:usize = buffer.len(cw)
-  out_min:usize = const() {"value":32784}
-  work_min:usize = const() {"value":500000}
-  out_ok:bool = compare.le(out_min,out_extent)
-  work_ok:bool = compare.le(work_min,work_extent)
-  exact:bool = bool.and(out_ok,work_ok)
-  branch exact activation(cr,co,cw,ce,cf) short()
-block activation(ar:readbuf,ao:mutbuf,aw:mutbuf,ae:u64,af:u64)
+  branch fits activation(br,bw,act_end,footer) frame()
+block activation(ar:readbuf,aw:mutbuf,ae:u64,af:u64)
   original_modes:bool = const() {"value":true}
   status:u32,extent_a:u64 = call(ar,aw,ae,original_modes,original_modes) {"function":"tat_parse_private"}
   z_a:u32 = const() {"value":0}
   typed:bool = compare.eq(status,z_a)
-  branch typed directory(ar,ao,aw,ae,af,extent_a) refused(status)
-block directory(dr:readbuf,do_:mutbuf,dw:mutbuf,de:u64,df:u64,dextent:u64)
+  branch typed directory(ar,aw,ae,af,extent_a) refused(status)
+block directory(dr:readbuf,dw:mutbuf,de:u64,df:u64,dextent:u64)
   known:bool = call(dw,dextent) {"function":"tac_index"}
-  branch known semantic(dr,do_,dw,de,df) frame()
-block semantic(sr:readbuf,so:mutbuf,sw:mutbuf,se:u64,sf:u64)
+  branch known semantic(dr,dw,de,df) frame()
+block semantic(sr:readbuf,sw:mutbuf,se:u64,sf:u64)
   code:u32,tokens:u64,hidden:u64 = call(sr,sw,sf) {"function":"tac_semantics"}
   good_s:u32 = const() {"value":0}
   okay:bool = compare.eq(code,good_s)
-  branch okay checkpoint(sr,so,sw,se,sf,tokens,hidden) refused(code)
-block checkpoint(kr:readbuf,ko:mutbuf,kw:mutbuf,ke:u64,kf:u64,kt:u64,kh:u64)
+  branch okay checkpoint(sr,sw,se,sf,tokens,hidden) refused(code)
+block checkpoint(kr:readbuf,kw:mutbuf,ke:u64,kf:u64,kt:u64,kh:u64)
   scratch_copy:u64 = call(kw,kh,kt) {"function":"tmn_save_hidden"}
   len_delta:u64 = const() {"value":32}
   len_at:u64 = int.add.wrap(kf,len_delta)
@@ -51,24 +89,21 @@ block checkpoint(kr:readbuf,ko:mutbuf,kw:mutbuf,ke:u64,kf:u64,kt:u64,kh:u64)
   cp_code:u32,source:u64 = call(kr,kw,ke,kf,expected,kf) {"function":"tce_private"}
   z_k:u32 = const() {"value":0}
   pinned:bool = compare.eq(cp_code,z_k)
-  branch pinned numerical(kr,ko,kw,kt,source) checkpoint_error(cp_code)
-block numerical(nr:readbuf,no:mutbuf,nw:mutbuf,nt:u64,np:u64)
+  branch pinned numerical(kr,kw,kt,source) checkpoint_error(cp_code)
+block numerical(nr:readbuf,nw:mutbuf,nt:u64,np:u64)
   weights:u64 = call(nr,nw,np) {"function":"tmn_weights"}
   failed:u64 = const() {"value":18446744073709551615}
   valid:bool = compare.ne(weights,failed)
-  branch valid finite_hidden(no,nw,nt,weights) nonfinite()
-block finite_hidden(fo:mutbuf,fw:mutbuf,ft:u64,fc:u64)
+  branch valid finite_hidden(nw,nt,weights) nonfinite()
+block finite_hidden(fw:mutbuf,ft:u64,fc:u64)
   finite:bool = call(fw,ft) {"function":"tmn_hidden_finite"}
-  branch finite finish(fo,fw,ft,fc) nonfinite()
-block finish(po:mutbuf,pw:mutbuf,pt:u64,pc:u64)
+  branch finite finish(fw,ft,fc) nonfinite()
+block finish(pw:mutbuf,pt:u64,pc:u64)
   clips_b:u64 = call(pw,pt) {"function":"tmn_activations"}
   at_a:u64 = const() {"value":463000}
   at_b:u64 = const() {"value":463008}
   a:u64 = call(pw,at_a,pc) {"function":"tr_put"}
   b:u64 = call(pw,at_b,clips_b) {"function":"tr_put"}
-  output_start:u64 = const() {"value":0}
-  output_n:u64 = const() {"value":32784}
-  completed:u64 = call(pw,at_a,po,output_start,output_n) {"function":"cs_wcopy"}
   ok:u32 = const() {"value":0}
   ret(ok)
 block checkpoint_error(orig:u32)
@@ -81,9 +116,6 @@ block checkpoint_error(orig:u32)
 block frame()
   bad_frame:u32 = const() {"value":100}
   ret(bad_frame)
-block short()
-  bad_span:u32 = const() {"value":102}
-  ret(bad_span)
 block nonfinite()
   bad_number:u32 = const() {"value":15}
   ret(bad_number)

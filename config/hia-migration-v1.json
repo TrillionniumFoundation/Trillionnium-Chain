@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_model_binding",
+      "node_integration_complete": false,
+      "scope": "Private immutable checkpoint and activation to exact expected matrix replay and two original detached digest checks; no task ID, proof, training or authority.",
+      "source": "hia/src/checkpoint/tile_model_binding.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_model_binding.py",
+        "hia/tests/rust_checkpoint_tile_model_binding_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_model_numeric",
       "node_integration_complete": false,
       "scope": "Private same-frame original checkpoint and activation pins, owned numerical A/B projections and clip counts; no live model, bytes outside caller, original observer, proof or authority.",
