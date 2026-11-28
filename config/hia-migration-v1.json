@@ -1645,6 +1645,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-periodic-snapshot-policy",
+      "node_integration_complete": false,
+      "scope": "Original immutable CPS1 finite snapshot policy decode, precedence, canonical bytes and commitment; no store, owner, authority, scheduling, reservation, funding or execution",
+      "source": "hia/src/data_availability/cell_periodic_snapshot_policy.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_periodic_snapshot_policy.py",
+        "hia/tests/rust_da_cell_periodic_snapshot_policy_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-release-manifest",
       "node_integration_complete": false,
       "scope": "Pure original TCR1 immutable declared set decode, exact order, full 32760 rows and domain SHA-256 identity. No external pin authority, files, release, cache, network, payload validation, selection or adoption.",
@@ -3120,6 +3131,7 @@
         "data-availability/cell-manifest",
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",
+        "data-availability/cell-periodic-snapshot-policy",
         "data-availability/cell-release-manifest",
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",
