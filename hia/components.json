@@ -7759,6 +7759,46 @@
         "source": "src/release_bundle/sbom_digest.hepta"
       }
     ],
+    "src/data_availability/cell_content_closure_value.hepta": [
+      {
+        "functions": [
+          "ccm_manifest",
+          "ccm_claim"
+        ],
+        "source": "src/data_availability/cell_content_manifest_value.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32",
+          "daav_copy"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "utf8"
+        ],
+        "source": "src/verification/closed_round.hepta"
+      },
+      {
+        "functions": [
+          "cm_family_chars"
+        ],
+        "source": "src/data_availability/cell_manifest.hepta"
+      },
+      {
+        "functions": [
+          "cch_nonzero64"
+        ],
+        "source": "src/release_bundle/content_claim_frame.hepta"
+      },
+      {
+        "functions": [
+          "root_be64"
+        ],
+        "source": "src/release_bundle/root_recovery_checkpoint_v3.hepta"
+      }
+    ],
     "src/data_availability/cell_content_manifest_value.hepta": [
       {
         "functions": [

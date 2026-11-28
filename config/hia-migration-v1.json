@@ -1894,6 +1894,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-content-closure-value",
+      "node_integration_complete": false,
+      "scope": "Original canonical TCC2 immutable declaration decode/encode, embedded TCM2 and five ordered CCH1 with purpose, shared profile and declared size. No payload observation, reads, loader, custody or authority.",
+      "source": "hia/src/data_availability/cell_content_closure_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_content_closure_value.py",
+        "hia/tests/rust_da_cell_content_closure_value_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-content-manifest-value",
       "node_integration_complete": false,
       "scope": "Private exact TCM2 model metadata and typed CCH1 payload claim declaration parsing; no payload observation, pin authority, keys, storage or activation.",
@@ -3905,6 +3916,7 @@
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
         "data-availability/cell-content-manifest-value",
+        "data-availability/cell-content-closure-value",
         "data-availability/cell-manifest",
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",

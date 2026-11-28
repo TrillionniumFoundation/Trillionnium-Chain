@@ -2,84 +2,12 @@ hia-asm.v1 hepta.hia.program.v8 trnm_cell_content_manifest_value
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
   n:usize = buffer.len(r)
-  length:u64 = int.cast(n) {"mode":"wrap"}
-  low:u64 = const() {"value":379}
-  high:u64 = const() {"value":442}
-  a:bool = compare.ge(length,low)
-  b:bool = compare.le(length,high)
-  valid:bool = bool.and(a,b)
-  branch valid magic(r,o,n,length) bad_length()
-block magic(r1:readbuf,o1:mutbuf,n1:usize,ext1:u64)
-  at1:u64 = const() {"value":0}
-  word1:u64 = call(r1,at1) {"function":"daav_u32"}
-  wanted1:u64 = const() {"value":843924308}
-  good1:bool = compare.eq(word1,wanted1)
-  branch good1 family_length(r1,o1,n1,ext1) bad_magic()
-block family_length(r2:readbuf,o2:mutbuf,n2:usize,ext2:u64)
-  at2:usize = const() {"value":4}
-  len2:u8 = buffer.load(r2,at2)
-  size2:u64 = int.cast(len2) {"mode":"wrap"}
-  low2:u64 = const() {"value":1}
-  high2:u64 = const() {"value":64}
-  a2:bool = compare.ge(size2,low2)
-  b2:bool = compare.le(size2,high2)
-  good2:bool = bool.and(a2,b2)
-  branch good2 coverage(r2,o2,n2,ext2,size2) bad_family_length()
-block coverage(r3:readbuf,o3:mutbuf,n3:usize,ext3:u64,sz3:u64)
-  base3:u64 = const() {"value":378}
-  total3:u64 = int.add.wrap(base3,sz3)
-  good3:bool = compare.eq(ext3,total3)
-  branch good3 family_utf8(r3,o3,n3,sz3) bad_exact()
-block family_utf8(r4:readbuf,o4:mutbuf,n4:usize,sz4:u64)
-  at4:usize = const() {"value":5}
-  amount4:usize = int.cast(sz4) {"mode":"wrap"}
-  valid4:bool = call(r4,at4,amount4) {"function":"utf8"}
-  branch valid4 claim_magic(r4,o4,n4,sz4) bad_utf8()
-block claim_magic(r5:readbuf,o5:mutbuf,n5:usize,sz5:u64)
-  base5:u64 = const() {"value":165}
-  claim5:u64 = int.add.wrap(base5,sz5)
-  word5:u64 = call(r5,claim5) {"function":"daav_u32"}
-  expected5:u64 = const() {"value":826819395}
-  good5:bool = compare.eq(word5,expected5)
-  branch good5 claim_kind(r5,o5,n5,sz5,claim5) bad_claim_encoding()
-block claim_kind(r6:readbuf,o6:mutbuf,n6:usize,sz6:u64,cl6:u64)
-  k6:u64 = const() {"value":68}
-  at6:u64 = int.add.wrap(cl6,k6)
-  i6:usize = int.cast(at6) {"mode":"wrap"}
-  code6:u8 = buffer.load(r6,i6)
-  lo6:u8 = const() {"value":1}
-  hi6:u8 = const() {"value":5}
-  a6:bool = compare.ge(code6,lo6)
-  b6:bool = compare.le(code6,hi6)
-  valid6:bool = bool.and(a6,b6)
-  branch valid6 claim_context(r6,o6,n6,sz6,cl6,code6) bad_claim_encoding()
-block claim_context(r7:readbuf,o7:mutbuf,n7:usize,sz7:u64,cl7:u64,kind7:u8)
-  a7:u64 = const() {"value":4}
-  b7:u64 = const() {"value":69}
-  p7:u64 = int.add.wrap(cl7,a7)
-  i7:u64 = int.add.wrap(cl7,b7)
-  okp7:bool = call(r7,p7) {"function":"cch_nonzero64"}
-  oki7:bool = call(r7,i7) {"function":"cch_nonzero64"}
-  good7:bool = bool.and(okp7,oki7)
-  branch good7 family_ascii(r7,o7,n7,sz7,cl7,kind7) bad_claim_context()
-block family_ascii(r8:readbuf,o8:mutbuf,n8:usize,sz8:u64,cl8:u64,kind8:u8)
-  off8:u64 = const() {"value":5}
-  good8:bool = call(r8,off8,sz8) {"function":"cm_family_chars"}
-  branch good8 purpose(r8,o8,n8,cl8,kind8) bad_family()
-block purpose(r9:readbuf,o9:mutbuf,n9:usize,cl9:u64,k9:u8)
-  payload9:u8 = const() {"value":4}
-  good9:bool = compare.eq(k9,payload9)
-  branch good9 payload_size(r9,o9,n9,cl9) bad_purpose()
-block payload_size(ra:readbuf,oa:mutbuf,na:usize,ca:u64)
-  fa:u64 = const() {"value":141}
-  at_a:u64 = int.add.wrap(ca,fa)
-  length_a:u64 = call(ra,at_a) {"function":"root_be64"}
-  low_a:u64 = const() {"value":1}
-  high_a:u64 = const() {"value":68719476736}
-  s_a:bool = compare.ge(length_a,low_a)
-  t_a:bool = compare.le(length_a,high_a)
-  good_a:bool = bool.and(s_a,t_a)
-  branch good_a output_size(ra,oa,na) bad_size()
+  total:u64 = int.cast(n) {"mode":"wrap"}
+  z:u64 = const() {"value":0}
+  status:u32,ignored:u64 = call(r,z,total) {"function":"ccm_manifest"}
+  zs:u32 = const() {"value":0}
+  ok:bool = compare.eq(status,zs)
+  branch ok output_size(r,o,n) fail(status)
 block output_size(rb:readbuf,ob:mutbuf,nb:usize)
   obsize:usize = buffer.len(ob)
   enoughb:bool = compare.ge(obsize,nb)
@@ -89,37 +17,142 @@ block publish(rc:readbuf,oc:mutbuf,nc:usize)
   _copy:u64 = call(rc,oc,zc,zc,nc) {"function":"daav_copy"}
   cc:u32 = const() {"value":0}
   ret(cc)
-block bad_length()
-  e1:u32 = const() {"value":1}
-  ret(e1)
-block bad_magic()
-  e2:u32 = const() {"value":2}
-  ret(e2)
-block bad_family_length()
-  e3:u32 = const() {"value":3}
-  ret(e3)
-block bad_exact()
-  e4:u32 = const() {"value":4}
-  ret(e4)
-block bad_utf8()
-  e5:u32 = const() {"value":5}
-  ret(e5)
-block bad_claim_encoding()
-  e6:u32 = const() {"value":6}
-  ret(e6)
-block bad_claim_context()
-  e7:u32 = const() {"value":7}
-  ret(e7)
-block bad_family()
-  e8:u32 = const() {"value":8}
-  ret(e8)
-block bad_purpose()
-  e9:u32 = const() {"value":9}
-  ret(e9)
-block bad_size()
-  e10:u32 = const() {"value":10}
-  ret(e10)
 block short()
   e102:u32 = const() {"value":102}
   ret(e102)
+block fail(s:u32)
+  ret(s)
+end
+
+fn ccm_manifest(r:readbuf,base:u64,len:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,base:u64,len:u64)
+  low:u64 = const() {"value":379}
+  high:u64 = const() {"value":442}
+  a:bool = compare.ge(len,low)
+  b:bool = compare.le(len,high)
+  valid:bool = bool.and(a,b)
+  branch valid magic(r,base,len) bad_length()
+block magic(r1:readbuf,b1:u64,n1:u64)
+  word1:u64 = call(r1,b1) {"function":"daav_u32"}
+  wanted1:u64 = const() {"value":843924308}
+  good1:bool = compare.eq(word1,wanted1)
+  branch good1 family_length(r1,b1,n1) bad_magic()
+block family_length(r2:readbuf,b2:u64,n2:u64)
+  four2:u64 = const() {"value":4}
+  at2:u64 = int.add.wrap(b2,four2)
+  p2:usize = int.cast(at2) {"mode":"wrap"}
+  raw2:u8 = buffer.load(r2,p2)
+  size2:u64 = int.cast(raw2) {"mode":"wrap"}
+  low2:u64 = const() {"value":1}
+  high2:u64 = const() {"value":64}
+  a2:bool = compare.ge(size2,low2)
+  b2_ok:bool = compare.le(size2,high2)
+  good2:bool = bool.and(a2,b2_ok)
+  branch good2 coverage(r2,b2,n2,size2) bad_family_length()
+block coverage(r3:readbuf,b3:u64,n3:u64,sz3:u64)
+  base3:u64 = const() {"value":378}
+  total3:u64 = int.add.wrap(base3,sz3)
+  good3:bool = compare.eq(n3,total3)
+  branch good3 family_utf8(r3,b3,sz3) bad_exact()
+block family_utf8(r4:readbuf,b4:u64,sz4:u64)
+  five4:u64 = const() {"value":5}
+  off4:u64 = int.add.wrap(b4,five4)
+  at4:usize = int.cast(off4) {"mode":"wrap"}
+  amount4:usize = int.cast(sz4) {"mode":"wrap"}
+  valid4:bool = call(r4,at4,amount4) {"function":"utf8"}
+  branch valid4 claim_decode(r4,b4,off4,sz4) bad_utf8()
+block claim_decode(r5:readbuf,b5:u64,f5:u64,sz5:u64)
+  aliases5:u64 = const() {"value":165}
+  claim_offset5:u64 = int.add.wrap(aliases5,sz5)
+  claim5:u64 = int.add.wrap(b5,claim_offset5)
+  status5:u32,kind5:u8 = call(r5,claim5) {"function":"ccm_claim"}
+  z5:u32 = const() {"value":0}
+  ok5:bool = compare.eq(status5,z5)
+  branch ok5 family_ascii(r5,f5,sz5,claim5,kind5) fail_manifest(status5)
+block family_ascii(r8:readbuf,f8:u64,sz8:u64,cl8:u64,kind8:u8)
+  good8:bool = call(r8,f8,sz8) {"function":"cm_family_chars"}
+  branch good8 purpose(r8,cl8,kind8) bad_family()
+block purpose(r9:readbuf,cl9:u64,k9:u8)
+  payload9:u8 = const() {"value":4}
+  good9:bool = compare.eq(k9,payload9)
+  branch good9 payload_size(r9,cl9) bad_purpose()
+block payload_size(ra:readbuf,ca:u64)
+  fa:u64 = const() {"value":141}
+  at_a:u64 = int.add.wrap(ca,fa)
+  length_a:u64 = call(ra,at_a) {"function":"root_be64"}
+  low_a:u64 = const() {"value":1}
+  high_a:u64 = const() {"value":68719476736}
+  s_a:bool = compare.ge(length_a,low_a)
+  t_a:bool = compare.le(length_a,high_a)
+  good_a:bool = bool.and(s_a,t_a)
+  branch good_a done(ca) bad_size()
+block done(out_at:u64)
+  success:u32 = const() {"value":0}
+  ret(success,out_at)
+block bad_length()
+  e1:u32 = const() {"value":1}
+  jump fail_manifest(e1)
+block bad_magic()
+  e2:u32 = const() {"value":2}
+  jump fail_manifest(e2)
+block bad_family_length()
+  e3:u32 = const() {"value":3}
+  jump fail_manifest(e3)
+block bad_exact()
+  e4:u32 = const() {"value":4}
+  jump fail_manifest(e4)
+block bad_utf8()
+  e5:u32 = const() {"value":5}
+  jump fail_manifest(e5)
+block bad_family()
+  e8:u32 = const() {"value":8}
+  jump fail_manifest(e8)
+block bad_purpose()
+  e9:u32 = const() {"value":9}
+  jump fail_manifest(e9)
+block bad_size()
+  e10:u32 = const() {"value":10}
+  jump fail_manifest(e10)
+block fail_manifest(err:u32)
+  no_result:u64 = const() {"value":0}
+  ret(err,no_result)
+end
+
+fn ccm_claim(r_c:readbuf,base_c:u64) -> (u32,u8) effects(read,trap) entry(entry)
+block entry(r_c:readbuf,base_c:u64)
+  raw_c:u64 = call(r_c,base_c) {"function":"daav_u32"}
+  expected_c:u64 = const() {"value":826819395}
+  ok_c:bool = compare.eq(raw_c,expected_c)
+  branch ok_c read_kind(r_c,base_c) bad_encoding()
+block read_kind(r_k:readbuf,base_k:u64)
+  k6:u64 = const() {"value":68}
+  at6:u64 = int.add.wrap(base_k,k6)
+  i6:usize = int.cast(at6) {"mode":"wrap"}
+  code6:u8 = buffer.load(r_k,i6)
+  lo6:u8 = const() {"value":1}
+  hi6:u8 = const() {"value":5}
+  a6:bool = compare.ge(code6,lo6)
+  b6:bool = compare.le(code6,hi6)
+  valid6:bool = bool.and(a6,b6)
+  branch valid6 claim_context(r_k,base_k,code6) bad_encoding()
+block claim_context(r7:readbuf,cl7:u64,kind7:u8)
+  a7:u64 = const() {"value":4}
+  b7:u64 = const() {"value":69}
+  p7:u64 = int.add.wrap(cl7,a7)
+  i7:u64 = int.add.wrap(cl7,b7)
+  okp7:bool = call(r7,p7) {"function":"cch_nonzero64"}
+  oki7:bool = call(r7,i7) {"function":"cch_nonzero64"}
+  good7:bool = bool.and(okp7,oki7)
+  branch good7 success_claim(kind7) bad_context()
+block success_claim(out_kind:u8)
+  s_claim:u32 = const() {"value":0}
+  ret(s_claim,out_kind)
+block bad_encoding()
+  s6:u32 = const() {"value":6}
+  empty6:u8 = const() {"value":0}
+  ret(s6,empty6)
+block bad_context()
+  s7:u32 = const() {"value":7}
+  empty7:u8 = const() {"value":0}
+  ret(s7,empty7)
 end
