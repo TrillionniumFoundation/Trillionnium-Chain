@@ -1,0 +1,62 @@
+{
+  "actual_output_digest_independently_repacked_with_array_module": true,
+  "actual_run_source_bytes_unchanged": true,
+  "base_commit": "8a8341832c02841bdac7e24fa3c32118987b8ee1",
+  "correction": "bounded products list evaluated before fsum; test expectation and numerical profile unchanged",
+  "evidence_checker_first_refusal_retained": true,
+  "file_sha256": {
+    ".github/workflows/chain-paired-acceptance.yml": "ff1a186781a9f843868dacacb1c552803f78e45351025312961639ea10e4b024",
+    "evidence/pft-reference-consumption-20261128/CONTROLS_ATTEMPT_1.log": "dc3af2b8569ed188715acbe70572d16080d11432cec8f1fea8fd520c3296e313",
+    "evidence/pft-reference-consumption-20261128/CONTROLS_ATTEMPT_2.log": "ebdc253cb18abd6e3edd5be165a0318aaca5571111074cb23a04b2cc6ed7d440",
+    "evidence/pft-reference-consumption-20261128/EVIDENCE_CHECK_FIRST_REFUSAL.json": "546d8ff35e3137698308a6f84ac259b9e95bd7373844e6228b25b9eb0ddd0203",
+    "evidence/pft-reference-consumption-20261128/EXPECTED.json": "91aa0b19591fcb5a0c39761d9b52cf5717a3bb23ad86cca955e1c07fe4bf6515",
+    "evidence/pft-reference-consumption-20261128/FEATURE_EXPORT_METADATA.json": "c87d14e47f576ee553883040a4f9ebbdfaa2d7f4f0b534b3d4297a8cdc2b365c",
+    "evidence/pft-reference-consumption-20261128/FIRST_FIX.patch": "df6ffad1419261b91f2b123aa83e65b4797cf8eeb46d055dc85492f2e4767739",
+    "evidence/pft-reference-consumption-20261128/FIRST_SOURCE_SHA256.json": "0d3086131e179f3b22fb72d24a24952740333c9da7fd9e842ef9a67e3f2e7448",
+    "evidence/pft-reference-consumption-20261128/FROZEN_RUN.json": "e6850135d81ae6688a41c04253eb2abb28b4e85f3e39001be11185e9d2f349d7",
+    "evidence/pft-reference-consumption-20261128/HISTORICAL_OBSERVATION.json": "62da8a613d53496250c793409a748ea2198fb4a593624019bcab8a8a2b55bf4f",
+    "evidence/pft-reference-consumption-20261128/OBSERVATIONS_ATTEMPT_1.json": "e1b3b99c509a7ba9f0cffef30cd4aa762a2cf1caaa6894e976cb5746f23148ad",
+    "evidence/pft-reference-consumption-20261128/OBSERVATIONS_ATTEMPT_2.json": "d9df55b29a6b0da846c3e379464f76e88bf59b9a43db031a84edcddc589eb755",
+    "evidence/pft-reference-consumption-20261128/PROTOCOL.json": "276782c46caa1df62ddc73537fc6ce002108743c03fec197759ff0aa76f9e70b",
+    "evidence/pft-reference-consumption-20261128/README.md": "d57944454cc2bdbf3f954cc9e53f9ee54e5ce556b65dce7699acbfc6c6ae09ea",
+    "evidence/pft-reference-consumption-20261128/SYNTHETIC_FEATURES.json": "0abfc720348f2970566a9cf756f9b6f93e8dc32ee1f668d1c702d9d8a567f5ab",
+    "scripts/pft_reference_consumption.py": "66090289a1c7f4152614705a70ac7a9a063e0dc9c0f60d46b8d29d4a3fc964d0",
+    "scripts/pft_reference_historical_readback.py": "d23bd0de6398f067a7c459a07f4b03c5a8c1536118f052f489c492e836402a61",
+    "scripts/test_pft_reference_consumption.py": "751daeab10537865198c3ebfc313228e344631765c66be8be11274a17a90d3df"
+  },
+  "final_control_attempt": {
+    "expected_exception_records": 27,
+    "expected_normal_equation_inconsistency_receipts": 1,
+    "failed": 0,
+    "observations": 33,
+    "passed": 12,
+    "tests": 12
+  },
+  "first_control_attempt": {
+    "diagnostic_mismatch": "product-underflow was reclassified by generator evaluation inside the sum wrapper",
+    "failed": 1,
+    "passed": 11,
+    "tests": 12
+  },
+  "full_native_rust_gates_run": false,
+  "full_worktree_materialized": false,
+  "historical_input_shape": [
+    4,
+    41
+  ],
+  "historical_invocations": 1,
+  "historical_prediction_sha256": "a254e8385df48372e9cc35ef307521976c3eca5f77e7c65b503018a626364285",
+  "historical_prediction_shape": [
+    4,
+    3
+  ],
+  "local_markdown_links_verified": true,
+  "manual_synthetic_ieee754_little_endian_octets_match": true,
+  "no_training_or_dev_or_final_test": true,
+  "old_workflow_steps_permissions_pins_timeout_preserved": true,
+  "profile_frozen_before_reference_inference": true,
+  "protocol_commit": "40a56f1bf1561145c8abcbe2131805941c1cfb2a",
+  "public_historical_material": "digests, shapes and scoped observations only",
+  "python_source_compiles": true,
+  "schema": "trnm-pft-reference-consumption-validation-v1"
+}

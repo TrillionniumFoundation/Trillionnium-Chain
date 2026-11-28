@@ -15,9 +15,13 @@ on:
       - scripts/pft_normal_equation_historical_readback.py
       - scripts/test_pft_normal_equation_readback.py
       - scripts/test_pft_file_inputs.py
+      - scripts/pft_reference_consumption.py
+      - scripts/pft_reference_historical_readback.py
+      - scripts/test_pft_reference_consumption.py
       - evidence/pft-candidate-readback-20261128/**
       - evidence/pft-normal-equation-readback-20261128/**
       - evidence/pft-file-input-boundary-20261128/**
+      - evidence/pft-reference-consumption-20261128/**
       - .github/workflows/chain-paired-acceptance.yml
 
 permissions:
@@ -45,6 +49,7 @@ jobs:
             evidence/pft-candidate-readback-20261128
             evidence/pft-normal-equation-readback-20261128
             evidence/pft-file-input-boundary-20261128
+            evidence/pft-reference-consumption-20261128
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
@@ -65,4 +70,8 @@ jobs:
       - name: Check PFT regular-file input boundaries
         run: python3 -B -m unittest discover -s scripts -p 'test_pft_file_inputs.py' -v
       - name: Check source stayed unchanged after input controls
+        run: git diff --exit-code
+      - name: Check same-candidate PFT reference consumption
+        run: python3 -B -m unittest discover -s scripts -p 'test_pft_reference_consumption.py' -v
+      - name: Check source stayed unchanged after reference controls
         run: git diff --exit-code

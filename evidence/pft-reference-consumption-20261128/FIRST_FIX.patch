@@ -1,0 +1,11 @@
+--- a/scripts/pft_reference_consumption.py
++++ b/scripts/pft_reference_consumption.py
+@@ -79,7 +79,7 @@
+     x = normal.matrix(rows, len(rows), d)
+     weight = normal.matrix(candidate["weight"], d, m)
+     # Inputs already include all declared expansion, normalization and bias.
+-    prediction = [[normal.summed(normal.multiplied(row[k], weight[k][j]) for k in range(d))
++    prediction = [[normal.summed([normal.multiplied(row[k], weight[k][j]) for k in range(d)])
+                    for j in range(m)] for row in x]
+     encoded = b"".join(struct.pack("<" + "d" * m, *row) for row in prediction)
+     return dict(report, status="REFERENCE_INFERENCE_COMPUTED",

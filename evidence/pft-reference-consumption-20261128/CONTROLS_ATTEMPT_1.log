@@ -1,0 +1,45 @@
+test_dimensions_duplicate_rows_and_nonfinite_values_refuse (test_pft_reference_consumption.ReferenceTests.test_dimensions_duplicate_rows_and_nonfinite_values_refuse) ... ok
+test_exact_fields_duplicate_json_and_other_schemas_refuse (test_pft_reference_consumption.ReferenceTests.test_exact_fields_duplicate_json_and_other_schemas_refuse) ... ok
+test_fsum_keeps_a_real_cancellation_term (test_pft_reference_consumption.ReferenceTests.test_fsum_keeps_a_real_cancellation_term) ... ok
+test_hand_computed_outputs_and_false_authority (test_pft_reference_consumption.ReferenceTests.test_hand_computed_outputs_and_false_authority) ... ok
+test_independent_raw_pins_refuse_changed_inputs (test_pft_reference_consumption.ReferenceTests.test_independent_raw_pins_refuse_changed_inputs) ... ok
+test_nonzero_product_underflow_refuses (test_pft_reference_consumption.ReferenceTests.test_nonzero_product_underflow_refuses) ... FAIL
+test_other_contract_or_feature_semantics_refuse (test_pft_reference_consumption.ReferenceTests.test_other_contract_or_feature_semantics_refuse) ... ok
+test_profile_is_the_precommitted_exact_profile (test_pft_reference_consumption.ReferenceTests.test_profile_is_the_precommitted_exact_profile) ... ok
+test_real_cli_output_refusals_and_receipt_collision (test_pft_reference_consumption.ReferenceTests.test_real_cli_output_refusals_and_receipt_collision) ... ok
+test_rehashed_wrong_weight_retains_numeric_refusal_without_inference (test_pft_reference_consumption.ReferenceTests.test_rehashed_wrong_weight_retains_numeric_refusal_without_inference) ... ok
+test_request_id_hard_type_and_matching_scope (test_pft_reference_consumption.ReferenceTests.test_request_id_hard_type_and_matching_scope) ... ok
+test_row_and_byte_limits_refuse (test_pft_reference_consumption.ReferenceTests.test_row_and_byte_limits_refuse) ... ok
+
+======================================================================
+FAIL: test_nonzero_product_underflow_refuses (test_pft_reference_consumption.ReferenceTests.test_nonzero_product_underflow_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/hepta-chain-6523704f97df/reference-repo/scripts/pft_normal_equation_readback.py", line 45, in summed
+    return normal(math.fsum(values))
+                  ^^^^^^^^^^^^^^^^^
+  File "/tmp/hepta-chain-6523704f97df/reference-repo/scripts/pft_reference_consumption.py", line 82, in <genexpr>
+    prediction = [[normal.summed(normal.multiplied(row[k], weight[k][j]) for k in range(d))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/hepta-chain-6523704f97df/reference-repo/scripts/pft_normal_equation_readback.py", line 52, in multiplied
+    identity.require(result != 0 or left == 0 or right == 0, "NEQ_PRODUCT_UNDERFLOW")
+  File "/tmp/hepta-chain-6523704f97df/reference-repo/scripts/pft_candidate_readback.py", line 43, in require
+    raise ValueError(code)
+ValueError: NEQ_PRODUCT_UNDERFLOW
+
+The above exception was the direct cause of the following exception:
+
+ValueError: NEQ_NUMERIC_RANGE
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/hepta-chain-6523704f97df/reference-repo/scripts/test_pft_reference_consumption.py", line 164, in test_nonzero_product_underflow_refuses
+    with self.assertRaisesRegex(ValueError, "PRODUCT_UNDERFLOW"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCT_UNDERFLOW" does not match "NEQ_NUMERIC_RANGE"
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.304s
+
+FAILED (failures=1)
