@@ -16,6 +16,7 @@
   "production_activation": false,
   "source_sha256": {
     "scripts/pft_candidate_readback.py": "f6763f59cf205160b3b6935b66857447e31d15ef3ed4990bda2099d2ab1fb16d",
-    "scripts/test_pft_candidate_readback.py": "eaa1f3c0c61d388050c0f5aa9f49c9ad1c281a880134f91dd1ec52878ac83d5d"
+    "scripts/test_pft_candidate_readback.py": "eaa1f3c0c61d388050c0f5aa9f49c9ad1c281a880134f91dd1ec52878ac83d5d",
+    ".github/workflows/chain-paired-acceptance.yml": "7e8f5ca3f0fed8bd89f48f66d34d7111dda36440f3bcc6882ebde69e03ef3a85"
   }
 }

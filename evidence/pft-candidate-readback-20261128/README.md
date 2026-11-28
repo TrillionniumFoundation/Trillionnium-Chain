@@ -49,6 +49,9 @@ production activation. The existing ordinary-model `dev_loop_identity` and
 all native schemas and owners are unchanged. No automatic conversion exists.
 
 The local original project preflight passed for all 26 package manifests.
+The existing paired-acceptance workflow now selects the public fixture and
+runs these 15 research-reader controls in a separate step, preserving all
+original controls, pinned actions, permissions and the five-minute job bound.
 The native Cargo/Clippy/format gates remain unexecuted in this environment,
 which lacks Rust and only materializes selected exact source. This Draft is
 an identity bridge for research evidence and grants no release qualification.

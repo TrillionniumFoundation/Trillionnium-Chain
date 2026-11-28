@@ -9,6 +9,9 @@ on:
       - scripts/dev_loop_identity.py
       - scripts/dev_runtime_artifacts.py
       - scripts/test_dev_*.py
+      - scripts/pft_candidate_readback.py
+      - scripts/test_pft_candidate_readback.py
+      - evidence/pft-candidate-readback-20261128/**
       - .github/workflows/chain-paired-acceptance.yml
 
 permissions:
@@ -33,6 +36,7 @@ jobs:
             evidence/cell-released-pair-funded-evaluation-20261123
             evidence/cell-historical-funded-evaluation-20261123
             evidence/cell-inline-source-preflight-20261123
+            evidence/pft-candidate-readback-20261128
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
@@ -41,4 +45,8 @@ jobs:
       - name: Check new and retained engineering contracts
         run: python3 -B -m unittest discover -s scripts -p 'test_dev_*.py' -v
       - name: Check source stayed unchanged
+        run: git diff --exit-code
+      - name: Check independent PFT research candidate identities
+        run: python3 -B -m unittest discover -s scripts -p 'test_pft_candidate_readback.py' -v
+      - name: Check source stayed unchanged after PFT controls
         run: git diff --exit-code
