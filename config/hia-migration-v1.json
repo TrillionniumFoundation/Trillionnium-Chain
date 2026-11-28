@@ -1825,6 +1825,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-closure-declared-context-relation",
+      "node_integration_complete": false,
+      "scope": "Original pure TCD1 closure declared context, locally derived digest, generation/profile, unique required roles and declared payload cap under borrowed immutable metadata; no actual loader or authority",
+      "source": "hia/src/data_availability/cell_closure_declared_context_relation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_closure_declared_context_relation.py",
+        "hia/tests/rust_da_cell_closure_declared_context_relation_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-dependency-closure",
       "node_integration_complete": false,
       "scope": "Pure original TCD1 declared metadata decode atop the shared offset-aware TCR1 core; canonical names, member equality, declared dependency graph, and both domain SHA-256 identities. No I/O, materialization, payload, loader policy, trust, authentication, network, adoption or production integration.",
@@ -3400,6 +3411,7 @@
         "data-availability/cell-recovery-placement-policy-value",
         "data-availability/cell-retention-contract-value",
         "data-availability/cell-release-manifest",
+        "data-availability/cell-closure-declared-context-relation",
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",
         "data-availability/cell-model-release-root",
