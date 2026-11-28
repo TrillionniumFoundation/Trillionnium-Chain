@@ -7,6 +7,7 @@ use crate::cell::{
 use std::{cell::Cell, fs, path::PathBuf};
 
 mod retention;
+mod selected_manifest;
 
 thread_local! {
     static BEFORE_COMMIT: Cell<bool> = const { Cell::new(false) };
