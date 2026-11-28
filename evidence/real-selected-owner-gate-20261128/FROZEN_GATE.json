@@ -1,0 +1,19 @@
+{
+  "schema": "chain-real-selected-owner-wrapper-frozen-engineering-gate-v1",
+  "head": "c471cba4aad9112dfb7226cd524b286093e176ea",
+  "rust_tree": "9db8871c16d333904670bcae5b16945dcd6ce8e6",
+  "source_manifest_sha256": "892a00ef545cb0e5b7a4407874145ea566123ce2d87b92003b4a56880919b943",
+  "source_packet_sha256": "cac34adb36676a29261ba0830c36c69ac7d7c643cf5bfcacfc54376b96324506",
+  "literal_include_packet_sha256": "6705f2edd35dcbf267a6cc6733a2e705e3a813de1a024badfdff8ff5f8b8cc52",
+  "driver_sha256": "9e55916654e7b52e3f005bef8f2d66790d7092bca77ed9ee3e7ed9523fe57be3",
+  "single_absolute_cap_seconds": 240,
+  "jobs": 2,
+  "profiles": "original Cargo.toml test/check profiles",
+  "offline_locked": true,
+  "source_modified": false,
+  "old_controls_rerun": false,
+  "new_real_owner_tests": 2,
+  "actual_wrapper_check": true,
+  "native_adoption": false,
+  "quality": false
+}
