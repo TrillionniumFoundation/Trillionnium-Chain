@@ -1,51 +1,13 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_cell_content_closure_value
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
-  jump input(r,o)
-block input(r0:readbuf,o0:mutbuf)
-  n0:usize = buffer.len(r0)
-  len0:u64 = int.cast(n0) {"mode":"wrap"}
-  min0:u64 = const() {"value":1457}
-  max0:u64 = const() {"value":1520}
-  lo0:bool = compare.ge(len0,min0)
-  hi0:bool = compare.le(len0,max0)
-  ok0:bool = bool.and(lo0,hi0)
-  branch ok0 magic(r0,o0,len0,n0) bad_length()
-block magic(r1:readbuf,o1:mutbuf,len1:u64,n1:usize)
-  z1:u64 = const() {"value":0}
-  word1:u64 = call(r1,z1) {"function":"daav_u32"}
-  expected1:u64 = const() {"value":843268948}
-  ok1:bool = compare.eq(word1,expected1)
-  branch ok1 extent(r1,o1,len1,n1) bad_magic()
-block extent(r2:readbuf,o2:mutbuf,len2:u64,n2:usize)
-  m2:u64 = call(r2) {"function":"tcc_be32"}
-  lower2:u64 = const() {"value":379}
-  higher2:u64 = const() {"value":442}
-  outer2:u64 = const() {"value":1078}
-  total2:u64 = int.add.wrap(m2,outer2)
-  lo2:bool = compare.ge(m2,lower2)
-  hi2:bool = compare.le(m2,higher2)
-  sized2:bool = bool.and(lo2,hi2)
-  exact2:bool = compare.eq(total2,len2)
-  ok2:bool = bool.and(sized2,exact2)
-  branch ok2 manifest(r2,o2,m2,n2) bad_extent()
-block manifest(r3:readbuf,o3:mutbuf,m3:u64,n3:usize)
-  start3:u64 = const() {"value":8}
-  z3:u32 = const() {"value":0}
-  status3:u32,claim3:u64 = call(r3,start3,m3) {"function":"ccm_manifest"}
-  ok3:bool = compare.eq(status3,z3)
-  row3:u64 = int.add.wrap(start3,m3)
-  branch ok3 decode_roles(r3,o3,row3,claim3,n3) fail(status3)
-block decode_roles(r4:readbuf,o4:mutbuf,row4:u64,payload4:u64,n4:usize)
-  s4:u32 = call(r4,row4) {"function":"tcc_claims"}
-  z4:u32 = const() {"value":0}
-  ok4:bool = compare.eq(s4,z4)
-  branch ok4 policies(r4,o4,row4,payload4,n4) fail(s4)
-block policies(r5:readbuf,o5:mutbuf,row5:u64,payload5:u64,n5:usize)
-  s5:u32 = call(r5,row5,payload5) {"function":"tcc_policy"}
-  z5:u32 = const() {"value":0}
-  ok5:bool = compare.eq(s5,z5)
-  branch ok5 capacity(r5,o5,n5) fail(s5)
+  n:usize = buffer.len(r)
+  total:u64 = int.cast(n) {"mode":"wrap"}
+  start:u64 = const() {"value":0}
+  status:u32,ignored:u64 = call(r,start,total) {"function":"tcc_decode"}
+  z:u32 = const() {"value":0}
+  ok:bool = compare.eq(status,z)
+  branch ok capacity(r,o,n) fail(status)
 block capacity(r6:readbuf,o6:mutbuf,n6:usize)
   available6:usize = buffer.len(o6)
   ok6:bool = compare.ge(available6,n6)
@@ -55,20 +17,71 @@ block publish(r7:readbuf,o7:mutbuf,n7:usize)
   _n7:u64 = call(r7,o7,zero7,zero7,n7) {"function":"daav_copy"}
   s7:u32 = const() {"value":0}
   ret(s7)
-block bad_length()
-  s20:u32 = const() {"value":20}
-  ret(s20)
-block bad_magic()
-  s21:u32 = const() {"value":21}
-  ret(s21)
-block bad_extent()
-  s22:u32 = const() {"value":22}
-  ret(s22)
 block short()
   s102:u32 = const() {"value":102}
   ret(s102)
 block fail(s:u32)
   ret(s)
+end
+
+fn tcc_decode(r:readbuf,base:u64,len:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,base:u64,len:u64)
+  min0:u64 = const() {"value":1457}
+  max0:u64 = const() {"value":1520}
+  lo0:bool = compare.ge(len,min0)
+  hi0:bool = compare.le(len,max0)
+  ok0:bool = bool.and(lo0,hi0)
+  branch ok0 magic(r,base,len) bad_length()
+block magic(r1:readbuf,b1:u64,len1:u64)
+  word1:u64 = call(r1,b1) {"function":"daav_u32"}
+  expected1:u64 = const() {"value":843268948}
+  ok1:bool = compare.eq(word1,expected1)
+  branch ok1 extent(r1,b1,len1) bad_magic()
+block extent(r2:readbuf,b2:u64,len2:u64)
+  m2:u64 = call(r2,b2) {"function":"tcc_be32"}
+  lower2:u64 = const() {"value":379}
+  higher2:u64 = const() {"value":442}
+  outer2:u64 = const() {"value":1078}
+  total2:u64 = int.add.wrap(m2,outer2)
+  lo2:bool = compare.ge(m2,lower2)
+  hi2:bool = compare.le(m2,higher2)
+  sized2:bool = bool.and(lo2,hi2)
+  exact2:bool = compare.eq(total2,len2)
+  ok2:bool = bool.and(sized2,exact2)
+  branch ok2 manifest(r2,b2,m2) bad_extent()
+block manifest(r3:readbuf,b3:u64,m3:u64)
+  eight3:u64 = const() {"value":8}
+  start3:u64 = int.add.wrap(b3,eight3)
+  z3:u32 = const() {"value":0}
+  status3:u32,claim3:u64 = call(r3,start3,m3) {"function":"ccm_manifest"}
+  ok3:bool = compare.eq(status3,z3)
+  row3:u64 = int.add.wrap(start3,m3)
+  branch ok3 decode_roles(r3,row3,claim3) fail(status3)
+block decode_roles(r4:readbuf,row4:u64,payload4:u64)
+  s4:u32 = call(r4,row4) {"function":"tcc_claims"}
+  z4:u32 = const() {"value":0}
+  ok4:bool = compare.eq(s4,z4)
+  branch ok4 policies(r4,row4,payload4) fail(s4)
+block policies(r5:readbuf,row5:u64,payload5:u64)
+  s5:u32 = call(r5,row5,payload5) {"function":"tcc_policy"}
+  z5:u32 = const() {"value":0}
+  ok5:bool = compare.eq(s5,z5)
+  branch ok5 done(payload5) fail(s5)
+block done(out_claim:u64)
+  success:u32 = const() {"value":0}
+  ret(success,out_claim)
+block bad_length()
+  s20:u32 = const() {"value":20}
+  jump fail(s20)
+block bad_magic()
+  s21:u32 = const() {"value":21}
+  jump fail(s21)
+block bad_extent()
+  s22:u32 = const() {"value":22}
+  jump fail(s22)
+block fail(s:u32)
+  z_out:u64 = const() {"value":0}
+  ret(s,z_out)
 end
 
 fn tcc_claims(r:readbuf,row:u64) -> (u32) effects(read,trap) entry(entry)
@@ -183,13 +196,14 @@ block different()
   ret(no)
 end
 
-fn tcc_be32(r:readbuf) -> (u64) effects(read,trap) entry(entry)
-block entry(r:readbuf)
+fn tcc_be32(r:readbuf,base:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(r:readbuf,base:u64)
   start:u64 = const() {"value":4}
   z:u64 = const() {"value":0}
-  jump byte(r,start,z)
-block byte(ra:readbuf,i:u64,v:u64)
-  idx:usize = int.cast(i) {"mode":"wrap"}
+  jump byte(r,base,start,z)
+block byte(ra:readbuf,ba:u64,i:u64,v:u64)
+  absolute:u64 = int.add.wrap(ba,i)
+  idx:usize = int.cast(absolute) {"mode":"wrap"}
   c:u8 = buffer.load(ra,idx)
   raw:u64 = int.cast(c) {"mode":"wrap"}
   eight:u64 = const() {"value":8}
@@ -198,7 +212,7 @@ block byte(ra:readbuf,i:u64,v:u64)
   sum:u64 = int.add.wrap(shifted,raw)
   next:u64 = int.add.wrap(i,one)
   more:bool = compare.lt(next,eight)
-  branch more byte(ra,next,sum) done(sum)
+  branch more byte(ra,ba,next,sum) done(sum)
 block done(result:u64)
   ret(result)
 end

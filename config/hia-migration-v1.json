@@ -1905,6 +1905,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-content-closure-observe",
+      "node_integration_complete": false,
+      "scope": "Original declared-only canonical TCC2 observation, independent ModelManifest context and exact fresh budget projection, native CCH1 SHA-512; no verify_readers, payload/dependency reads, storage, reservations, custody or authority.",
+      "source": "hia/src/data_availability/cell_content_closure_observe.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_content_closure_observe.py",
+        "hia/tests/rust_da_cell_content_closure_observe_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-content-closure-value",
       "node_integration_complete": false,
       "scope": "Original canonical TCC2 immutable declaration decode/encode, embedded TCM2 and five ordered CCH1 with purpose, shared profile and declared size. No payload observation, reads, loader, custody or authority.",
@@ -3941,6 +3952,7 @@
         "data-availability/cache-capacity",
         "data-availability/cell-content-manifest-value",
         "data-availability/cell-content-closure-value",
+        "data-availability/cell-content-closure-observe",
         "data-availability/cell-manifest",
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",
