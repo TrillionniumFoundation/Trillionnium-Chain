@@ -84,7 +84,12 @@ pub fn load_pinned_pft(
     )?;
     let candidate = json::parse(candidate)?;
     let features = json::parse(features)?;
-    let (descriptor, weights) = model_bytes(&candidate, expected)?;
+    let (descriptor, weights) = model_bytes(
+        &candidate,
+        &expected.model,
+        expected.parent_model_sha256,
+        expected.objective_sha256,
+    )?;
     let model =
         core::PreparedPftReadoutV1::prepare(&descriptor, &weights, &expected.model, &weights)
             .map_err(NativePftErrorV1::Core)?;
@@ -101,7 +106,9 @@ pub fn load_pinned_pft(
 
 fn model_bytes(
     value: &Value,
-    expected: &PftNativeExpectationsV1,
+    expected: &core::PftModelDescriptorV1,
+    parent_model_sha256: Pin,
+    objective_sha256: Pin,
 ) -> Result<(core::PftModelDescriptorV1, Vec<u8>)> {
     let c = fields(value, "schema contract contract_sha256 contract_canonical_json head revision head_material_canonical_json count weight_shape weight weight_encoding weight_sha256")?;
     constant(c, "schema", "pft-online-candidate-v1")?;
@@ -109,7 +116,7 @@ fn model_bytes(
     let raw = text(&c["contract_canonical_json"], 4096)?;
     let contract_pin = pin(&c["contract_sha256"])?;
     require(
-        hash(raw.as_bytes()) == contract_pin && contract_pin == expected.model.contract_sha256,
+        hash(raw.as_bytes()) == contract_pin && contract_pin == expected.contract_sha256,
         NativePftErrorV1::Pin,
     )?;
     let contract = json::parse(raw.as_bytes())?;
@@ -127,13 +134,13 @@ fn model_bytes(
     uint(&q["epoch"], 0, i64::MAX as u64)?;
     require(real(&q["regularizer"])? > 0.0, NativePftErrorV1::Numeric)?;
     require(
-        pin(&q["parent_model_sha256"])? == expected.parent_model_sha256
-            && pin(&q["objective_sha256"])? == expected.objective_sha256,
+        pin(&q["parent_model_sha256"])? == parent_model_sha256
+            && pin(&q["objective_sha256"])? == objective_sha256,
         NativePftErrorV1::Pin,
     )?;
     let d = uint(&q["dimension"], 1, 1024)? as u32;
     let m = uint(&q["outputs"], 1, 32)? as u32;
-    let head = check_head(c, contract_pin, expected.model.head)?;
+    let head = check_head(c, contract_pin, expected.head)?;
     let shape = array(&c["weight_shape"])?;
     require(
         shape.len() == 2
@@ -144,7 +151,7 @@ fn model_bytes(
     let weights = matrix(&c["weight"], d as usize, m as usize)?;
     let weight_pin = pin(&c["weight_sha256"])?;
     require(
-        hash(&weights) == weight_pin && weight_pin == expected.model.weight_sha256,
+        hash(&weights) == weight_pin && weight_pin == expected.weight_sha256,
         NativePftErrorV1::Pin,
     )?;
     Ok((
@@ -152,7 +159,7 @@ fn model_bytes(
             schema: core::MODEL_SCHEMA.into(),
             family: core::FAMILY.into(),
             numeric_profile: core::PROFILE.into(),
-            candidate_sha256: expected.model.candidate_sha256,
+            candidate_sha256: expected.candidate_sha256,
             contract_sha256: contract_pin,
             head,
             weight_sha256: weight_pin,
@@ -164,6 +171,52 @@ fn model_bytes(
         },
         weights,
     ))
+}
+
+/// Internal inspection only. The complete candidate hash and contract/base pins
+/// must come from the actual selected manifest, not a peer's expectations packet.
+/// No executable model, input, feature bytes or weight buffer leaves this call.
+pub(crate) fn inspect_selected_candidate(
+    candidate: &[u8],
+    candidate_sha256: Pin,
+    contract_sha256: Pin,
+    parent_model_sha256: Pin,
+) -> Result<core::PftModelDescriptorV1> {
+    require(
+        !candidate.is_empty() && candidate.len() <= MAX_BYTES,
+        NativePftErrorV1::Limit,
+    )?;
+    require(
+        ![candidate_sha256, contract_sha256, parent_model_sha256].contains(&[0; 32])
+            && hash(candidate) == candidate_sha256,
+        NativePftErrorV1::Pin,
+    )?;
+    let value = json::parse(candidate)?;
+    let q = &value["contract"];
+    let expected = core::PftModelDescriptorV1 {
+        schema: core::MODEL_SCHEMA.into(),
+        family: core::FAMILY.into(),
+        numeric_profile: core::PROFILE.into(),
+        candidate_sha256,
+        contract_sha256,
+        head: pin(&value["head"])?,
+        weight_sha256: pin(&value["weight_sha256"])?,
+        feature_program_sha256: pin(&q["feature_program_sha256"])?,
+        normalization_sha256: pin(&q["normalization_sha256"])?,
+        time_semantics_sha256: pin(&q["time_semantics_sha256"])?,
+        dimension: uint(&q["dimension"], 1, 1024)? as u32,
+        outputs: uint(&q["outputs"], 1, 32)? as u32,
+    };
+    // Remaining labels are pinned by the already matched complete payload and
+    // the independently selected contract, then checked against actual bytes.
+    let (descriptor, _) = model_bytes(
+        &value,
+        &expected,
+        parent_model_sha256,
+        pin(&q["objective_sha256"])?,
+    )?;
+    require(descriptor == expected, NativePftErrorV1::Contract)?;
+    Ok(descriptor)
 }
 
 fn check_head(c: &Map<String, Value>, contract: Pin, expected: Pin) -> Result<Pin> {
