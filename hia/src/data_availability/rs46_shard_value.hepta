@@ -1,0 +1,216 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_rs46_standalone_shard_value_v1
+fn f0(p0_r:readbuf,p0_o:mutbuf,p0_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(p0_r:readbuf,p0_o:mutbuf,p0_w:mutbuf)
+  p0_ln:usize = buffer.len(p0_r)
+  p0_n:u64 = int.cast(p0_ln) {"mode":"wrap"}
+  p0_s:u32 = call(p0_r,p0_n) {"function":"rs46_shape"}
+  p0_zero:u32 = const() {"value":0}
+  p0_ok:bool = compare.eq(p0_s,p0_zero)
+  branch p0_ok buffers(p0_r,p0_o,p0_w,p0_n) failure(p0_s)
+block buffers(p1_r:readbuf,p1_o:mutbuf,p1_w:mutbuf,p1_n:u64)
+  p1_om:usize = const() {"value":113}
+  p1_wm:usize = const() {"value":1232}
+  p1_ol:usize = buffer.len(p1_o)
+  p1_wl:usize = buffer.len(p1_w)
+  p1_oc:bool = compare.ge(p1_ol,p1_om)
+  p1_wc:bool = compare.ge(p1_wl,p1_wm)
+  p1_cap:bool = bool.and(p1_oc,p1_wc)
+  branch p1_cap hash_init(p1_r,p1_o,p1_w,p1_n) capacity()
+block hash_init(p2_r:readbuf,p2_o:mutbuf,p2_w:mutbuf,p2_n:u64)
+  p2_s:u64 = call(p2_w) {"function":"rs46_digest_init"}
+  p2_z:u64 = const() {"value":0}
+  p2_ok:bool = compare.eq(p2_s,p2_z)
+  branch p2_ok hash_wire(p2_r,p2_o,p2_w,p2_n) internal()
+block hash_wire(p3_r:readbuf,p3_o:mutbuf,p3_w:mutbuf,p3_n:u64)
+  p3_offset:u64 = const() {"value":0}
+  p3_s:u64 = call(p3_r,p3_offset,p3_n,p3_w) {"function":"tr_sha_update"}
+  p3_ok:bool = compare.eq(p3_s,p3_offset)
+  branch p3_ok publish(p3_r,p3_o,p3_w) internal()
+block publish(p4_r:readbuf,p4_o:mutbuf,p4_w:mutbuf)
+  p4_s:u32 = call(p4_r,p4_o,p4_w) {"function":"rs46_publish"}
+  ret(p4_s)
+block failure(p5_s:u32)
+  ret(p5_s)
+block capacity()
+  p6_code:u32 = const() {"value":102}
+  ret(p6_code)
+block internal()
+  p7_code:u32 = const() {"value":103}
+  ret(p7_code)
+end
+
+fn f1(p0_h:readbuf,p0_p:readbuf,p0_o:mutbuf,p0_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(p0_h:readbuf,p0_p:readbuf,p0_o:mutbuf,p0_w:mutbuf)
+  p0_hn:usize = buffer.len(p0_h)
+  p0_cap:usize = const() {"value":81}
+  p0_okay:bool = compare.eq(p0_hn,p0_cap)
+  branch p0_okay length(p0_h,p0_p,p0_o,p0_w) bound()
+block length(p1_h:readbuf,p1_p:readbuf,p1_o:mutbuf,p1_w:mutbuf)
+  p1_raw:usize = buffer.len(p1_p)
+  p1_pn:u64 = int.cast(p1_raw) {"mode":"wrap"}
+  p1_bound:u64 = const() {"value":1048576}
+  p1_hdr:u64 = const() {"value":81}
+  p1_okay:bool = compare.le(p1_pn,p1_bound)
+  p1_n:u64 = int.add.wrap(p1_pn,p1_hdr)
+  branch p1_okay shape(p1_h,p1_p,p1_o,p1_w,p1_n,p1_pn) wire_size()
+block shape(p2_h:readbuf,p2_p:readbuf,p2_o:mutbuf,p2_w:mutbuf,p2_n:u64,p2_pn:u64)
+  p2_s:u32 = call(p2_h,p2_n) {"function":"rs46_shape"}
+  p2_zero:u32 = const() {"value":0}
+  p2_ok:bool = compare.eq(p2_s,p2_zero)
+  branch p2_ok buffers(p2_h,p2_p,p2_o,p2_w,p2_pn) failure(p2_s)
+block buffers(p3_h:readbuf,p3_p:readbuf,p3_o:mutbuf,p3_w:mutbuf,p3_pn:u64)
+  p3_om:usize = const() {"value":113}
+  p3_wm:usize = const() {"value":1232}
+  p3_ol:usize = buffer.len(p3_o)
+  p3_wl:usize = buffer.len(p3_w)
+  p3_oc:bool = compare.ge(p3_ol,p3_om)
+  p3_wc:bool = compare.ge(p3_wl,p3_wm)
+  p3_cap:bool = bool.and(p3_oc,p3_wc)
+  branch p3_cap hash_init(p3_h,p3_p,p3_o,p3_w,p3_pn) capacity()
+block hash_init(p4_h:readbuf,p4_p:readbuf,p4_o:mutbuf,p4_w:mutbuf,p4_pn:u64)
+  p4_s:u64 = call(p4_w) {"function":"rs46_digest_init"}
+  p4_z:u64 = const() {"value":0}
+  p4_ok:bool = compare.eq(p4_s,p4_z)
+  branch p4_ok hash_head(p4_h,p4_p,p4_o,p4_w,p4_pn) internal()
+block hash_head(p5_h:readbuf,p5_p:readbuf,p5_o:mutbuf,p5_w:mutbuf,p5_pn:u64)
+  p5_offset:u64 = const() {"value":0}
+  p5_n:u64 = const() {"value":81}
+  p5_s:u64 = call(p5_h,p5_offset,p5_n,p5_w) {"function":"tr_sha_update"}
+  p5_ok:bool = compare.eq(p5_s,p5_offset)
+  branch p5_ok hash_tail(p5_h,p5_p,p5_o,p5_w,p5_pn) internal()
+block hash_tail(p6_h:readbuf,p6_p:readbuf,p6_o:mutbuf,p6_w:mutbuf,p6_pn:u64)
+  p6_offset:u64 = const() {"value":0}
+  p6_s:u64 = call(p6_p,p6_offset,p6_pn,p6_w) {"function":"tr_sha_update"}
+  p6_ok:bool = compare.eq(p6_s,p6_offset)
+  branch p6_ok publish(p6_h,p6_o,p6_w) internal()
+block publish(p7_h:readbuf,p7_o:mutbuf,p7_w:mutbuf)
+  p7_s:u32 = call(p7_h,p7_o,p7_w) {"function":"rs46_publish"}
+  ret(p7_s)
+block failure(p8_s:u32)
+  ret(p8_s)
+block wire_size()
+  p9_code:u32 = const() {"value":1}
+  ret(p9_code)
+block bound()
+  p10_code:u32 = const() {"value":100}
+  ret(p10_code)
+block capacity()
+  p11_code:u32 = const() {"value":102}
+  ret(p11_code)
+block internal()
+  p12_code:u32 = const() {"value":103}
+  ret(p12_code)
+end
+
+fn rs46_shape(p0_r:readbuf,p0_n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(p0_r:readbuf,p0_n:u64)
+  p0_min:u64 = const() {"value":82}
+  p0_cap:u64 = const() {"value":1048657}
+  p0_lo:bool = compare.ge(p0_n,p0_min)
+  p0_hi:bool = compare.le(p0_n,p0_cap)
+  p0_okay:bool = bool.and(p0_lo,p0_hi)
+  branch p0_okay magic(p0_r,p0_n) size()
+block magic(p1_r:readbuf,p1_n:u64)
+  p1_z:u64 = const() {"value":0}
+  p1_tag_n:u64 = const() {"value":4}
+  p1_tag:u64 = call(p1_r,p1_z,p1_tag_n) {"function":"ca_read_be"}
+  p1_magic:u64 = const() {"value":1129468721}
+  p1_good:bool = compare.eq(p1_tag,p1_magic)
+  branch p1_good source(p1_r,p1_n) version()
+block source(p2_r:readbuf,p2_n:u64)
+  p2_pos:u64 = const() {"value":40}
+  p2_source_n:u64 = const() {"value":4}
+  p2_source:u64 = call(p2_r,p2_pos,p2_source_n) {"function":"ca_read_be"}
+  p2_one:u64 = const() {"value":1}
+  p2_cap:u64 = const() {"value":4194304}
+  p2_lo:bool = compare.ge(p2_source,p2_one)
+  p2_hi:bool = compare.le(p2_source,p2_cap)
+  p2_okay:bool = bool.and(p2_lo,p2_hi)
+  branch p2_okay index(p2_r,p2_n,p2_source) source_bad()
+block index(p3_r:readbuf,p3_n:u64,p3_source:u64)
+  p3_cp:u64 = const() {"value":36}
+  p3_chunk_n:u64 = const() {"value":4}
+  p3_chunk:u64 = call(p3_r,p3_cp,p3_chunk_n) {"function":"ca_read_be"}
+  p3_ip:u64 = const() {"value":76}
+  p3_index_n:u64 = const() {"value":1}
+  p3_index:u64 = call(p3_r,p3_ip,p3_index_n) {"function":"ca_read_be"}
+  p3_ccap:u64 = const() {"value":16383}
+  p3_icap:u64 = const() {"value":5}
+  p3_okc:bool = compare.le(p3_chunk,p3_ccap)
+  p3_oki:bool = compare.le(p3_index,p3_icap)
+  p3_okay:bool = bool.and(p3_okc,p3_oki)
+  branch p3_okay coverage(p3_r,p3_n,p3_source) index_bad()
+block coverage(p4_r:readbuf,p4_n:u64,p4_source:u64)
+  p4_pos:u64 = const() {"value":77}
+  p4_given_n:u64 = const() {"value":4}
+  p4_given:u64 = call(p4_r,p4_pos,p4_given_n) {"function":"ca_read_be"}
+  p4_three:u64 = const() {"value":3}
+  p4_four:u64 = const() {"value":4}
+  p4_header:u64 = const() {"value":81}
+  p4_ceiling:u64 = int.add.wrap(p4_source,p4_three)
+  p4_shard:u64 = int.div.checked(p4_ceiling,p4_four)
+  p4_total:u64 = int.add.wrap(p4_given,p4_header)
+  p4_equal:bool = compare.eq(p4_shard,p4_given)
+  p4_exact:bool = compare.eq(p4_n,p4_total)
+  p4_okay:bool = bool.and(p4_equal,p4_exact)
+  branch p4_okay pass() coverage_bad()
+block pass()
+  p5_code:u32 = const() {"value":0}
+  ret(p5_code)
+block size()
+  p6_code:u32 = const() {"value":1}
+  ret(p6_code)
+block version()
+  p7_code:u32 = const() {"value":2}
+  ret(p7_code)
+block source_bad()
+  p8_code:u32 = const() {"value":3}
+  ret(p8_code)
+block index_bad()
+  p9_code:u32 = const() {"value":4}
+  ret(p9_code)
+block coverage_bad()
+  p10_code:u32 = const() {"value":5}
+  ret(p10_code)
+end
+
+fn rs46_digest_init(p0_w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(p0_w:mutbuf)
+  p0_s:u64 = call(p0_w) {"function":"tr_sha_init"}
+  p0_z:u64 = const() {"value":0}
+  p0_ok:bool = compare.eq(p0_s,p0_z)
+  branch p0_ok domain(p0_w) failure(p0_s)
+block domain(p1_w:mutbuf)
+  p1_p0:u64 = const() {"value":1208}
+  p1_h0:u64 = const() {"value":7810758179799593588}
+  p1__x0:u64 = call(p1_w,p1_p0,p1_h0) {"function":"tr_put"}
+  p1_p8:u64 = const() {"value":1216}
+  p1_h8:u64 = const() {"value":8299349287216754028}
+  p1__x8:u64 = call(p1_w,p1_p8,p1_h8) {"function":"tr_put"}
+  p1_p16:u64 = const() {"value":1224}
+  p1_h16:u64 = const() {"value":13922215484612968}
+  p1__x16:u64 = call(p1_w,p1_p16,p1_h16) {"function":"tr_put"}
+  p1_ln:u64 = const() {"value":24}
+  p1_s:u64 = call(p1_w,p1_p0,p1_ln) {"function":"tr_sha_update_work"}
+  ret(p1_s)
+block failure(p2_x:u64)
+  ret(p2_x)
+end
+
+fn rs46_publish(p0_r:readbuf,p0_o:mutbuf,p0_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(p0_r:readbuf,p0_o:mutbuf,p0_w:mutbuf)
+  p0_s:u64 = call(p0_w) {"function":"tr_sha_final"}
+  p0_z:u64 = const() {"value":0}
+  p0_ok:bool = compare.eq(p0_s,p0_z)
+  branch p0_ok copy(p0_r,p0_o,p0_w,p0_z) internal()
+block copy(p1_r:readbuf,p1_o:mutbuf,p1_w:mutbuf,p1_z:u64)
+  p1_at:u64 = const() {"value":1168}
+  p1_head:u64 = const() {"value":81}
+  p1_after:u64 = call(p1_w,p1_o,p1_at,p1_z) {"function":"td_copy"}
+  p1__tail:u64 = call(p1_r,p1_z,p1_o,p1_after,p1_head) {"function":"cs_copy"}
+  p1_zero:u32 = const() {"value":0}
+  ret(p1_zero)
+block internal()
+  p2_code:u32 = const() {"value":103}
+  ret(p2_code)
+end
