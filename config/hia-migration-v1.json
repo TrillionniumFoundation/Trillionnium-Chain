@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_activation_typed",
+      "node_integration_complete": false,
+      "scope": "Private native same-byte bounded original concrete Activation/Runtime serde field projection; no semantic activation, provenance, observer or material.",
+      "source": "hia/src/checkpoint/tile_activation_typed.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_activation_typed.py",
+        "hia/tests/rust_checkpoint_tile_activation_typed_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_activation_raw",
       "node_integration_complete": false,
       "scope": "Private same held raw activation SHA pin before bounded strict JSON lexical/decoded-key uniqueness scan; no typed fields, observer, material or authority.",

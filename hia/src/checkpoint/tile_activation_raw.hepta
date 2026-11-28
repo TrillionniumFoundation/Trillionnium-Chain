@@ -1,6 +1,13 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_checkpoint_activation_raw
 fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  no_capture:bool = const() {"value":false}
+  status:u32 = call(r,w,no_capture) {"function":"tar_preflight"}
+  ret(status)
+end
+
+fn tar_preflight(r:readbuf,w:mutbuf,capture:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,capture:bool)
   len:usize = buffer.len(r)
   n:u64 = int.cast(len) {"mode":"wrap"}
   header:u64 = const() {"value":40}
@@ -8,19 +15,21 @@ block entry(r:readbuf,o:mutbuf,w:mutbuf)
   low:bool = compare.le(header,n)
   high:bool = compare.le(n,upper)
   fits:bool = bool.and(low,high)
-  branch fits identify(r,w,n) frame()
-block identify(ir:readbuf,iw:mutbuf,in:u64)
+  branch fits identify(r,w,n,capture) frame()
+block identify(ir:readbuf,iw:mutbuf,in:u64,ic:bool)
   z:u64 = const() {"value":0}
   actual:u64 = call(ir,z) {"function":"tr_read"}
   expected:u64 = const() {"value":827474260}
   matches:bool = compare.eq(actual,expected)
-  branch matches capacity(ir,iw,in) frame()
-block capacity(cr:readbuf,cw:mutbuf,cn:u64)
+  branch matches capacity(ir,iw,in,ic) frame()
+block capacity(cr:readbuf,cw:mutbuf,cn:u64,cc:bool)
   cap:usize = buffer.len(cw)
-  needed:usize = const() {"value":9920}
+  normal:usize = const() {"value":9920}
+  project:usize = const() {"value":10448}
+  needed:usize = select(cc,project,normal)
   room:bool = compare.le(needed,cap)
-  branch room pin(cr,cw,cn) short()
-block pin(pr:readbuf,pw:mutbuf,pn:u64)
+  branch room pin(cr,cw,cn,cc) short()
+block pin(pr:readbuf,pw:mutbuf,pn:u64,pc:bool)
   start:u64 = const() {"value":40}
   size:u64 = int.sub.wrap(pn,start)
   a:u64 = call(pw) {"function":"tr_sha_init"}
@@ -30,12 +39,18 @@ block pin(pr:readbuf,pw:mutbuf,pn:u64)
   errors:u64 = bit.or(first,c)
   zero:u64 = const() {"value":0}
   hashed:bool = compare.eq(errors,zero)
-  branch hashed compare(pr,pw,pn) internal()
-block compare(qr:readbuf,qw:mutbuf,qn:u64)
+  branch hashed compare(pr,pw,pn,pc) internal()
+block compare(qr:readbuf,qw:mutbuf,qn:u64,qc:bool)
   yes:bool = call(qr,qw) {"function":"tar_pin"}
-  branch yes parse(qr,qw,qn) pin_failed()
-block parse(fr:readbuf,fw:mutbuf,fn_:u64)
+  branch yes parse(qr,qw,qn,qc) pin_failed()
+block parse(fr:readbuf,fw:mutbuf,fn_:u64,fc:bool)
   start_json:u64 = const() {"value":40}
+  mark_at:u64 = const() {"value":1208}
+  mode_one:u64 = const() {"value":1}
+  mode_zero:u64 = const() {"value":0}
+  mode:u64 = select(fc,mode_one,mode_zero)
+  saved:u64 = call(fw,mark_at,mode) {"function":"tr_put"}
+  cleared:u64 = call(fw,mode_one,mode_zero) {"function":"tar_count"}
   code:u32 = call(fr,fw,fn_,start_json) {"function":"tar_object"}
   ret(code)
 block frame()
@@ -102,7 +117,7 @@ block opening_obj(or_:readbuf,ow:mutbuf,on:u64,op:u64,od:u64,ob:u64,os:u64)
   close_code:u64 = const() {"value":125}
   closed:bool = compare.eq(t,close_code)
   zero_o:u64 = const() {"value":0}
-  branch closed close(or_,ow,on,at,od,os) key(or_,ow,on,at,od,ob,os,zero_o)
+  branch closed close(or_,ow,on,at,od,os,zero_o) key(or_,ow,on,at,od,ob,os,zero_o)
 block key(kr:readbuf,kw:mutbuf,kn:u64,kp:u64,kd:u64,kb:u64,ks:u64,kc:u64)
   max_keys:u64 = const() {"value":32}
   room:bool = compare.lt(kc,max_keys)
@@ -113,7 +128,8 @@ block decode(dr:readbuf,dw:mutbuf,dn:u64,dp:u64,dd:u64,db:u64,ds:u64,dc:u64)
   slot:u64 = int.add.wrap(db,offset)
   eight:u64 = const() {"value":8}
   scratch:u64 = int.add.wrap(slot,eight)
-  q:u64,len:u64 = call(dr,dw,dp,dn,scratch) {"function":"tar_string"}
+  key_cap:u64 = const() {"value":128}
+  q:u64,len:u64 = call(dr,dw,dp,dn,scratch,key_cap) {"function":"tar_string"}
   invalid_token:u64 = const() {"value":18446744073709551615}
   outside_token:u64 = const() {"value":18446744073709551614}
   bad:bool = compare.eq(q,invalid_token)
@@ -133,7 +149,13 @@ block uniqueness(ur:readbuf,uw:mutbuf,un:u64,up:u64,ud:u64,ub:u64,us:u64,uc:u64,
   one_u:u64 = const() {"value":1}
   next_u:u64 = int.add.wrap(sep,one_u)
   new_count:u64 = int.add.wrap(uc,one_u)
-  branch ready value(ur,uw,un,next_u,ud,ub,us,new_count) invalid()
+  branch ready mark(ur,uw,un,next_u,ud,ub,us,new_count) invalid()
+block mark(mar:readbuf,maw:mutbuf,man:u64,map:u64,mad:u64,mab:u64,mas:u64,mac:u64)
+  mark_one:u64 = const() {"value":1}
+  mark_id:u64 = int.sub.wrap(mac,mark_one)
+  mark_at:u64 = call(mar,map,man) {"function":"oj_ws"}
+  note:u64 = call(maw,mad,mark_id,mark_at) {"function":"tar_mark"}
+  jump value(mar,maw,man,mark_at,mad,mab,mas,mac)
 block value(vr:readbuf,vw:mutbuf,vn:u64,vp:u64,vd:u64,vb:u64,vs:u64,vc:u64)
   val_at:u64 = call(vr,vp,vn) {"function":"oj_ws"}
   c:u64 = call(vr,val_at,vn) {"function":"oj_peek"}
@@ -165,15 +187,16 @@ block delimiter(tr:readbuf,tw:mutbuf,tn:u64,tp:u64,td:u64,tb:u64,ts:u64,tc:u64)
   next_pair:bool = compare.eq(mark_t,comma)
   one_t:u64 = const() {"value":1}
   following:u64 = int.add.wrap(delim_at,one_t)
-  branch end_object close(tr,tw,tn,delim_at,td,ts) another(tr,tw,tn,following,td,tb,ts,tc,next_pair)
+  branch end_object close(tr,tw,tn,delim_at,td,ts,tc) another(tr,tw,tn,following,td,tb,ts,tc,next_pair)
 block another(mr:readbuf,mw:mutbuf,mn:u64,mp:u64,md:u64,mb:u64,ms:u64,mc:u64,more:bool)
   branch more key(mr,mw,mn,mp,md,mb,ms,mc) invalid()
-block close(er:readbuf,ew:mutbuf,en:u64,ep:u64,ed:u64,es:u64)
+block close(er:readbuf,ew:mutbuf,en:u64,ep:u64,ed:u64,es:u64,ec:u64)
   zero_e:u64 = const() {"value":0}
   top:bool = compare.eq(ed,zero_e)
   one_e:u64 = const() {"value":1}
   after_close:u64 = int.add.wrap(ep,one_e)
   root_base:u64 = const() {"value":1216}
+  store_count:u64 = call(ew,ed,ec) {"function":"tar_count"}
   branch top complete(er,en,after_close) delimiter(er,ew,en,after_close,zero_e,root_base,zero_e,es)
 block complete(fr:readbuf,fn_:u64,fp:u64)
   tail:u64 = call(fr,fp,fn_) {"function":"oj_ws"}
@@ -190,8 +213,8 @@ block outside()
   ret(outside_code)
 end
 
-fn tar_string(r:readbuf,w:mutbuf,p:u64,n:u64,dst:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
-block entry(r:readbuf,w:mutbuf,p:u64,n:u64,dst:u64)
+fn tar_string(r:readbuf,w:mutbuf,p:u64,n:u64,dst:u64,max:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,dst:u64,max:u64)
   at:u64 = call(r,p,n) {"function":"oj_ws"}
   c:u64 = call(r,at,n) {"function":"oj_peek"}
   quote:u64 = const() {"value":34}
@@ -200,18 +223,18 @@ block entry(r:readbuf,w:mutbuf,p:u64,n:u64,dst:u64)
   begin:u64 = int.add.wrap(at,one)
   zero:u64 = const() {"value":0}
   copies:bool = compare.ne(dst,zero)
-  branch found next(r,w,begin,n,dst,zero,copies) invalid()
-block next(nr:readbuf,nw:mutbuf,np:u64,nn:u64,nd:u64,nl:u64,ncopy:bool)
+  branch found next(r,w,begin,n,dst,zero,copies,max) invalid()
+block next(nr:readbuf,nw:mutbuf,np:u64,nn:u64,nd:u64,nl:u64,ncopy:bool,nmax:u64)
   in_range:bool = compare.lt(np,nn)
-  branch in_range peek(nr,nw,np,nn,nd,nl,ncopy) invalid()
-block peek(pr:readbuf,pw:mutbuf,pp:u64,pn:u64,pd:u64,pl:u64,pcopy:bool)
+  branch in_range peek(nr,nw,np,nn,nd,nl,ncopy,nmax) invalid()
+block peek(pr:readbuf,pw:mutbuf,pp:u64,pn:u64,pd:u64,pl:u64,pcopy:bool,pmax:u64)
   b:u64 = call(pr,pp,pn) {"function":"oj_peek"}
   quote_p:u64 = const() {"value":34}
   finished:bool = compare.eq(b,quote_p)
   one_p:u64 = const() {"value":1}
   endpos:u64 = int.add.wrap(pp,one_p)
-  branch finished complete(endpos,pl) scalar(pr,pw,pp,pn,pd,pl,pcopy)
-block scalar(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,sd:u64,sl:u64,scopy:bool)
+  branch finished complete(endpos,pl) scalar(pr,pw,pp,pn,pd,pl,pcopy,pmax)
+block scalar(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,sd:u64,sl:u64,scopy:bool,smax:u64)
   packed:u64 = call(sr,sp,sn) {"function":"jv_scalar"}
   bad:u64 = const() {"value":18446744073709551615}
   valid:bool = compare.ne(packed,bad)
@@ -219,10 +242,10 @@ block scalar(sr:readbuf,sw:mutbuf,sp:u64,sn:u64,sd:u64,sl:u64,scopy:bool)
   pos:u64 = int.shr.checked(packed,shift)
   mask:u64 = const() {"value":2097151}
   codepoint:u64 = bit.and(packed,mask)
-  branch valid selected(sr,sw,pos,sn,sd,sl,codepoint,scopy) invalid()
-block selected(ar:readbuf,aw:mutbuf,ap:u64,an:u64,ad:u64,al:u64,ac:u64,acopy:bool)
-  branch acopy size(ar,aw,ap,an,ad,al,ac) next(ar,aw,ap,an,ad,al,acopy)
-block size(zr:readbuf,zw:mutbuf,zp:u64,zn:u64,zd:u64,zl:u64,zc:u64)
+  branch valid selected(sr,sw,pos,sn,sd,sl,codepoint,scopy,smax) invalid()
+block selected(ar:readbuf,aw:mutbuf,ap:u64,an:u64,ad:u64,al:u64,ac:u64,acopy:bool,amax:u64)
+  branch acopy size(ar,aw,ap,an,ad,al,ac,amax) next(ar,aw,ap,an,ad,al,acopy,amax)
+block size(zr:readbuf,zw:mutbuf,zp:u64,zn:u64,zd:u64,zl:u64,zc:u64,zmax:u64)
   one_z:u64 = const() {"value":1}
   two_z:u64 = const() {"value":2}
   three_z:u64 = const() {"value":3}
@@ -237,14 +260,13 @@ block size(zr:readbuf,zw:mutbuf,zp:u64,zn:u64,zd:u64,zl:u64,zc:u64)
   middle:u64 = select(fits2,two_z,high)
   size_z:u64 = select(fits1,one_z,middle)
   length:u64 = int.add.wrap(zl,size_z)
-  cap:u64 = const() {"value":128}
-  within:bool = compare.le(length,cap)
-  branch within copy(zr,zw,zp,zn,zd,zl,zc,length) outside()
-block copy(cr:readbuf,cw:mutbuf,cp:u64,cn:u64,cd:u64,cl:u64,cc:u64,new:u64)
+  within:bool = compare.le(length,zmax)
+  branch within copy(zr,zw,zp,zn,zd,zl,zc,length,zmax) outside()
+block copy(cr:readbuf,cw:mutbuf,cp:u64,cn:u64,cd:u64,cl:u64,cc:u64,new:u64,cmax:u64)
   dest:u64 = int.add.wrap(cd,cl)
   written:u64 = call(cw,dest,cc) {"function":"oj_utf8"}
   yes:bool = const() {"value":true}
-  jump next(cr,cw,cp,cn,cd,new,yes)
+  jump next(cr,cw,cp,cn,cd,new,yes,cmax)
 block complete(past:u64,len:u64)
   ret(past,len)
 block invalid()
@@ -382,7 +404,7 @@ block entry(r:readbuf,w:mutbuf,p:u64,n:u64)
   branch is_string string(r,w,at,n) choose(r,at,n,token,nested)
 block string(sr:readbuf,sw:mutbuf,sp:u64,sn:u64)
   zero:u64 = const() {"value":0}
-  after:u64,unused:u64 = call(sr,sw,sp,sn,zero) {"function":"tar_string"}
+  after:u64,unused:u64 = call(sr,sw,sp,sn,zero,zero) {"function":"tar_string"}
   ret(after)
 block choose(cr:readbuf,cp:u64,cn:u64,ct:u64,cdeep:bool)
   branch cdeep outside() num_or_lit(cr,cp,cn,ct)
@@ -431,4 +453,45 @@ block outside()
 block invalid()
   syntax:u64 = const() {"value":18446744073709551615}
   ret(syntax)
+end
+
+fn tar_mark(w:mutbuf,depth:u64,index:u64,p:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,depth:u64,index:u64,p:u64)
+  flag_at:u64 = const() {"value":1208}
+  flag:u64 = call(w,flag_at) {"function":"tr_get"}
+  zero:u64 = const() {"value":0}
+  enabled:bool = compare.ne(flag,zero)
+  branch enabled record(w,depth,index,p) done()
+block record(rw:mutbuf,rd:u64,ri:u64,rp:u64)
+  root:u64 = const() {"value":9920}
+  stride:u64 = const() {"value":256}
+  width:u64 = const() {"value":8}
+  group:u64 = int.mul.wrap(rd,stride)
+  within:u64 = int.mul.wrap(ri,width)
+  offset:u64 = int.add.wrap(group,within)
+  at:u64 = int.add.wrap(root,offset)
+  written:u64 = call(rw,at,rp) {"function":"tr_put"}
+  ret(written)
+block done()
+  no_write:u64 = const() {"value":0}
+  ret(no_write)
+end
+
+fn tar_count(w:mutbuf,depth:u64,count:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,depth:u64,count:u64)
+  flag_at:u64 = const() {"value":1208}
+  flag:u64 = call(w,flag_at) {"function":"tr_get"}
+  zero:u64 = const() {"value":0}
+  enabled:bool = compare.ne(flag,zero)
+  branch enabled record(w,depth,count) done()
+block record(rw:mutbuf,rd:u64,rc:u64)
+  root:u64 = const() {"value":10432}
+  width:u64 = const() {"value":8}
+  shift:u64 = int.mul.wrap(rd,width)
+  at:u64 = int.add.wrap(root,shift)
+  written:u64 = call(rw,at,rc) {"function":"tr_put"}
+  ret(written)
+block done()
+  no_write:u64 = const() {"value":0}
+  ret(no_write)
 end
