@@ -1620,6 +1620,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-content-manifest-value",
+      "node_integration_complete": false,
+      "scope": "Private exact TCM2 model metadata and typed CCH1 payload claim declaration parsing; no payload observation, pin authority, keys, storage or activation.",
+      "source": "hia/src/data_availability/cell_content_manifest_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_content_manifest_value.py",
+        "hia/tests/rust_da_cell_content_manifest_value_reference.rs",
+        "hia/tests/test_da_protocol_context.py"
+      ]
+    },
+    {
       "id": "data-availability/cell-manifest",
       "node_integration_complete": false,
       "scope": "Pure original TCM1 CellManifestV1 immutable binary metadata decode and canonical byte projection, exact geometry and domain SHA-256, full original limits and Rust error order. No lookup, storage, release context authority, payload recovery or live integration.",
@@ -3184,6 +3196,7 @@
         "data-availability/member-definition",
         "data-availability/typed-object-id",
         "data-availability/cache-capacity",
+        "data-availability/cell-content-manifest-value",
         "data-availability/cell-manifest",
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",
