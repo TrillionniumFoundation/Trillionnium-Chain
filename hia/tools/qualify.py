@@ -147,6 +147,7 @@ def sources():
         "hia/src/data_availability/CELL_PERIODIC_SNAPSHOT_POLICY.md",
         "hia/src/data_availability/CELL_CHUNK_DELTA_VALUE.md",
         "hia/src/data_availability/CELL_CLOSURE_DECLARED_CONTEXT_RELATION.md",
+        "hia/src/data_availability/CELL_VERSION_DECLARED_CONTEXT_RELATION.md",
         "hia/src/data_availability/CELL_VERSION_RETENTION_OBJECT_RELATION.md",
         "hia/src/data_availability/CELL_VERSION_RETENTION_OUTER_TERMS.md",
         "hia/src/data_availability/CELL_VERSION_LOADER_PIN_VALUE.md",

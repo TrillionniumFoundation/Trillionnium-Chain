@@ -1825,6 +1825,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-declared-context-relation",
+      "node_integration_complete": false,
+      "scope": "Same-loan immutable TCV1 canonical validation, original version SHA-512 commitment, model and environment declared context comparisons, and each closure declared chunk cap. No actual loader, storage or authority.",
+      "source": "hia/src/data_availability/cell_version_declared_context_relation.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_declared_context_relation.py",
+        "hia/tests/rust_da_cell_version_declared_context_relation_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-closure-declared-context-relation",
       "node_integration_complete": false,
       "scope": "Original pure TCD1 closure declared context, locally derived digest, generation/profile, unique required roles and declared payload cap under borrowed immutable metadata; no actual loader or authority",
@@ -3434,6 +3445,7 @@
         "data-availability/cell-retention-contract-value",
         "data-availability/cell-release-manifest",
         "data-availability/cell-closure-declared-context-relation",
+        "data-availability/cell-version-declared-context-relation",
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",
         "data-availability/cell-model-release-root",
