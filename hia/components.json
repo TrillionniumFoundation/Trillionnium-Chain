@@ -9403,6 +9403,57 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/state/routed_int257_grouped_multibatch.hepta": [
+      {
+        "functions": [
+          "rid_copy",
+          "rid_groups",
+          "rid_index"
+        ],
+        "source": "src/state/routed_int257_direct.hepta"
+      },
+      {
+        "functions": [
+          "rio_argmax",
+          "rio_coefficients",
+          "rio_dot",
+          "rio_features",
+          "rio_i32"
+        ],
+        "source": "src/state/routed_int257_ordinary.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32",
+          "daav_copy"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "rig_route",
+          "rig_gather",
+          "rig_tile",
+          "rig_zero",
+          "rig_accumulate",
+          "rig_i32"
+        ],
+        "source": "src/state/routed_int257_grouped.hepta"
+      },
+      {
+        "functions": [
+          "rmb_header"
+        ],
+        "source": "src/state/routed_int257_factored_multibatch.hepta"
+      }
+    ],
     "src/state/routed_int257_grouped.hepta": [
       {
         "functions": [
