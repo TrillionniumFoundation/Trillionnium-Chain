@@ -1626,6 +1626,17 @@
       ]
     },
     {
+      "id": "data-availability/bep52-bencode-prefix",
+      "node_integration_complete": false,
+      "scope": "Pure bounded offline prefix syntax validation, root kind, consumed extent and value census against frozen original bencode. No peer fields, sockets, content, transport or authority.",
+      "source": "hia/src/data_availability/bep52_bencode_prefix.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_bep52_bencode_prefix.py",
+        "hia/tests/rust_da_bep52_bencode_prefix_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/rs46-codeword-value",
       "node_integration_complete": false,
       "scope": "Pure standalone CRC1 decode and exact canonical wire/domain digest against independently supplied pins, revalidating complete borrowed TCM1 and its selected original chunk, with six nonzero unique slots. No repair, source retrieval, storage, custody or authority.",
@@ -3819,6 +3830,7 @@
         "data-availability/bep52-piece-compare",
         "data-availability/bep52-metainfo-value",
         "data-availability/bep52-magnet-value",
+        "data-availability/bep52-bencode-prefix",
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",

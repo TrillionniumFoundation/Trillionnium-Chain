@@ -158,6 +158,7 @@ def sources():
         "hia/src/data_availability/BEP52_PIECE_COMPARE.md",
         "hia/src/data_availability/BEP52_METAINFO_VALUE.md",
         "hia/src/data_availability/BEP52_MAGNET_VALUE.md",
+        "hia/src/data_availability/BEP52_BENCODE_PREFIX.md",
         "hia/src/data_availability/CELL_VERSION_RETENTION_OBJECT_RELATION.md",
         "hia/src/data_availability/CELL_VERSION_RETENTION_OUTER_TERMS.md",
         "hia/src/data_availability/CELL_VERSION_LOADER_PIN_VALUE.md",
