@@ -3,6 +3,12 @@ fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry
 block entry(r:readbuf,o:mutbuf,w:mutbuf)
   nn:usize = buffer.len(r)
   n:u64 = int.cast(nn) {"mode":"wrap"}
+  status:u32 = call(r,o,w,n) {"function":"tmb_private"}
+  ret(status)
+end
+
+fn tmb_private(r:readbuf,o:mutbuf,w:mutbuf,n:u64) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf,n:u64)
   min:u64 = const() {"value":32920}
   max:u64 = const() {"value":1048576}
   a:bool = compare.le(min,n)

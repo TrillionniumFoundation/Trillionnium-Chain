@@ -1160,6 +1160,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_context_binding",
+      "node_integration_complete": false,
+      "scope": "Private original typed checkpoint context size and six nonzero checks before same-loan replay and detached pins; no identity authority, task, proof or IO.",
+      "source": "hia/src/checkpoint/tile_context_binding.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_context_binding.py",
+        "hia/tests/rust_checkpoint_tile_context_binding_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_model_binding",
       "node_integration_complete": false,
       "scope": "Private immutable checkpoint and activation to exact expected matrix replay and two original detached digest checks; no task ID, proof, training or authority.",
