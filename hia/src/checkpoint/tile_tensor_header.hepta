@@ -23,51 +23,22 @@ block capacity(cr:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
   out_ok:bool = compare.le(out_need,os)
   work_ok:bool = compare.le(work_need,ws)
   all:bool = bool.and(out_ok,work_ok)
-  branch all lex(cr,co,cw,cn) short()
-block lex(lr:readbuf,lo:mutbuf,lw:mutbuf,ln:u64)
-  capture:u64 = const() {"value":1208}
-  one:u64 = const() {"value":1}
-  set:u64 = call(lw,capture,one) {"function":"tr_put"}
-  p:u64 = const() {"value":16}
-  embed:bool = const() {"value":false}
-  status:u32,past:u64 = call(lr,lw,ln,p,embed) {"function":"tar_object"}
-  zero:u32 = const() {"value":0}
-  valid:bool = compare.eq(status,zero)
-  branch valid collect(lr,lo,lw,ln) refused(status)
-block collect(ar:readbuf,ao:mutbuf,aw:mutbuf,an:u64)
-  setup:u64 = call(aw) {"function":"th_literals"}
+  branch all run(cr,co,cw,cn) short()
+block run(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64)
+  start_header:u64 = const() {"value":16}
   p_at:u64 = const() {"value":8}
-  payload:u64 = call(ar,p_at) {"function":"tr_read"}
-  cnt_at:u64 = const() {"value":10432}
-  count:u64 = call(aw,cnt_at) {"function":"tr_get"}
-  status_c:u32,tensors:u64,target:u64 = call(ar,aw,an,payload,count) {"function":"th_collect"}
-  zero_c:u32 = const() {"value":0}
-  pass:bool = compare.eq(status_c,zero_c)
-  branch pass cover(ao,aw,payload,tensors,target) refused(status_c)
-block cover(vo:mutbuf,vw:mutbuf,vp:u64,vc:u64,vt:u64)
-  good:bool = call(vw,vp,vc) {"function":"th_cover"}
-  branch good target(vo,vw,vc,vt) coverage()
-block target(to:mutbuf,tw:mutbuf,tc:u64,tt:u64)
-  absent:u64 = const() {"value":18446744073709551615}
-  hit:bool = compare.ne(tt,absent)
-  branch hit emit(to,tw,tc,tt) missing()
-block emit(eo:mutbuf,ew:mutbuf,ec:u64,et:u64)
-  base:u64 = const() {"value":12500}
-  width:u64 = const() {"value":16}
-  rel:u64 = int.mul.wrap(et,width)
-  start:u64 = int.add.wrap(base,rel)
+  payload:u64 = call(rr,p_at) {"function":"tr_read"}
+  status:u32,cnt:u64,span:u64 = call(rr,rw,rn,start_header,payload) {"function":"th_header_private"}
+  zero:u32 = const() {"value":0}
+  good:bool = compare.eq(status,zero)
+  branch good emit(ro,rw,cnt,span) refused(status)
+block emit(eo:mutbuf,ew:mutbuf,ec:u64,start:u64)
   zero_o:u64 = const() {"value":0}
   count_at:u64 = const() {"value":16}
-  copied:u64 = call(ew,start,eo,zero_o,width) {"function":"cs_wcopy"}
+  copied:u64 = call(ew,start,eo,zero_o,count_at) {"function":"cs_wcopy"}
   wrote:u64 = call(eo,count_at,ec) {"function":"tr_put"}
   success:u32 = const() {"value":0}
   ret(success)
-block coverage()
-  no_union:u32 = const() {"value":10}
-  ret(no_union)
-block missing()
-  no_target:u32 = const() {"value":9}
-  ret(no_target)
 block wire()
   bad_frame:u32 = const() {"value":100}
   ret(bad_frame)
@@ -76,6 +47,49 @@ block short()
   ret(short_u)
 block refused(code:u32)
   ret(code)
+end
+
+fn th_header_private(lr:readbuf,lw:mutbuf,ln:u64,p:u64,lpay:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(lr:readbuf,lw:mutbuf,ln:u64,p:u64,lpay:u64)
+  capture:u64 = const() {"value":1208}
+  one:u64 = const() {"value":1}
+  set:u64 = call(lw,capture,one) {"function":"tr_put"}
+  embed:bool = const() {"value":false}
+  status:u32,past:u64 = call(lr,lw,ln,p,embed) {"function":"tar_object"}
+  zero:u32 = const() {"value":0}
+  valid:bool = compare.eq(status,zero)
+  branch valid collect(lr,lw,ln,lpay) refused(status)
+block collect(ar:readbuf,aw:mutbuf,an:u64,payload:u64)
+  setup:u64 = call(aw) {"function":"th_literals"}
+  cnt_at:u64 = const() {"value":10432}
+  count:u64 = call(aw,cnt_at) {"function":"tr_get"}
+  status_c:u32,tensors:u64,target:u64 = call(ar,aw,an,payload,count) {"function":"th_collect"}
+  zero_c:u32 = const() {"value":0}
+  pass:bool = compare.eq(status_c,zero_c)
+  branch pass cover(aw,payload,tensors,target) refused(status_c)
+block cover(vw:mutbuf,vp:u64,vc:u64,vt:u64)
+  good:bool = call(vw,vp,vc) {"function":"th_cover"}
+  branch good target(vc,vt) coverage()
+block target(tc:u64,tt:u64)
+  absent:u64 = const() {"value":18446744073709551615}
+  hit:bool = compare.ne(tt,absent)
+  branch hit complete(tc,tt) missing()
+block complete(cc:u64,ct:u64)
+  base:u64 = const() {"value":12500}
+  width:u64 = const() {"value":16}
+  rel:u64 = int.mul.wrap(ct,width)
+  start:u64 = int.add.wrap(base,rel)
+  success:u32 = const() {"value":0}
+  ret(success,cc,start)
+block coverage()
+  no_union:u32 = const() {"value":10}
+  jump refused(no_union)
+block missing()
+  no_target:u32 = const() {"value":9}
+  jump refused(no_target)
+block refused(c:u32)
+  zero_out:u64 = const() {"value":0}
+  ret(c,zero_out,zero_out)
 end
 
 fn th_collect(r:readbuf,w:mutbuf,n:u64,p:u64,k:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)

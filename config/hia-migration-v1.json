@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_checkpoint_extract",
+      "node_integration_complete": false,
+      "scope": "Private same immutable checkpoint prefix/header derivation, complete SHA pin and BF16 tile extraction on supplied synthetic bytes; no I/O, observer, runtime, task, proof or authority.",
+      "source": "hia/src/checkpoint/tile_checkpoint_extract.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_checkpoint_extract.py",
+        "hia/tests/rust_checkpoint_tile_checkpoint_extract_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_tensor_header",
       "node_integration_complete": false,
       "scope": "Private bounded original checkpoint BF16 target header typed metadata, sorted row checks and coverage on a declared extent; no checkpoint bytes, I/O, observer, proof or authority.",
