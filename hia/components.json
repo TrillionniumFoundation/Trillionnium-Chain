@@ -9051,6 +9051,32 @@
         "source": "src/crypto/sha256_stream.hepta"
       }
     ],
+    "src/state/routed_int257_factor_preparation.hepta": [
+      {
+        "functions": [
+          "rio_i32"
+        ],
+        "source": "src/state/routed_int257_ordinary.hepta"
+      },
+      {
+        "functions": [
+          "rim_validate"
+        ],
+        "source": "src/state/routed_int257_model_commitment.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/state/routed_int257_grouped.hepta": [
       {
         "functions": [
