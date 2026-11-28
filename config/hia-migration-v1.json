@@ -4497,6 +4497,18 @@
       ]
     },
     {
+      "id": "data-availability/cache-held-sealed-descriptor",
+      "node_integration_complete": false,
+      "retirement_accepted": false,
+      "scope": "Offline Linux x86-64 pinned Selfhost-only static FD0 reader for supplied immutable synthetic TCM1 and one held chunk. Exact old adapter, bounded output, same held original comparison; no path, live cache, node authority or production routing.",
+      "sources": [
+        "hia/platform/cell_cache_held_sealed/emitter.hepta"
+      ],
+      "tests": [
+        "hia/tests/test_da_cell_cache_payload_held_sealed.py"
+      ]
+    },
+    {
       "id": "state/integer-model-sealed-descriptor",
       "node_integration_complete": false,
       "retirement_accepted": false,

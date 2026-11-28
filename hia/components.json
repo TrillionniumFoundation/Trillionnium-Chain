@@ -27197,6 +27197,20 @@
         "source": "platform/worker_journal_audit_stdin/emitter.hepta"
       }
     ],
+    "platform/cell_cache_held_sealed/emitter.hepta": [
+      {
+        "functions": [
+          "fd_checks",
+          "anonymous_buffers",
+          "read_exact",
+          "eof_and_call",
+          "stdout",
+          "retry_and_exit",
+          "put_le64"
+        ],
+        "source": "platform/worker_journal_audit_stdin/emitter.hepta"
+      }
+    ],
     "platform/integer_model_sealed_descriptor/emitter.hepta": [
       {
         "functions": [
