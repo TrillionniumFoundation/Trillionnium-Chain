@@ -146,7 +146,13 @@ plain `-h`/`--help` stdout and exit 0. Recognized missing values and duplicate
 options use its exact stderr and exit 2. The five unsigned options also match
 the locked Rust diagnostic for empty values, invalid digits and overflow when
 the value is printable ASCII within the existing 127-byte argv token extent.
-Only the consumed value is reflected. Invalid printable ASCII workload and
+Only the consumed value is reflected. A malformed UTF-8 value on one of
+these five numeric options instead uses the original fixed UTF-8 stderr,
+without transporting the invalid value to the renderer. Duplicate and
+deferred split-value precedence are unchanged; the bounded frame and
+destination-stream gates still apply. Valid non-ASCII numeric text and
+malformed values for enums, boolean flags, unknown names or positional
+tokens do not gain an echo path. Invalid printable ASCII workload and
 strategy values also match the locked Clap error, including the ordered
 possible-value list and optional suggestion. The HIA scorer uses the
 `strsim` 0.11.1 greedy Jaro match window and transpositions, with integer

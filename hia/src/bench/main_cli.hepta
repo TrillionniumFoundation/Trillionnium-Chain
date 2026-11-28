@@ -547,7 +547,53 @@ block digits(i_ds:readbuf,o_ds:mutbuf,n_ds:u64,p_ds:u64,e_ds:u64,k_ds:u64,f_ds:u
   invalid_ds:u64 = const() {"value":80}
   overflow_ds:u64 = const() {"value":96}
   error_ds:u64 = select(digit_ok,overflow_ds,invalid_ds)
-  branch ok_ds after_digit(i_ds,o_ds,n_ds,p_inc,e_ds,k_ds,f_ds,s_ds,b_ds,combined,start_ds) value_diagnostic(i_ds,o_ds,start_ds,e_ds,f_ds,error_ds)
+  branch ok_ds after_digit(i_ds,o_ds,n_ds,p_inc,e_ds,k_ds,f_ds,s_ds,b_ds,combined,start_ds) numeric_failure(i_ds,o_ds,n_ds,start_ds,e_ds,k_ds,f_ds,error_ds)
+block numeric_failure(nf_i:readbuf,nf_o:mutbuf,nf_n:u64,nf_p:u64,nf_e:u64,nf_k:u64,nf_f:u64,nf_error:u64)
+  nf_size:u64 = int.sub.wrap(nf_e,nf_p)
+  nf_cap:u64 = const() {"value":127}
+  nf_fits:bool = compare.le(nf_size,nf_cap)
+  branch nf_fits numeric_encoding(nf_i,nf_o,nf_n,nf_p,nf_e,nf_k,nf_f,nf_error,nf_size) fail()
+block numeric_encoding(ne_i:readbuf,ne_o:mutbuf,ne_n:u64,ne_p:u64,ne_e:u64,ne_k:u64,ne_f:u64,ne_base:u64,ne_size:u64)
+  ne_valid:u64 = call(ne_i,ne_p,ne_size) {"function":"value_utf8"}
+  ne_zero:u64 = const() {"value":0}
+  ne_bad:bool = compare.eq(ne_valid,ne_zero)
+  branch ne_bad numeric_utf_scope(ne_i,ne_o,ne_n,ne_p,ne_e,ne_k,ne_f,ne_size) value_diagnostic(ne_i,ne_o,ne_p,ne_e,ne_f,ne_base)
+block numeric_utf_scope(nus_i:readbuf,nus_o:mutbuf,nus_n:u64,nus_p:u64,nus_e:u64,nus_k:u64,nus_f:u64,nus_size:u64)
+  nus_zero:u64 = const() {"value":0}
+  nus_one:u64 = const() {"value":1}
+  nus_127:u64 = const() {"value":127}
+  nus_17:u64 = const() {"value":17}
+  nus_argc:u64 = call(nus_i,nus_zero) {"function":"bench_read"}
+  nus_count:bool = compare.le(nus_argc,nus_17)
+  nus_mark:bool = call(nus_o) {"function":"bc_marked"}
+  nus_unmarked:bool = bool.not(nus_mark)
+  nus_scope:bool = bool.and(nus_count,nus_unmarked)
+  nus_previous:u64 = int.sub.wrap(nus_p,nus_one)
+  nus_at:usize = int.cast(nus_previous) {"mode":"wrap"}
+  nus_before:u8 = buffer.load(nus_i,nus_at)
+  nus_equal:u8 = const() {"value":61}
+  nus_attached:bool = compare.eq(nus_before,nus_equal)
+  nus_stride:u64 = const() {"value":8}
+  nus_shift:u64 = int.mul.wrap(nus_f,nus_stride)
+  nus_roster:u64 = const() {"value":15453293774598}
+  nus_lengths:u64 = int.shr.checked(nus_roster,nus_shift)
+  nus_mask:u64 = const() {"value":255}
+  nus_prefix:u64 = bit.and(nus_lengths,nus_mask)
+  nus_overhead:u64 = select(nus_attached,nus_prefix,nus_zero)
+  nus_total:u64 = int.add.wrap(nus_size,nus_overhead)
+  nus_span:bool = compare.le(nus_total,nus_127)
+  nus_admitted:bool = bool.and(nus_scope,nus_span)
+  nus_after:u64 = int.add.wrap(nus_e,nus_one)
+  branch nus_admitted numeric_utf_frame(nus_i,nus_o,nus_n,nus_after,nus_k) fail()
+block numeric_utf_frame(nuf_i:readbuf,nuf_o:mutbuf,nuf_n:u64,nuf_after:u64,nuf_k:u64)
+  nuf_exact:bool = call(nuf_i,nuf_n,nuf_after,nuf_k) {"function":"bc_tail_frame"}
+  branch nuf_exact numeric_utf_invalid(nuf_o) fail()
+block numeric_utf_invalid(nui_o:mutbuf)
+  nui_zero:u64 = const() {"value":0}
+  nui_len:u64 = const() {"value":72}
+  _nui:u64 = call(nui_o,nui_len,nui_zero) {"function":"bench_put"}
+  nui_code:u32 = const() {"value":67}
+  ret(nui_code)
 block after_digit(i_ad:readbuf,o_ad:mutbuf,n_ad:u64,p_ad:u64,e_ad:u64,k_ad:u64,f_ad:u64,s_ad:u64,b_ad:u64,a_ad:u64,start_ad:u64)
   another:bool = compare.lt(p_ad,e_ad)
   branch another digits(i_ad,o_ad,n_ad,p_ad,e_ad,k_ad,f_ad,s_ad,b_ad,a_ad,start_ad) keep(i_ad,o_ad,n_ad,e_ad,k_ad,f_ad,s_ad,b_ad,a_ad)

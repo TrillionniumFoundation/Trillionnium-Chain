@@ -1060,7 +1060,7 @@ class NativeBenchMain(unittest.TestCase):
             self.assertEqual((old.returncode, old.stdout), (2, b""))
             self.assertIn(reason, old.stderr)
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", old.stderr), args)
-        closed = ((b"--txs=\xff",), (b"--txs=bad\x01",), (b"--txs=bad\x1b[0m",),
+        closed = ((b"--txs=bad\x01",), (b"--txs=bad\x1b[0m",),
                   (b"--write-every=\t",), (b"--read-fanout", b"0" * 127 + b"x"),
                   (b"--reader-high-water-v1", b"--txs=bad"))
         for i, args in enumerate(closed):
@@ -1069,6 +1069,54 @@ class NativeBenchMain(unittest.TestCase):
         denied, _ = self.actual("uint-cli-env-denied", self.native, (b"--txs=bad",),
                                 env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_invalid_utf8_numeric_value_is_not_reflected(self):
+        fields = (b"--txs",b"--keys",b"--determinism-repeats",b"--read-fanout",b"--write-every")
+        malformed = (b"\xff",b"numeric-secret-\x80-tail",b"\xc0\xaf",b"\xed\xa0\x80",
+                     b"\xf4\x90\x80\x80",b"\xe2\x82",b"\xc2!",b"18446744073709551616\xff",
+                     b"\x1b\xff")
+        expected = (b"error: invalid UTF-8 was detected in one or more arguments\n\n"
+                    b"Usage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n")
+        for fi, field in enumerate(fields):
+            for split in (False, True):
+                prefix = (b"--profile",) if split else ()
+                overhead = 0 if split else len(field)+1
+                exact127=b"s"*(126-overhead)+b"\xff"
+                for vi,value in enumerate((*malformed,exact127)):
+                    form=(field,value) if split else (field+b"="+value,)
+                    args=(*prefix,*form,b"--help",b"opaque-\xff")
+                    for owner,image in (("rust",self.original),("hia",self.native)):
+                        observed,_=self.actual(f"numeric-utf8-{fi}-{split}-{vi}-{owner}",image,args)
+                        self.assertEqual((observed.returncode,observed.stdout,observed.stderr),
+                                         (2,b"",expected),args)
+                over=exact127+b"s"
+                form=(field,over) if split else (field+b"="+over,)
+                refused,_=self.actual(f"numeric-utf8-over-{fi}-{split}",self.native,form)
+                self.assertEqual((refused.returncode,refused.stdout,refused.stderr),(2,b"",OUTSIDE),form)
+        precedence = (
+            (b"--keys=1",b"--keys=\xff"),
+            (b"--keys=1",b"--keys",b"\xff"),
+            (b"--keys",b"\xff",b"--help=x"),
+            (b"--keys",b"\xff",b"--",b"--profile"),
+            (b"--help",b"--keys=\xff"),
+            (b"--txs=bad",b"--keys=\xff"),
+            (b"--keys=\xff",b"--help=x"),
+            (b"--keys",b"\xff",b"--"),
+        )
+        for i,args in enumerate(precedence):
+            old,_=self.actual(f"numeric-utf8-first-{i}-rust",self.original,args)
+            new,_=self.actual(f"numeric-utf8-first-{i}-hia",self.native,args)
+            self.assertEqual((new.returncode,new.stdout,new.stderr),(old.returncode,old.stdout,old.stderr),args)
+        for i,(args,env) in enumerate((
+            ((b"--keys=\xef\xbf\xbd",),{}), ((b"--keys=\xc3\xa9",),{}),
+            ((b"--keys=\x1b",),{}), ((b"--keys",b"-\xff"),{}),
+            ((b"--workload=\xff",),{}), ((b"--strategy",b"\xff"),{}),
+            ((b"--help=\xff",),{}), ((b"--",b"\xff"),{}),
+            ((b"--reader-high-water-v1",b"--keys=\xff"),{}),
+            ((b"--keys=\xff",),{b"LANG":b"C"}), ((b"--keys=\xff",)+(b"opaque",)*17,{}))):
+            new,_=self.actual(f"numeric-utf8-fence-{i}-hia",self.native,args,env=env)
+            self.assertEqual((new.returncode,new.stdout,new.stderr),(2,b"",OUTSIDE),args)
         self.assertFalse(self.run_path.exists())
 
     def test_actual_plain_enum_diagnostics_and_exact_similarity_boundary(self):
@@ -1134,7 +1182,8 @@ class NativeBenchMain(unittest.TestCase):
                 ("help", (b"-h",), False),
                 ("attached-help", (b"--help=x",), True),
                 ("attached-profile", (b"--profile=x",), True),
-                ("post-terminator", (b"--", b"--profile"), True)):
+                ("post-terminator", (b"--", b"--profile"), True),
+                ("invalid-utf8", (b"--keys=\xff",), True)):
             master, slave = pty.openpty()
             fd = sealed_executable(self.native, f"plain-cli-terminal-{label}")
             try:

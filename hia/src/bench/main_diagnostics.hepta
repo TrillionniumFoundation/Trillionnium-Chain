@@ -21,7 +21,77 @@ block lookup(r_i:readbuf,r_o:mutbuf,r_s:mutbuf,r_n:u64,r_cap:u64)
   code_fit:bool = compare.lt(code,code_limit)
   value_fit:bool = compare.le(value_len,value_limit)
   fit:bool = bool.and(code_fit,value_fit)
-  branch fit load_row(r_i,r_o,r_s,r_n,r_cap,code,value_len) refuse()
+  branch fit lookup_code(r_i,r_o,r_s,r_n,r_cap,code,value_len) refuse()
+block lookup_code(lc_i:readbuf,lc_o:mutbuf,lc_s:mutbuf,lc_n:u64,lc_cap:u64,lc_code:u64,lc_v:u64)
+  lc_utf_code:u64 = const() {"value":67}
+  lc_utf:bool = compare.eq(lc_code,lc_utf_code)
+  branch lc_utf fixed_utf_check(lc_i,lc_o,lc_n,lc_cap,lc_v) load_row(lc_i,lc_o,lc_s,lc_n,lc_cap,lc_code,lc_v)
+block fixed_utf_check(fuc_i:readbuf,fuc_o:mutbuf,fuc_n:u64,fuc_cap:u64,fuc_v:u64)
+  fuc_zero:u64 = const() {"value":0}
+  fuc_empty:bool = compare.eq(fuc_v,fuc_zero)
+  fuc_total:u64 = const() {"value":125}
+  fuc_fits:bool = compare.ge(fuc_cap,fuc_total)
+  fuc_ready:bool = bool.and(fuc_empty,fuc_fits)
+  branch fuc_ready fixed_utf_tail(fuc_i,fuc_o,fuc_n) refuse()
+block fixed_utf_tail(fut_i:readbuf,fut_o:mutbuf,fut_n:u64)
+  fut_at:u64 = const() {"value":864}
+  fut_atp:u64 = const() {"value":866}
+  fut_ats:u64 = const() {"value":868}
+  fut_rel:u64 = call(fut_i,fut_at) {"function":"diag_u16"}
+  fut_a:u64 = call(fut_i,fut_atp) {"function":"diag_u16"}
+  fut_b:u64 = call(fut_i,fut_ats) {"function":"diag_u16"}
+  fut_floor:u64 = const() {"value":960}
+  fut_needed:u64 = const() {"value":74}
+  fut_base:u64 = const() {"value":144}
+  fut_drop:u64 = const() {"value":7}
+  fut_data:bool = compare.ge(fut_rel,fut_floor)
+  fut_suffix:bool = compare.eq(fut_b,fut_needed)
+  fut_start:u64 = int.add.wrap(fut_rel,fut_base)
+  fut_after:u64 = int.add.wrap(fut_start,fut_a)
+  fut_end:u64 = int.add.wrap(fut_after,fut_needed)
+  fut_extent:bool = compare.le(fut_end,fut_n)
+  fut_shape:bool = bool.and(fut_data,fut_suffix)
+  fut_valid:bool = bool.and(fut_shape,fut_extent)
+  fut_tail:u64 = int.add.wrap(fut_after,fut_drop)
+  branch fut_valid fixed_utf_emit(fut_i,fut_o,fut_tail) refuse()
+block fixed_utf_emit(fue_i:readbuf,fue_o:mutbuf,fue_tail:u64)
+  fue_at0:u64 = const() {"value":0}
+  fue_word0:u64 = const() {"value":7575118836407628389}
+  fue_n0:u64 = const() {"value":8}
+  _fue0:u64 = call(fue_o,fue_at0,fue_word0,fue_n0) {"function":"diag_fixed_word"}
+  fue_at1:u64 = const() {"value":8}
+  fue_word1:u64 = const() {"value":6134013096431285870}
+  fue_n1:u64 = const() {"value":8}
+  _fue1:u64 = call(fue_o,fue_at1,fue_word1,fue_n1) {"function":"diag_fixed_word"}
+  fue_at2:u64 = const() {"value":16}
+  fue_word2:u64 = const() {"value":8314057367367796308}
+  fue_n2:u64 = const() {"value":8}
+  _fue2:u64 = call(fue_o,fue_at2,fue_word2,fue_n2) {"function":"diag_fixed_word"}
+  fue_at3:u64 = const() {"value":24}
+  fue_word3:u64 = const() {"value":7310577382524806176}
+  fue_n3:u64 = const() {"value":8}
+  _fue3:u64 = call(fue_o,fue_at3,fue_word3,fue_n3) {"function":"diag_fixed_word"}
+  fue_at4:u64 = const() {"value":32}
+  fue_word4:u64 = const() {"value":7308901430350913636}
+  fue_n4:u64 = const() {"value":8}
+  _fue4:u64 = call(fue_o,fue_at4,fue_word4,fue_n4) {"function":"diag_fixed_word"}
+  fue_at5:u64 = const() {"value":40}
+  fue_word5:u64 = const() {"value":7310027659662225184}
+  fue_n5:u64 = const() {"value":8}
+  _fue5:u64 = call(fue_o,fue_at5,fue_word5,fue_n5) {"function":"diag_fixed_word"}
+  fue_at6:u64 = const() {"value":48}
+  fue_word6:u64 = const() {"value":7954884667833999648}
+  fue_n6:u64 = const() {"value":8}
+  _fue6:u64 = call(fue_o,fue_at6,fue_word6,fue_n6) {"function":"diag_fixed_word"}
+  fue_at7:u64 = const() {"value":56}
+  fue_word7:u64 = const() {"value":29556}
+  fue_n7:u64 = const() {"value":2}
+  _fue7:u64 = call(fue_o,fue_at7,fue_word7,fue_n7) {"function":"diag_fixed_word"}
+  fue_dst:u64 = const() {"value":58}
+  fue_len:u64 = const() {"value":67}
+  _fue_footer:u64 = call(fue_i,fue_o,fue_tail,fue_dst,fue_len) {"function":"diag_copy"}
+  fue_result:u32 = const() {"value":125}
+  ret(fue_result)
 block load_row(l_i:readbuf,l_o:mutbuf,l_s:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_vlen:u64)
   base:u64 = const() {"value":144}
   size:u64 = const() {"value":8}
@@ -514,6 +584,27 @@ block entry(i:readbuf,o:mutbuf,fragment:u64,label:u64,n:u64,dest:u64)
   after:u64 = call(i,o,dash_at,dest,count) {"function":"diag_copy"}
   result:u64 = call(i,o,label,after,n) {"function":"diag_copy"}
   ret(result)
+end
+
+fn diag_fixed_word(o:mutbuf,at:u64,word:u64,count:u64) -> (u64) effects(write,trap) entry(entry)
+block entry(o:mutbuf,at:u64,word:u64,count:u64)
+  jump loop(o,at,word,count)
+block loop(lo:mutbuf,lat:u64,lword:u64,lcount:u64)
+  zero:u64 = const() {"value":0}
+  done:bool = compare.eq(lcount,zero)
+  branch done finish(lat) write(lo,lat,lword,lcount)
+block write(w_o:mutbuf,w_at:u64,w_word:u64,w_count:u64)
+  w_index:usize = int.cast(w_at) {"mode":"wrap"}
+  w_byte:u8 = int.cast(w_word) {"mode":"wrap"}
+  _ = buffer.store(w_o,w_index,w_byte)
+  w_eight:u64 = const() {"value":8}
+  w_one:u64 = const() {"value":1}
+  w_next:u64 = int.add.wrap(w_at,w_one)
+  w_shift:u64 = int.shr.checked(w_word,w_eight)
+  w_remaining:u64 = int.sub.wrap(w_count,w_one)
+  jump loop(w_o,w_next,w_shift,w_remaining)
+block finish(n:u64)
+  ret(n)
 end
 
 fn diag_copy(i:readbuf,o:mutbuf,from:u64,to:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
