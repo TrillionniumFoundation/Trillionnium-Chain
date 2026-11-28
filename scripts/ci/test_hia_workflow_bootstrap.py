@@ -25,6 +25,7 @@ ORIGINAL_RUST_PREP_JOBS = {
     "native-components-general-c",
     "native-components-general-settlement",
     "native-components-general-state-import",
+    "native-components-general-worker",
     "native-components-bench",
 }
 COMPILER_SHA256 = "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
@@ -43,6 +44,7 @@ EXPECTED_BOOTSTRAP_JOBS = (
     "native-components-general-c",
     "native-components-general-settlement",
     "native-components-general-state-import",
+    "native-components-general-worker",
     "native-components-oracle",
     "native-components-bench",
     "native-components-crypto-types",
