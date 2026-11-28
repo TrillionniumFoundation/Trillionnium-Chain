@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v13
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v14
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -115,9 +115,27 @@ block free_dash_kind(sh1_dk_i:readbuf,sh1_dk_o:mutbuf,sh1_dk_p:u64,sh1_dk_e:u64,
   sh1_short_dk:bool = compare.eq(sh1_kind_dk,sh1_one_fdk)
   sh1_long_dk:bool = compare.eq(sh1_kind_dk,sh1_dash_dk)
   sh1_echo_to_dk:u64 = int.add.wrap(sh1_dk_q,sh1_one_fdk)
-  branch sh1_short_dk free_dash_echo(sh1_dk_i,sh1_dk_o,sh1_dk_p,sh1_echo_to_dk) free_maybe_long(sh1_dk_i,sh1_dk_o,sh1_dk_p,sh1_dk_e,sh1_dk_eq,sh1_long_dk)
-block free_maybe_long(sh2_ml_i:readbuf,sh2_ml_o:mutbuf,sh2_ml_p:u64,sh2_ml_e:u64,sh2_ml_eq:u64,sh2_ml_long:bool)
-  branch sh2_ml_long free_long(sh2_ml_i,sh2_ml_o,sh2_ml_p,sh2_ml_e,sh2_ml_eq) fail()
+  branch sh1_short_dk free_dash_echo(sh1_dk_i,sh1_dk_o,sh1_dk_p,sh1_echo_to_dk) free_extended(sh1_dk_i,sh1_dk_o,sh1_dk_p,sh1_dk_e,sh1_dk_eq,sh1_dk_q,sh1_kind_dk,sh1_long_dk)
+block free_extended(ux_i:readbuf,ux_o:mutbuf,ux_p:u64,ux_e:u64,ux_eq:u64,ux_q:u64,ux_kind:u64,ux_long:bool)
+  branch ux_long free_long(ux_i,ux_o,ux_p,ux_e,ux_eq) free_help_or_unicode(ux_i,ux_o,ux_p,ux_e,ux_q,ux_kind)
+block free_help_or_unicode(uh_i:readbuf,uh_o:mutbuf,uh_p:u64,uh_e:u64,uh_q:u64,uh_kind:u64)
+  help_uh:u64 = const() {"value":2}
+  wants_help_uh:bool = compare.eq(uh_kind,help_uh)
+  branch wants_help_uh help(uh_o) free_unicode(uh_i,uh_o,uh_p,uh_e,uh_q)
+block free_unicode(uu_i:readbuf,uu_o:mutbuf,uu_p:u64,uu_e:u64,uu_q:u64)
+  width_uu:u64 = call(uu_i,uu_q,uu_e) {"function":"bc_unicode_width"}
+  zero_uu:u64 = const() {"value":0}
+  good_uu:bool = compare.ne(width_uu,zero_uu)
+  after_uu:u64 = int.add.wrap(uu_q,width_uu)
+  branch good_uu free_unicode_copy(uu_i,uu_o,uu_p,after_uu) fail()
+block free_unicode_copy(uc_i:readbuf,uc_o:mutbuf,uc_p:u64,uc_e:u64)
+  dest_uc:u64 = const() {"value":96}
+  count_uc:u64 = int.sub.wrap(uc_e,uc_p)
+  _copied_uc:u64 = call(uc_i,uc_o,uc_p,uc_e,dest_uc) {"function":"bc_unicode_copy"}
+  len_uc:u64 = const() {"value":72}
+  _stamp_uc:u64 = call(uc_o,len_uc,count_uc) {"function":"bench_put"}
+  code_uc:u32 = const() {"value":90}
+  ret(code_uc)
 block free_dash_echo(sh3_de_i:readbuf,sh3_de_o:mutbuf,sh3_de_p:u64,sh3_de_e:u64)
   sh3_kind_de:u64 = const() {"value":90}
   jump free_save(sh3_de_i,sh3_de_o,sh3_de_p,sh3_de_e,sh3_kind_de)
@@ -254,9 +272,11 @@ block pending_secondary(sh5_ps_i:readbuf,sh5_ps_o:mutbuf,sh5_ps_n:u64,sh5_ps_p:u
   sh5_dash_ps:u64 = const() {"value":3}
   sh5_is_help_ps:bool = compare.eq(sh5_ps_tag,sh5_help_ps)
   sh5_is_long_ps:bool = compare.eq(sh5_ps_tag,sh5_dash_ps)
-  branch sh5_is_help_ps pending_short_help(sh5_ps_i,sh5_ps_o,sh5_ps_n,sh5_ps_e,sh5_ps_k,sh5_ps_f,sh5_ps_s) pending_maybe_long(sh5_ps_i,sh5_ps_o,sh5_ps_p,sh5_ps_e,sh5_ps_f,sh5_is_long_ps)
-block pending_maybe_long(sh6_pm_i:readbuf,sh6_pm_o:mutbuf,sh6_pm_p:u64,sh6_pm_e:u64,sh6_pm_f:u64,sh6_pm_long:bool)
-  branch sh6_pm_long pending_long(sh6_pm_i,sh6_pm_o,sh6_pm_p,sh6_pm_e,sh6_pm_f) fail()
+  branch sh5_is_help_ps pending_short_help(sh5_ps_i,sh5_ps_o,sh5_ps_n,sh5_ps_e,sh5_ps_k,sh5_ps_f,sh5_ps_s) pending_maybe_long(sh5_ps_i,sh5_ps_o,sh5_ps_n,sh5_ps_p,sh5_ps_e,sh5_ps_k,sh5_ps_f,sh5_is_long_ps)
+block pending_maybe_long(ul_i:readbuf,ul_o:mutbuf,ul_n:u64,ul_p:u64,ul_e:u64,ul_k:u64,ul_f:u64,ul_long:bool)
+  one_ul:u64 = const() {"value":1}
+  count_ul:u64 = int.add.wrap(ul_k,one_ul)
+  branch ul_long pending_long(ul_i,ul_o,ul_p,ul_e,ul_f) free_arg(ul_i,ul_o,ul_n,ul_p,count_ul,ul_e,ul_e)
 block pending_short_help(sh7_ph_i:readbuf,sh7_ph_o:mutbuf,sh7_ph_n:u64,sh7_ph_e:u64,sh7_ph_k:u64,sh7_ph_f:u64,sh7_ph_s:u64)
   sh7_max_ph:u64 = const() {"value":127}
   sh7_max_args_ph:u64 = const() {"value":17}
@@ -1226,6 +1246,73 @@ block ok()
 block fail()
   no:bool = const() {"value":false}
   ret(no)
+end
+
+fn bc_unicode_width(i:readbuf,p:u64,e:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,p:u64,e:u64)
+  available:bool = compare.lt(p,e)
+  branch available lead(i,p,e) bad()
+block lead(i_l:readbuf,p_l:u64,e_l:u64)
+  at_l:usize = int.cast(p_l) {"mode":"wrap"}
+  octet_l:u8 = buffer.load(i_l,at_l)
+  low_l:u8 = const() {"value":194}
+  high_l:u8 = const() {"value":244}
+  lower_l:bool = compare.ge(octet_l,low_l)
+  upper_l:bool = compare.le(octet_l,high_l)
+  lead_ok:bool = bool.and(lower_l,upper_l)
+  branch lead_ok span(i_l,p_l,e_l,octet_l) bad()
+block span(i_s:readbuf,p_s:u64,e_s:u64,b_s:u8)
+  last2:u8 = const() {"value":223}
+  last3:u8 = const() {"value":239}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  four:u64 = const() {"value":4}
+  is2:bool = compare.le(b_s,last2)
+  at_most3:bool = compare.le(b_s,last3)
+  high_width:u64 = select(at_most3,three,four)
+  width:u64 = select(is2,two,high_width)
+  left:u64 = int.sub.wrap(e_s,p_s)
+  fits:bool = compare.le(width,left)
+  branch fits validate(i_s,p_s,width,b_s) bad()
+block validate(i_v:readbuf,p_v:u64,n_v:u64,lead_v:u8)
+  one_v:u64 = const() {"value":1}
+  at_v:u64 = int.add.wrap(p_v,one_v)
+  address_v:usize = int.cast(at_v) {"mode":"wrap"}
+  second_v:u8 = buffer.load(i_v,address_v)
+  key_v:u8 = const() {"value":194}
+  non_control:u8 = const() {"value":160}
+  prefix_v:bool = compare.eq(lead_v,key_v)
+  below_v:bool = compare.lt(second_v,non_control)
+  control_v:bool = bool.and(prefix_v,below_v)
+  branch control_v bad() utf8(i_v,p_v,n_v)
+block utf8(i_u:readbuf,p_u:u64,n_u:u64)
+  check_u:u64 = call(i_u,p_u,n_u) {"function":"value_utf8"}
+  zero_u:u64 = const() {"value":0}
+  valid_u:bool = compare.ne(check_u,zero_u)
+  width_u:u64 = select(valid_u,n_u,zero_u)
+  ret(width_u)
+block bad()
+  zero_b:u64 = const() {"value":0}
+  ret(zero_b)
+end
+
+fn bc_unicode_copy(i:readbuf,o:mutbuf,p:u64,e:u64,d:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,p:u64,e:u64,d:u64)
+  jump loop(i,o,p,e,d)
+block loop(i_l:readbuf,o_l:mutbuf,p_l:u64,e_l:u64,d_l:u64)
+  done:bool = compare.eq(p_l,e_l)
+  branch done result(d_l) copy(i_l,o_l,p_l,e_l,d_l)
+block copy(i_c:readbuf,o_c:mutbuf,p_c:u64,e_c:u64,d_c:u64)
+  source:usize = int.cast(p_c) {"mode":"wrap"}
+  dest:usize = int.cast(d_c) {"mode":"wrap"}
+  byte:u8 = buffer.load(i_c,source)
+  _ = buffer.store(o_c,dest,byte)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(p_c,one)
+  after:u64 = int.add.wrap(d_c,one)
+  jump loop(i_c,o_c,next,e_c,after)
+block result(n:u64)
+  ret(n)
 end
 
 fn bc_short_kind(i:readbuf,at:u64) -> (u64) effects(read,trap) entry(entry)

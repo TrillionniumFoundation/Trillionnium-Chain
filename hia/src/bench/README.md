@@ -191,10 +191,16 @@ appear in the diagnostic. A lone hyphen is positional unless absorbed as a
 pending value. A negative token split from a value option is interpreted as
 a short option here; an attached negative value still reaches numeric
 diagnostics. When a pending option expects a value, a short cluster beginning
-with `h` reports the missing value without running help; standalone help
-clusters other than the already admitted bare `-h` remain refused. The same
-bound applies to the complete selected token and the 17-token frame. This
-does not add non-ASCII or control short names, terminal modes, or accepted work.
+with `h` reports the missing value without running help. Otherwise, a short
+cluster beginning with `h` writes exactly the existing plain `-h` help and
+stops. Nothing else in the cluster is interpreted. The same bounds apply
+to the complete selected token and the 17-token frame.
+
+An unrecognized non-control Unicode short name echoes the first validated
+UTF-8 scalar only, after the hyphen, using the same `[OPTIONS]` diagnostic.
+The parser and renderer both check the exact two-, three- or four-byte
+scalar. Malformed encodings and C0/C1 control names stay outside this
+candidate. This does not add a terminal mode or admit any additional work.
 The HIA renderer reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted

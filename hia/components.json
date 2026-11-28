@@ -15519,6 +15519,26 @@
           "bench_read"
         ],
         "source": "src/bench/workload.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
+      }
+    ],
+    "src/bench/main_diagnostics.hepta": [
+      {
+        "functions": [
+          "bc_unicode_width"
+        ],
+        "source": "src/bench/main_cli.hepta"
+      },
+      {
+        "functions": [
+          "value_utf8"
+        ],
+        "source": "src/codec/json_primitives.hepta"
       }
     ],
     "src/bench/digests.hepta": [

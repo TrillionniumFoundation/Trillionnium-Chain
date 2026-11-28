@@ -717,9 +717,8 @@ class NativeBenchMain(unittest.TestCase):
                 self.assertIn(b"a value is required for '" + field, original.stderr)
                 self.assertEqual((native.returncode, native.stdout,native.stderr),
                                  (2,b"",original.stderr), args)
-        for i, args in enumerate(((b"-x"+b"x"*126,), (b"-h=tail",), (b"-hx",),
-                                  (b"--keys=2", b"-hh"), (b"--txs", b"-h"+b"x"*126),
-                                  (b"-\xc3\xa9",), (b"-\x01suffix",),
+        for i, args in enumerate(((b"-x"+b"x"*126,), (b"--txs", b"-h"+b"x"*126),
+                                  (b"-\x01suffix",),
                                   (b"--reader-high-water-v1", b"-x"),
                                   (b"-x", *(b"trailing",)*17))):
             out, _ = self.actual(f"short-outside-{i}", self.native, args)
@@ -727,6 +726,70 @@ class NativeBenchMain(unittest.TestCase):
         out, _ = self.actual("short-outside-environment", self.native, (b"--profile", b"-x", b"--help"),
                              env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((out.returncode,out.stdout,out.stderr), (2,b"",OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_unicode_short_and_attached_help_clusters(self):
+        prefixes = ((), (b"--profile",), (b"--txs=3", b"--keys=2"),
+                    (b"--txs=2", b"--txs"))
+        points = (0xA0, 0xAD, 0xE9, 0x300, 0x7FE, 0x7FF, 0x800, 0x901,
+                  0x4E2D, 0x200C, 0x2028, 0x202E, 0x2603, 0xD7FF, 0xE000,
+                  0xFDD0, 0xFEFF, 0xFFFE, 0xFFFF, 0x10000, 0x10001, 0x1F600,
+                  0x1F642, 0x1D11E, 0x10FEFE, 0x10FFFF)
+        tails = ((b"", ()), (b"ignored", (b"--help",)), (b"=opaque\xff", (b"--profile",)))
+        index = 0
+        for cp in points:
+            token = b"-" + chr(cp).encode()
+            expected = (b"error: unexpected argument '" + token + b"' found\n\n"
+                        b"Usage: trnm-bench [OPTIONS]\n\nFor more information, try '--help'.\n")
+            for prefix in prefixes:
+                for attached, rest in tails:
+                    args = (*prefix, token + attached, *rest)
+                    for owner, image in (("rust", self.original), ("hia", self.native)):
+                        result, _ = self.actual(f"unicode-first-{index}-{owner}", image, args)
+                        self.assertEqual((result.returncode,result.stdout,result.stderr),
+                                         (2,b"",expected), args)
+                    index += 1
+        self.assertEqual(index, 312)
+        original, _ = self.actual("short-cluster-help-standalone-rust", self.original, (b"-h",))
+        success = (0,original.stdout,b"")
+        self.assertEqual((original.returncode,original.stdout,original.stderr), success)
+        self.assertTrue(original.stdout.startswith(b"TRNM load bench"))
+        regular_prefixes = ((), (b"--profile",), (b"--keys=2",b"--txs=1"),
+                            (b"--determinism-repeats=1001",))
+        clusters = (b"-hx", b"-h=x", b"-h=", b"-hh", b"-h\xff", b"-h"+b"q"*125)
+        later = ((), (b"--unknown",), (b"--txs=bad", b"--profile"))
+        accepted = 0
+        for prefix in regular_prefixes:
+            for cluster in clusters:
+                for suffix in later:
+                    args = (*prefix,cluster,*suffix)
+                    for owner, image in (("rust", self.original), ("hia", self.native)):
+                        result, _ = self.actual(f"short-cluster-help-{accepted}-{owner}", image, args)
+                        self.assertEqual((result.returncode,result.stdout,result.stderr), success, args)
+                    accepted += 1
+        self.assertEqual(accepted, 72)
+        limits = ((b"-hx", *(b"ignored",)*16), (b"-\xc3\xa9"+b"z"*124,),
+                  (b"--txs=bad",b"-hx"), (b"--profile",b"--profile",b"-h=x"),
+                  (b"-xh",b"-h=x"), (b"--workload",b"-h=x",b"--profile"))
+        for i,args in enumerate(limits):
+            old, _ = self.actual(f"unicode-bound-{i}-rust", self.original, args)
+            new, _ = self.actual(f"unicode-bound-{i}-hia", self.native, args)
+            self.assertEqual(old.returncode,0 if i == 0 else 2,args)
+            self.assertEqual((new.returncode,new.stdout,new.stderr),(old.returncode,old.stdout,old.stderr),args)
+        invalid = (b"-\xc2\x80",b"-\xc2\x9f",b"-\xc0\xa0",b"-\xc3",b"-\xe2\x82",
+                   b"-\xed\xa0\x80",b"-\xf4\x90\x80\x80",b"-\xf5\x80\x80\x80",b"-\x80",
+                   b"-\xff",b"-\xc3x",b"-\xc3\xa9"+b"z"*125)
+        fences = [(token,b"--profile") for token in invalid]
+        fences.extend(((b"-h"+b"x"*126,), (b"-hx",*(b"ignored",)*17),
+                       (b"--reader-high-water-v1",b"-h=x"),
+                       (b"--reader-high-water-v1",b"-\xc3\xa9")))
+        for i,args in enumerate(fences):
+            new, _ = self.actual(f"unicode-scope-fence-{i}", self.native, args)
+            self.assertEqual((new.returncode,new.stdout,new.stderr),(2,b"",OUTSIDE),args)
+        for i,args in enumerate(((b"-hx",b"--profile"),(b"-\xc3\xa9",b"--help"))):
+            new, _ = self.actual(f"unicode-env-fence-{i}", self.native, args,
+                                env={b"HIA_BENCH_TEST_ONLY":b"synthetic"})
+            self.assertEqual((new.returncode,new.stdout,new.stderr),(2,b"",OUTSIDE),args)
         self.assertFalse(self.run_path.exists())
 
     def test_actual_plain_uint_cli_diagnostics_and_no_unbounded_echo(self):

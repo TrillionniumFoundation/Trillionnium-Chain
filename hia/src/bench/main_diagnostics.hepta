@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_plain_diagnostic_renderer_v5
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_plain_diagnostic_renderer_v6
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   nz:usize = buffer.len(i)
@@ -66,7 +66,31 @@ block load_row(l_i:readbuf,l_o:mutbuf,l_s:mutbuf,l_n:u64,l_cap:u64,l_code:u64,l_
   fit_report:bool = bool.and(fit_out,hard_fit)
   fit_both:bool = bool.and(data_ok,fit_report)
   ready:bool = bool.and(text_valid,fit_both)
-  branch ready token_check(l_i,l_o,l_s,l_code,start,p_end,a,b,l_vlen,total,z_row) refuse()
+  branch ready token_policy(l_i,l_o,l_s,l_code,start,p_end,a,b,l_vlen,total,z_row) refuse()
+block token_policy(newunicode0_up_i:readbuf,newunicode0_up_o:mutbuf,newunicode0_up_s:mutbuf,newunicode0_up_code:u64,newunicode0_up_start:u64,newunicode0_up_after:u64,newunicode0_up_a:u64,newunicode0_up_b:u64,newunicode0_up_len:u64,newunicode0_up_total:u64,newunicode0_up_zero:u64)
+  newunicode0_positional_up:u64 = const() {"value":90}
+  newunicode0_is_positional:bool = compare.eq(newunicode0_up_code,newunicode0_positional_up)
+  newunicode0_min_up:u64 = const() {"value":3}
+  newunicode0_max_up:u64 = const() {"value":5}
+  newunicode0_over_min_up:bool = compare.ge(newunicode0_up_len,newunicode0_min_up)
+  newunicode0_under_max_up:bool = compare.le(newunicode0_up_len,newunicode0_max_up)
+  newunicode0_length_up:bool = bool.and(newunicode0_over_min_up,newunicode0_under_max_up)
+  newunicode0_probe_up:bool = bool.and(newunicode0_is_positional,newunicode0_length_up)
+  branch newunicode0_probe_up token_unicode(newunicode0_up_i,newunicode0_up_o,newunicode0_up_s,newunicode0_up_code,newunicode0_up_start,newunicode0_up_after,newunicode0_up_a,newunicode0_up_b,newunicode0_up_len,newunicode0_up_total,newunicode0_up_zero) token_check(newunicode0_up_i,newunicode0_up_o,newunicode0_up_s,newunicode0_up_code,newunicode0_up_start,newunicode0_up_after,newunicode0_up_a,newunicode0_up_b,newunicode0_up_len,newunicode0_up_total,newunicode0_up_zero)
+block token_unicode(newunicode1_uu_i:readbuf,newunicode1_uu_o:mutbuf,newunicode1_uu_s:mutbuf,newunicode1_uu_code:u64,newunicode1_uu_start:u64,newunicode1_uu_after:u64,newunicode1_uu_a:u64,newunicode1_uu_b:u64,newunicode1_uu_len:u64,newunicode1_uu_total:u64,newunicode1_uu_zero:u64)
+  newunicode1_at_uu:usize = const() {"value":16}
+  newunicode1_base_uu:u64 = const() {"value":16}
+  newunicode1_after_dash_uu:u64 = const() {"value":17}
+  newunicode1_end_uu:u64 = int.add.wrap(newunicode1_base_uu,newunicode1_uu_len)
+  newunicode1_one_uu:u64 = const() {"value":1}
+  newunicode1_dash_uu:u8 = const() {"value":45}
+  newunicode1_first_uu:u8 = buffer.load(newunicode1_uu_i,newunicode1_at_uu)
+  newunicode1_has_dash_uu:bool = compare.eq(newunicode1_first_uu,newunicode1_dash_uu)
+  newunicode1_width_uu:u64 = call(newunicode1_uu_i,newunicode1_after_dash_uu,newunicode1_end_uu) {"function":"bc_unicode_width"}
+  newunicode1_expected_uu:u64 = int.add.wrap(newunicode1_width_uu,newunicode1_one_uu)
+  newunicode1_exact_uu:bool = compare.eq(newunicode1_expected_uu,newunicode1_uu_len)
+  newunicode1_shape_uu:bool = bool.and(newunicode1_has_dash_uu,newunicode1_exact_uu)
+  branch newunicode1_shape_uu variant(newunicode1_uu_i,newunicode1_uu_o,newunicode1_uu_s,newunicode1_uu_code,newunicode1_uu_start,newunicode1_uu_after,newunicode1_uu_a,newunicode1_uu_b,newunicode1_uu_len,newunicode1_uu_total) token_check(newunicode1_uu_i,newunicode1_uu_o,newunicode1_uu_s,newunicode1_uu_code,newunicode1_uu_start,newunicode1_uu_after,newunicode1_uu_a,newunicode1_uu_b,newunicode1_uu_len,newunicode1_uu_total,newunicode1_uu_zero)
 block token_check(t_i:readbuf,t_o:mutbuf,t_s:mutbuf,t_code:u64,t_start:u64,t_after:u64,t_a:u64,t_b:u64,t_vlen:u64,t_total:u64,t_j:u64)
   arrived:bool = compare.eq(t_j,t_vlen)
   branch arrived variant(t_i,t_o,t_s,t_code,t_start,t_after,t_a,t_b,t_vlen,t_total) token_byte(t_i,t_o,t_s,t_code,t_start,t_after,t_a,t_b,t_vlen,t_total,t_j)
