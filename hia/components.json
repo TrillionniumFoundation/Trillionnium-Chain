@@ -10451,6 +10451,75 @@
         ]
       }
     ],
+    "src/data_availability/cell_tensor_header_spans.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_wcopy",
+          "cp_wout"
+        ]
+      },
+      {
+        "source": "src/oracle/serde_json.hepta",
+        "functions": [
+          "oj_ws",
+          "oj_peek",
+          "oj_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_scalar"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/oracle/values.hepta",
+        "functions": [
+          "or_wcompare"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json.hepta",
+        "functions": [
+          "hj_take",
+          "hj_follow",
+          "hj_name",
+          "hj_kind",
+          "hj_array",
+          "hj_uint"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_metadata.hepta",
+        "functions": [
+          "hj_metadata",
+          "hj_entry",
+          "hv_key",
+          "hv_field",
+          "hv_value",
+          "hv_dtype",
+          "hv_scroll",
+          "hv_width",
+          "hm_slot",
+          "hm_record",
+          "hm_for_key",
+          "hm_seen",
+          "hm_merge",
+          "hm_insert"
+        ]
+      }
+    ],
     "src/data_availability/cell_tensor_model_manifest.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
