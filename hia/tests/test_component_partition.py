@@ -124,6 +124,22 @@ class ComponentPartitions(unittest.TestCase):
                 expected = hashlib.sha256((ci.qualify.ROOT / name).read_bytes()).hexdigest()
                 self.assertEqual(sources.get(name), expected)
 
+    def test_cell_native_original_files_bound_by_component_reports(self):
+        # The private training reference and the public Model oracle depend
+        # on this owner. Bind source bytes, not just the caller and lockfile.
+        prefix = "trillionnium/crates/trnm-pon-node/src/"
+        sources = ci.qualify.sources()
+        for relative in (
+            "cell_native_v1.rs",
+            "cell_native_v1/execution.rs",
+            "cell_native_v1/source.rs",
+            "cell_native_v1/work.rs",
+        ):
+            with self.subTest(relative=relative):
+                name = prefix + relative
+                expected = hashlib.sha256((ci.qualify.ROOT / name).read_bytes()).hexdigest()
+                self.assertEqual(sources.get(name), expected)
+
     def test_all_partitions_execute_every_fixture_exactly_once(self):
         observed = []
         for group in part.GROUPS:

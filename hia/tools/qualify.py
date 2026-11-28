@@ -133,6 +133,12 @@ def sources():
               ROOT / "hia/src/consensus/ASERT_TARGET.md",
               ROOT / "hia/src/consensus/WORK_SCHEDULE_PROFILE.md",
               ROOT / "hia/src/consensus/README.md"]
+    # Bind the original Cell model owner and its three implementation modules
+    # in each component report and in the same-run independent readback.
+    cell_owner = ROOT / "trillionnium/crates/trnm-pon-node/src"
+    paths += [cell_owner / name for name in (
+        "cell_native_v1.rs", "cell_native_v1/execution.rs",
+        "cell_native_v1/source.rs", "cell_native_v1/work.rs")]
     # Local resource metadata oracle compiles the exact original public methods.
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
               ROOT / "hia/src/node/RESOURCE_PROFILE.md"]
