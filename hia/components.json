@@ -16675,6 +16675,45 @@
         "source": "src/release_bundle/bundle_binding.hepta"
       }
     ],
+    "src/research_protocol/hepta_artifact_value.hepta": [
+      {
+        "source": "src/research_protocol/canonical.hepta",
+        "functions": [
+          "research_head_size",
+          "research_write_head"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_copy",
+          "rac_write_be"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_copy_digest",
+          "sb_hash_transcript"
+        ]
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/release_bundle/sbom_digest.hepta": [
       {
         "functions": [
