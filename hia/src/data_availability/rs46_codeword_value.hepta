@@ -1,0 +1,247 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_rs46_standalone_codeword_value_v1
+fn f0(p0_r:readbuf,p0_o:mutbuf,p0_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(p0_r:readbuf,p0_o:mutbuf,p0_w:mutbuf)
+  p0_size:usize = buffer.len(p0_r)
+  p0_n:u64 = int.cast(p0_size) {"mode":"wrap"}
+  p0_cap:u64 = const() {"value":1048576}
+  p0_min:u64 = const() {"value":233}
+  p0_lo:bool = compare.ge(p0_n,p0_min)
+  p0_hi:bool = compare.le(p0_n,p0_cap)
+  p0_ok:bool = bool.and(p0_lo,p0_hi)
+  branch p0_ok header(p0_r,p0_o,p0_w,p0_n) invalid_frame()
+block header(p1_r:readbuf,p1_o:mutbuf,p1_w:mutbuf,p1_n:u64)
+  p1_z:u64 = const() {"value":0}
+  p1_tag_n:u64 = const() {"value":4}
+  p1_tag:u64 = call(p1_r,p1_z,p1_tag_n) {"function":"ca_read_be"}
+  p1_marker:u64 = const() {"value":1380139569}
+  p1_ok:bool = compare.eq(p1_tag,p1_marker)
+  branch p1_ok family(p1_r,p1_o,p1_w,p1_n) invalid_frame()
+block family(p2_r:readbuf,p2_o:mutbuf,p2_w:mutbuf,p2_n:u64)
+  p2_fp:u64 = const() {"value":72}
+  p2_flen_n:u64 = const() {"value":1}
+  p2_flen:u64 = call(p2_r,p2_fp,p2_flen_n) {"function":"ca_read_be"}
+  p2_fixed:u64 = const() {"value":233}
+  p2_at:u64 = int.add.wrap(p2_flen,p2_fixed)
+  p2_mb:u64,p2_me:u64 = call(p2_r,p2_at,p2_n) {"function":"tc_frame"}
+  p2_z:u64 = const() {"value":0}
+  p2_ok:bool = compare.ne(p2_mb,p2_z)
+  branch p2_ok type(p2_r,p2_o,p2_w,p2_n,p2_mb,p2_me,p2_flen) invalid_frame()
+block type(p3_r:readbuf,p3_o:mutbuf,p3_w:mutbuf,p3_n:u64,p3_mb:u64,p3_me:u64,p3_flen:u64)
+  p3_family:u64 = const() {"value":73}
+  p3_utf:u64 = call(p3_r,p3_family,p3_flen) {"function":"value_utf8"}
+  p3_one:u64 = const() {"value":1}
+  p3_ok:bool = compare.eq(p3_utf,p3_one)
+  branch p3_ok manifest(p3_r,p3_o,p3_w,p3_n,p3_mb,p3_me,p3_flen) invalid_frame()
+block manifest(p4_r:readbuf,p4_o:mutbuf,p4_w:mutbuf,p4_n:u64,p4_mb:u64,p4_me:u64,p4_flen:u64)
+  p4_ml:u64 = int.sub.wrap(p4_me,p4_mb)
+  p4_s:u32,p4_rows:u64,p4_count:u64 = call(p4_r,p4_mb,p4_ml) {"function":"cm_decode"}
+  p4_zero:u32 = const() {"value":0}
+  p4_ok:bool = compare.eq(p4_s,p4_zero)
+  branch p4_ok context(p4_r,p4_o,p4_w,p4_n,p4_mb,p4_me,p4_ml,p4_flen,p4_rows,p4_count) fail(p4_s)
+block context(p5_r:readbuf,p5_o:mutbuf,p5_w:mutbuf,p5_n:u64,p5_mb:u64,p5_me:u64,p5_ml:u64,p5_flen:u64,p5_rows:u64,p5_count:u64)
+  p5_four:u64 = const() {"value":4}
+  p5_fields:u64 = const() {"value":161}
+  p5_expected:u64 = const() {"value":72}
+  p5_live:u64 = int.add.wrap(p5_mb,p5_four)
+  p5_live_len_n:u64 = const() {"value":1}
+  p5_live_len:u64 = call(p5_r,p5_live,p5_live_len_n) {"function":"ca_read_be"}
+  p5_ll:u64 = int.add.wrap(p5_live_len,p5_fields)
+  p5_el:u64 = int.add.wrap(p5_flen,p5_fields)
+  p5_match:u64 = call(p5_r,p5_live,p5_expected,p5_ll,p5_el) {"function":"sb_compare"}
+  p5_one:u64 = const() {"value":1}
+  p5_okay:bool = compare.eq(p5_match,p5_one)
+  branch p5_okay workspace(p5_r,p5_o,p5_w,p5_n,p5_mb,p5_me,p5_ml,p5_rows,p5_count) bad_context()
+block workspace(p6_r:readbuf,p6_o:mutbuf,p6_w:mutbuf,p6_n:u64,p6_mb:u64,p6_me:u64,p6_ml:u64,p6_rows:u64,p6_count:u64)
+  p6_wn:usize = buffer.len(p6_w)
+  p6_need:usize = const() {"value":1240}
+  p6_okay:bool = compare.ge(p6_wn,p6_need)
+  branch p6_okay manifest_hash(p6_r,p6_o,p6_w,p6_n,p6_mb,p6_me,p6_ml,p6_rows,p6_count) short()
+block manifest_hash(p7_r:readbuf,p7_o:mutbuf,p7_w:mutbuf,p7_n:u64,p7_mb:u64,p7_me:u64,p7_ml:u64,p7_rows:u64,p7_count:u64)
+  p7_s:u64 = call(p7_r,p7_mb,p7_ml,p7_w) {"function":"cm_hash"}
+  p7_z:u64 = const() {"value":0}
+  p7_okay:bool = compare.eq(p7_s,p7_z)
+  branch p7_okay manifest_id(p7_r,p7_o,p7_w,p7_n,p7_me,p7_rows,p7_count) internal()
+block manifest_id(p8_r:readbuf,p8_o:mutbuf,p8_w:mutbuf,p8_n:u64,p8_cb:u64,p8_rows:u64,p8_count:u64)
+  p8_man:u64 = const() {"value":8}
+  p8_digest:u64 = const() {"value":1168}
+  p8_width:u64 = const() {"value":32}
+  p8_match:u64 = call(p8_r,p8_man,p8_w,p8_digest,p8_width) {"function":"ca_equal"}
+  p8_one:u64 = const() {"value":1}
+  p8_ok:bool = compare.eq(p8_match,p8_one)
+  branch p8_ok select_chunk(p8_r,p8_o,p8_w,p8_n,p8_cb,p8_rows,p8_count) bad_manifest()
+block select_chunk(p9_r:readbuf,p9_o:mutbuf,p9_w:mutbuf,p9_n:u64,p9_cb:u64,p9_rows:u64,p9_count:u64)
+  p9_at:u64 = const() {"value":4}
+  p9_index_n:u64 = const() {"value":4}
+  p9_index:u64 = call(p9_r,p9_at,p9_index_n) {"function":"ca_read_be"}
+  p9_inside:bool = compare.lt(p9_index,p9_count)
+  branch p9_inside codeword_size(p9_r,p9_o,p9_w,p9_n,p9_cb,p9_rows,p9_index) bad_index()
+block codeword_size(p10_r:readbuf,p10_o:mutbuf,p10_w:mutbuf,p10_n:u64,p10_cb:u64,p10_rows:u64,p10_index:u64)
+  p10_span:u64 = int.sub.wrap(p10_n,p10_cb)
+  p10_fixed:u64 = const() {"value":268}
+  p10_right:bool = compare.eq(p10_span,p10_fixed)
+  branch p10_right codeword_magic(p10_r,p10_o,p10_w,p10_cb,p10_rows,p10_index) wire_size()
+block codeword_magic(p11_r:readbuf,p11_o:mutbuf,p11_w:mutbuf,p11_cb:u64,p11_rows:u64,p11_index:u64)
+  p11_tag_n:u64 = const() {"value":4}
+  p11_tag:u64 = call(p11_r,p11_cb,p11_tag_n) {"function":"ca_read_be"}
+  p11_magic:u64 = const() {"value":1129464625}
+  p11_okay:bool = compare.eq(p11_tag,p11_magic)
+  branch p11_okay codeword_hash(p11_r,p11_o,p11_w,p11_cb,p11_rows,p11_index) wire_magic()
+block codeword_hash(p12_r:readbuf,p12_o:mutbuf,p12_w:mutbuf,p12_cb:u64,p12_rows:u64,p12_index:u64)
+  p12_s:u64 = call(p12_r,p12_w,p12_cb) {"function":"rcb_digest"}
+  p12_zero:u64 = const() {"value":0}
+  p12_ok:bool = compare.eq(p12_s,p12_zero)
+  branch p12_ok codeword_pin(p12_r,p12_o,p12_w,p12_cb,p12_rows,p12_index) internal()
+block codeword_pin(p13_r:readbuf,p13_o:mutbuf,p13_w:mutbuf,p13_cb:u64,p13_rows:u64,p13_index:u64)
+  p13_id:u64 = const() {"value":40}
+  p13_digest:u64 = const() {"value":1168}
+  p13_width:u64 = const() {"value":32}
+  p13_m:u64 = call(p13_r,p13_id,p13_w,p13_digest,p13_width) {"function":"ca_equal"}
+  p13_one:u64 = const() {"value":1}
+  p13_good:bool = compare.eq(p13_m,p13_one)
+  branch p13_good original_pin(p13_r,p13_o,p13_w,p13_cb,p13_rows,p13_index) wrong_codeword()
+block original_pin(p14_r:readbuf,p14_o:mutbuf,p14_w:mutbuf,p14_cb:u64,p14_rows:u64,p14_index:u64)
+  p14_four:u64 = const() {"value":4}
+  p14_thirty_six:u64 = const() {"value":36}
+  p14_expected:u64 = const() {"value":8}
+  p14_forty:u64 = const() {"value":40}
+  p14_man:u64 = int.add.wrap(p14_cb,p14_four)
+  p14_ix:u64 = int.add.wrap(p14_cb,p14_thirty_six)
+  p14_slot:u64 = int.add.wrap(p14_cb,p14_forty)
+  p14_offset:u64 = int.mul.wrap(p14_index,p14_thirty_six)
+  p14_row:u64 = int.add.wrap(p14_rows,p14_offset)
+  p14_thirty_two:u64 = const() {"value":32}
+  p14_m:u64 = call(p14_r,p14_expected,p14_man,p14_thirty_two) {"function":"cp_equal_read"}
+  p14_wireindex_n:u64 = const() {"value":4}
+  p14_wireindex:u64 = call(p14_r,p14_ix,p14_wireindex_n) {"function":"ca_read_be"}
+  p14_chunk:u64 = call(p14_r,p14_slot,p14_row,p14_thirty_six) {"function":"cp_equal_read"}
+  p14_one:u64 = const() {"value":1}
+  p14_same:bool = compare.eq(p14_m,p14_one)
+  p14_sameidx:bool = compare.eq(p14_wireindex,p14_index)
+  p14_samechunk:bool = compare.eq(p14_chunk,p14_one)
+  p14_samebase:bool = bool.and(p14_same,p14_sameidx)
+  p14_done:bool = bool.and(p14_samebase,p14_samechunk)
+  branch p14_done identities(p14_r,p14_o,p14_w,p14_cb) wrong_chunk()
+block identities(p15_r:readbuf,p15_o:mutbuf,p15_w:mutbuf,p15_cb:u64)
+  p15_head:u64 = const() {"value":76}
+  p15_first:u64 = int.add.wrap(p15_cb,p15_head)
+  p15_full:u64 = const() {"value":268}
+  p15_end:u64 = int.add.wrap(p15_cb,p15_full)
+  p15_good:bool = call(p15_r,p15_first,p15_end) {"function":"rcb_slots"}
+  branch p15_good output(p15_r,p15_o,p15_w,p15_cb) wrong_ids()
+block output(p16_r:readbuf,p16_o:mutbuf,p16_w:mutbuf,p16_cb:u64)
+  p16_ol:usize = buffer.len(p16_o)
+  p16_need:usize = const() {"value":300}
+  p16_fit:bool = compare.ge(p16_ol,p16_need)
+  branch p16_fit publish(p16_r,p16_o,p16_w,p16_cb) short()
+block publish(p17_r:readbuf,p17_o:mutbuf,p17_w:mutbuf,p17_cb:u64)
+  p17_digest:u64 = const() {"value":1168}
+  p17_zero:u64 = const() {"value":0}
+  p17_n:u64 = const() {"value":268}
+  p17_after:u64 = call(p17_w,p17_o,p17_digest,p17_zero) {"function":"td_copy"}
+  p17__last:u64 = call(p17_r,p17_cb,p17_o,p17_after,p17_n) {"function":"cs_copy"}
+  p17_s:u32 = const() {"value":0}
+  ret(p17_s)
+block fail(p18_s:u32)
+  ret(p18_s)
+block bad_index()
+  p19_code:u32 = const() {"value":13}
+  ret(p19_code)
+block bad_context()
+  p20_code:u32 = const() {"value":14}
+  ret(p20_code)
+block bad_manifest()
+  p21_code:u32 = const() {"value":15}
+  ret(p21_code)
+block wire_size()
+  p22_code:u32 = const() {"value":20}
+  ret(p22_code)
+block wire_magic()
+  p23_code:u32 = const() {"value":21}
+  ret(p23_code)
+block wrong_codeword()
+  p24_code:u32 = const() {"value":22}
+  ret(p24_code)
+block wrong_chunk()
+  p25_code:u32 = const() {"value":23}
+  ret(p25_code)
+block wrong_ids()
+  p26_code:u32 = const() {"value":24}
+  ret(p26_code)
+block invalid_frame()
+  p27_code:u32 = const() {"value":100}
+  ret(p27_code)
+block short()
+  p28_code:u32 = const() {"value":102}
+  ret(p28_code)
+block internal()
+  p29_code:u32 = const() {"value":103}
+  ret(p29_code)
+end
+
+fn rcb_digest(p0_r:readbuf,p0_w:mutbuf,p0_cb:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(p0_r:readbuf,p0_w:mutbuf,p0_cb:u64)
+  p0_s:u64 = call(p0_w) {"function":"tr_sha_init"}
+  p0_z:u64 = const() {"value":0}
+  p0_ok:bool = compare.eq(p0_s,p0_z)
+  branch p0_ok domain(p0_r,p0_w,p0_cb) failure(p0_s)
+block domain(p1_r:readbuf,p1_w:mutbuf,p1_cb:u64)
+  p1_p0:u64 = const() {"value":1208}
+  p1_h0:u64 = const() {"value":7810758179799593588}
+  p1__x0:u64 = call(p1_w,p1_p0,p1_h0) {"function":"tr_put"}
+  p1_p8:u64 = const() {"value":1216}
+  p1_h8:u64 = const() {"value":7146427782609907052}
+  p1__x8:u64 = call(p1_w,p1_p8,p1_h8) {"function":"tr_put"}
+  p1_p16:u64 = const() {"value":1224}
+  p1_h16:u64 = const() {"value":3342922646485820527}
+  p1__x16:u64 = call(p1_w,p1_p16,p1_h16) {"function":"tr_put"}
+  p1_p24:u64 = const() {"value":1232}
+  p1_h24:u64 = const() {"value":12662}
+  p1__x24:u64 = call(p1_w,p1_p24,p1_h24) {"function":"tr_put"}
+  p1_ln:u64 = const() {"value":27}
+  p1_s:u64 = call(p1_w,p1_p0,p1_ln) {"function":"tr_sha_update_work"}
+  p1_z:u64 = const() {"value":0}
+  p1_ok:bool = compare.eq(p1_s,p1_z)
+  branch p1_ok wire(p1_r,p1_w,p1_cb) failure(p1_s)
+block wire(p2_r:readbuf,p2_w:mutbuf,p2_cb:u64)
+  p2_length:u64 = const() {"value":268}
+  p2_s:u64 = call(p2_r,p2_cb,p2_length,p2_w) {"function":"tr_sha_update"}
+  p2_z:u64 = const() {"value":0}
+  p2_ok:bool = compare.eq(p2_s,p2_z)
+  branch p2_ok finish(p2_w) failure(p2_s)
+block finish(p3_w:mutbuf)
+  p3_s:u64 = call(p3_w) {"function":"tr_sha_final"}
+  ret(p3_s)
+block failure(p4_x:u64)
+  ret(p4_x)
+end
+
+fn rcb_slots(p0_r:readbuf,p0_first:u64,p0_end:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(p0_r:readbuf,p0_first:u64,p0_end:u64)
+  jump slot(p0_r,p0_first,p0_end,p0_first)
+block slot(p1_r:readbuf,p1_first:u64,p1_end:u64,p1_cur:u64)
+  p1_more:bool = compare.lt(p1_cur,p1_end)
+  branch p1_more nonzero(p1_r,p1_first,p1_end,p1_cur) yes()
+block nonzero(p2_r:readbuf,p2_first:u64,p2_end:u64,p2_cur:u64)
+  p2_okay:bool = call(p2_r,p2_cur) {"function":"rac_nonzero_digest"}
+  branch p2_okay prior(p2_r,p2_first,p2_end,p2_cur,p2_first) no()
+block prior(p3_r:readbuf,p3_first:u64,p3_end:u64,p3_cur:u64,p3_j:u64)
+  p3_more:bool = compare.lt(p3_j,p3_cur)
+  branch p3_more compare(p3_r,p3_first,p3_end,p3_cur,p3_j) advance(p3_r,p3_first,p3_end,p3_cur)
+block compare(p4_r:readbuf,p4_first:u64,p4_end:u64,p4_cur:u64,p4_j:u64)
+  p4_width:u64 = const() {"value":32}
+  p4_equal:u64 = call(p4_r,p4_cur,p4_j,p4_width) {"function":"cp_equal_read"}
+  p4_z:u64 = const() {"value":0}
+  p4_unique:bool = compare.eq(p4_equal,p4_z)
+  p4_next:u64 = int.add.wrap(p4_j,p4_width)
+  branch p4_unique prior(p4_r,p4_first,p4_end,p4_cur,p4_next) no()
+block advance(p5_r:readbuf,p5_first:u64,p5_end:u64,p5_cur:u64)
+  p5_width:u64 = const() {"value":32}
+  p5_next:u64 = int.add.wrap(p5_cur,p5_width)
+  jump slot(p5_r,p5_first,p5_end,p5_next)
+block yes()
+  p6_b:bool = const() {"value":true}
+  ret(p6_b)
+block no()
+  p7_b:bool = const() {"value":false}
+  ret(p7_b)
+end

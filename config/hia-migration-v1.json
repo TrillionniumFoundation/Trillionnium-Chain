@@ -1496,6 +1496,17 @@
       ]
     },
     {
+      "id": "data-availability/rs46-codeword-value",
+      "node_integration_complete": false,
+      "scope": "Pure standalone CRC1 decode and exact canonical wire/domain digest against independently supplied pins, revalidating complete borrowed TCM1 and its selected original chunk, with six nonzero unique slots. No repair, source retrieval, storage, custody or authority.",
+      "source": "hia/src/data_availability/rs46_codeword_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_rs46_codeword_value.py",
+        "hia/tests/rust_da_rs46_codeword_value_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/rs46-shard-value",
       "node_integration_complete": false,
       "scope": "Pure immutable original standalone CRS1 decode and canonical header plus borrowed payload, exact shard ID on both stock through full original extent (split immutable Direct loans). No coding, recovery, authority, network, storage or custody.",
@@ -3542,6 +3553,7 @@
       "components": [
         "data-availability/rs46",
         "data-availability/rs46-shard-value",
+        "data-availability/rs46-codeword-value",
         "data-availability/protocol-context",
         "data-availability/author-authority-value",
         "data-availability/batch-author-transcript",
