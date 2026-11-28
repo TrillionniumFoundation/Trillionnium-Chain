@@ -1,0 +1,331 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_routed_int257_grouped
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  actual:usize = buffer.len(r)
+  width:u64 = int.cast(actual) {"mode":"wrap"}
+  min:u64 = const() {"value":15424}
+  enough:bool = compare.ge(width,min)
+  branch enough frame(r,o,w,width,min) malformed()
+block frame(r1:readbuf,o1:mutbuf,w1:mutbuf,width1:u64,min1:u64)
+  pos:u64 = const() {"value":0}
+  count:u64 = call(r1,pos) {"function":"daav_u32"}
+  stride:u64 = const() {"value":1028}
+  rows:u64 = int.mul.wrap(count,stride)
+  need:u64 = int.add.wrap(min1,rows)
+  exact:bool = compare.eq(width1,need)
+  branch exact model(r1,o1,w1,count,min1) malformed()
+block model(r2:readbuf,o2:mutbuf,w2:mutbuf,count2:u64,end2:u64)
+  good2:bool = call(r2,end2) {"function":"rio_coefficients"}
+  branch good2 batch(r2,o2,w2,count2,end2) coefficient_error()
+block batch(r3:readbuf,o3:mutbuf,w3:mutbuf,count3:u64,end3:u64)
+  lo3:u64 = const() {"value":1}
+  hi3:u64 = const() {"value":64}
+  lower:bool = compare.ge(count3,lo3)
+  upper:bool = compare.le(count3,hi3)
+  valid:bool = bool.and(lower,upper)
+  branch valid features(r3,o3,w3,count3,end3) batch_error()
+block features(r4:readbuf,o4:mutbuf,w4:mutbuf,count4:u64,end4:u64)
+  inputs:bool = call(r4,count4,end4) {"function":"rio_features"}
+  branch inputs capacity(r4,o4,w4,count4,end4) inputs_error()
+block capacity(r5:readbuf,o5:mutbuf,w5:mutbuf,count5:u64,first5:u64)
+  result:usize = buffer.len(o5)
+  n5:u64 = int.cast(result) {"mode":"wrap"}
+  stride5:u64 = const() {"value":51}
+  header5:u64 = const() {"value":48}
+  rows5:u64 = int.mul.wrap(count5,stride5)
+  total5:u64 = int.add.wrap(header5,rows5)
+  room5:bool = compare.ge(n5,total5)
+  work5:usize = buffer.len(w5)
+  cap5:usize = const() {"value":67536}
+  scratch5:bool = compare.ge(work5,cap5)
+  okay5:bool = bool.and(room5,scratch5)
+  branch okay5 begin(r5,o5,w5,count5,first5,header5) short()
+block begin(r6:readbuf,o6:mutbuf,w6:mutbuf,count6:u64,first6:u64,header6:u64)
+  z6:usize = const() {"value":0}
+  a6:usize = const() {"value":1}
+  b6:usize = const() {"value":2}
+  byte6:u8 = const() {"value":0}
+  idx6:u64 = const() {"value":0}
+  _ = buffer.store(w6,z6,byte6)
+  _ = buffer.store(w6,a6,byte6)
+  _ = buffer.store(w6,b6,byte6)
+  jump row(r6,o6,w6,first6,header6,idx6,count6)
+block row(r7:readbuf,o7:mutbuf,w7:mutbuf,feature7:u64,out7:u64,index7:u64,n7:u64)
+  expert:u64 = call(r7,o7,feature7,out7) {"function":"rig_route"}
+  _group:u64 = call(w7,expert,index7) {"function":"rid_index"}
+  one7:u64 = const() {"value":1}
+  step7:u64 = const() {"value":1028}
+  width7:u64 = const() {"value":50}
+  next7:u64 = int.add.wrap(feature7,step7)
+  out_next:u64 = int.add.wrap(out7,width7)
+  advanced:u64 = int.add.wrap(index7,one7)
+  done7:bool = compare.eq(advanced,n7)
+  branch done7 experts(r7,o7,w7,n7,out_next) row(r7,o7,w7,next7,out_next,advanced,n7)
+block experts(rx:readbuf,ox:mutbuf,wx:mutbuf,nx:u64,tailx:u64)
+  zero_x:u64 = const() {"value":0}
+  _grouped:u64 = call(rx,ox,wx,zero_x) {"function":"rig_experts"}
+  jump success(ox,wx,nx,tailx)
+block malformed()
+  malformed_code:u32 = const() {"value":100}
+  ret(malformed_code)
+block coefficient_error()
+  coefficient_code:u32 = const() {"value":3}
+  ret(coefficient_code)
+block batch_error()
+  batch_code:u32 = const() {"value":4}
+  ret(batch_code)
+block inputs_error()
+  input_code:u32 = const() {"value":5}
+  ret(input_code)
+block short()
+  short_code:u32 = const() {"value":102}
+  ret(short_code)
+block success(o8:mutbuf,w8:mutbuf,n8:u64,where8:u64)
+  _out:u64 = call(o8,w8,n8,where8) {"function":"rid_groups"}
+  success_code:u32 = const() {"value":0}
+  ret(success_code)
+end
+
+fn rig_route(r:readbuf,o:mutbuf,x:u64,out:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,x:u64,out:u64)
+  zero:u64 = const() {"value":0}
+  r0:u64 = const() {"value":3088}
+  r1:u64 = const() {"value":4116}
+  r2:u64 = const() {"value":5144}
+  plain:bool = const() {"value":false}
+  a:i64 = call(r,r0,zero,x,plain) {"function":"rio_dot"}
+  b:i64 = call(r,r1,zero,x,plain) {"function":"rio_dot"}
+  c:i64 = call(r,r2,zero,x,plain) {"function":"rio_dot"}
+  expert:u64 = call(a,b,c) {"function":"rio_argmax"}
+  u24:u64 = const() {"value":24}
+  route_pos:u64 = int.add.wrap(out,u24)
+  route_idx:usize = int.cast(route_pos) {"mode":"wrap"}
+  choice:u8 = int.cast(expert) {"mode":"wrap"}
+  _ = buffer.store(o,route_idx,choice)
+  bias:u64 = const() {"value":26}
+  eight:u64 = const() {"value":8}
+  x0:u64 = int.add.wrap(out,bias)
+  x1:u64 = int.add.wrap(x0,eight)
+  x2:u64 = int.add.wrap(x1,eight)
+  aa:u64 = int.cast(a) {"mode":"wrap"}
+  bb:u64 = int.cast(b) {"mode":"wrap"}
+  cc:u64 = int.cast(c) {"mode":"wrap"}
+  _a:u64 = call(o,x0,aa) {"function":"tr_put"}
+  _b:u64 = call(o,x1,bb) {"function":"tr_put"}
+  _c:u64 = call(o,x2,cc) {"function":"tr_put"}
+  ret(expert)
+end
+
+fn rig_experts(r_initial:readbuf,o_initial:mutbuf,w_initial:mutbuf,expert_initial:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r_initial:readbuf,o_initial:mutbuf,w_initial:mutbuf,expert_initial:u64)
+  jump loop(r_initial,o_initial,w_initial,expert_initial)
+block loop(r:readbuf,o:mutbuf,w:mutbuf,expert:u64)
+  width_at:usize = int.cast(expert) {"mode":"wrap"}
+  byte_n:u8 = buffer.load(w,width_at)
+  n:u64 = int.cast(byte_n) {"mode":"wrap"}
+  zero:u64 = const() {"value":0}
+  empty:bool = compare.eq(n,zero)
+  branch empty advance(r,o,w,expert) grouped(r,o,w,expert,n)
+block grouped(r1:readbuf,o1:mutbuf,w1:mutbuf,e1:u64,n1:u64)
+  prefix:u64 = const() {"value":3}
+  stride:u64 = const() {"value":64}
+  group_off:u64 = int.mul.wrap(e1,stride)
+  indices:u64 = int.add.wrap(group_off,prefix)
+  _gather:u64 = call(r1,w1,indices,n1) {"function":"rig_gather"}
+  _tile:u64 = call(r1,w1,e1,n1) {"function":"rig_tile"}
+  _scatter:u64 = call(o1,w1,indices,n1) {"function":"rig_scatter"}
+  jump advance(r1,o1,w1,e1)
+block advance(r2:readbuf,o2:mutbuf,w2:mutbuf,e2:u64)
+  one:u64 = const() {"value":1}
+  three:u64 = const() {"value":3}
+  next2:u64 = int.add.wrap(e2,one)
+  done2:bool = compare.eq(next2,three)
+  branch done2 okay() loop(r2,o2,w2,next2)
+block okay()
+  good:u64 = const() {"value":0}
+  ret(good)
+end
+
+fn rig_gather(r:readbuf,w:mutbuf,index:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,index:u64,n:u64)
+  base:u64 = const() {"value":1744}
+  input:u64 = const() {"value":15424}
+  zero:u64 = const() {"value":0}
+  jump local(r,w,index,n,input,base,zero)
+block local(r1:readbuf,w1:mutbuf,indices1:u64,n1:u64,at1:u64,dst1:u64,j1:u64)
+  pos1:u64 = int.add.wrap(indices1,j1)
+  p1:usize = int.cast(pos1) {"mode":"wrap"}
+  global_byte:u8 = buffer.load(w1,p1)
+  global:u64 = int.cast(global_byte) {"mode":"wrap"}
+  row_stride:u64 = const() {"value":1028}
+  row:u64 = int.mul.wrap(global,row_stride)
+  src:u64 = int.add.wrap(row,at1)
+  src_us:usize = int.cast(src) {"mode":"wrap"}
+  dst_us:usize = int.cast(dst1) {"mode":"wrap"}
+  size:usize = const() {"value":4}
+  _copy:u64 = call(r1,w1,src_us,dst_us,size) {"function":"daav_copy"}
+  one:u64 = const() {"value":1}
+  four:u64 = const() {"value":4}
+  j_new:u64 = int.add.wrap(j1,one)
+  dest_next:u64 = int.add.wrap(dst1,four)
+  done1:bool = compare.eq(j_new,n1)
+  branch done1 feature(r1,w1,indices1,n1,at1,dest_next) local(r1,w1,indices1,n1,at1,dest_next,j_new)
+block feature(r2:readbuf,w2:mutbuf,indices2:u64,n2:u64,at2:u64,dst2:u64)
+  last2:u64 = const() {"value":16448}
+  done2:bool = compare.eq(at2,last2)
+  step2:u64 = const() {"value":4}
+  next_at:u64 = int.add.wrap(at2,step2)
+  z2:u64 = const() {"value":0}
+  branch done2 okay(dst2) local(r2,w2,indices2,n2,next_at,dst2,z2)
+block okay(end:u64)
+  ret(end)
+end
+
+fn rig_tile(r:readbuf,w:mutbuf,e:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,e:u64,n:u64)
+  model:u64 = const() {"value":4}
+  original_delta:u64 = const() {"value":6172}
+  group_stride:u64 = const() {"value":3084}
+  offset:u64 = int.mul.wrap(e,group_stride)
+  delta:u64 = int.add.wrap(original_delta,offset)
+  sums:u64 = const() {"value":200}
+  jump init(r,w,n,model,delta,sums)
+block init(r1:readbuf,w1:mutbuf,n1:u64,base1:u64,delta1:u64,sum1:u64)
+  _zero:u64 = call(w1,sum1,n1) {"function":"rig_zero"}
+  pack1:u64 = const() {"value":1744}
+  count1:u64 = const() {"value":257}
+  jump factor(r1,w1,n1,base1,delta1,sum1,pack1,count1)
+block factor(r2:readbuf,w2:mutbuf,n2:u64,base2:u64,delta2:u64,sum2:u64,pack2:u64,count2:u64)
+  a2:i64 = call(r2,base2) {"function":"rio_i32"}
+  b2:i64 = call(r2,delta2) {"function":"rio_i32"}
+  c2:i64 = int.add.wrap(a2,b2)
+  end_pack:u64 = call(w2,sum2,pack2,n2,c2) {"function":"rig_accumulate"}
+  one2:u64 = const() {"value":1}
+  four2:u64 = const() {"value":4}
+  base_next:u64 = int.add.wrap(base2,four2)
+  delta_next:u64 = int.add.wrap(delta2,four2)
+  next_count:u64 = int.sub.wrap(count2,one2)
+  done2:bool = compare.eq(count2,one2)
+  branch done2 class(r2,w2,n2,base_next,delta_next,sum2) factor(r2,w2,n2,base_next,delta_next,sum2,end_pack,next_count)
+block class(r3:readbuf,w3:mutbuf,n3:u64,base3:u64,delta3:u64,sum3:u64)
+  last3:u64 = const() {"value":3088}
+  done3:bool = compare.eq(base3,last3)
+  eight3:u64 = const() {"value":8}
+  gap3:u64 = int.mul.wrap(n3,eight3)
+  next3:u64 = int.add.wrap(sum3,gap3)
+  branch done3 finish() init(r3,w3,n3,base3,delta3,next3)
+block finish()
+  okay:u64 = const() {"value":0}
+  ret(okay)
+end
+
+fn rig_zero(w_initial:mutbuf,out_initial:u64,n_initial:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w_initial:mutbuf,out_initial:u64,n_initial:u64)
+  jump loop(w_initial,out_initial,n_initial)
+block loop(w:mutbuf,out:u64,n:u64)
+  z:u64 = const() {"value":0}
+  _clear:u64 = call(w,out,z) {"function":"tr_put"}
+  one:u64 = const() {"value":1}
+  eight:u64 = const() {"value":8}
+  next:u64 = int.add.wrap(out,eight)
+  left:u64 = int.sub.wrap(n,one)
+  done:bool = compare.eq(n,one)
+  branch done finish(next) loop(w,next,left)
+block finish(end:u64)
+  ret(end)
+end
+
+fn rig_accumulate(w_initial:mutbuf,s_initial:u64,p_initial:u64,n_initial:u64,c_initial:i64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w_initial:mutbuf,s_initial:u64,p_initial:u64,n_initial:u64,c_initial:i64)
+  jump loop(w_initial,s_initial,p_initial,n_initial,c_initial)
+block loop(w:mutbuf,s:u64,p:u64,n:u64,c:i64)
+  x:i64 = call(w,p) {"function":"rig_i32"}
+  bits:u64 = call(w,s) {"function":"tr_get"}
+  prev:i64 = int.cast(bits) {"mode":"wrap"}
+  product:i64 = int.mul.wrap(c,x)
+  sum:i64 = int.add.wrap(prev,product)
+  output:u64 = int.cast(sum) {"mode":"wrap"}
+  _store:u64 = call(w,s,output) {"function":"tr_put"}
+  one:u64 = const() {"value":1}
+  four:u64 = const() {"value":4}
+  eight:u64 = const() {"value":8}
+  next_s:u64 = int.add.wrap(s,eight)
+  next_p:u64 = int.add.wrap(p,four)
+  left:u64 = int.sub.wrap(n,one)
+  done:bool = compare.eq(n,one)
+  branch done finish(next_p) loop(w,next_s,next_p,left,c)
+block finish(end:u64)
+  ret(end)
+end
+
+fn rig_i32(w:mutbuf,at:u64) -> (i64) effects(read,trap) entry(entry)
+block entry(w:mutbuf,at:u64)
+  zero:u64 = const() {"value":0}
+  jump byte(w,at,zero,zero)
+block byte(w1:mutbuf,at1:u64,i1:u64,value1:u64)
+  p1:u64 = int.add.wrap(at1,i1)
+  idx:usize = int.cast(p1) {"mode":"wrap"}
+  b1:u8 = buffer.load(w1,idx)
+  raw:u64 = int.cast(b1) {"mode":"wrap"}
+  eight:u64 = const() {"value":8}
+  shift:u64 = int.mul.wrap(i1,eight)
+  moved:u64 = int.shl.checked(raw,shift)
+  out:u64 = bit.or(value1,moved)
+  one:u64 = const() {"value":1}
+  four:u64 = const() {"value":4}
+  i_next:u64 = int.add.wrap(i1,one)
+  done:bool = compare.eq(i_next,four)
+  branch done sign(out) byte(w1,at1,i_next,out)
+block sign(bits:u64)
+  i:i32 = int.cast(bits) {"mode":"wrap"}
+  x:i64 = int.cast(i) {"mode":"wrap"}
+  ret(x)
+end
+
+fn rig_scatter(o:mutbuf,w:mutbuf,idx:u64,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,w:mutbuf,idx:u64,n:u64)
+  first:u64 = const() {"value":200}
+  eight:u64 = const() {"value":8}
+  row_width:u64 = int.mul.wrap(n,eight)
+  second:u64 = int.add.wrap(first,row_width)
+  third:u64 = int.add.wrap(second,row_width)
+  z:u64 = const() {"value":0}
+  jump next(o,w,idx,n,z,first,second,third)
+block next(o1:mutbuf,w1:mutbuf,idx1:u64,n1:u64,j1:u64,a1:u64,b1:u64,c1:u64)
+  at1:u64 = int.add.wrap(idx1,j1)
+  local1:usize = int.cast(at1) {"mode":"wrap"}
+  global_byte:u8 = buffer.load(w1,local1)
+  global:u64 = int.cast(global_byte) {"mode":"wrap"}
+  header:u64 = const() {"value":48}
+  stride:u64 = const() {"value":50}
+  base:u64 = int.mul.wrap(global,stride)
+  dst:u64 = int.add.wrap(base,header)
+  x1:u64 = call(w1,a1) {"function":"tr_get"}
+  y1:u64 = call(w1,b1) {"function":"tr_get"}
+  z1:u64 = call(w1,c1) {"function":"tr_get"}
+  eight1:u64 = const() {"value":8}
+  pos_y:u64 = int.add.wrap(dst,eight1)
+  pos_z:u64 = int.add.wrap(pos_y,eight1)
+  _x:u64 = call(o1,dst,x1) {"function":"tr_put"}
+  _y:u64 = call(o1,pos_y,y1) {"function":"tr_put"}
+  _z:u64 = call(o1,pos_z,z1) {"function":"tr_put"}
+  sx:i64 = int.cast(x1) {"mode":"wrap"}
+  sy:i64 = int.cast(y1) {"mode":"wrap"}
+  sz:i64 = int.cast(z1) {"mode":"wrap"}
+  winner:u64 = call(sx,sy,sz) {"function":"rio_argmax"}
+  ds:u64 = const() {"value":25}
+  prediction:u64 = int.add.wrap(dst,ds)
+  d_us:usize = int.cast(prediction) {"mode":"wrap"}
+  p_u8:u8 = int.cast(winner) {"mode":"wrap"}
+  _ = buffer.store(o1,d_us,p_u8)
+  one1:u64 = const() {"value":1}
+  jp:u64 = int.add.wrap(j1,one1)
+  ap:u64 = int.add.wrap(a1,eight1)
+  bp:u64 = int.add.wrap(b1,eight1)
+  cp:u64 = int.add.wrap(c1,eight1)
+  done1:bool = compare.eq(jp,n1)
+  branch done1 complete() next(o1,w1,idx1,n1,jp,ap,bp,cp)
+block complete()
+  okay:u64 = const() {"value":0}
+  ret(okay)
+end
