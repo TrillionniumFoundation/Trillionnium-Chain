@@ -61,13 +61,13 @@ def extract():
                    work=work,errors=errors,lib=lib,method=method,query=query).items()})
 
 
-def original(where, *, link=None):
+def original(where, *, link=None, source_factory=None):
     git=["git","-C",ROOT]
     def check():
         if run([*git,"rev-parse","HEAD:trillionnium"]).decode().strip()!=ORIGINAL:
             raise ValueError("Wrong frozen project Rust tree")
         run([*git,"diff","--quiet","HEAD","--","trillionnium"])
-        return extract()
+        return (extract if source_factory is None else source_factory)()
     exact,pins=check()
     src=where/"src"
     src.mkdir()
