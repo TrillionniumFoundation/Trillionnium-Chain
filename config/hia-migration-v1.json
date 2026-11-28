@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_model_numeric",
+      "node_integration_complete": false,
+      "scope": "Private same-frame original checkpoint and activation pins, owned numerical A/B projections and clip counts; no live model, bytes outside caller, original observer, proof or authority.",
+      "source": "hia/src/checkpoint/tile_model_numeric.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_model_numeric.py",
+        "hia/tests/rust_checkpoint_tile_model_numeric_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_checkpoint_extract",
       "node_integration_complete": false,
       "scope": "Private same immutable checkpoint prefix/header derivation, complete SHA pin and BF16 tile extraction on supplied synthetic bytes; no I/O, observer, runtime, task, proof or authority.",

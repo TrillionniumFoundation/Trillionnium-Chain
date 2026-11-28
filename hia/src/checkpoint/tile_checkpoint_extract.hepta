@@ -28,17 +28,37 @@ block size(sr:readbuf,so:mutbuf,sw:mutbuf,sn:u64)
   size_at:u64 = const() {"value":40}
   expected_n:u64 = call(sr,size_at) {"function":"tr_read"}
   raw_start:u64 = const() {"value":48}
-  actual_n:u64 = int.sub.wrap(sn,raw_start)
-  exact:bool = compare.eq(expected_n,actual_n)
-  branch exact prefix(sr,so,sw,sn,actual_n) size_error()
-block prefix(pr:readbuf,po:mutbuf,pw:mutbuf,pn:u64,ps:u64)
+  pin_at:u64 = const() {"value":8}
+  status:u32,first:u64 = call(sr,sw,raw_start,sn,expected_n,pin_at) {"function":"tce_private"}
+  zero:u32 = const() {"value":0}
+  matched:bool = compare.eq(status,zero)
+  branch matched tile(sr,so,first) refusal(status)
+block tile(tr:readbuf,to:mutbuf,tp:u64)
+  result:u32 = call(tr,to,tp) {"function":"tce_copy"}
+  ret(result)
+block frame()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block short()
+  short_space:u32 = const() {"value":102}
+  ret(short_space)
+block refusal(c:u32)
+  ret(c)
+end
+
+fn tce_private(r:readbuf,w:mutbuf,p:u64,n:u64,expected:u64,pin_at:u64) -> (u32,u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,w:mutbuf,p:u64,n:u64,expected:u64,pin_at:u64)
+  actual_n:u64 = int.sub.wrap(n,p)
+  exact:bool = compare.eq(expected,actual_n)
+  branch exact prefix(r,w,n,p,actual_n,pin_at) size_error()
+block prefix(pr:readbuf,pw:mutbuf,pn:u64,pp:u64,ps:u64,pa:u64)
   eight:u64 = const() {"value":8}
   have_prefix:bool = compare.le(eight,ps)
-  branch have_prefix range(pr,po,pw,pn,ps) prefix_error()
-block range(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rs:u64)
-  raw_at:u64 = const() {"value":48}
-  header_bytes:u64 = call(rr,raw_at) {"function":"tr_read"}
-  start:u64 = const() {"value":56}
+  branch have_prefix range(pr,pw,pn,pp,ps,pa) prefix_error()
+block range(rr:readbuf,rw:mutbuf,rn:u64,rp:u64,rs:u64,ra:u64)
+  header_bytes:u64 = call(rr,rp) {"function":"tr_read"}
+  eight_r:u64 = const() {"value":8}
+  start:u64 = int.add.wrap(rp,eight_r)
   avail:u64 = int.sub.wrap(rn,start)
   two:u64 = const() {"value":2}
   ceiling:u64 = const() {"value":16777216}
@@ -49,53 +69,48 @@ block range(rr:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rs:u64)
   okay:bool = bool.and(bounds,inside)
   end_header:u64 = int.add.wrap(start,header_bytes)
   payload:u64 = int.sub.wrap(avail,header_bytes)
-  branch okay header(rr,ro,rw,rs,start,end_header,payload) header_error()
-block header(hr:readbuf,ho:mutbuf,hw:mutbuf,hs:u64,hb:u64,he:u64,hp:u64)
+  branch okay header(rr,rw,rp,rs,start,end_header,payload,ra) header_error()
+block header(hr:readbuf,hw:mutbuf,hraw:u64,hs:u64,hb:u64,he:u64,hp:u64,ha:u64)
   status:u32,count:u64,slot:u64 = call(hr,hw,he,hb,hp) {"function":"th_header_private"}
   zero_h:u32 = const() {"value":0}
   proved:bool = compare.eq(status,zero_h)
-  branch proved digest(hr,ho,hw,hs,he,slot) refusal(status)
-block digest(dr:readbuf,do_:mutbuf,dw:mutbuf,ds:u64,de:u64,dt:u64)
-  start_d:u64 = const() {"value":48}
+  branch proved digest(hr,hw,hraw,hs,he,slot,ha) refusal(status)
+block digest(dr:readbuf,dw:mutbuf,dstart:u64,ds:u64,de:u64,dt:u64,da:u64)
   init:u64 = call(dw) {"function":"tr_sha_init"}
-  feed:u64 = call(dr,start_d,ds,dw) {"function":"tr_sha_update"}
+  feed:u64 = call(dr,dstart,ds,dw) {"function":"tr_sha_update"}
   final:u64 = call(dw) {"function":"tr_sha_final"}
   two_d:u64 = bit.or(init,feed)
   all_d:u64 = bit.or(two_d,final)
   zero_d:u64 = const() {"value":0}
   good_digest:bool = compare.eq(all_d,zero_d)
-  branch good_digest pin(dr,do_,dw,de,dt) sha_error()
-block pin(ar:readbuf,ao:mutbuf,aw:mutbuf,ae:u64,at:u64)
-  matches:bool = call(ar,aw) {"function":"tar_pin"}
-  branch matches tile(ar,ao,aw,ae,at) pin_error()
-block tile(tr:readbuf,to:mutbuf,tw:mutbuf,te:u64,tt:u64)
+  branch good_digest pin(dr,dw,de,dt,da) sha_error()
+block pin(ar:readbuf,aw:mutbuf,ae:u64,at:u64,ap:u64)
+  sha_at:u64 = const() {"value":1168}
+  matches:bool = call(ar,aw,ap,sha_at) {"function":"tac_match_pin"}
+  branch matches tile(aw,ae,at) pin_error()
+block tile(tw:mutbuf,te:u64,tt:u64)
   offset:u64 = call(tw,tt) {"function":"tr_get"}
-  p:u64 = int.add.wrap(te,offset)
-  result:u32 = call(tr,to,p) {"function":"tce_copy"}
-  ret(result)
-block frame()
-  bad_frame:u32 = const() {"value":100}
-  ret(bad_frame)
-block short()
-  short_space:u32 = const() {"value":102}
-  ret(short_space)
+  tile_at:u64 = int.add.wrap(te,offset)
+  good:u32 = const() {"value":0}
+  ret(good,tile_at)
 block size_error()
   wrong_size:u32 = const() {"value":1}
-  ret(wrong_size)
+  jump refusal(wrong_size)
 block prefix_error()
   bad_read:u32 = const() {"value":12}
-  ret(bad_read)
+  jump refusal(bad_read)
 block header_error()
   wrong_header:u32 = const() {"value":13}
-  ret(wrong_header)
+  jump refusal(wrong_header)
 block pin_error()
   wrong_pin:u32 = const() {"value":14}
-  ret(wrong_pin)
+  jump refusal(wrong_pin)
 block sha_error()
   failed_sha:u32 = const() {"value":104}
-  ret(failed_sha)
+  jump refusal(failed_sha)
 block refusal(c:u32)
-  ret(c)
+  absent:u64 = const() {"value":0}
+  ret(c,absent)
 end
 
 fn tce_copy(r:readbuf,o:mutbuf,p:u64) -> (u32) effects(read,write,trap) entry(entry)
