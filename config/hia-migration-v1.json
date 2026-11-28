@@ -1862,6 +1862,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-complete-version-content",
+      "node_integration_complete": false,
+      "scope": "Strict bounded TCV2 canonical declared metadata with fully validated embedded TCV1, same-loan TCM1 ID and chunk cardinality equality, original digest-presence ordering and computed SHA-512 content commitment. Common native total <=1 MiB, no trusted pins, payload, actual use, files, store, loader or production routing.",
+      "source": "hia/src/data_availability/cell_complete_version_content.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_complete_version_content.py",
+        "hia/tests/rust_cell_complete_version_content_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-release-snapshot-metadata",
       "node_integration_complete": false,
       "scope": "Bounded CTS1 structural and declared post-pin semantic diagnostic, same-loan validated TCV1/TMA1 subspans, exact canonical TMR equality and declared Configuration selection, and original snapshot content digest. No supplied trusted pin, authority, verify_for_loader, actual payload, filesystem, network, signatures, adoption or production routing.",
