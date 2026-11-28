@@ -1825,6 +1825,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-release-retention-canonical",
+      "node_integration_complete": false,
+      "scope": "Pure bounded TCA2 archive typed declaration validation and original SHA-256 commitment. Exact model and optional tensor roots, canonical object descriptors/order and raw declared capacity; no actual store, loader, funding, retention, custody or authority.",
+      "source": "hia/src/data_availability/cell_release_retention_canonical.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_release_retention_canonical.py",
+        "hia/tests/rust_da_cell_release_retention_canonical_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-retention-canonical",
       "node_integration_complete": false,
       "scope": "Pure immutable bounded TCA3 canonical decode and original commitment, verified nested TCV1/TMA1, exact declared pins and ordered actual object bytes, no owner, loader, storage or funding.",
@@ -3502,6 +3513,7 @@
         "data-availability/cell-closure-declared-context-relation",
         "data-availability/cell-version-declared-context-relation",
         "data-availability/cell-version-retention-canonical",
+        "data-availability/cell-release-retention-canonical",
         "data-availability/cell-dependency-closure",
         "data-availability/cell-closure-manifest-relation",
         "data-availability/cell-model-release-root",

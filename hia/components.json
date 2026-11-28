@@ -8442,6 +8442,162 @@
         ]
       }
     ],
+    "src/data_availability/cell_release_retention_canonical.hepta": [
+      {
+        "source": "src/data_availability/cell_version_retention_canonical.hepta",
+        "functions": [
+          "ta_obj_lease",
+          "ta_obj_span",
+          "ta_outer"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_equal",
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_decode",
+          "cm_family_chars",
+          "cm_hash",
+          "cm_row_sizes"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_manifest.hepta",
+        "functions": [
+          "crm_decode",
+          "crm_nonzero_range",
+          "crm_order"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_dependency_closure.hepta",
+        "functions": [
+          "td_copy",
+          "td_directory_alias",
+          "td_fold",
+          "td_fold_eq",
+          "td_graph",
+          "td_has_index",
+          "td_index",
+          "td_indices",
+          "td_manifest_seen",
+          "td_members",
+          "td_path",
+          "td_path_exists",
+          "td_records",
+          "td_reserved",
+          "td_row",
+          "td_scan",
+          "td_unique",
+          "td_validate",
+          "td_visit"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_model_release_root.hepta",
+        "functions": [
+          "mr_count",
+          "mr_roster"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_model_manifest.hepta",
+        "functions": [
+          "ma_contract",
+          "ma_file_bytes",
+          "ma_members",
+          "ma_root",
+          "ma_root_hash",
+          "ma_tt_semantics",
+          "ma_tt_syntax"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_complete_version.hepta",
+        "functions": [
+          "tc_frame",
+          "tc_ids",
+          "tc_match"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_equal_read"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_snapshot_metadata.hepta",
+        "functions": [
+          "cs_tma_span"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_contract.hepta",
+        "functions": [
+          "tt_name_ok",
+          "tt_names",
+          "tt_row",
+          "tt_shape",
+          "tt_values"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_version_retention_object_relation.hepta",
+        "functions": [
+          "vro_nonzero",
+          "vro_terms"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_version_retention_outer_terms.hepta",
+        "functions": [
+          "vrt_nonzero"
+        ]
+      }
+    ],
     "src/data_availability/cell_version_retention_canonical.hepta": [
       {
         "source": "src/data_availability/cell_version_declared_context_relation.hepta",
