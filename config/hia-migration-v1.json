@@ -2685,6 +2685,17 @@
       ]
     },
     {
+      "id": "model/source-revision",
+      "node_integration_complete": false,
+      "scope": "Private original in-memory ordered model source revision with actual content byte and digest validation, canonical JSON snapshot SHA-256, no I/O, provenance, windows, training or trust.",
+      "source": "hia/src/model/source_revision.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_model_source_revision.py",
+        "hia/tests/rust_model_source_revision_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-policy-value",
       "node_integration_complete": false,
       "scope": "Private bounded exact original canonical Policy object, ordered actions, bounded Boolean vectors and optional Training; no action, training, state validation or authority.",

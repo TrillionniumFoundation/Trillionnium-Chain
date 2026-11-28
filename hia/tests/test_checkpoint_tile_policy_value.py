@@ -19,7 +19,7 @@ ORIGINAL = "563bb7e471b3db278d50feceb3cbac7de4ab281a"
 CARGO_LOCK = "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
 
 
-def original(directory):
+def original(directory, reference=REFERENCE):
     git = ['git','-C',ROOT]
     if execute([*git,'rev-parse','HEAD:trillionnium']).stdout.decode().strip() != ORIGINAL:
         raise ValueError("Wrong frozen Rust workspace")
@@ -52,7 +52,7 @@ def original(directory):
     if not lib.is_relative_to(target):
         raise ValueError("Original library escaped private target")
     exe=directory/"tile-policy-value-original"
-    execute([rustc,"--edition=2021",REFERENCE,"-L",f"dependency={target/'debug/deps'}",
+    execute([rustc,"--edition=2021",reference,"-L",f"dependency={target/'debug/deps'}",
              "--extern",f"trnm_mvcc_fee={lib}","-o",exe],env=env,timeout=90)
     return execute([exe]).stdout
 
