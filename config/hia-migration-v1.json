@@ -1973,6 +1973,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-declared-spec-lookup",
+      "node_integration_complete": false,
+      "scope": "Pure immutable TMT1 validated declared tensor lookup by exact file index and UTF-8 name, projecting original name/dtype/shape and bounded byte extent; no backing payload, admission, ownership, loader, store, execution or production.",
+      "source": "hia/src/data_availability/cell_tensor_declared_spec_lookup.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_declared_spec_lookup.py",
+        "hia/tests/rust_cell_tensor_declared_spec_lookup_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-view-bytes",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable dense bytes: exact CellResidentTensorV1 segment projection, checked copy and F32 little-endian bits. Receives raw backing plus bounded view coordinates only; no admission, loader, store, keys, network, execution or production.",

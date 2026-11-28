@@ -9915,6 +9915,63 @@
         ]
       }
     ],
+    "src/data_availability/cell_tensor_declared_spec_lookup.hepta": [
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_dependency_closure.hepta",
+        "functions": [
+          "td_count"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_contract.hepta",
+        "functions": [
+          "tt_row",
+          "tt_names",
+          "tt_values",
+          "tt_name_ok",
+          "tt_shape"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_model_manifest.hepta",
+        "functions": [
+          "ma_contract",
+          "ma_tt_syntax",
+          "ma_tt_semantics"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_snapshot_metadata.hepta",
+        "functions": [
+          "cs_copy"
+        ]
+      }
+    ],
     "src/data_availability/cell_tensor_model_manifest.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

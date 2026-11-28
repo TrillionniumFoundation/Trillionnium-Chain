@@ -1,0 +1,112 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_tensor_declared_spec_lookup_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  sz:usize = buffer.len(i)
+  n:u64 = int.cast(sz) {"mode":"wrap"}
+  four:u64 = const() {"value":4}
+  cap:u64 = const() {"value":1048576}
+  lo:bool = compare.le(four,n)
+  initial_hi:bool = compare.le(n,cap)
+  bounded:bool = bool.and(lo,initial_hi)
+  branch bounded query(i,o,n,four) envelope()
+block query(qi:readbuf,qo:mutbuf,qn:u64,qb:u64)
+  z:u64 = const() {"value":0}
+  two:u64 = const() {"value":2}
+  file:u64 = call(qi,z,two) {"function":"ca_read_be"}
+  query_n:u64 = call(qi,two,two) {"function":"ca_read_be"}
+  base:u64 = int.add.wrap(qb,query_n)
+  fit:bool = compare.le(base,qn)
+  branch fit encoding(qi,qo,qn,qb,query_n,base,file) envelope()
+block encoding(ui:readbuf,uo:mutbuf,un:u64,uq:u64,ul:u64,ub:u64,uf:u64)
+  k:u64 = call(ui,uq,ul) {"function":"value_utf8"}
+  one_u:u64 = const() {"value":1}
+  utf8:bool = compare.eq(k,one_u)
+  branch utf8 contract(ui,uo,un,uq,ul,ub,uf) query_encoding()
+block contract(ci:readbuf,co:mutbuf,cn:u64,cq:u64,cl:u64,cb:u64,cf:u64)
+  extent:u64 = int.sub.wrap(cn,cb)
+  status:u32,count:u64 = call(ci,cb,extent) {"function":"ma_contract"}
+  zero_c:u32 = const() {"value":0}
+  okay:bool = compare.eq(status,zero_c)
+  branch okay first_file(ci,co,cn,cq,cl,cb,cf,count) fail(status)
+block first_file(fi:readbuf,fo:mutbuf,fn_:u64,fq:u64,fl:u64,fb:u64,ff:u64,fc:u64)
+  forty:u64 = const() {"value":40}
+  begin:u64 = int.add.wrap(fb,forty)
+  jump file_row(fi,fo,fn_,fq,fl,ff,fc,begin)
+block file_row(gi:readbuf,go:mutbuf,gn:u64,gq:u64,gl:u64,gf:u64,gc:u64,gp:u64)
+  two_g:u64 = const() {"value":2}
+  four_g:u64 = const() {"value":4}
+  idx:u64 = call(gi,gp,two_g) {"function":"ca_read_be"}
+  can_match:bool = compare.le(idx,gf)
+  counts_at:u64 = int.add.wrap(gp,two_g)
+  row_at:u64 = int.add.wrap(gp,four_g)
+  tensors:u64 = call(gi,counts_at,two_g) {"function":"ca_read_be"}
+  same_file:bool = compare.eq(idx,gf)
+  branch can_match scan(gi,go,gn,gq,gl,gf,gc,row_at,tensors,same_file) not_found()
+block scan(si:readbuf,so:mutbuf,sn:u64,sq:u64,sl:u64,sf:u64,sc:u64,sp:u64,sr:u64,ss:bool)
+  code:u32,dtype_at:u64,next:u64 = call(si,sn,sp) {"function":"tt_row"}
+  zero_s:u32 = const() {"value":0}
+  well:bool = compare.eq(code,zero_s)
+  branch well choose(si,so,sn,sq,sl,sf,sc,sp,sr,ss,dtype_at,next) internal()
+block choose(hi:readbuf,ho:mutbuf,hn:u64,hq:u64,hl:u64,hf:u64,hc:u64,hp:u64,hr:u64,hs:bool,hd:u64,he:u64)
+  branch hs name(hi,ho,hn,hq,hl,hf,hc,hp,hr,hs,hd,he) advance(hi,ho,hn,hq,hl,hf,hc,hr,hs,he)
+block name(ni:readbuf,no:mutbuf,nn:u64,nq:u64,nl:u64,nf:u64,nc:u64,np:u64,nr:u64,ns:bool,nd:u64,ne:u64)
+  n2:u64 = const() {"value":2}
+  name_at:u64 = int.add.wrap(np,n2)
+  name_len:u64 = int.sub.wrap(nd,name_at)
+  order:u64 = call(ni,nq,name_at,nl,name_len) {"function":"sb_compare"}
+  zero_n:u64 = const() {"value":0}
+  one_n:u64 = const() {"value":1}
+  earlier:bool = compare.eq(order,zero_n)
+  exact:bool = compare.eq(order,one_n)
+  branch earlier not_found() select_row(ni,no,nn,nq,nl,nf,nc,np,nr,ns,nd,ne,exact)
+block select_row(xi:readbuf,xo:mutbuf,xn:u64,xq:u64,xl:u64,xf:u64,xc:u64,xp:u64,xr:u64,xs:bool,xd:u64,xe:u64,xok:bool)
+  branch xok byte_length(xi,xo,xp,xd,xe) advance(xi,xo,xn,xq,xl,xf,xc,xr,xs,xe)
+block advance(ai:readbuf,ao:mutbuf,an:u64,aq:u64,al:u64,af:u64,ac:u64,ar:u64,as_:bool,ae:u64)
+  one_a:u64 = const() {"value":1}
+  remains:u64 = int.sub.wrap(ar,one_a)
+  last_a:bool = compare.eq(ar,one_a)
+  branch last_a next_file(ai,ao,an,aq,al,af,ac,as_,ae) scan(ai,ao,an,aq,al,af,ac,ae,remains,as_)
+block next_file(yi:readbuf,yo:mutbuf,yn:u64,yq:u64,yl:u64,yf:u64,yc:u64,ys:bool,ye:u64)
+  one_y:u64 = const() {"value":1}
+  f_rem:u64 = int.sub.wrap(yc,one_y)
+  more_files:bool = compare.gt(yc,one_y)
+  want_later:bool = bool.not(ys)
+  more:bool = bool.and(want_later,more_files)
+  branch more file_row(yi,yo,yn,yq,yl,yf,f_rem,ye) not_found()
+block byte_length(bi:readbuf,bo:mutbuf,bp:u64,bd:u64,be:u64)
+  k_b:u32,bytes_b:u64 = call(bi,bd,be) {"function":"tt_shape"}
+  zero_b:u32 = const() {"value":0}
+  valid_b:bool = compare.eq(k_b,zero_b)
+  branch valid_b capacity(bi,bo,bp,be,bytes_b) internal()
+block capacity(ki:readbuf,ko:mutbuf,kp:u64,ke:u64,kb:u64)
+  room_kz:usize = buffer.len(ko)
+  room_k:u64 = int.cast(room_kz) {"mode":"wrap"}
+  eight_k:u64 = const() {"value":8}
+  row_n:u64 = int.sub.wrap(ke,kp)
+  need_k:u64 = int.add.wrap(row_n,eight_k)
+  fits_k:bool = compare.le(need_k,room_k)
+  branch fits_k publish(ki,ko,kp,row_n,kb,eight_k) no_capacity()
+block publish(ri:readbuf,ro:mutbuf,rp:u64,rn:u64,rb:u64,re:u64)
+  zr:u64 = const() {"value":0}
+  stored:u64 = call(ro,rb,zr,re) {"function":"td_count"}
+  copied:u64 = call(ri,rp,ro,re,rn) {"function":"cs_copy"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block envelope()
+  no_frame:u32 = const() {"value":247}
+  ret(no_frame)
+block query_encoding()
+  bad_utf8:u32 = const() {"value":248}
+  ret(bad_utf8)
+block not_found()
+  absent:u32 = const() {"value":249}
+  ret(absent)
+block fail(reason:u32)
+  ret(reason)
+block internal()
+  err:u32 = const() {"value":103}
+  ret(err)
+block no_capacity()
+  cap_err:u32 = const() {"value":102}
+  ret(cap_err)
+end
