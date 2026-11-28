@@ -1163,6 +1163,17 @@
       ]
     },
     {
+      "id": "state/cell-scalar-products",
+      "node_integration_complete": false,
+      "scope": "Private all fifteen original signed Cell scalar products from bounded held weights and prepared numeric rows, explicit row-major output and Cell feature domain; no work proof, prepared-data provenance, execution, training or authority.",
+      "source": "hia/src/state/cell_scalar_products.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_scalar_products.py",
+        "hia/tests/rust_cell_scalar_products_reference.rs"
+      ]
+    },
+    {
       "id": "state/cell-held-rows",
       "node_integration_complete": false,
       "scope": "Pure bounded held Cell expert selection, logits, recurrent memory and remaining-step active trainer projection, compared to genuine frozen execute; no inference provenance, actions, training, owner or deployment.",
@@ -4528,6 +4539,7 @@
         "state/integer-training-batch-update",
         "model/cell-model-canonical",
         "state/integer-training-fused",
+        "state/cell-scalar-products",
         "state/cell-held-rows",
         "state/cell-held-train",
         "model/cell-source-prepare",

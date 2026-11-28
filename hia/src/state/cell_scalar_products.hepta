@@ -1,0 +1,131 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_scalar_products
+fn f0(r:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,w:mutbuf)
+  actual:usize = buffer.len(r)
+  width:u64 = int.cast(actual) {"mode":"wrap"}
+  fixed:u64 = const() {"value":15424}
+  enough:bool = compare.ge(width,fixed)
+  branch enough frame(r,o,width,fixed) malformed()
+block frame(fr:readbuf,fo:mutbuf,fn:u64,ff:u64)
+  zero:u64 = const() {"value":0}
+  count:u64 = call(fr,zero) {"function":"daav_u32"}
+  row_bytes:u64 = const() {"value":1028}
+  tail:u64 = int.mul.wrap(count,row_bytes)
+  need:u64 = int.add.wrap(ff,tail)
+  exact:bool = compare.eq(fn,need)
+  branch exact weights(fr,fo,count,ff) malformed()
+block weights(wr:readbuf,wo:mutbuf,wn:u64,wf:u64)
+  bounded:bool = call(wr,wf) {"function":"rio_coefficients"}
+  branch bounded rows(wr,wo,wn,wf) coefficient_error()
+block rows(br:readbuf,bo:mutbuf,bn:u64,bf:u64)
+  one:u64 = const() {"value":1}
+  limit:u64 = const() {"value":64}
+  low:bool = compare.le(one,bn)
+  high:bool = compare.le(bn,limit)
+  count_ok:bool = bool.and(low,high)
+  branch count_ok features(br,bo,bn,bf) batch_error()
+block features(xr:readbuf,xo:mutbuf,xn:u64,xf:u64)
+  legal:bool = call(xr,xn,xf) {"function":"rio_features"}
+  branch legal totals(xr,xo,xn,xf) input_error()
+block totals(tr:readbuf,to:mutbuf,tn:u64,tf:u64)
+  totals_ok:bool = call(tr,tn,tf) {"function":"csp_l1"}
+  branch totals_ok space(tr,to,tn,tf) input_error()
+block space(sr:readbuf,so:mutbuf,sn:u64,sf:u64)
+  len:usize = buffer.len(so)
+  avail:u64 = int.cast(len) {"mode":"wrap"}
+  record:u64 = const() {"value":120}
+  want:u64 = int.mul.wrap(sn,record)
+  enough_result:bool = compare.le(want,avail)
+  branch enough_result produce(sr,so,sn,sf) short()
+block produce(pr:readbuf,po:mutbuf,pn:u64,pf:u64)
+  _ = call(pr,po,pn,pf) {"function":"csp_products"}
+  good:u32 = const() {"value":0}
+  ret(good)
+block malformed()
+  bad_frame:u32 = const() {"value":100}
+  ret(bad_frame)
+block coefficient_error()
+  bad_w:u32 = const() {"value":3}
+  ret(bad_w)
+block batch_error()
+  bad_n:u32 = const() {"value":4}
+  ret(bad_n)
+block input_error()
+  bad_x:u32 = const() {"value":5}
+  ret(bad_x)
+block short()
+  bad_out:u32 = const() {"value":102}
+  ret(bad_out)
+end
+
+fn csp_l1(r:readbuf,count:u64,start:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(r:readbuf,count:u64,start:u64)
+  jump row(r,count,start)
+block row(rr:readbuf,rn:u64,rs:u64)
+  prefix:u64 = const() {"value":1024}
+  end:u64 = int.add.wrap(rs,prefix)
+  zero:u64 = const() {"value":0}
+  jump coordinate(rr,rn,rs,end,zero)
+block coordinate(cr:readbuf,cn:u64,ci:u64,ce:u64,cs:u64)
+  x:i64 = call(cr,ci) {"function":"rio_i32"}
+  z:i64 = const() {"value":0}
+  neg:bool = compare.lt(x,z)
+  nx:i64 = int.neg.checked(x)
+  signed_magnitude:i64 = select(neg,nx,x)
+  magnitude:u64 = int.cast(signed_magnitude) {"mode":"wrap"}
+  sum:u64 = int.add.wrap(cs,magnitude)
+  bound:u64 = const() {"value":1024}
+  legal:bool = compare.le(sum,bound)
+  branch legal advance(cr,cn,ci,ce,sum) reject()
+block advance(ar:readbuf,an:u64,ai:u64,ae:u64,as:u64)
+  step:u64 = const() {"value":4}
+  next:u64 = int.add.wrap(ai,step)
+  row_end:bool = compare.eq(next,ae)
+  branch row_end next_row(ar,an,ae) coordinate(ar,an,next,ae,as)
+block next_row(nr:readbuf,nn:u64,ne:u64)
+  one:u64 = const() {"value":1}
+  last:bool = compare.eq(nn,one)
+  left:u64 = int.sub.wrap(nn,one)
+  four:u64 = const() {"value":4}
+  nx_row:u64 = int.add.wrap(ne,four)
+  branch last accept() row(nr,left,nx_row)
+block accept()
+  t:bool = const() {"value":true}
+  ret(t)
+block reject()
+  f:bool = const() {"value":false}
+  ret(f)
+end
+
+fn csp_products(r:readbuf,o:mutbuf,count:u64,start:u64) -> () effects(read,write,trap) entry(entry)
+block entry(r:readbuf,o:mutbuf,count:u64,start:u64)
+  zero:u64 = const() {"value":0}
+  jump row(r,o,count,start,zero)
+block row(rr:readbuf,ro:mutbuf,rn:u64,rx:u64,rout:u64)
+  first_lane:u64 = const() {"value":4}
+  last_lane:u64 = const() {"value":15}
+  jump lane(rr,ro,rn,rx,rout,first_lane,last_lane)
+block lane(lr:readbuf,lo:mutbuf,ln:u64,lx:u64,lout:u64,lcoef:u64,ll:u64)
+  unmerged:bool = const() {"value":false}
+  ignored_delta:u64 = const() {"value":0}
+  value:i64 = call(lr,lcoef,ignored_delta,lx,unmerged) {"function":"rio_dot"}
+  raw:u64 = int.cast(value) {"mode":"wrap"}
+  written:u64 = call(lo,lout,raw) {"function":"tr_put"}
+  eight:u64 = const() {"value":8}
+  next_out:u64 = int.add.wrap(lout,eight)
+  one:u64 = const() {"value":1}
+  last:bool = compare.eq(ll,one)
+  left:u64 = int.sub.wrap(ll,one)
+  step:u64 = const() {"value":1028}
+  next_coef:u64 = int.add.wrap(lcoef,step)
+  branch last next_row(lr,lo,ln,lx,next_out) lane(lr,lo,ln,lx,next_out,next_coef,left)
+block next_row(nr:readbuf,no:mutbuf,nn:u64,nx:u64,nout:u64)
+  row_one:u64 = const() {"value":1}
+  rows_done:bool = compare.eq(nn,row_one)
+  row_left:u64 = int.sub.wrap(nn,row_one)
+  feature_step:u64 = const() {"value":1028}
+  feature_next:u64 = int.add.wrap(nx,feature_step)
+  branch rows_done finish() row(nr,no,row_left,feature_next,nout)
+block finish()
+  ret()
+end

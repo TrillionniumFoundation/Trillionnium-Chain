@@ -112,6 +112,7 @@ def sources():
         "hia/src/model/PAIRED_EVALUATION_SCORE.md",
         "hia/src/model/HELD_CALIBRATION_SELECT.md",
         "hia/src/model/CALIBRATED_PAIRED_EVALUATION.md",
+        "hia/src/state/CELL_SCALAR_PRODUCTS.md",
         "formal/pon-nakamoto-v1/vectors/header.bin",
         "formal/pon-nakamoto-v1/vectors/header-short.bin",
         "formal/pon-nakamoto-v1/vectors/header-version.bin",

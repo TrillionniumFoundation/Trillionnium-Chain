@@ -13750,6 +13750,29 @@
         ]
       }
     ],
+    "src/state/cell_scalar_products.hepta": [
+      {
+        "source": "src/state/routed_int257_ordinary.hepta",
+        "functions": [
+          "rio_coefficients",
+          "rio_features",
+          "rio_i32",
+          "rio_dot"
+        ]
+      },
+      {
+        "source": "src/data_availability/author_authority_value.hepta",
+        "functions": [
+          "daav_u32"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_put"
+        ]
+      }
+    ],
     "src/state/routed_int257_direct.hepta": [
       {
         "functions": [
