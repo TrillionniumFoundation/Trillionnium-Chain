@@ -8067,6 +8067,59 @@
         "source": "src/release_bundle/root_recovery_checkpoint_v3.hepta"
       }
     ],
+    "src/data_availability/cell_cache_payload_held_read.hepta": [
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_decode",
+          "cm_family_chars",
+          "cm_row_sizes"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be",
+          "ca_equal"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_put",
+          "cp_copy"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      }
+    ],
     "src/data_availability/cell_cache_payload_cursor.hepta": [
       {
         "source": "src/data_availability/cell_manifest.hepta",

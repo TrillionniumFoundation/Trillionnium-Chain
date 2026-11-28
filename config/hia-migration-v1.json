@@ -2003,6 +2003,19 @@
       ]
     },
     {
+      "id": "data-availability/cell-cache-payload-held-read",
+      "node_integration_complete": false,
+      "scope": "Pure same immutable selected TCM1 row, original raw cache digest then exact declared length and one-chunk bytes/cursor readback, shared at most 1 MiB loan. No actual cache, SQL, clock, authority or production.",
+      "source": "hia/src/data_availability/cell_cache_payload_held_read.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_cache_payload_held_read.py",
+        "hia/tests/cache_payload_held_plan.py",
+        "hia/tests/cache_payload_held_original.py",
+        "hia/tests/rust_cell_cache_payload_held_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-cache-payload-cursor",
       "node_integration_complete": false,
       "scope": "Pure immutable TCM1, exact original CachePayloadReader mathematical SeekFrom and EOF/single checked-row span projection under no IO. No bytes, cache, deadline, ownership, authorization, system or deployment.",

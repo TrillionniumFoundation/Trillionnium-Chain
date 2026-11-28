@@ -1,0 +1,152 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_cache_payload_held_read_v1
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  nn:usize = buffer.len(i)
+  n:u64 = int.cast(nn) {"mode":"wrap"}
+  fixed:u64 = const() {"value":20}
+  cap:u64 = const() {"value":1048576}
+  lower:bool = compare.le(fixed,n)
+  upper:bool = compare.le(n,cap)
+  okay:bool = bool.and(lower,upper)
+  branch okay frame(i,o,w,n,fixed) envelope()
+block frame(fi:readbuf,fo:mutbuf,fw:mutbuf,fn_:u64,fh:u64)
+  mln:u64 = const() {"value":16}
+  len4:u64 = const() {"value":4}
+  mn:u64 = call(fi,mln,len4) {"function":"rac_read_le"}
+  body:u64 = int.add.wrap(fh,mn)
+  present:bool = compare.le(body,fn_)
+  branch present manifest(fi,fo,fw,fn_,fh,mn,body) envelope()
+block manifest(mi:readbuf,mo:mutbuf,mw:mutbuf,mn_:u64,mh:u64,ml:u64,mb:u64)
+  st:u32,rows:u64,rc:u64 = call(mi,mh,ml) {"function":"cm_decode"}
+  zero_s:u32 = const() {"value":0}
+  valid:bool = compare.eq(st,zero_s)
+  branch valid plan(mi,mo,mw,mn_,mb,rows,rc) error(st)
+block plan(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,pb:u64,pr:u64,pc:u64)
+  zero:u64 = const() {"value":0}
+  eight:u64 = const() {"value":8}
+  size_dist:u64 = const() {"value":48}
+  size_pos:u64 = int.sub.wrap(pr,size_dist)
+  size:u64 = call(pi,size_pos,eight) {"function":"ca_read_be"}
+  pos:u64 = call(pi,zero,eight) {"function":"rac_read_le"}
+  want:u64 = call(pi,eight,eight) {"function":"rac_read_le"}
+  nonempty:bool = compare.lt(zero,want)
+  more:bool = compare.lt(pos,size)
+  needs:bool = bool.and(nonempty,more)
+  branch needs select_row(pi,po,pw,pn,pb,pr,pc,pos,want) empty(po,pos)
+block select_row(si:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sb:u64,sr:u64,sc:u64,sp:u64,sq:u64)
+  row:u64,off:u64,count:u64 = call(si,sp,sq,sr,sc) {"function":"ch_plan"}
+  num0:u64 = const() {"value":0}
+  sane:bool = compare.gt(count,num0)
+  branch sane present_chunk(si,so,sw,sn,sb,row,off,count,sp) internal()
+block present_chunk(ai:readbuf,ao:mutbuf,aw:mutbuf,an:u64,ab:u64,ar:u64,af:u64,ac:u64,ap:u64)
+  payload_n:u64 = int.sub.wrap(an,ab)
+  nil:u64 = const() {"value":0}
+  present_:bool = compare.lt(nil,payload_n)
+  branch present_ hash_room(ai,ao,aw,ab,ar,af,ac,ap,payload_n) digest_missing()
+block hash_room(hi:readbuf,ho:mutbuf,hw:mutbuf,hb:u64,hr:u64,hf:u64,hc:u64,hp:u64,hn:u64)
+  have:usize = buffer.len(hw)
+  min:usize = const() {"value":1232}
+  enough:bool = compare.le(min,have)
+  branch enough hash(hi,ho,hw,hb,hr,hf,hc,hp,hn) capacity()
+block hash(yi:readbuf,yo:mutbuf,yw:mutbuf,yb:u64,yr:u64,yf:u64,yc:u64,yp:u64,yn:u64)
+  init:u64 = call(yw) {"function":"tr_sha_init"}
+  feed:u64 = call(yi,yb,yn,yw) {"function":"tr_sha_update"}
+  good0:u64 = const() {"value":0}
+  ok_feed:bool = compare.eq(feed,good0)
+  branch ok_feed hash_end(yi,yo,yw,yb,yr,yf,yc,yp,yn) internal()
+block hash_end(ei:readbuf,eo:mutbuf,ew:mutbuf,eb:u64,er:u64,ef:u64,ec:u64,ep:u64,en:u64)
+  end:u64 = call(ew) {"function":"tr_sha_final"}
+  eq0:u64 = const() {"value":0}
+  good:bool = compare.eq(end,eq0)
+  branch good equal(ei,eo,ew,eb,er,ef,ec,ep,en) internal()
+block equal(di:readbuf,do:mutbuf,dw:mutbuf,db:u64,dr:u64,df:u64,dc:u64,dp:u64,dn:u64)
+  four:u64 = const() {"value":4}
+  digest_pos:u64 = int.add.wrap(dr,four)
+  out_digest:u64 = const() {"value":1168}
+  hash_bytes:u64 = const() {"value":32}
+  same:u64 = call(di,digest_pos,dw,out_digest,hash_bytes) {"function":"ca_equal"}
+  eq1:u64 = const() {"value":1}
+  valid_hash:bool = compare.eq(same,eq1)
+  branch valid_hash extent(di,do,db,dr,df,dc,dp,dn,four) digest_missing()
+block extent(xi:readbuf,xo:mutbuf,xb:u64,xr:u64,xf:u64,xc:u64,xp:u64,xn:u64,x4:u64)
+  expected:u64 = call(xi,xr,x4) {"function":"ca_read_be"}
+  valid_length:bool = compare.eq(expected,xn)
+  branch valid_length read_room(xi,xo,xb,xf,xc,xp) chunk_length()
+block read_room(ri:readbuf,ro:mutbuf,rb:u64,rf:u64,rcount:u64,rp:u64)
+  header:u64 = const() {"value":16}
+  required:u64 = int.add.wrap(header,rcount)
+  have0:usize = buffer.len(ro)
+  have1:u64 = int.cast(have0) {"mode":"wrap"}
+  fits:bool = compare.le(required,have1)
+  branch fits read_out(ri,ro,rb,rf,rcount,rp,header) capacity()
+block read_out(oi:readbuf,oo:mutbuf,ob:u64,of:u64,oc:u64,op:u64,oh:u64)
+  address:u64 = int.add.wrap(ob,of)
+  next_pos:u64 = int.add.wrap(op,oc)
+  pref:u64 = call(oo,next_pos,oc) {"function":"ch_output"}
+  copied:u64 = call(oi,address,oo,oh,oc) {"function":"cp_copy"}
+  jump success()
+block empty(eo2:mutbuf,ep2:u64)
+  full:usize = buffer.len(eo2)
+  minimum:usize = const() {"value":16}
+  room:bool = compare.le(minimum,full)
+  branch room empty_out(eo2,ep2) capacity()
+block empty_out(no:mutbuf,np:u64)
+  z:u64 = const() {"value":0}
+  prefix:u64 = call(no,np,z) {"function":"ch_output"}
+  jump success()
+block success()
+  success_s:u32 = const() {"value":0}
+  ret(success_s)
+block envelope()
+  envelope_s:u32 = const() {"value":100}
+  ret(envelope_s)
+block capacity()
+  capacity_s:u32 = const() {"value":102}
+  ret(capacity_s)
+block internal()
+  internal_s:u32 = const() {"value":103}
+  ret(internal_s)
+block digest_missing()
+  digest_s:u32 = const() {"value":247}
+  ret(digest_s)
+block chunk_length()
+  length_s:u32 = const() {"value":248}
+  ret(length_s)
+block error(err:u32)
+  ret(err)
+end
+
+fn ch_output(o:mutbuf,next:u64,count:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,next:u64,count:u64)
+  z:u64 = const() {"value":0}
+  k8:u64 = const() {"value":8}
+  a:u64 = call(o,z,next) {"function":"cp_put"}
+  b:u64 = call(o,k8,count) {"function":"cp_put"}
+  ret(b)
+end
+
+fn ch_plan(ci:readbuf,cpos:u64,creq:u64,crows:u64,ccount:u64) -> (u64,u64,u64) effects(read,write,trap) entry(entry)
+block entry(ci:readbuf,cpos:u64,creq:u64,crows:u64,ccount:u64)
+  row_size_bytes:u64 = const() {"value":4}
+  width:u64 = call(ci,crows,row_size_bytes) {"function":"ca_read_be"}
+  index:u64 = int.div.checked(cpos,width)
+  within:bool = compare.lt(index,ccount)
+  off_in_chunk:u64 = int.rem.checked(cpos,width)
+  branch within read_count(ci,creq,crows,index,off_in_chunk) internal()
+block read_count(ki:readbuf,kreq:u64,kr:u64,kindex:u64,koff:u64)
+  stride:u64 = const() {"value":36}
+  sizelen:u64 = const() {"value":4}
+  delta:u64 = int.mul.wrap(kindex,stride)
+  row:u64 = int.add.wrap(kr,delta)
+  got:u64 = call(ki,row,sizelen) {"function":"ca_read_be"}
+  valid_off:bool = compare.lt(koff,got)
+  left_chunk:u64 = int.sub.wrap(got,koff)
+  limited:bool = compare.le(kreq,left_chunk)
+  count_bytes:u64 = select(limited,kreq,left_chunk)
+  branch valid_off found(row,koff,count_bytes) internal()
+block found(row_at:u64,offset:u64,count:u64)
+  ret(row_at,offset,count)
+block internal()
+  z:u64 = const() {"value":0}
+  ret(z,z,z)
+end
