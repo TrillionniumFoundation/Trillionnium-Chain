@@ -9,6 +9,28 @@
         ]
       }
     ],
+    "src/node/history_page_two_batch.hepta": [
+      {
+        "source": "src/node/history_page_fold.hepta",
+        "functions": ["hp_edge", "hp_append", "hp_same", "hp_shift", "hp_record"]
+      },
+      {
+        "source": "src/node/history_page_cutoff.hepta",
+        "functions": ["hpcb_decide"]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": ["tr_read", "tr_put", "tr_get"]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": ["cp_copy"]
+      },
+      {
+        "source": "src/node/history_inline_record.hepta",
+        "functions": ["hir_span"]
+      }
+    ],
     "src/node/history_page_fold.hepta": [
       {
         "functions": [

@@ -1682,6 +1682,18 @@
       ]
     },
     {
+      "id": "node/history-two-batch-cutoff",
+      "node_integration_complete": false,
+      "scope": "One private atomic fold of exactly two immutable projected ancestry batches with native cursor and deque handoff, then bounded reverse retained-ID byte cutoff. Synthetic held lengths; no packet parsing, Node I/O or custody.",
+      "source": "hia/src/node/history_page_two_batch.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_history_page_two_batch.py",
+        "hia/tests/rust_history_page_two_batch_reference.rs",
+        "hia/tests/test_history_page_cutoff.py"
+      ]
+    },
+    {
       "id": "node/history-inline-record",
       "node_integration_complete": false,
       "scope": "Private original fixed-column SQLite storage-class and width projection of immutable already-held synthetic values. No Node database, history traversal, custody or authority.",
@@ -4576,6 +4588,7 @@
         "node/resource-vector-value",
         "node/resource-snapshot-projection",
         "node/history-held-page-fold",
+        "node/history-two-batch-cutoff",
         "state/integer-training-backward",
         "state/integer-training-batch-update",
         "model/cell-model-canonical",

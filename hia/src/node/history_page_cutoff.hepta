@@ -33,20 +33,14 @@ block length(li:readbuf,lo:mutbuf,lend:usize,lp:usize,lc:u64,lt:u64)
   word_width:usize = const() {"value":8}
   len_at:usize = int.sub.wrap(lp,word_width)
   candidate_len:u64 = call(li,len_at) {"function":"cw_read64"}
-  min_wire:u64 = const() {"value":49508}
-  fits_min:bool = compare.le(min_wire,candidate_len)
-  max_wire:u64 = const() {"value":1048576}
-  fits_max:bool = compare.le(candidate_len,max_wire)
-  length_valid:bool = bool.and(fits_min,fits_max)
-  branch length_valid cutoff(li,lo,lend,lp,lc,lt,candidate_len) bad()
-block cutoff(ci:readbuf,co:mutbuf,cend:usize,cp:usize,cc:u64,ct:u64,cl:u64)
-  next_sum:u64 = int.add.wrap(ct,cl)
-  no_records:u64 = const() {"value":0}
-  budget:u64 = const() {"value":800000}
-  is_first:bool = compare.eq(cc,no_records)
-  fits_budget:bool = compare.le(next_sum,budget)
-  include:bool = bool.or(is_first,fits_budget)
-  branch include advance(ci,co,cend,cp,cc,next_sum) capacity(ci,co,cend,cc,ct)
+  next:u64,decision:u64 = call(lc,lt,candidate_len) {"function":"hpcb_decide"}
+  z:u64 = const() {"value":0}
+  keep:bool = compare.eq(decision,z)
+  branch keep advance(li,lo,lend,lp,lc,next) stopped(li,lo,lend,lc,lt,decision)
+block stopped(ci:readbuf,co:mutbuf,ce:usize,cc:u64,ct:u64,cd:u64)
+  one:u64 = const() {"value":1}
+  stop:bool = compare.eq(cd,one)
+  branch stop capacity(ci,co,ce,cc,ct) bad()
 block advance(vi:readbuf,vo:mutbuf,vend:usize,vp:usize,vc:u64,vt:u64)
   input_width:usize = const() {"value":40}
   next_row:usize = int.sub.wrap(vp,input_width)
@@ -106,4 +100,33 @@ block bad()
 block short()
   status_short:u32 = const() {"value":102}
   ret(status_short)
+end
+
+
+fn hpcb_decide(entry_count:u64,entry_sum:u64,entry_length:u64) -> (u64,u64) effects() entry(entry)
+block entry(entry_count:u64,entry_sum:u64,entry_length:u64)
+  entry_min:u64 = const() {"value":49508}
+  entry_max:u64 = const() {"value":1048576}
+  entry_low:bool = compare.le(entry_min,entry_length)
+  entry_high:bool = compare.le(entry_length,entry_max)
+  entry_fit:bool = bool.and(entry_low,entry_high)
+  branch entry_fit budget(entry_count,entry_sum,entry_length) bad()
+block budget(budget_c:u64,budget_s:u64,budget_l:u64)
+  budget_next:u64 = int.add.wrap(budget_s,budget_l)
+  budget_zero:u64 = const() {"value":0}
+  budget_cap:u64 = const() {"value":800000}
+  budget_first:bool = compare.eq(budget_c,budget_zero)
+  budget_within:bool = compare.le(budget_next,budget_cap)
+  budget_keep:bool = bool.or(budget_first,budget_within)
+  branch budget_keep accept(budget_next) stop(budget_s)
+block accept(accept_n:u64)
+  accept_accepted:u64 = const() {"value":0}
+  ret(accept_n,accept_accepted)
+block stop(stop_s:u64)
+  stop_stopped:u64 = const() {"value":1}
+  ret(stop_s,stop_stopped)
+block bad()
+  h5_error:u64 = const() {"value":100}
+  h5_zero:u64 = const() {"value":0}
+  ret(h5_zero,h5_error)
 end
