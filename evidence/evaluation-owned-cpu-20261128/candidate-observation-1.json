@@ -1,0 +1,46 @@
+{
+  "control": "two_independent_jobs_same_parent",
+  "evaluator_sha256": "daec91933d7bced5faa008337efa62bdef423fee82be412663f8cc7ba6a4541c",
+  "idle_cpu_ns": 39333000,
+  "busy_cpu_ns": 407329000,
+  "idle_wall_ns": 544997772,
+  "busy_wall_ns": 493396118,
+  "idle_cpu_less_than_half_busy": true,
+  "attempt_idle": {
+    "child_status": "succeeded",
+    "command_sha256": "f1522251b72ef8b0ea244028b5121f4e36a11845864cdd40fb05feb7d30679fa",
+    "cost_completeness_verified": false,
+    "cpu_ns": 39333000,
+    "cpu_scope": "wait4 owned PID; child plus descendants it reaped; excludes detached or unreaped descendants",
+    "error_type": null,
+    "execution_authority": false,
+    "intent_sha256": "4eab1c278cad0dc4b459e0f2fad2759114df01c58b0ce72b1a2242c4ec01e4bb",
+    "logs": {
+      "evaluation.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evaluation.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "request_sha256": "b62de45e909ce5b486e6b3d777f81240160677d087aa47e5ec07310d29cd33ca",
+    "returncode": 0,
+    "schema": "trnm-evaluation-child-attempt-v2",
+    "wall_ns": 544997772
+  },
+  "attempt_busy": {
+    "child_status": "succeeded",
+    "command_sha256": "bd2f2c90d2bc1dd91647d1e4c20b26634b560491d1000f7dc62ed1a1550a414f",
+    "cost_completeness_verified": false,
+    "cpu_ns": 407329000,
+    "cpu_scope": "wait4 owned PID; child plus descendants it reaped; excludes detached or unreaped descendants",
+    "error_type": null,
+    "execution_authority": false,
+    "intent_sha256": "1dc0da3a762d485d1ff66f15d656a35ceb7a76f84e3c04bcfb73f50c2cb679fc",
+    "logs": {
+      "evaluation.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evaluation.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "request_sha256": "b62de45e909ce5b486e6b3d777f81240160677d087aa47e5ec07310d29cd33ca",
+    "returncode": 0,
+    "schema": "trnm-evaluation-child-attempt-v2",
+    "wall_ns": 493396118
+  },
+  "costs_are_not_end_to_end": true
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "trnm-evaluation-owned-cpu-validation-v1",
+  "parent_commit": "cdc0f90c27a461833e552bfc1a39d4485507e89b",
+  "changed_source_sha256": {
+    "scripts/dev_circuit_evaluation.py": "21d3195b2e4d77085380caa64a35a6e00e8a414abeb0efe6f82bf2e27cdb2af2",
+    "scripts/dev_historical_evaluation.py": "39533414817db3ac217520c0eeb7d3507610e044f42556b6a489b526615f187c",
+    "scripts/test_dev_evaluation_attempt.py": "c70bd8adad06696983386b7d8e99790e68d5f23b91d78f8263ee73cda521dbea"
+  },
+  "attempts": [
+    {
+      "name": "original_attempt_controls",
+      "tests": 16,
+      "errors": 0,
+      "failures": 0,
+      "source": "original_parent"
+    },
+    {
+      "name": "original_concurrent_counterexample",
+      "passed": false,
+      "retained": "original-counterexample.json"
+    },
+    {
+      "name": "candidate_attempt_controls",
+      "tests": 24,
+      "errors": 0,
+      "failures": 0,
+      "source": "before_final_lost_reaper_control"
+    },
+    {
+      "name": "evaluation_missing_original_fixtures",
+      "tests": 47,
+      "errors": 4,
+      "failures": 0,
+      "error": "FileNotFoundError: cell-released-pair-funded-evaluation-20261123",
+      "original_log_location": "session execution result; summary retained here"
+    },
+    {
+      "name": "complete_evaluation_controls",
+      "tests": 60,
+      "errors": 0,
+      "failures": 0,
+      "retained": "evaluation-controls.log"
+    },
+    {
+      "name": "source_integrity_missing_original_support",
+      "tests": 43,
+      "errors": 17,
+      "failures": 0,
+      "retained": "source-integrity-missing-support.log"
+    },
+    {
+      "name": "complete_source_integrity_controls",
+      "tests": 43,
+      "errors": 0,
+      "failures": 0,
+      "retained": "source-integrity-complete.log"
+    }
+  ],
+  "full_native_cargo_graph_verified": false,
+  "strict_clippy_executed": false,
+  "rust_format_gate_executed": false,
+  "paid_model_execution_executed": false,
+  "complete_worktree_verified": false,
+  "cost_completeness_verified": false,
+  "execution_authority": false,
+  "production_activation": false
+}

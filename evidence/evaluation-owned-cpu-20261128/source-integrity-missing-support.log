@@ -1,0 +1,233 @@
+test_actual_bytes_are_checked_even_if_status_reports_clean (test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ok
+test_assume_unchanged_cannot_hide_modified_source (test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ok
+test_executable_mode_checked_even_when_git_ignores_filemode (test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ok
+test_graft_file_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected) ... ok
+test_hidden_index_flag_is_rejected_even_without_changes (test_ci_source_integrity.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ok
+test_intermediate_directory_symlink_rejected (test_ci_source_integrity.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ok
+test_new_native_c_bytes_are_verified_without_an_extension_allowlist (test_ci_source_integrity.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ok
+test_nonregular_file_rejected_without_waiting_for_fifo (test_ci_source_integrity.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ok
+test_prospective_merge_accepts_exact_ancestor_candidate_tree (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree) ... ok
+test_prospective_merge_accepts_exact_diverged_combination (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination) ... ok
+test_prospective_merge_ignores_environment_merge_driver (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver) ... ok
+test_prospective_merge_ignores_local_union_attributes (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes) ... ok
+test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree) ... ok
+test_prospective_merge_never_executes_local_merge_driver (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver) ... ok
+test_prospective_merge_rejects_injected_committed_source (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source) ... ok
+test_prospective_merge_rejects_omitted_base_change (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change) ... ok
+test_prospective_merge_rejects_unreviewed_conflict_resolution (test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution) ... ok
+test_receipt_reuses_raw_source_guard (test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ERROR
+test_regular_file_symlink_substitution_rejected (test_ci_source_integrity.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ok
+test_replacement_commit_cannot_relabel_different_source (test_ci_source_integrity.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ok
+test_same_size_stat_cached_change_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ok
+test_skip_worktree_cannot_hide_modified_source (test_ci_source_integrity.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ok
+test_source_fence_checked_retains_actual_failed_observation (test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ERROR
+test_source_fence_clean_child_keeps_actual_success_and_bytes (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ERROR
+test_source_fence_clean_commit_switch_during_command_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ERROR
+test_source_fence_clean_wrong_head_cannot_start_child (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ERROR
+test_source_fence_dirty_before_command_cannot_start_child (test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ERROR
+test_source_fence_dirty_source_preserves_primary_failure (test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ERROR
+test_source_fence_existing_fuzz_and_supply_callers_pin_every_command (test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ERROR
+test_source_fence_finish_clean_other_commit_cannot_borrow_pass (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ERROR
+test_source_fence_finish_dirty_source_cannot_write_pass (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ERROR
+test_source_fence_finish_requires_initial_pin (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ERROR
+test_source_fence_finish_valid_source_never_upgrades_existing_failure (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ERROR
+test_source_fence_index_hidden_child_mutation_still_refuses (test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ERROR
+test_source_fence_keeps_nonzero_primary_error_and_drift (test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ERROR
+test_source_fence_pin_is_clean_and_does_not_follow_later_changes (test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ERROR
+test_source_fence_timeout_and_source_failure_preserve_both (test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ERROR
+test_source_fence_zero_exit_with_real_dirty_source_is_not_success (test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ERROR
+test_staged_change_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_staged_change_is_rejected) ... ok
+test_subdirectory_is_not_a_complete_source_root (test_ci_source_integrity.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ok
+test_tracked_symlink_target_change_rejected (test_ci_source_integrity.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ok
+test_untracked_configuration_cannot_hide_new_source (test_ci_source_integrity.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ok
+test_valid_raw_files_modes_and_symlink (test_ci_source_integrity.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ok
+
+======================================================================
+ERROR: test_receipt_reuses_raw_source_guard (test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 299, in test_receipt_reuses_raw_source_guard
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_checked_retains_actual_failed_observation (test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 409, in test_source_fence_checked_retains_actual_failed_observation
+    result, _, marker = self._fenced_child(
+                        ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_clean_child_keeps_actual_success_and_bytes (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 357, in test_source_fence_clean_child_keeps_actual_success_and_bytes
+    result, log, marker = self._fenced_child('')
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_clean_commit_switch_during_command_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 416, in test_source_fence_clean_commit_switch_during_command_is_rejected
+    result, _, _ = self._fenced_child(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_clean_wrong_head_cannot_start_child (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 384, in test_source_fence_clean_wrong_head_cannot_start_child
+    result, _, marker = self._fenced_child('')
+                        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_dirty_before_command_cannot_start_child (test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 370, in test_source_fence_dirty_before_command_cannot_start_child
+    result, log, marker = self._fenced_child('raise SystemExit(0)')
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_dirty_source_preserves_primary_failure (test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 492, in test_source_fence_dirty_source_preserves_primary_failure
+    result = self._finish_report(dict(result='FAIL', source_expected=self.head,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 347, in _finish_report
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_existing_fuzz_and_supply_callers_pin_every_command (test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 503, in test_source_fence_existing_fuzz_and_supply_callers_pin_every_command
+    tree = ast.parse((root / 'scripts/ci' / filename).read_text())
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/run_fuzz_smoke.py'
+
+======================================================================
+ERROR: test_source_fence_finish_clean_other_commit_cannot_borrow_pass (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 468, in test_source_fence_finish_clean_other_commit_cannot_borrow_pass
+    result = self._finish_report(dict(result='PASS', source_expected=self.head))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 347, in _finish_report
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_finish_dirty_source_cannot_write_pass (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 457, in test_source_fence_finish_dirty_source_cannot_write_pass
+    result = self._finish_report(dict(result='PASS', source_expected=self.head,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 347, in _finish_report
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_finish_requires_initial_pin (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 475, in test_source_fence_finish_requires_initial_pin
+    result = self._finish_report(dict(result='PASS'))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 347, in _finish_report
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_finish_valid_source_never_upgrades_existing_failure (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 481, in test_source_fence_finish_valid_source_never_upgrades_existing_failure
+    result = self._finish_report(dict(result=status, source_expected=self.head,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 347, in _finish_report
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_index_hidden_child_mutation_still_refuses (test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 427, in test_source_fence_index_hidden_child_mutation_still_refuses
+    result, _, _ = self._fenced_child(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_keeps_nonzero_primary_error_and_drift (test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 401, in test_source_fence_keeps_nonzero_primary_error_and_drift
+    result, log, _ = self._fenced_child(
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_pin_is_clean_and_does_not_follow_later_changes (test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 446, in test_source_fence_pin_is_clean_and_does_not_follow_later_changes
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_timeout_and_source_failure_preserve_both (test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 436, in test_source_fence_timeout_and_source_failure_preserve_both
+    result, _, marker = self._fenced_child(
+                        ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+======================================================================
+ERROR: test_source_fence_zero_exit_with_real_dirty_source_is_not_success (test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 390, in test_source_fence_zero_exit_with_real_dirty_source_is_not_success
+    result, log, marker = self._fenced_child(
+                          ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6523704f97df/implementation/chain/repo/scripts/ci/test_ci_source_integrity.py", line 326, in _fenced_child
+    import ci_observation
+ModuleNotFoundError: No module named 'ci_observation'
+
+----------------------------------------------------------------------
+Ran 43 tests in 4.533s
+
+FAILED (errors=17)
