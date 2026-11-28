@@ -8986,6 +8986,30 @@
         ]
       }
     ],
+    "src/state/routed_int257_direct.hepta": [
+      {
+        "functions": [
+          "rio_argmax",
+          "rio_coefficients",
+          "rio_dot",
+          "rio_features",
+          "rio_i32"
+        ],
+        "source": "src/state/routed_int257_ordinary.hepta"
+      },
+      {
+        "functions": [
+          "daav_u32"
+        ],
+        "source": "src/data_availability/author_authority_value.hepta"
+      },
+      {
+        "functions": [
+          "tr_put"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/state/routed_int257_ordinary.hepta": [
       {
         "functions": [

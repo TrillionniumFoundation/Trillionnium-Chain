@@ -938,6 +938,19 @@
       ]
     },
     {
+      "id": "state/routed-int257-direct",
+      "node_integration_complete": false,
+      "scope": "Pure routed Int257 direct diagnostic product with stable expert groups/router scores and original counts; no statement, W1/proof, request, cost or production authority.",
+      "source": "hia/src/state/routed_int257_direct.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_routed_int257_direct.py",
+        "hia/tests/rust_routed_int257_direct_reference.rs",
+        "hia/tests/routed_int257_direct_derivation.py",
+        "hia/tests/test_routed_int257_ordinary.py"
+      ]
+    },
+    {
       "id": "state/routed-int257-ordinary",
       "node_integration_complete": false,
       "scope": "Pure ordinary routed Int257 inference: fixed signed coefficient and feature caps, exact selected logits and stable argmax; no live model, W1/proof, commitment, request or production authority.",
@@ -3110,7 +3123,8 @@
         "crypto/ml-dsa-keygen",
         "crypto/ml-dsa-sign",
         "crypto/ml-dsa-owner",
-        "state/routed-int257-ordinary"
+        "state/routed-int257-ordinary",
+        "state/routed-int257-direct"
       ],
       "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
       "module": "M01",
