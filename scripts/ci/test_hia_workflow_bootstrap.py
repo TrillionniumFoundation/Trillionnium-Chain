@@ -29,8 +29,13 @@ ORIGINAL_RUST_PREP_JOBS = {
     "native-components-bench",
 }
 COMPILER_SHA256 = "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
+BOOTSTRAP_HELPER = "scripts/ci/bootstrap_native_hia_compiler.sh"
 BOOTSTRAP = re.compile(
     r"(?ms)^ {10}python3(?: -B)? - \"\$RUNNER_TEMP/hia-bootstrap/bootstrap\.json\" \"\$GITHUB_ENV\" <<'PY'\n(?P<body>.*?)^ {10}PY$"
+)
+SOURCE_BOOTSTRAP = re.compile(
+    r"(?m)^      - name: Bootstrap and self-reproduce the native HIA compiler\n"
+    rf"        run: source {re.escape(BOOTSTRAP_HELPER)}$"
 )
 
 
@@ -97,21 +102,42 @@ EXPECTED_BOOTSTRAP_JOBS = (
     "native-additional-owners",
 )
 EXPECTED_BOOTSTRAP_COUNTS = Counter(EXPECTED_BOOTSTRAP_JOBS)
+INLINE_BOOTSTRAP_COUNTS = Counter((
+    "native-work-owner",
+    "native-node-pool-smoke",
+    "native-node-pool-boundaries",
+    "native-node-pool-capacity",
+    "native-node-pool-node",
+    "native-node-pool-cross",
+    "native-node-commitment",
+    "native-peer-lease-store",
+    "native-checkpoint-store",
+    "native-additional-owners",
+))
+SOURCE_BOOTSTRAP_COUNTS = EXPECTED_BOOTSTRAP_COUNTS - INLINE_BOOTSTRAP_COUNTS
 
 
 def bootstrap_bodies(text):
     _, separator, jobs = text.partition("\njobs:\n")
     if not separator:
         raise AssertionError("missing native workflow jobs section")
+    script = (ROOT / BOOTSTRAP_HELPER).read_text(encoding="utf-8")
+    admissions = list(BOOTSTRAP.finditer(textwrap.indent(script, " " * 10)))
+    if len(admissions) != 1:
+        raise AssertionError("expected exactly one compiler admission in the common helper")
+    shared = textwrap.dedent(admissions[0].group("body"))
     headers = list(JOB_HEADER.finditer(jobs))
     bodies = []
+    inline_counts, source_counts = Counter(), Counter()
     for i, header in enumerate(headers):
         end = headers[i + 1].start() if i + 1 < len(headers) else len(jobs)
         job = header.group("job")
-        bodies.extend(
-            (job, textwrap.dedent(match.group("body")))
-            for match in BOOTSTRAP.finditer(jobs, header.end(), end)
-        )
+        for match in BOOTSTRAP.finditer(jobs, header.end(), end):
+            inline_counts[job] += 1
+            bodies.append((job, textwrap.dedent(match.group("body"))))
+        for _ in SOURCE_BOOTSTRAP.finditer(jobs, header.end(), end):
+            source_counts[job] += 1
+            bodies.append((job, shared))
     actual = Counter(job for job, _ in bodies)
     if actual != EXPECTED_BOOTSTRAP_COUNTS:
         raise AssertionError(
@@ -120,7 +146,10 @@ def bootstrap_bodies(text):
             f"unexpected={dict(actual - EXPECTED_BOOTSTRAP_COUNTS)!r}"
         )
     # Do not silently drop a recognizable block outside the job scopes.
-    if len(bodies) != sum(1 for _ in BOOTSTRAP.finditer(text)):
+    if (inline_counts != INLINE_BOOTSTRAP_COUNTS
+            or source_counts != SOURCE_BOOTSTRAP_COUNTS
+            or sum(inline_counts.values()) != len(list(BOOTSTRAP.finditer(text)))
+            or sum(source_counts.values()) != text.count(BOOTSTRAP_HELPER)):
         raise AssertionError("native bootstrap admission block outside the job inventory")
     return bodies
 
@@ -148,7 +177,7 @@ class BootstrapGuards(unittest.TestCase):
         jobs = list(JOB_HEADER.finditer(self.workflow_text, self.workflow_text.index("\njobs:\n")))
         index = next(i for i, header in enumerate(jobs) if header.group("job") == "native-components-bench")
         header, following = jobs[index:index + 2]
-        match = BOOTSTRAP.search(self.workflow_text, header.end(), following.start())
+        match = SOURCE_BOOTSTRAP.search(self.workflow_text, header.end(), following.start())
         self.assertIsNotNone(match)
         for kind, changed in (
             ("removed", self.workflow_text[:match.start()] + self.workflow_text[match.end():]),
@@ -158,6 +187,48 @@ class BootstrapGuards(unittest.TestCase):
             with self.subTest(change=kind):
                 with self.assertRaisesRegex(AssertionError, "missing=.*native-components-bench"):
                     bootstrap_bodies(changed)
+
+    def test_shared_shell_preserves_compiler_environment_and_failure(self):
+        # Tiny test double for the earlier cold emitter, not evidence of any
+        # compiler build. Execute the actual Bash helper and its real gate.
+        runner = (
+            "import os, pathlib, sys\n"
+            "destination = pathlib.Path(sys.argv[2])\n"
+            "destination.mkdir()\n"
+            "(destination / 'bootstrap.json').write_text(os.environ['FIXTURE_RECEIPT'])\n"
+            "raise SystemExit(int(os.environ['FIXTURE_EXIT']))\n"
+        )
+        valid = {"status": "PASS", "compiler": "/test/actual-compiler",
+                 "compiler_sha256": COMPILER_SHA256}
+        for receipt, status, accepted in (
+            (json.dumps(valid), 0, True),
+            (json.dumps({**valid, "status": "FAIL"}), 0, False),
+            (json.dumps({**valid, "compiler_sha256": "0" * 64}), 0, False),
+            (json.dumps({**valid, "compiler": ""}), 0, False),
+            ("malformed JSON", 0, False),
+            (json.dumps(valid), 6, False),
+        ):
+            with self.subTest(receipt=receipt, status=status), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                witness = root / "hia/tools/bootstrap.py"
+                witness.parent.mkdir(parents=True)
+                witness.write_text(runner, encoding="utf-8")
+                output = root / "github.env"
+                output.write_bytes(b"PRIOR=test\n")
+                child = subprocess.run(
+                    ["bash", "--noprofile", "--norc", "-e", "-o", "pipefail",
+                     "-c", 'source "$1"', "test-helper", str(ROOT / BOOTSTRAP_HELPER)],
+                    cwd=root, env={**os.environ, "PYTHONOPTIMIZE": "2",
+                                   "RUNNER_TEMP": str(root), "GITHUB_ENV": str(output),
+                                   "FIXTURE_RECEIPT": receipt, "FIXTURE_EXIT": str(status)},
+                    capture_output=True, check=False, timeout=8,
+                )
+                self.assertEqual(child.returncode == 0, accepted, child.stderr)
+                expected = b"PRIOR=test\n"
+                if accepted:
+                    expected += ("HIA_NATIVE_COMPILER=/test/actual-compiler\n"
+                                 + f"HIA_NATIVE_COMPILER_SHA256={COMPILER_SHA256}\n").encode()
+                self.assertEqual(output.read_bytes(), expected)
 
     def check_case(self, body, payload, *, python_args, succeed):
         with tempfile.TemporaryDirectory() as tmp:
