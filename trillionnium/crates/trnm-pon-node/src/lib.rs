@@ -36,6 +36,8 @@ pub(crate) mod operator_pq_auth;
 pub mod operator_pq_startup;
 pub mod operator_task_policy;
 pub mod peer_polling;
+/// Strict pinned JSON preparation only; never native adoption or payment.
+pub mod pft_native_loader_v1;
 /// Independent binary64 research preparation; no adoption or execution authority.
 pub mod pft_readout_f64_v1;
 pub mod pq_application_v6;
