@@ -1307,6 +1307,17 @@
       ]
     },
     {
+      "id": "consensus/asert-target",
+      "node_integration_complete": false,
+      "scope": "Independent pure research work-schedule ASERT target arithmetic against the public original Rust oracle, exact signed fixed-point and raw 256-bit target, no branch/proof/economic or consensus authority",
+      "source": "hia/src/consensus/asert_target.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_consensus_asert_target.py",
+        "hia/tests/rust_consensus_asert_target_reference.rs"
+      ]
+    },
+    {
       "id": "consensus/work",
       "node_integration_complete": false,
       "scope": "Complete original pure M02 512-bit Work arithmetic, target conversion, work credit, retarget, parent window and median-time policy; emitted-native and actual original Rust independently exercised",
@@ -3258,6 +3269,7 @@
         "transport/signed-response",
         "node/settings-development",
         "consensus/work",
+        "consensus/asert-target",
         "mempool/raw-bindings-owner",
         "mempool/local-pool-policy"
       ],

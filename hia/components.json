@@ -1,5 +1,27 @@
 {
   "includes": {
+    "src/consensus/asert_target.hepta": [
+      {
+        "source": "src/consensus/work.hepta",
+        "functions": [
+          "cw_read64",
+          "cw_load64",
+          "cw_read32be",
+          "cw_store64",
+          "cw_zero",
+          "cw_copy",
+          "cw_decode",
+          "cw_encode",
+          "cw_compare",
+          "cw_is_zero",
+          "cw_add",
+          "cw_subtract",
+          "cw_shift_one",
+          "cw_mul_small",
+          "cw_divide"
+        ]
+      }
+    ],
     "src/data_availability/availability_certificate_verify.hepta": [
       {
         "source": "src/data_availability/committee_id.hepta",

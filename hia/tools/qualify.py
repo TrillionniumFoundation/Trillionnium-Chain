@@ -125,6 +125,10 @@ def sources():
     paths += [ROOT / "trillionnium/crates/trnm-pon-node/src/consensus.rs",
               ROOT / "formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json",
               ROOT / "formal/pon-nakamoto-v1/vectors/consensus-domain-v2.json",
+              ROOT / "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+              ROOT / "trillionnium/crates/trnm-pon-node/Cargo.toml",
+              ROOT / "formal/pon-nakamoto-v1/vectors/quantum-daa-asert-bchn-v1.json",
+              ROOT / "hia/src/consensus/ASERT_TARGET.md",
               ROOT / "hia/src/consensus/README.md"]
     # Exact original data/owner bodies and their complete native contracts.
     paths += [ROOT / name for name in (
