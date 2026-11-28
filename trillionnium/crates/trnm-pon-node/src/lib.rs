@@ -40,6 +40,8 @@ pub mod peer_polling;
 pub mod pft_native_loader_v1;
 /// Independent binary64 research preparation; no adoption or execution authority.
 pub mod pft_readout_f64_v1;
+/// Selected catalog metadata inspection only; no executable handle or authority.
+pub mod pft_selected_inspection_v1;
 pub mod pq_application_v6;
 pub mod pq_rollback_witness;
 pub mod public_submit;
