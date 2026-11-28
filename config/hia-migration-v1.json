@@ -2313,6 +2313,17 @@
       ]
     },
     {
+      "id": "release-bundle/unsigned-candidate-128",
+      "node_integration_complete": false,
+      "scope": "Separate private original unsigned V0 deterministic candidate, 128 slots per roster, exact precedence and offset-bound sorted digest folds. No signature/authority or production path; original 64-slot native ABI unchanged.",
+      "source": "hia/src/release_bundle/unsigned_candidate_128.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_unsigned_candidate_128.py",
+        "hia/tests/rust_release_unsigned_candidate_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/builder-provenance-ordered-256",
       "node_integration_complete": false,
       "scope": "Separate read-only original V0 typed provenance canonical digest at 0–256 private slots, using bounded native index heapsort and original member transcript. No validation, authority, signing or production routing; old 64-slot modes unchanged.",
