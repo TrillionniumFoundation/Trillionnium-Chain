@@ -24,6 +24,12 @@ SQL = (
 
 
 def run(reader, provider, mode):
+    return drive(reader,provider,mode,8192,100,SQL)
+
+
+def drive(reader, provider, mode, n, operations, allowed_sql):
+    # Bounds and allowed literals are fixed by the private profile entry.
+    # They cannot come from the JSON message or native provider responses.
     sig = ctypes.c_void_p, ctypes.c_uint64
     ptr, u64 = sig
     step = transport.bind(reader,"f0",u64,*sig,*sig,*sig)
@@ -31,7 +37,6 @@ def run(reader, provider, mode):
     free = transport.bind(provider,"trnm_task_provider_free",None,ptr)
     reset = transport.bind(provider,"trnm_task_provider_reset",u64,ptr)
     fetch = transport.bind(provider,"trnm_task_provider",u64,ptr,u64,*sig,*sig)
-    n = 8192
     state = ctypes.create_string_buffer(n)
     response = ctypes.create_string_buffer(128)
     addr = ctypes.addressof(state)
@@ -41,7 +46,7 @@ def run(reader, provider, mode):
     raw = struct.pack("<Q",mode)
     log, statements = [], []
     try:
-        for turn in range(100):
+        for turn in range(operations):
             arg = ctypes.create_string_buffer(raw)
             status = step(arg,len(raw),state,n,None,0)
             phase,op,size,published = struct.unpack_from("<4Q",state)
@@ -62,7 +67,7 @@ def run(reader, provider, mode):
             if op == 5:
                 statement = request[16:]
                 pin = sha256(statement).hexdigest()
-                if len(statements) >= len(SQL) or pin != SQL[len(statements)]:
+                if len(statements) >= len(allowed_sql) or pin != allowed_sql[len(statements)]:
                     raise ValueError("Outside the six exact statements")
                 statements.append(pin)
             length = fetch(owner,op,addr+256,size,response,len(response))

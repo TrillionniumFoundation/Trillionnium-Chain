@@ -44,3 +44,30 @@ VFS migration, underlying SQLite engine replacement, packet read, work,
 authority, or active Node state.
 
     python3 -B -m unittest -v hia.tests.test_node_history_cte_acquire
+
+## Separate original-64-row profile
+
+The separate `history_cte_acquire_64.hepta` entry shares the checked
+continuation with the four-row entry. The new fixture uses a fixed
+67-row in-memory seed (IDs 0–66) and the same original literal SELECT
+with the same actual bound INTEGER limit 64. It reads 64 rows down
+toward genesis, a shorter three-row run toward ID 63, and an empty run
+at ID 66. The full result is bounded by the original SELECT although
+more than 64 ancestors exist. The original Rust comparator checks that
+the full batch's continuation cursor is ID 2; neither native entry
+publishes a cursor or verifies ancestry. The host still forwards typed
+values only, and the immutable original receives an independently
+seeded fixture through typed binds.
+
+Only this new fixture accepts a 65,536-byte exact owner buffer: the
+4,096-byte prefix, 8-byte projection count and at most
+64 × 11 × (16 + 64) bytes of cells fit. Its separate host allows at
+most 832 provider calls, above the actual full transcript of at most
+793 calls, and the only changed admitted SQL literal is fixed fixture
+setup. The earlier entry still requires exactly 8,192 bytes and its
+host still stops at 100 operations; its original test is unchanged.
+The helper extraction changes physical ELF bytes, which are
+requalified on both stock backends. Neither profile changes provider
+rules, compiler limits, privileges or settings.
+
+    python3 -B -m unittest -v hia.tests.test_node_history_cte_acquire_64 hia.tests.test_node_history_cte_acquire

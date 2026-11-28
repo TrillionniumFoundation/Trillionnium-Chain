@@ -1,12 +1,18 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_private_history_cte
-fn f0(entry_r:readbuf,entry_s:mutbuf,entry_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
-block entry(entry_r:readbuf,entry_s:mutbuf,entry_w:mutbuf)
+fn f0(r:readbuf,s:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,s:mutbuf,w:mutbuf)
+  narrow:usize = const() {"value":8192}
+  result:u32 = call(r,s,w,narrow) {"function":"hct_read"}
+  ret(result)
+end
+
+fn hct_read(entry_r:readbuf,entry_s:mutbuf,entry_w:mutbuf,entry_required:usize) -> (u32) effects(read,write,trap) entry(entry)
+block entry(entry_r:readbuf,entry_s:mutbuf,entry_w:mutbuf,entry_required:usize)
   entry_n:usize = buffer.len(entry_r)
   entry_size:usize = buffer.len(entry_s)
   entry_work:usize = buffer.len(entry_w)
-  entry_minimum:usize = const() {"value":8192}
   entry_zero:usize = const() {"value":0}
-  entry_valid:bool = compare.eq(entry_size,entry_minimum)
+  entry_valid:bool = compare.eq(entry_size,entry_required)
   entry_spare:bool = compare.eq(entry_work,entry_zero)
   entry_safe:bool = bool.and(entry_valid,entry_spare)
   branch entry_safe dispatch(entry_r,entry_s,entry_n) bad()
@@ -175,7 +181,12 @@ block step_row(step_row_r:readbuf,step_row_s:mutbuf,step_row_n:usize)
   step_row_rows:u64 = call(step_row_s,step_row_a_rows) {"function":"cp_get"}
   step_row_cte:u64 = const() {"value":4}
   step_row_is_query:bool = compare.eq(step_row_cte,step_row_stage)
-  step_row_bound:bool = compare.lt(step_row_rows,step_row_cte)
+  step_row_shape:usize = buffer.len(step_row_s)
+  step_row_wide:usize = const() {"value":65536}
+  step_row_is_wide:bool = compare.eq(step_row_shape,step_row_wide)
+  step_row_sixtyfour:u64 = const() {"value":64}
+  step_row_row_cap:u64 = select(step_row_is_wide,step_row_sixtyfour,step_row_cte)
+  step_row_bound:bool = compare.lt(step_row_rows,step_row_row_cap)
   step_row_legal:bool = bool.and(step_row_row,step_row_is_query)
   step_row_fit:bool = bool.and(step_row_legal,step_row_bound)
   branch step_row_fit first_col(step_row_s) bad()
@@ -230,7 +241,8 @@ block project(project_r:readbuf,project_s:mutbuf,project_tag:u64,project_length:
   project_a:u64 = int.add.wrap(project_cursor,project_eight)
   project_b:u64 = int.add.wrap(project_cursor,project_head)
   project_next:u64 = int.add.wrap(project_b,project_length)
-  project_arena:u64 = const() {"value":8192}
+  project_span:usize = buffer.len(project_s)
+  project_arena:u64 = int.cast(project_span) {"mode":"wrap"}
   project_safe:bool = compare.le(project_next,project_arena)
   branch project_safe append(project_r,project_s,project_tag,project_length,project_cursor,project_a,project_b,project_next) bad()
 block append(append_r:readbuf,append_s:mutbuf,append_tag:u64,append_length:u64,append_cursor:u64,append_a:u64,append_b:u64,append_next:u64)
@@ -365,7 +377,204 @@ block sql0(sql0_s:mutbuf)
 block route1(route1_s:mutbuf,route1_stage:u64)
   route1_expected:u64 = const() {"value":1}
   route1_hit:bool = compare.eq(route1_expected,route1_stage)
-  branch route1_hit sql1(route1_s) route2(route1_s,route1_stage)
+  branch route1_hit seed_profile(route1_s) route2(route1_s,route1_stage)
+block seed_profile(seed_profile_s:mutbuf)
+  seed_profile_span:usize = buffer.len(seed_profile_s)
+  seed_profile_wide:usize = const() {"value":65536}
+  seed_profile_select:bool = compare.eq(seed_profile_span,seed_profile_wide)
+  branch seed_profile_select seed_wide(seed_profile_s) sql1(seed_profile_s)
+block seed_wide(seed_wide_s:mutbuf)
+  seed_wide_len:u64 = const() {"value":488}
+  seed_wide_len_at:u64 = const() {"value":264}
+  seed_wide__len:u64 = call(seed_wide_s,seed_wide_len_at,seed_wide_len) {"function":"cp_put"}
+  seed_wide_word0:u64 = const() {"value":4847370872540121431}
+  seed_wide_at0:u64 = const() {"value":272}
+  seed_wide__write0:u64 = call(seed_wide_s,seed_wide_at0,seed_wide_word0) {"function":"cp_put"}
+  seed_wide_word1:u64 = const() {"value":8295706750516154965}
+  seed_wide_at1:u64 = const() {"value":280}
+  seed_wide__write1:u64 = call(seed_wide_s,seed_wide_at1,seed_wide_word1) {"function":"cp_put"}
+  seed_wide_word2:u64 = const() {"value":4692796364820866405}
+  seed_wide_at2:u64 = const() {"value":288}
+  seed_wide__write2:u64 = call(seed_wide_s,seed_wide_at2,seed_wide_word2) {"function":"cp_put"}
+  seed_wide_word3:u64 = const() {"value":4995983205139488851}
+  seed_wide_at3:u64 = const() {"value":296}
+  seed_wide__write3:u64 = call(seed_wide_s,seed_wide_at3,seed_wide_word3) {"function":"cp_put"}
+  seed_wide_word4:u64 = const() {"value":5282253009570506835}
+  seed_wide_at4:u64 = const() {"value":304}
+  seed_wide__write4:u64 = call(seed_wide_s,seed_wide_at4,seed_wide_word4) {"function":"cp_put"}
+  seed_wide_word5:u64 = const() {"value":5989871394796621391}
+  seed_wide_at5:u64 = const() {"value":312}
+  seed_wide__write5:u64 = call(seed_wide_s,seed_wide_at5,seed_wide_word5) {"function":"cp_put"}
+  seed_wide_word6:u64 = const() {"value":3129474337347030085}
+  seed_wide_at6:u64 = const() {"value":320}
+  seed_wide__write6:u64 = call(seed_wide_s,seed_wide_at6,seed_wide_word6) {"function":"cp_put"}
+  seed_wide_word7:u64 = const() {"value":8295715516694536241}
+  seed_wide_at7:u64 = const() {"value":328}
+  seed_wide__write7:u64 = call(seed_wide_s,seed_wide_at7,seed_wide_word7) {"function":"cp_put"}
+  seed_wide_word8:u64 = const() {"value":5928224023545931109}
+  seed_wide_at8:u64 = const() {"value":336}
+  seed_wide__write8:u64 = call(seed_wide_s,seed_wide_at8,seed_wide_word8) {"function":"cp_put"}
+  seed_wide_word9:u64 = const() {"value":3182134218283950149}
+  seed_wide_at9:u64 = const() {"value":344}
+  seed_wide__write9:u64 = call(seed_wide_s,seed_wide_at9,seed_wide_word9) {"function":"cp_put"}
+  seed_wide_word10:u64 = const() {"value":7578553392971409696}
+  seed_wide_at10:u64 = const() {"value":352}
+  seed_wide__write10:u64 = call(seed_wide_s,seed_wide_at10,seed_wide_word10) {"function":"cp_put"}
+  seed_wide_word11:u64 = const() {"value":8389754697773231204}
+  seed_wide_at11:u64 = const() {"value":360}
+  seed_wide__write11:u64 = call(seed_wide_s,seed_wide_at11,seed_wide_word11) {"function":"cp_put"}
+  seed_wide_word12:u64 = const() {"value":4995380530984853545}
+  seed_wide_at12:u64 = const() {"value":368}
+  seed_wide__write12:u64 = call(seed_wide_s,seed_wide_at12,seed_wide_word12) {"function":"cp_put"}
+  seed_wide_word13:u64 = const() {"value":8443244486544541004}
+  seed_wide_at13:u64 = const() {"value":376}
+  seed_wide__write13:u64 = call(seed_wide_s,seed_wide_at13,seed_wide_word13) {"function":"cp_put"}
+  seed_wide_word14:u64 = const() {"value":7598258840448362606}
+  seed_wide_at14:u64 = const() {"value":384}
+  seed_wide__write14:u64 = call(seed_wide_s,seed_wide_at14,seed_wide_word14) {"function":"cp_put"}
+  seed_wide_word15:u64 = const() {"value":3616431350890263662}
+  seed_wide_at15:u64 = const() {"value":392}
+  seed_wide__write15:u64 = call(seed_wide_s,seed_wide_at15,seed_wide_word15) {"function":"cp_put"}
+  seed_wide_word16:u64 = const() {"value":2845285581975201656}
+  seed_wide_at16:u64 = const() {"value":400}
+  seed_wide__write16:u64 = call(seed_wide_s,seed_wide_at16,seed_wide_word16) {"function":"cp_put"}
+  seed_wide_word17:u64 = const() {"value":3472328296227680304}
+  seed_wide_at17:u64 = const() {"value":408}
+  seed_wide__write17:u64 = call(seed_wide_s,seed_wide_at17,seed_wide_word17) {"function":"cp_put"}
+  seed_wide_word18:u64 = const() {"value":8946172168319807536}
+  seed_wide_at18:u64 = const() {"value":416}
+  seed_wide__write18:u64 = call(seed_wide_s,seed_wide_at18,seed_wide_word18) {"function":"cp_put"}
+  seed_wide_word19:u64 = const() {"value":7305790138895135356}
+  seed_wide_at19:u64 = const() {"value":424}
+  seed_wide__write19:u64 = call(seed_wide_s,seed_wide_at19,seed_wide_word19) {"function":"cp_put"}
+  seed_wide_word20:u64 = const() {"value":8243129007208753192}
+  seed_wide_at20:u64 = const() {"value":432}
+  seed_wide__write20:u64 = call(seed_wide_s,seed_wide_at20,seed_wide_word20) {"function":"cp_put"}
+  seed_wide_word21:u64 = const() {"value":3761113042049065583}
+  seed_wide_at21:u64 = const() {"value":440}
+  seed_wide__write21:u64 = call(seed_wide_s,seed_wide_at21,seed_wide_word21) {"function":"cp_put"}
+  seed_wide_word22:u64 = const() {"value":3181564645134313769}
+  seed_wide_at22:u64 = const() {"value":448}
+  seed_wide__write22:u64 = call(seed_wide_s,seed_wide_at22,seed_wide_word22) {"function":"cp_put"}
+  seed_wide_word23:u64 = const() {"value":2318273164917290279}
+  seed_wide_at23:u64 = const() {"value":456}
+  seed_wide__write23:u64 = call(seed_wide_s,seed_wide_at23,seed_wide_word23) {"function":"cp_put"}
+  seed_wide_word24:u64 = const() {"value":4992335983053848899}
+  seed_wide_at24:u64 = const() {"value":464}
+  seed_wide__write24:u64 = call(seed_wide_s,seed_wide_at24,seed_wide_word24) {"function":"cp_put"}
+  seed_wide_word25:u64 = const() {"value":5211826060335652942}
+  seed_wide_at25:u64 = const() {"value":472}
+  seed_wide__write25:u64 = call(seed_wide_s,seed_wide_at25,seed_wide_word25) {"function":"cp_put"}
+  seed_wide_word26:u64 = const() {"value":2327319036710374981}
+  seed_wide_at26:u64 = const() {"value":480}
+  seed_wide__write26:u64 = call(seed_wide_s,seed_wide_at26,seed_wide_word26) {"function":"cp_put"}
+  seed_wide_word27:u64 = const() {"value":7525080808845167685}
+  seed_wide_at27:u64 = const() {"value":488}
+  seed_wide__write27:u64 = call(seed_wide_s,seed_wide_at27,seed_wide_word27) {"function":"cp_put"}
+  seed_wide_word28:u64 = const() {"value":8389759096066701413}
+  seed_wide_at28:u64 = const() {"value":496}
+  seed_wide__write28:u64 = call(seed_wide_s,seed_wide_at28,seed_wide_word28) {"function":"cp_put"}
+  seed_wide_word29:u64 = const() {"value":2844078347047610470}
+  seed_wide_at29:u64 = const() {"value":504}
+  seed_wide__write29:u64 = call(seed_wide_s,seed_wide_at29,seed_wide_word29) {"function":"cp_put"}
+  seed_wide_word30:u64 = const() {"value":2845285580951875116}
+  seed_wide_at30:u64 = const() {"value":512}
+  seed_wide__write30:u64 = call(seed_wide_s,seed_wide_at30,seed_wide_word30) {"function":"cp_put"}
+  seed_wide_word31:u64 = const() {"value":3472328296227680304}
+  seed_wide_at31:u64 = const() {"value":520}
+  seed_wide__write31:u64 = call(seed_wide_s,seed_wide_at31,seed_wide_word31) {"function":"cp_put"}
+  seed_wide_word32:u64 = const() {"value":8946172168319807536}
+  seed_wide_at32:u64 = const() {"value":528}
+  seed_wide__write32:u64 = call(seed_wide_s,seed_wide_at32,seed_wide_word32) {"function":"cp_put"}
+  seed_wide_word33:u64 = const() {"value":7305790138895135356}
+  seed_wide_at33:u64 = const() {"value":536}
+  seed_wide__write33:u64 = call(seed_wide_s,seed_wide_at33,seed_wide_word33) {"function":"cp_put"}
+  seed_wide_word34:u64 = const() {"value":8243129007208753192}
+  seed_wide_at34:u64 = const() {"value":544}
+  seed_wide__write34:u64 = call(seed_wide_s,seed_wide_at34,seed_wide_word34) {"function":"cp_put"}
+  seed_wide_word35:u64 = const() {"value":3761113042049065583}
+  seed_wide_at35:u64 = const() {"value":552}
+  seed_wide__write35:u64 = call(seed_wide_s,seed_wide_at35,seed_wide_word35) {"function":"cp_put"}
+  seed_wide_word36:u64 = const() {"value":3181564645134313769}
+  seed_wide_at36:u64 = const() {"value":560}
+  seed_wide__write36:u64 = call(seed_wide_s,seed_wide_at36,seed_wide_word36) {"function":"cp_put"}
+  seed_wide_word37:u64 = const() {"value":4981026444600096039}
+  seed_wide_at37:u64 = const() {"value":568}
+  seed_wide__write37:u64 = call(seed_wide_s,seed_wide_at37,seed_wide_word37) {"function":"cp_put"}
+  seed_wide_word38:u64 = const() {"value":2327603797202846798}
+  seed_wide_at38:u64 = const() {"value":576}
+  seed_wide__write38:u64 = call(seed_wide_s,seed_wide_at38,seed_wide_word38) {"function":"cp_put"}
+  seed_wide_word39:u64 = const() {"value":5641075370408371571}
+  seed_wide_at39:u64 = const() {"value":584}
+  seed_wide__write39:u64 = call(seed_wide_s,seed_wide_at39,seed_wide_word39) {"function":"cp_put"}
+  seed_wide_word40:u64 = const() {"value":6074873350571836755}
+  seed_wide_at40:u64 = const() {"value":592}
+  seed_wide__write40:u64 = call(seed_wide_s,seed_wide_at40,seed_wide_word40) {"function":"cp_put"}
+  seed_wide_word41:u64 = const() {"value":8316850467080642639}
+  seed_wide_at41:u64 = const() {"value":600}
+  seed_wide__write41:u64 = call(seed_wide_s,seed_wide_at41,seed_wide_word41) {"function":"cp_put"}
+  seed_wide_word42:u64 = const() {"value":2329560872168805152}
+  seed_wide_at42:u64 = const() {"value":608}
+  seed_wide__write42:u64 = call(seed_wide_s,seed_wide_at42,seed_wide_word42) {"function":"cp_put"}
+  seed_wide_word43:u64 = const() {"value":7954890079639200873}
+  seed_wide_at43:u64 = const() {"value":616}
+  seed_wide__write43:u64 = call(seed_wide_s,seed_wide_at43,seed_wide_word43) {"function":"cp_put"}
+  seed_wide_word44:u64 = const() {"value":7307211844944276596}
+  seed_wide_at44:u64 = const() {"value":624}
+  seed_wide__write44:u64 = call(seed_wide_s,seed_wide_at44,seed_wide_word44) {"function":"cp_put"}
+  seed_wide_word45:u64 = const() {"value":7161124112489916536}
+  seed_wide_at45:u64 = const() {"value":632}
+  seed_wide__write45:u64 = call(seed_wide_s,seed_wide_at45,seed_wide_word45) {"function":"cp_put"}
+  seed_wide_word46:u64 = const() {"value":7312201442551933029}
+  seed_wide_at46:u64 = const() {"value":640}
+  seed_wide__write46:u64 = call(seed_wide_s,seed_wide_at46,seed_wide_word46) {"function":"cp_put"}
+  seed_wide_word47:u64 = const() {"value":3902477307815817074}
+  seed_wide_at47:u64 = const() {"value":648}
+  seed_wide__write47:u64 = call(seed_wide_s,seed_wide_at47,seed_wide_word47) {"function":"cp_put"}
+  seed_wide_word48:u64 = const() {"value":2823809911164053812}
+  seed_wide_at48:u64 = const() {"value":656}
+  seed_wide__write48:u64 = call(seed_wide_s,seed_wide_at48,seed_wide_word48) {"function":"cp_put"}
+  seed_wide_word49:u64 = const() {"value":2911142226705936428}
+  seed_wide_at49:u64 = const() {"value":664}
+  seed_wide__write49:u64 = call(seed_wide_s,seed_wide_at49,seed_wide_word49) {"function":"cp_put"}
+  seed_wide_word50:u64 = const() {"value":7938763640338916647}
+  seed_wide_at50:u64 = const() {"value":672}
+  seed_wide__write50:u64 = call(seed_wide_s,seed_wide_at50,seed_wide_word50) {"function":"cp_put"}
+  seed_wide_word51:u64 = const() {"value":7307211844939753769}
+  seed_wide_at51:u64 = const() {"value":680}
+  seed_wide__write51:u64 = call(seed_wide_s,seed_wide_at51,seed_wide_word51) {"function":"cp_put"}
+  seed_wide_word52:u64 = const() {"value":7161124112489916536}
+  seed_wide_at52:u64 = const() {"value":688}
+  seed_wide__write52:u64 = call(seed_wide_s,seed_wide_at52,seed_wide_word52) {"function":"cp_put"}
+  seed_wide_word53:u64 = const() {"value":7312201442551933029}
+  seed_wide_at53:u64 = const() {"value":696}
+  seed_wide__write53:u64 = call(seed_wide_s,seed_wide_at53,seed_wide_word53) {"function":"cp_put"}
+  seed_wide_word54:u64 = const() {"value":3686304525702033266}
+  seed_wide_at54:u64 = const() {"value":704}
+  seed_wide__write54:u64 = call(seed_wide_s,seed_wide_at54,seed_wide_word54) {"function":"cp_put"}
+  seed_wide_word55:u64 = const() {"value":2823809911164053810}
+  seed_wide_at55:u64 = const() {"value":712}
+  seed_wide__write55:u64 = call(seed_wide_s,seed_wide_at55,seed_wide_word55) {"function":"cp_put"}
+  seed_wide_word56:u64 = const() {"value":2911142226705936428}
+  seed_wide_at56:u64 = const() {"value":720}
+  seed_wide__write56:u64 = call(seed_wide_s,seed_wide_at56,seed_wide_word56) {"function":"cp_put"}
+  seed_wide_word57:u64 = const() {"value":2894732057683961127}
+  seed_wide_at57:u64 = const() {"value":728}
+  seed_wide__write57:u64 = call(seed_wide_s,seed_wide_at57,seed_wide_word57) {"function":"cp_put"}
+  seed_wide_word58:u64 = const() {"value":7937643998166482030}
+  seed_wide_at58:u64 = const() {"value":736}
+  seed_wide__write58:u64 = call(seed_wide_s,seed_wide_at58,seed_wide_word58) {"function":"cp_put"}
+  seed_wide_word59:u64 = const() {"value":2317428740020255014}
+  seed_wide_at59:u64 = const() {"value":744}
+  seed_wide__write59:u64 = call(seed_wide_s,seed_wide_at59,seed_wide_word59) {"function":"cp_put"}
+  seed_wide_word60:u64 = const() {"value":8314886399489692230}
+  seed_wide_at60:u64 = const() {"value":752}
+  seed_wide__write60:u64 = call(seed_wide_s,seed_wide_at60,seed_wide_word60) {"function":"cp_put"}
+  seed_wide_phase:u64 = const() {"value":2}
+  seed_wide_op:u64 = const() {"value":5}
+  seed_wide_size:u64 = const() {"value":504}
+  seed_wide_result:u32 = call(seed_wide_s,seed_wide_phase,seed_wide_op,seed_wide_size) {"function":"sr_issue"}
+  ret(seed_wide_result)
 block sql1(sql1_s:mutbuf)
   sql1_sql_len:u64 = const() {"value":1322}
   sql1_d_sql_len:u64 = const() {"value":264}
@@ -1228,10 +1437,17 @@ block ids(ids_s:mutbuf,ids_i:u64)
   ids_mode:u64 = call(ids_s,ids_a_mode) {"function":"cp_get"}
   ids_m0:bool = compare.eq(ids_mode,ids_zero)
   ids_m1:bool = compare.eq(ids_mode,ids_one)
-  ids_tmp:u64 = select(ids_m1,ids_one,ids_three)
+  ids_span:usize = buffer.len(ids_s)
+  ids_wide:usize = const() {"value":65536}
+  ids_profile:bool = compare.eq(ids_span,ids_wide)
+  ids_tip:u64 = const() {"value":66}
+  ids_short_stop:u64 = const() {"value":63}
+  ids_fixed_tip:u64 = select(ids_profile,ids_tip,ids_three)
+  ids_fixed_short:u64 = select(ids_profile,ids_short_stop,ids_one)
+  ids_tmp:u64 = select(ids_m1,ids_fixed_short,ids_fixed_tip)
   ids_stop:u64 = select(ids_m0,ids_zero,ids_tmp)
   ids_other:u64 = select(ids_after,ids_stop,ids_zero)
-  ids_head:u64 = select(ids_start,ids_three,ids_other)
+  ids_head:u64 = select(ids_start,ids_fixed_tip,ids_other)
   ids_d_head:u64 = const() {"value":280}
   ids__p_head:u64 = call(ids_s,ids_d_head,ids_head) {"function":"cp_put"}
   ids_suffix:u64 = const() {"value":6293595036912670551}

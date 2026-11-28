@@ -1,0 +1,7 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_private_history_cte_64
+fn f0(r:readbuf,s:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,s:mutbuf,w:mutbuf)
+  wide:usize = const() {"value":65536}
+  result:u32 = call(r,s,w,wide) {"function":"hct_read"}
+  ret(result)
+end

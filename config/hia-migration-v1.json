@@ -1707,6 +1707,17 @@
       ]
     },
     {
+      "id": "node/history-cte-acquisition-64",
+      "node_integration_complete": false,
+      "scope": "Separate private 64-row original SQLite recursive SELECT acquisition profile through the existing TaskKernel provider on 67 fixed generated in-memory rows. True typed column projection and closure only; no Node SQL service, packets, durable I/O or authority.",
+      "source": "hia/src/node/history_cte_acquire_64.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_history_cte_acquire_64.py",
+        "hia/tests/rust_history_cte_acquire_64_reference.rs"
+      ]
+    },
+    {
       "id": "node/history-inline-record",
       "node_integration_complete": false,
       "scope": "Private original fixed-column SQLite storage-class and width projection of immutable already-held synthetic values. No Node database, history traversal, custody or authority.",
@@ -4603,6 +4614,7 @@
         "node/history-held-page-fold",
         "node/history-two-batch-cutoff",
         "node/history-cte-acquisition",
+        "node/history-cte-acquisition-64",
         "state/integer-training-backward",
         "state/integer-training-batch-update",
         "model/cell-model-canonical",
