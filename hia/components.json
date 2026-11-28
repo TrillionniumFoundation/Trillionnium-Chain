@@ -10907,6 +10907,209 @@
         ]
       }
     ],
+    "src/data_availability/cell_tensor_reader_readback_four.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare",
+          "sb_copy_digest"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be",
+          "ca_equal"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_family_chars"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_manifest.hepta",
+        "functions": [
+          "crm_decode",
+          "crm_order",
+          "crm_nonzero_range",
+          "crm_hash"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_dependency_closure.hepta",
+        "functions": [
+          "td_validate",
+          "td_row",
+          "td_scan",
+          "td_indices",
+          "td_index",
+          "td_fold",
+          "td_fold_eq",
+          "td_path_exists",
+          "td_unique",
+          "td_path",
+          "td_reserved",
+          "td_directory_alias",
+          "td_manifest_seen",
+          "td_records",
+          "td_has_index",
+          "td_members",
+          "td_graph",
+          "td_visit",
+          "td_copy",
+          "td_count"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_model_release_root.hepta",
+        "functions": [
+          "mr_count",
+          "mr_roster"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_contract.hepta",
+        "functions": [
+          "tt_row",
+          "tt_names",
+          "tt_values",
+          "tt_name_ok",
+          "tt_shape"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_model_manifest.hepta",
+        "functions": [
+          "ma_root",
+          "ma_contract",
+          "ma_members",
+          "ma_file_bytes",
+          "ma_root_hash",
+          "ma_contract_hash",
+          "ma_tt_syntax",
+          "ma_tt_semantics"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_wcopy",
+          "cp_wout",
+          "cp_copy"
+        ]
+      },
+      {
+        "source": "src/oracle/serde_json.hepta",
+        "functions": [
+          "oj_ws",
+          "oj_peek",
+          "oj_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_scalar"
+        ]
+      },
+      {
+        "source": "src/oracle/values.hepta",
+        "functions": [
+          "or_wcompare"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json.hepta",
+        "functions": [
+          "hj_take",
+          "hj_follow",
+          "hj_name",
+          "hj_kind",
+          "hj_array",
+          "hj_uint"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_metadata.hepta",
+        "functions": [
+          "hj_metadata",
+          "hm_slot",
+          "hm_record",
+          "hm_for_key",
+          "hm_seen",
+          "hm_merge",
+          "hm_insert"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json_wide.hepta",
+        "functions": [
+          "hj_entry",
+          "hv_key",
+          "hv_field",
+          "hv_value",
+          "hv_dtype",
+          "hv_scroll",
+          "hv_width"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_reader_readback.hepta",
+        "functions": [
+          "sl_find",
+          "sl_dims"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_spans.hepta",
+        "functions": [
+          "hj_object",
+          "ht_slot",
+          "ht_record",
+          "ht_against",
+          "ht_order",
+          "ht_seen",
+          "ht_merge",
+          "ht_insert"
+        ]
+      }
+    ],
     "src/data_availability/cell_tensor_reader_readback_metadata.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

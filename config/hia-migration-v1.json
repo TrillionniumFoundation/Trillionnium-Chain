@@ -2251,6 +2251,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-four",
+      "node_integration_complete": false,
+      "scope": "Immutable 4-MiB total Safetensors readback, full original 16384 tensors/1024 metadata/1-MiB JSON, five fixed Direct read loans / Selfhost contiguous, native ordered container SHA across complete data. No live streaming I/O, storage, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_four.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_four.py",
+        "hia/tests/tensor_readback_four_derivation.py",
+        "hia/tests/rust_cell_tensor_reader_readback_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-metadata",
       "node_integration_complete": false,
       "scope": "Stock three-loan immutable Safetensors public-value readback with full original 1024-key metadata and 1-MiB JSON, actual selected layout and final native SHA over identical bytes. Private 2 MiB logical frame and 128-tensor profile; no live reader, storage, or authority.",
