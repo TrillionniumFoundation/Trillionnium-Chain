@@ -150,8 +150,8 @@ possible-value list and optional suggestion. The HIA scorer uses the
 normalization producing the same binary64 round-to-nearest-even divisions
 and additions in the same order. The best score must be strictly greater than
 0.7 after rounding; exact ties favor the later original roster entry.
-A single free-standing positional identifier or unrecognized, bare long option
-can emit the original unexpected-argument diagnostic. The token (including
+The first unrecognized positional identifier or bare long option can emit
+the original unexpected-argument diagnostic. The token (including
 an option's leading `--`) must fit 127 bytes; the identifier is
 `[A-Za-z0-9_][A-Za-z0-9_-]*`. The long-option diagnostic uses the same
 Jaro scorer over the locked command's ten long options in parser order,
@@ -162,8 +162,8 @@ accept the suggested option. For an unknown long option with an attached
 `=value`, the complete token must still fit 127 bytes and the attached value
 must be empty or printable ASCII. Only the name before the first `=` is
 scored and printed, as in the locked CLI. This does not admit attached values
-on boolean flags, help or the corrected-mode marker. The final diagnostic may follow a completed prefix of up to all nine original
-options. It shows the completed options in argv order and adds a distinct
+on boolean flags, help or the corrected-mode marker. The diagnostic may
+follow a completed prefix of up to all nine original options. It shows the completed options in argv order and adds a distinct
 suggested option last, without repeating an already listed option. The
 original positional diagnostic uses `[OPTIONS]` even with preceding options.
 Earlier errors and help retain precedence. A late unknown assignment still
@@ -175,9 +175,14 @@ its tag. Standalone and
 single-predecessor diagnostics retain the previous layout and full 127-byte
 echo bound. The renderer validates the packed roster and total assembled
 length before writing and uses the existing literal usage fragments. Neither
-the machine adapter nor the catalog changes. A nonfinal unknown, an original
-terminal `--` followed by a token, corrected-mode diagnostics, malformed
-assignment bytes, controls and invalid UTF-8 remain refused by this candidate.
+the machine adapter nor the catalog changes. The first admitted error takes
+precedence over later options, including `--help`, a duplicate, a missing or
+invalid value, a positional and `--`. The parser verifies only the exact
+remaining count, NUL boundaries, and total frame extent. It does not interpret
+the suffix, and none of its bytes is added to a diagnostic. The existing
+17-token process intake limit is unchanged. An original `--` preceding a token,
+corrected-mode diagnostics, and malformed or nonprintable bytes in the
+selected token remain refused by this candidate.
 The HIA renderer reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted

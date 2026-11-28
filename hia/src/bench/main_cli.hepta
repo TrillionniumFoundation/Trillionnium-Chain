@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v11
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v12
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -78,20 +78,25 @@ block name(i_name:readbuf,o_name:mutbuf,n_name:u64,p_name:u64,k_name:u64,e_name:
   branch known flag_or_arg(i_name,o_name,n_name,k_name,e_name,equal_at,opt) free_arg(i_name,o_name,n_name,p_name,k_name,e_name,equal_at)
 block free_arg(i_fa:readbuf,o_fa:mutbuf,n_fa:u64,p_fa:u64,k_fa:u64,e_fa:u64,eq_fa:u64)
   one_fa:u64 = const() {"value":1}
+  max_args_fa:u64 = const() {"value":17}
+  argc_at_fa:u64 = const() {"value":0}
+  initial_argc_fa:u64 = call(i_fa,argc_at_fa) {"function":"bench_read"}
   cap_fa:u64 = const() {"value":127}
   past_fa:u64 = int.add.wrap(e_fa,one_fa)
   span_fa:u64 = int.sub.wrap(e_fa,p_fa)
-  one_tok:bool = compare.eq(k_fa,one_fa)
-  exact_end:bool = compare.eq(past_fa,n_fa)
+  count_fa:bool = compare.le(initial_argc_fa,max_args_fa)
   has_token:bool = compare.ge(span_fa,one_fa)
   bounded_tok:bool = compare.le(span_fa,cap_fa)
   marked_fa:bool = call(o_fa) {"function":"bc_marked"}
   ordinary_fa:bool = bool.not(marked_fa)
-  tail_only:bool = bool.and(one_tok,exact_end)
-  valid_layout:bool = bool.and(tail_only,ordinary_fa)
+  valid_scope:bool = bool.and(count_fa,ordinary_fa)
   valid_span:bool = bool.and(has_token,bounded_tok)
-  finite:bool = bool.and(valid_layout,valid_span)
-  branch finite free_kind(i_fa,o_fa,p_fa,e_fa,eq_fa) fail()
+  finite:bool = bool.and(valid_scope,valid_span)
+  left_fa:u64 = int.sub.wrap(k_fa,one_fa)
+  branch finite free_tail(i_fa,o_fa,n_fa,p_fa,e_fa,eq_fa,past_fa,left_fa) fail()
+block free_tail(i_ft:readbuf,o_ft:mutbuf,n_ft:u64,p_ft:u64,e_ft:u64,eq_ft:u64,past_ft:u64,left_ft:u64)
+  framing_ft:bool = call(i_ft,n_ft,past_ft,left_ft) {"function":"bc_tail_frame"}
+  branch framing_ft free_kind(i_ft,o_ft,p_ft,e_ft,eq_ft) fail()
 block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   at_fk:usize = int.cast(p_fk) {"mode":"wrap"}
   lead_fk:u8 = buffer.load(i_fk,at_fk)
@@ -1173,6 +1178,28 @@ block ok()
   yes:bool = const() {"value":true}
   ret(yes)
 block fail()
+  no:bool = const() {"value":false}
+  ret(no)
+end
+
+fn bc_tail_frame(i:readbuf,n:u64,at:u64,count:u64) -> (bool) effects(read,trap) entry(entry)
+block entry(i:readbuf,n:u64,at:u64,count:u64)
+  jump tail_next(i,n,at,count)
+block tail_next(i_n:readbuf,n_n:u64,at_n:u64,count_n:u64)
+  zero_n:u64 = const() {"value":0}
+  finished_n:bool = compare.eq(count_n,zero_n)
+  branch finished_n tail_end(n_n,at_n) tail_token(i_n,n_n,at_n,count_n)
+block tail_token(i_t:readbuf,n_t:u64,at_t:u64,count_t:u64)
+  one_t:u64 = const() {"value":1}
+  end_t:u64 = call(i_t,at_t,n_t) {"function":"bc_end"}
+  terminated_t:bool = compare.lt(end_t,n_t)
+  next_t:u64 = int.add.wrap(end_t,one_t)
+  left_t:u64 = int.sub.wrap(count_t,one_t)
+  branch terminated_t tail_next(i_t,n_t,next_t,left_t) refuse()
+block tail_end(n_e:u64,at_e:u64)
+  exact_e:bool = compare.eq(n_e,at_e)
+  ret(exact_e)
+block refuse()
   no:bool = const() {"value":false}
   ret(no)
 end
