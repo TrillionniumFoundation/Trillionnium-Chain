@@ -2185,6 +2185,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback-metadata",
+      "node_integration_complete": false,
+      "scope": "Stock three-loan immutable Safetensors public-value readback with full original 1024-key metadata and 1-MiB JSON, actual selected layout and final native SHA over identical bytes. Private 2 MiB logical frame and 128-tensor profile; no live reader, storage, or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback_metadata.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback_metadata.py",
+        "hia/tests/tensor_readback_metadata_derivation.py",
+        "hia/tests/rust_cell_tensor_reader_readback_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-reader-readback-three",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable original Safetensors declaration, full-height 1-MiB header, layout and native final container SHA; stock Direct three separate capped loans / stock Selfhost private contiguous, logical frame at most 2 MiB and unchanged 128/64 roster. No live reader, storage, trust, or authority.",
