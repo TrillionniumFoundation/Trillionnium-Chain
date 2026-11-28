@@ -99,6 +99,7 @@ def sources():
         "trillionnium/crates/trnm-state-import/Cargo.toml",
         "trillionnium/crates/trnm-state-import/src/lib.rs",
         "hia/src/state_import/README.md",
+        "hia/src/state_import/CUTOVER_AGREEMENT_DIGEST.md",
         "trillionnium/crates/trnm-transport/src/lib.rs",
         "trillionnium/crates/trnm-transport/src/proof_admission.rs",
         "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs",

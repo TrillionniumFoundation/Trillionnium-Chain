@@ -1,0 +1,116 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_state_import_cutover_agreement_digest
+fn f0(raw:readbuf,output:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,output:mutbuf,work:mutbuf)
+  n:usize = buffer.len(raw)
+  exact_size:usize = const() {"value":184}
+  sized:bool = compare.eq(n,exact_size)
+  branch sized marker(raw,output,work) bad_frame()
+block marker(mi:readbuf,mo:mutbuf,mw:mutbuf)
+  start:u64 = const() {"value":0}
+  raw_marker:u64 = call(mi,start) {"function":"tr_read"}
+  expected:u64 = const() {"value":3544385890602271566}
+  typed:bool = compare.eq(raw_marker,expected)
+  branch typed capacity(mi,mo,mw) bad_frame()
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf)
+  output_size:usize = buffer.len(co)
+  work_size:usize = buffer.len(cw)
+  output_min:usize = const() {"value":32}
+  work_min:usize = const() {"value":1456}
+  out_good:bool = compare.ge(output_size,output_min)
+  work_good:bool = compare.ge(work_size,work_min)
+  fits:bool = bool.and(out_good,work_good)
+  branch fits capture(ci,co,cw) too_small()
+block capture(ai:readbuf,ao:mutbuf,aw:mutbuf)
+  started:u64 = call(aw) {"function":"tr_sha_init"}
+  h0:u64 = const() {"value":1208}
+  v0:u64 = const() {"value":3026418949592973312}
+  put0:u64 = call(aw,h0,v0) {"function":"tr_put"}
+  h8:u64 = const() {"value":1216}
+  v8:u64 = const() {"value":7451607104633074292}
+  put8:u64 = call(aw,h8,v8) {"function":"tr_put"}
+  h16:u64 = const() {"value":1224}
+  v16:u64 = const() {"value":7146771083473215858}
+  put16:u64 = call(aw,h16,v16) {"function":"tr_put"}
+  h24:u64 = const() {"value":1232}
+  v24:u64 = const() {"value":7002378775735268469}
+  put24:u64 = call(aw,h24,v24) {"function":"tr_put"}
+  h32:u64 = const() {"value":1240}
+  v32:u64 = const() {"value":8389754676364800615}
+  put32:u64 = call(aw,h32,v32) {"function":"tr_put"}
+  h40:u64 = const() {"value":1248}
+  v40:u64 = const() {"value":3342922646150279725}
+  put40:u64 = call(aw,h40,v40) {"function":"tr_put"}
+  h48:usize = const() {"value":1256}
+  v48:u8 = const() {"value":118}
+  _ = buffer.store(aw,h48,v48)
+  h49:usize = const() {"value":1257}
+  v49:u8 = const() {"value":48}
+  _ = buffer.store(aw,h49,v49)
+  frame_at0:u64 = const() {"value":1258}
+  frame_len0:u64 = const() {"value":2305843009213693952}
+  frame_put0:u64 = call(aw,frame_at0,frame_len0) {"function":"tr_put"}
+  value_at0:u64 = const() {"value":1266}
+  input_at0:u64 = const() {"value":8}
+  width0:u64 = const() {"value":32}
+  value_put0:u64 = call(ai,input_at0,aw,value_at0,width0) {"function":"cp_copy"}
+  frame_at1:u64 = const() {"value":1298}
+  frame_len1:u64 = const() {"value":2305843009213693952}
+  frame_put1:u64 = call(aw,frame_at1,frame_len1) {"function":"tr_put"}
+  value_at1:u64 = const() {"value":1306}
+  input_at1:u64 = const() {"value":40}
+  width1:u64 = const() {"value":32}
+  value_put1:u64 = call(ai,input_at1,aw,value_at1,width1) {"function":"cp_copy"}
+  frame_at2:u64 = const() {"value":1338}
+  frame_len2:u64 = const() {"value":2305843009213693952}
+  frame_put2:u64 = call(aw,frame_at2,frame_len2) {"function":"tr_put"}
+  value_at2:u64 = const() {"value":1346}
+  input_at2:u64 = const() {"value":72}
+  width2:u64 = const() {"value":32}
+  value_put2:u64 = call(ai,input_at2,aw,value_at2,width2) {"function":"cp_copy"}
+  frame_at3:u64 = const() {"value":1378}
+  frame_len3:u64 = const() {"value":576460752303423488}
+  frame_put3:u64 = call(aw,frame_at3,frame_len3) {"function":"tr_put"}
+  value_at3:u64 = const() {"value":1386}
+  input_at3:u64 = const() {"value":104}
+  width3:u64 = const() {"value":8}
+  value_put3:u64 = call(ai,input_at3,aw,value_at3,width3) {"function":"cp_copy"}
+  frame_at4:u64 = const() {"value":1394}
+  frame_len4:u64 = const() {"value":576460752303423488}
+  frame_put4:u64 = call(aw,frame_at4,frame_len4) {"function":"tr_put"}
+  value_at4:u64 = const() {"value":1402}
+  input_at4:u64 = const() {"value":112}
+  width4:u64 = const() {"value":8}
+  value_put4:u64 = call(ai,input_at4,aw,value_at4,width4) {"function":"cp_copy"}
+  frame_at5:u64 = const() {"value":1410}
+  frame_len5:u64 = const() {"value":2305843009213693952}
+  frame_put5:u64 = call(aw,frame_at5,frame_len5) {"function":"tr_put"}
+  value_at5:u64 = const() {"value":1418}
+  input_at5:u64 = const() {"value":120}
+  width5:u64 = const() {"value":32}
+  value_put5:u64 = call(ai,input_at5,aw,value_at5,width5) {"function":"cp_copy"}
+  feed_at:u64 = const() {"value":1208}
+  feed_width:u64 = const() {"value":242}
+  fed:u64 = call(aw,feed_at,feed_width) {"function":"tr_sha_update_work"}
+  finalized:u64 = call(aw) {"function":"tr_sha_final"}
+  stage0:u64 = bit.or(started,fed)
+  stages:u64 = bit.or(stage0,finalized)
+  zero:u64 = const() {"value":0}
+  ready:bool = compare.eq(stages,zero)
+  branch ready publish(ao,aw) internal()
+block publish(po:mutbuf,pw:mutbuf)
+  digest:u64 = const() {"value":1168}
+  destination:u64 = const() {"value":0}
+  digest_width:u64 = const() {"value":32}
+  copied:u64 = call(pw,digest,po,destination,digest_width) {"function":"cp_wout"}
+  okay:u32 = const() {"value":0}
+  ret(okay)
+block bad_frame()
+  invalid:u32 = const() {"value":100}
+  ret(invalid)
+block too_small()
+  capacity_error:u32 = const() {"value":102}
+  ret(capacity_error)
+block internal()
+  hash_error:u32 = const() {"value":103}
+  ret(hash_error)
+end

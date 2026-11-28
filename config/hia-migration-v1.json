@@ -654,6 +654,17 @@
       ]
     },
     {
+      "id": "state_import/cutover_agreement_digest",
+      "node_integration_complete": false,
+      "scope": "Exact immutable framed digest of the original CutoverAgreementV0 record value; no verification, issuance, signatures, state transition, adoption, or authority",
+      "source": "hia/src/state_import/cutover_agreement_digest.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_import_cutover_agreement_digest.py",
+        "hia/tests/rust_state_import_cutover_agreement_digest_reference.rs"
+      ]
+    },
+    {
       "id": "state_import/handoff_commitments",
       "node_integration_complete": false,
       "scope": "M13 exact original finalized-source binding and projection digest framing, with a read-only comparison to an already verified export projection. No real authorization, finality or genesis installation.",
@@ -3196,7 +3207,8 @@
         "state_import/incremental_delta_commitment",
         "state_import/migration_plan",
         "state_import/checkpoint_context",
-        "state_import/handoff_commitments"
+        "state_import/handoff_commitments",
+        "state_import/cutover_agreement_digest"
       ],
       "legacy_path": "trillionnium/crates/trnm-state-import",
       "module": "M13",
