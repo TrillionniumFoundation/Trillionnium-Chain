@@ -16701,6 +16701,14 @@
         "source": "src/release_bundle/bundle_binding.hepta"
       }
     ],
+    "src/research_protocol/hepta_artifact_check.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read"
+        ]
+      }
+    ],
     "src/research_protocol/hepta_artifact_value.hepta": [
       {
         "source": "src/research_protocol/canonical.hepta",

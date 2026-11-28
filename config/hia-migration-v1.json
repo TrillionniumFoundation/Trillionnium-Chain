@@ -2360,6 +2360,17 @@
       ]
     },
     {
+      "id": "research-protocol/hepta-artifact-check",
+      "node_integration_complete": false,
+      "scope": "Private pure original Hepta handoff typed field status and inclusive supplied-time window. No clock effects, signatures, admission decision, authority, or production.",
+      "source": "hia/src/research_protocol/hepta_artifact_check.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_research_hepta_artifact_check.py",
+        "hia/tests/rust_research_hepta_artifact_check_reference.rs"
+      ]
+    },
+    {
       "id": "research-protocol/hepta-artifact-value",
       "node_integration_complete": false,
       "scope": "Private typed original HeptaArtifactAdmissionV1 canonical CBOR and domain-bound digest only, using generated inert values. No validation, signing, owner authority, clock, network or production.",

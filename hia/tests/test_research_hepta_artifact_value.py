@@ -19,7 +19,7 @@ OUT,WORK,FRAME=520,1792,456
 DOMAIN=b"trnm-hepta-artifact-admission-v1"
 
 
-def locked_original(tmp):
+def locked_original(tmp, adapter=ADAPTER):
     git=["git","-C",ROOT]
     if execute([*git,"rev-parse","HEAD:trillionnium"]).stdout.strip()!=b"563bb7e471b3db278d50feceb3cbac7de4ab281a":
         raise ValueError("Wrong immutable original workspace")
@@ -49,7 +49,7 @@ def locked_original(tmp):
     if not Path(rlib).is_relative_to(target):
         raise ValueError("Wrong Cargo artifact path")
     program=tmp/"hepta-artifact-value-original"
-    execute([rustc,"--edition=2021","-Dwarnings",ADAPTER,"-L",f"dependency={target/'debug/deps'}",
+    execute([rustc,"--edition=2021","-Dwarnings",adapter,"-L",f"dependency={target/'debug/deps'}",
              "--extern",f"trnm_research_protocol={rlib}","-o",program],env=env,timeout=60)
     return execute([program]).stdout
 
