@@ -2008,6 +2008,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-header-json-wide",
+      "node_integration_complete": false,
+      "scope": "Immutable Safetensors header visitor on the exact original 1-MiB raw profile; bounded per-field decoding, counted metadata values and same-input dtype emission, still 128/64 entries and no record or loader authority.",
+      "source": "hia/src/data_availability/cell_tensor_header_json_wide.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_header_json_wide.py",
+        "hia/tests/tensor_header_wide_derivation.py",
+        "hia/tests/rust_cell_tensor_header_json_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-model-manifest",
       "node_integration_complete": false,
       "scope": "Pure original TMA1 one-call canonical TMR1/TMT1 and declared root ID, positional member size plus 10, and Base/Adapter coverage. Both emitters through the 1 MiB shared loan cap; larger valid original envelope observed in Rust only. No tensor/weight/payload IO, owner pin, trust, loader, authentication, network, adoption or production routing.",

@@ -10338,6 +10338,63 @@
         ]
       }
     ],
+    "src/data_availability/cell_tensor_header_json_wide.hepta": [
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_get",
+          "cp_put",
+          "cp_wcopy",
+          "cp_wout"
+        ]
+      },
+      {
+        "source": "src/oracle/serde_json.hepta",
+        "functions": [
+          "oj_ws",
+          "oj_peek",
+          "oj_utf8"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_hex",
+          "jv_hex4",
+          "jv_scalar"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/oracle/values.hepta",
+        "functions": [
+          "or_wcompare"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json.hepta",
+        "functions": [
+          "hj_take",
+          "hj_follow",
+          "hj_meta_unique",
+          "hj_keep",
+          "hj_name",
+          "hj_insert",
+          "hj_tensor",
+          "hj_kind",
+          "hj_array",
+          "hj_uint",
+          "hj_row",
+          "hj_measure",
+          "hj_emit_string"
+        ]
+      }
+    ],
     "src/data_availability/cell_tensor_model_manifest.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
