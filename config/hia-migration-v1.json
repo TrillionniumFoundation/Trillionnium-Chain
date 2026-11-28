@@ -2061,6 +2061,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-reader-readback",
+      "node_integration_complete": false,
+      "scope": "One bounded immutable loan binds actual TMT/TMR and a supplied synthetic content digest to real Safetensors framing/JSON, canonical roster and interval coverage, final container SHA equality and original public readback fields; no live reader or authority.",
+      "source": "hia/src/data_availability/cell_tensor_reader_readback.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_reader_readback.py",
+        "hia/tests/rust_cell_tensor_reader_readback_reference.rs",
+        "hia/tests/tensor_readback_framing_derivation.py"
+      ]
+    },
+    {
       "id": "data-availability/cell-tensor-view-bytes",
       "node_integration_complete": false,
       "scope": "Pure bounded immutable dense bytes: exact CellResidentTensorV1 segment projection, checked copy and F32 little-endian bits. Receives raw backing plus bounded view coordinates only; no admission, loader, store, keys, network, execution or production.",
