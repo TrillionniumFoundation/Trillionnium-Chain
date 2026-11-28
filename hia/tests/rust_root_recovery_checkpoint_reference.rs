@@ -101,4 +101,10 @@ fn main() {
     bad[74]=3;
     bad.push(0);
     row(&mut w,[1;64],0,&bad); // original roster error before trailing and expiry
+    // Ordinary unsigned Unix second values around adjacent byte transitions.
+    let r = roster(0);
+    for (expires, now) in [(255,254), (256,255), (256,256), (257,256), (65536,65535)] {
+        let policy = RootPolicyV3{roster:r.clone(),expires_at_unix:expires}.encode().unwrap();
+        row(&mut w,[1;64],now,&policy);
+    }
 }

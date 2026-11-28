@@ -67,7 +67,7 @@ class RootRecoveryCheckpointTests(unittest.TestCase):
             size = 0 if status else 128
             rows.append((ref[8:n+8],status,ref[n+8:n+8+size]))
             ref = ref[n+8+size:]
-        self.assertEqual([s for _,s,_ in rows],[0,0,0,2,2,2,1,3,1,1,4,5,6,6,8,4,2,5])
+        self.assertEqual([s for _,s,_ in rows],[0,0,0,2,2,2,1,3,1,1,4,5,6,6,8,4,2,5,0,0,2,0,0])
         self.assertEqual(rows[0][2][:64],rows[1][2][:64])
         self.assertNotEqual(rows[0][2][64:],rows[1][2][64:])
         self.assertNotEqual(rows[0][2][:64],rows[2][2][:64])

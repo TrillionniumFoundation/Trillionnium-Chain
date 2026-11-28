@@ -55,8 +55,8 @@ block trailing(tr:readbuf,to:mutbuf,tw:mutbuf,tn:u64,te:u64)
 block bootstrap(br:readbuf,bo:mutbuf,bw:mutbuf)
   exp_at:u64 = const() {"value":100}
   clk_at:u64 = const() {"value":64}
-  expires:u64 = call(br,exp_at) {"function":"s512_read64"}
-  now:u64 = call(br,clk_at) {"function":"s512_read64"}
+  expires:u64 = call(br,exp_at) {"function":"root_be64"}
+  now:u64 = call(br,clk_at) {"function":"root_be64"}
   fresh:bool = compare.gt(expires,now)
   scope:bool = call(br) {"function":"root_scope"}
   accepted_bootstrap:bool = bool.and(scope,fresh)
@@ -107,6 +107,28 @@ block entry(r:readbuf,at:u64)
   jump loop(r,at,zero,zero)
 block loop(lr:readbuf,la:u64,li:u64,lv:u64)
   n:u64 = const() {"value":4}
+  more:bool = compare.lt(li,n)
+  branch more next(lr,la,li,lv) done(lv)
+block next(nr:readbuf,na:u64,ni:u64,nv:u64)
+  raw:u64 = int.add.wrap(na,ni)
+  addr:usize = int.cast(raw) {"mode":"wrap"}
+  b:u8 = buffer.load(nr,addr)
+  bits:u64 = int.cast(b) {"mode":"wrap"}
+  shift:u64 = const() {"value":8}
+  up:u64 = int.shl.checked(nv,shift)
+  combined:u64 = bit.or(up,bits)
+  one:u64 = const() {"value":1}
+  after:u64 = int.add.wrap(ni,one)
+  jump loop(nr,na,after,combined)
+block done(number:u64)
+  ret(number)
+end
+fn root_be64(r:readbuf,at:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(r:readbuf,at:u64)
+  zero:u64 = const() {"value":0}
+  jump loop(r,at,zero,zero)
+block loop(lr:readbuf,la:u64,li:u64,lv:u64)
+  n:u64 = const() {"value":8}
   more:bool = compare.lt(li,n)
   branch more next(lr,la,li,lv) done(lv)
 block next(nr:readbuf,na:u64,ni:u64,nv:u64)
