@@ -16660,6 +16660,135 @@
         "source": "src/crypto/sha512_stream.hepta"
       }
     ],
+    "src/release_bundle/unsigned_candidate_256.hepta": [
+      {
+        "source": "src/release_bundle/unsigned_candidate_128.hepta",
+        "functions": [
+          "uc_match_links",
+          "uc_hash_bundle",
+          "uc128_derive",
+          "uc128_fold",
+          "uc128_merge",
+          "uc128_ord",
+          "uc128_row",
+          "uc128_member"
+        ]
+      },
+      {
+        "source": "src/release_bundle/unsigned_candidate.hepta",
+        "functions": [
+          "uc_wire_rows",
+          "uc_part_from_work"
+        ]
+      },
+      {
+        "source": "src/release_bundle/ordered_release_digest_256.hepta",
+        "functions": [
+          "m_get",
+          "m_put"
+        ]
+      },
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_copy",
+          "rac_nonzero_digest",
+          "rac_printable",
+          "rac_read_le",
+          "rac_write_be"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_set_digest.hepta",
+        "functions": [
+          "aset_cmp_size",
+          "aset_digest_member",
+          "aset_member_valid",
+          "aset_ord",
+          "aset_read_size",
+          "aset_row_at",
+          "aset_well_formed"
+        ]
+      },
+      {
+        "source": "src/release_bundle/builder_provenance.hepta",
+        "functions": [
+          "prov_cmp_name",
+          "prov_cmp_source",
+          "prov_digest_member",
+          "prov_fixed_valid_at",
+          "prov_member_valid",
+          "prov_ord",
+          "prov_prefix_at",
+          "prov_row_at",
+          "prov_same_key",
+          "prov_well_formed"
+        ]
+      },
+      {
+        "source": "src/release_bundle/bundle_binding.hepta",
+        "functions": [
+          "rb_le16",
+          "rb_matches_computed",
+          "rb_part",
+          "rb_text"
+        ]
+      },
+      {
+        "source": "src/release_bundle/exact_source.hepta",
+        "functions": [
+          "es_copy_field",
+          "es_hash_at",
+          "es_nonzero",
+          "es_validate_at"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_admission.hepta",
+        "functions": [
+          "sba_key_equal",
+          "sba_key_wire",
+          "sba_valid_package"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_append_digest",
+          "sb_compare",
+          "sb_compare_field",
+          "sb_digest_member",
+          "sb_hash_transcript",
+          "sb_ord",
+          "sb_row_at",
+          "sb_well_formed",
+          "sb_width"
+        ]
+      },
+      {
+        "source": "src/release_bundle/unsigned_prefix.hepta",
+        "functions": [
+          "up_header",
+          "up_wire"
+        ]
+      }
+    ],
     "src/release_bundle/unsigned_candidate_128.hepta": [
       {
         "source": "src/release_bundle/unsigned_candidate.hepta",

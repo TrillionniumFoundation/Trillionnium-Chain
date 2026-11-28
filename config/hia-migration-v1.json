@@ -2325,6 +2325,17 @@
       ]
     },
     {
+      "id": "release-bundle/unsigned-candidate-256",
+      "node_integration_complete": false,
+      "scope": "Private 256-slot unsigned original release candidate and bounded sorted-prefix membership/binary required-key lookup with exact original pre-signature outcomes. No signing, authority or production; previous 64 and 128 ABIs unchanged.",
+      "source": "hia/src/release_bundle/unsigned_candidate_256.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_unsigned_candidate_256.py",
+        "hia/tests/rust_release_unsigned_candidate_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/unsigned-candidate-128",
       "node_integration_complete": false,
       "scope": "Separate private original unsigned V0 deterministic candidate, 128 slots per roster, exact precedence and offset-bound sorted digest folds. No signature/authority or production path; original 64-slot native ABI unchanged.",
