@@ -1668,6 +1668,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-chunk-delta-value",
+      "node_integration_complete": false,
+      "scope": "Original immutable TCX1 chunk delta byte identity after full target TCM1 and encoded vector validation; no base comparison, canonical source derivation or store/download",
+      "source": "hia/src/data_availability/cell_chunk_delta_value.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_chunk_delta_value.py",
+        "hia/tests/rust_da_cell_chunk_delta_value_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-retention-contract-value",
       "node_integration_complete": false,
       "scope": "Original immutable Cell retention contract hash using one complete native TCM1 decode and derived manifest ID, exact declared terms and optional successor; no store, funding, authority, custody or effects",
@@ -3177,6 +3188,7 @@
         "data-availability/cell-manifest-chunk",
         "data-availability/cell-manifest-binding",
         "data-availability/cell-periodic-snapshot-policy",
+        "data-availability/cell-chunk-delta-value",
         "data-availability/cell-retention-contract-value",
         "data-availability/cell-release-manifest",
         "data-availability/cell-dependency-closure",

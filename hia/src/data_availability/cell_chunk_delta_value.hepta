@@ -1,0 +1,136 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_chunk_delta_value_v1
+fn f0(raw:readbuf,out:mutbuf,work:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(raw:readbuf,out:mutbuf,work:mutbuf)
+  n0:usize = buffer.len(raw)
+  n:u64 = int.cast(n0) {"mode":"wrap"}
+  min:u64 = const() {"value":44}
+  max:u64 = const() {"value":1114156}
+  enough:bool = compare.ge(n,min)
+  within:bool = compare.le(n,max)
+  bounded:bool = bool.and(enough,within)
+  branch bounded tag(raw,out,work,n,min) bad_length()
+block tag(ti:readbuf,to:mutbuf,tw:mutbuf,tn:u64,tmin:u64)
+  start:u64 = const() {"value":0}
+  four:u64 = const() {"value":4}
+  expect:u64 = const() {"value":827867988}
+  seen:u64 = call(ti,start,four) {"function":"rac_read_le"}
+  valid:bool = compare.eq(seen,expect)
+  branch valid base(ti,to,tw,tn,tmin) bad_tag()
+block base(bi:readbuf,bo:mutbuf,bw:mutbuf,bn:u64,bmin:u64)
+  p0:u64 = const() {"value":4}
+  p1:u64 = const() {"value":12}
+  p2:u64 = const() {"value":20}
+  p3:u64 = const() {"value":28}
+  a:u64 = call(bi,p0) {"function":"tr_read"}
+  b:u64 = call(bi,p1) {"function":"tr_read"}
+  c:u64 = call(bi,p2) {"function":"tr_read"}
+  d:u64 = call(bi,p3) {"function":"tr_read"}
+  ab:u64 = bit.or(a,b)
+  cd:u64 = bit.or(c,d)
+  abcd:u64 = bit.or(ab,cd)
+  z:u64 = const() {"value":0}
+  nonzero:bool = compare.ne(abcd,z)
+  branch nonzero target(bi,bo,bw,bn,bmin) bad_base()
+block target(mi:readbuf,mo:mutbuf,mw:mutbuf,mn:u64,mmin:u64)
+  at:u64 = const() {"value":36}
+  width:u64 = const() {"value":4}
+  mstart:u64 = const() {"value":40}
+  cap:u64 = const() {"value":1048576}
+  left:u64 = int.sub.wrap(mn,mmin)
+  ml:u64 = call(mi,at,width) {"function":"ca_read_be"}
+  in_cap:bool = compare.le(ml,cap)
+  fits:bool = compare.le(ml,left)
+  okay:bool = bool.and(in_cap,fits)
+  branch okay decode(mi,mo,mw,mn,mstart,ml,width) bad_target()
+block decode(di:readbuf,do_:mutbuf,dw:mutbuf,dn:u64,ds:u64,dl:u64,dword:u64)
+  result:u32,_first:u64,rows:u64 = call(di,ds,dl) {"function":"cm_decode"}
+  zero:u32 = const() {"value":0}
+  good:bool = compare.eq(result,zero)
+  branch good geometry(di,do_,dw,dn,ds,dl,dword,rows) rejected(result)
+block geometry(gi:readbuf,go:mutbuf,gw:mutbuf,gn:u64,gs:u64,gl:u64,gword:u64,grows:u64)
+  count_at:u64 = int.add.wrap(gs,gl)
+  count:u64 = call(gi,count_at,gword) {"function":"ca_read_be"}
+  vectors:u64 = int.add.wrap(count_at,gword)
+  remain:u64 = int.sub.wrap(gn,vectors)
+  vsize:u64 = int.mul.wrap(grows,gword)
+  equal:bool = compare.eq(count,grows)
+  full:bool = compare.eq(remain,vsize)
+  valid_geo:bool = bool.and(equal,full)
+  branch valid_geo scan(gi,go,gw,gn,vectors,gword) bad_geometry()
+block scan(si:readbuf,so:mutbuf,sw:mutbuf,sn:u64,sp:u64,sword:u64)
+  has_next:bool = compare.lt(sp,sn)
+  branch has_next row(si,so,sw,sn,sp,sword) capacity(si,so,sw,sn)
+block row(ri:readbuf,ro:mutbuf,rw:mutbuf,rn:u64,rp:u64,rword:u64)
+  index:u64 = call(ri,rp,rword) {"function":"ca_read_be"}
+  sentinel:u64 = const() {"value":4294967295}
+  maxidx:u64 = const() {"value":16384}
+  is_new:bool = compare.eq(index,sentinel)
+  in_scope:bool = compare.lt(index,maxidx)
+  good_row:bool = bool.or(is_new,in_scope)
+  after:u64 = int.add.wrap(rp,rword)
+  branch good_row scan(ri,ro,rw,rn,after,rword) bad_index()
+block capacity(ci:readbuf,co:mutbuf,cw:mutbuf,cn:u64)
+  cap_out:usize = const() {"value":32}
+  cap_work:usize = const() {"value":1240}
+  o:usize = buffer.len(co)
+  w:usize = buffer.len(cw)
+  oo:bool = compare.ge(o,cap_out)
+  ww:bool = compare.ge(w,cap_work)
+  okay_:bool = bool.and(oo,ww)
+  branch okay_ hash(ci,co,cw,cn) short()
+block hash(hi:readbuf,ho:mutbuf,hw:mutbuf,hn:u64)
+  init:u64 = call(hw) {"function":"tr_sha_init"}
+  h0:u64 = const() {"value":1208}
+  h1:u64 = const() {"value":1216}
+  h2:u64 = const() {"value":1224}
+  h3:u64 = const() {"value":1232}
+  d0:u64 = const() {"value":7810758179799593588}
+  d1:u64 = const() {"value":3272831004756356460}
+  d2:u64 = const() {"value":3564087151210292580}
+  dz:u64 = const() {"value":0}
+  _p0:u64 = call(hw,h0,d0) {"function":"tr_put"}
+  _p1:u64 = call(hw,h1,d1) {"function":"tr_put"}
+  _p2:u64 = call(hw,h2,d2) {"function":"tr_put"}
+  _p3:u64 = call(hw,h3,dz) {"function":"tr_put"}
+  domain_len:u64 = const() {"value":25}
+  pref:u64 = call(hw,h0,domain_len) {"function":"tr_sha_update_work"}
+  body:u64 = call(hi,dz,hn,hw) {"function":"tr_sha_update"}
+  end_hash:u64 = call(hw) {"function":"tr_sha_final"}
+  left_hash:u64 = bit.or(init,pref)
+  right_hash:u64 = bit.or(body,end_hash)
+  all:u64 = bit.or(left_hash,right_hash)
+  hash_ok:bool = compare.eq(all,dz)
+  branch hash_ok publish(ho,hw,dz) internal()
+block publish(po:mutbuf,pw:mutbuf,pz:u64)
+  from:u64 = const() {"value":1168}
+  bytes:u64 = const() {"value":32}
+  _copy:u64 = call(pw,from,po,pz,bytes) {"function":"cp_wout"}
+  pass:u32 = const() {"value":0}
+  ret(pass)
+block bad_length()
+  length:u32 = const() {"value":20}
+  ret(length)
+block bad_tag()
+  tag_:u32 = const() {"value":21}
+  ret(tag_)
+block bad_base()
+  base_:u32 = const() {"value":22}
+  ret(base_)
+block bad_target()
+  target_:u32 = const() {"value":23}
+  ret(target_)
+block bad_geometry()
+  geometry_:u32 = const() {"value":24}
+  ret(geometry_)
+block bad_index()
+  index_:u32 = const() {"value":25}
+  ret(index_)
+block short()
+  capacity_:u32 = const() {"value":102}
+  ret(capacity_)
+block internal()
+  hash_:u32 = const() {"value":103}
+  ret(hash_)
+block rejected(code:u32)
+  ret(code)
+end

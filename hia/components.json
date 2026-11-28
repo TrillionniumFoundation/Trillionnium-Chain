@@ -8911,6 +8911,58 @@
         "source": "src/control_plane/core.hepta"
       }
     ],
+    "src/data_availability/cell_chunk_delta_value.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_read",
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_decode",
+          "cm_family_chars",
+          "cm_row_sizes"
+        ]
+      },
+      {
+        "source": "src/control_plane/core.hepta",
+        "functions": [
+          "cp_wout"
+        ]
+      }
+    ],
     "src/data_availability/cell_retention_contract_value.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
