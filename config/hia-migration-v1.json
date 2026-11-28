@@ -1962,6 +1962,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-tensor-view-bytes",
+      "node_integration_complete": false,
+      "scope": "Pure bounded immutable dense bytes: exact CellResidentTensorV1 segment projection, checked copy and F32 little-endian bits. Receives raw backing plus bounded view coordinates only; no admission, loader, store, keys, network, execution or production.",
+      "source": "hia/src/data_availability/cell_tensor_view_bytes.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_tensor_view_bytes.py",
+        "hia/tests/rust_cell_tensor_view_bytes_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-version-content-lineage",
       "node_integration_complete": false,
       "scope": "Bounded canonical TCV3 declared lineage decode and exact content commitment; same-loan real TCV2 and TMR IDs before complete canonical root/alias/parent/reachability checks. Shared <=1 MiB and original 16-version bound. No actual content, owner pin, store, lineage authority, loader, network or production.",

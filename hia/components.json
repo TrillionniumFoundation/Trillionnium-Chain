@@ -9867,6 +9867,26 @@
         ]
       }
     ],
+    "src/data_availability/cell_tensor_view_bytes.hepta": [
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_snapshot_metadata.hepta",
+        "functions": [
+          "cs_copy"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_dependency_closure.hepta",
+        "functions": [
+          "td_count"
+        ]
+      }
+    ],
     "src/data_availability/cell_tensor_contract.hepta": [
       {
         "functions": [
