@@ -4,18 +4,23 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
-import resource
 import secrets
 import shutil
+import signal
 import subprocess
 import sys
 import time
 
 ATTEMPT_FILE = "EVALUATION_ATTEMPT.json"
-ATTEMPT_SCHEMA = "trnm-evaluation-child-attempt-v1"
+ATTEMPT_SCHEMA_V1 = "trnm-evaluation-child-attempt-v1"
+ATTEMPT_SCHEMA = "trnm-evaluation-child-attempt-v2"
 INTENT_FILE = "EVALUATION_STARTED.json"
-INTENT_SCHEMA = "trnm-evaluation-child-intent-v1"
-CPU_SCOPE = "getrusage RUSAGE_CHILDREN delta; concurrent children are not isolated"
+INTENT_SCHEMA_V1 = "trnm-evaluation-child-intent-v1"
+INTENT_SCHEMA = "trnm-evaluation-child-intent-v2"
+CPU_SCOPE_V1 = "getrusage RUSAGE_CHILDREN delta; concurrent children are not isolated"
+CPU_SCOPE = "wait4 owned PID; child plus descendants it reaped; excludes detached or unreaped descendants"
+COST_SCHEMAS_V3 = {f"trnm-isolated-{kind}-evaluation-cost-v3" for kind in
+                   ("circuit", "plain-paired", "historical")}
 COST_SCHEMAS_V2 = {f"trnm-isolated-{kind}-evaluation-cost-v2" for kind in
                    ("circuit", "plain-paired", "historical")}
 COST_SCHEMAS_V1 = {schema.removesuffix("v2") + "v1" for schema in COST_SCHEMAS_V2}
@@ -143,12 +148,20 @@ def prepare(job, materials, source, pins, *, intake=None, request_path=None, fro
     record(job / "ADMISSION.json", terms)
 
 
-def measure(job, command, env):
+def valid_timeout(value):
+    return value is None or (type(value) in (int, float) and 0 < value <= 86400)
+
+
+def measure(job, command, env, *, timeout_seconds=None):
     """Retain measured child attempts, including failures; never infer full cost.
 
     A killed recorder may leave no receipt. Absence remains unknown, not zero.
     Receipt persistence and earlier/later pipeline stages are outside this clock.
+    Optional wall timeout is at most one day; None retains the caller's existing
+    supervision policy. It is not a CPU limit or a complete process-tree meter.
     """
+    require(callable(getattr(os, "wait4", None)), "owned child CPU accounting requires wait4")
+    require(valid_timeout(timeout_seconds), "invalid evaluation wall timeout")
     require(not os.path.lexists(job / ATTEMPT_FILE), "evaluation attempt already recorded")
     require(not any(os.path.lexists(job / name) for name in ("evaluation.stdout", "evaluation.stderr")),
             "evaluation logs already exist")
@@ -156,28 +169,66 @@ def measure(job, command, env):
     # The exclusive launch gate and output reservations are outside the terminal
     # recorder. A losing/colliding caller must not write another owner's outcome.
     intent = record(job / INTENT_FILE, dict(schema=INTENT_SCHEMA, request_sha256=request,
-        command_sha256=digest(command), attempt_nonce=secrets.token_hex(16), execution_authority=False))
+        command_sha256=digest(command), attempt_nonce=secrets.token_hex(16),
+        wall_timeout_seconds=timeout_seconds, execution_authority=False))
     with (job / "evaluation.stdout").open("x+b") as stdout, (job / "evaluation.stderr").open("x+b") as stderr:
-        return _measure_owned(job, command, env, request, intent, stdout, stderr)
+        return _measure_owned(job, command, env, request, intent, stdout, stderr, timeout_seconds)
 
 
-def _measure_owned(job, command, env, request, intent, stdout, stderr):
-    cpu0, start = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic_ns()
+def _wait_owned(child, deadline=None):
+    """Only this owner reaps this PID; Popen.wait/poll must not run in parallel."""
+    while True:
+        pid, status, usage = os.wait4(child.pid, 0 if deadline is None else os.WNOHANG)
+        if pid:
+            require(pid == child.pid, "wait4 returned a different child")
+            # Avoid a second waitpid in Popen cleanup. No process-global CPU
+            # delta can attribute other evaluation jobs to this receipt.
+            child.returncode = os.waitstatus_to_exitcode(status)
+            return usage
+        remaining = deadline - time.monotonic_ns()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(child.args, 0)
+        time.sleep(min(remaining / 1_000_000_000, 0.01))
+
+
+def _measure_owned(job, command, env, request, intent, stdout, stderr, timeout_seconds):
+    start = time.monotonic_ns()
+    deadline = None if timeout_seconds is None else start + int(timeout_seconds * 1_000_000_000)
+    child, usage = None, None
     status, returncode, error_type, failure = "unknown", None, None, None
     try:
-        result = subprocess.run(command, check=False, cwd=job, env=env, stdout=stdout, stderr=stderr)
-        returncode = result.returncode
+        child = subprocess.Popen(command, cwd=job, env=env, stdout=stdout, stderr=stderr,
+                                 start_new_session=True)
+        try:
+            usage = _wait_owned(child, deadline)
+        except subprocess.TimeoutExpired:
+            raise subprocess.TimeoutExpired(command, timeout_seconds) from None
+        returncode = child.returncode
         status = "succeeded" if returncode == 0 else "failed"
+        if deadline is not None and time.monotonic_ns() > deadline:
+            raise subprocess.TimeoutExpired(command, timeout_seconds)
         if returncode:
             raise subprocess.CalledProcessError(returncode, command)
     except BaseException as error:
         error_type = type(error).__name__
         failure = error
+        if child is not None and child.returncode is None and not isinstance(error, ChildProcessError):
+            try:
+                # The unreaped session leader still owns this process-group ID.
+                # Terminate its remaining group before reaping; do not signal a
+                # possibly reused PID after a successful terminal wait4.
+                try:
+                    os.killpg(child.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                usage = _wait_owned(child)
+                returncode, status = child.returncode, "failed"
+            except BaseException as cleanup_error:
+                error.add_note("evaluation child cleanup could not be completed: " + type(cleanup_error).__name__)
         raise
     finally:
         wall_ns = time.monotonic_ns() - start
-        cpu1 = resource.getrusage(resource.RUSAGE_CHILDREN)
-        cpu_ns = round(((cpu1.ru_utime - cpu0.ru_utime) + (cpu1.ru_stime - cpu0.ru_stime)) * 1_000_000_000)
+        cpu_ns = None if usage is None else round((usage.ru_utime + usage.ru_stime) * 1_000_000_000)
         try:
             require(sha((job / INTENT_FILE).read_bytes()) == intent, "evaluation launch intent changed")
             logs = {}
@@ -206,7 +257,7 @@ def attempt_cost_fields(job):
 def verify_attempt_cost(job, cost, *, admission=None):
     """Verify retained child-cost statements; this is not execution authentication."""
     schema = cost.get("schema")
-    require(schema in COST_SCHEMAS_V1 | COST_SCHEMAS_V2, "unknown evaluation cost schema")
+    require(schema in COST_SCHEMAS_V1 | COST_SCHEMAS_V2 | COST_SCHEMAS_V3, "unknown evaluation cost schema")
     if admission is not None:
         import dev_intake_evaluation as plain
 
@@ -218,16 +269,20 @@ def verify_attempt_cost(job, cost, *, admission=None):
         else:
             require(request_schema == "trnm-isolated-circuit-evaluation-request-v1", "unknown cost admission schema")
             family = "circuit"
-        version = "v2" if schema in COST_SCHEMAS_V2 else "v1"
+        version = "v3" if schema in COST_SCHEMAS_V3 else "v2" if schema in COST_SCHEMAS_V2 else "v1"
         require(schema == f"trnm-isolated-{family}-evaluation-cost-{version}", "cost family differs from admission")
         if request_schema == plain.ARTIFACT_ADMISSION:
-            require(schema in COST_SCHEMAS_V2, "artifact-bound admission requires cost v2")
+            require(schema in COST_SCHEMAS_V2 | COST_SCHEMAS_V3, "artifact-bound admission requires cost v2 or v3")
     if schema in COST_SCHEMAS_V1:
-        require("evaluation_attempt_sha256" not in cost, "attempt pin requires cost v2")
+        require("evaluation_attempt_sha256" not in cost, "attempt pin requires cost v2 or v3")
         require(cost.get("cost_completeness_verified", False) is False, "historical cost completeness differs")
         return dict(scope="historical_evaluation_only", attempt_receipt_bound=False,
                     cost_completeness_verified=False)
-    require(cost.get("cpu_scope") == CPU_SCOPE and cost.get("cost_completeness_verified") is False,
+    isolated = schema in COST_SCHEMAS_V3
+    cpu_scope = CPU_SCOPE if isolated else CPU_SCOPE_V1
+    attempt_schema = ATTEMPT_SCHEMA if isolated else ATTEMPT_SCHEMA_V1
+    intent_schema = INTENT_SCHEMA if isolated else INTENT_SCHEMA_V1
+    require(cost.get("cpu_scope") == cpu_scope and cost.get("cost_completeness_verified") is False,
             "evaluation cost scope differs")
     raw = (job / ATTEMPT_FILE).read_bytes()
     require(sha(raw) == cost.get("evaluation_attempt_sha256"), "evaluation attempt pin differs")
@@ -235,12 +290,12 @@ def verify_attempt_cost(job, cost, *, admission=None):
     require(set(attempt) == {"schema", "request_sha256", "command_sha256", "intent_sha256", "child_status", "returncode",
                             "error_type", "cpu_ns", "wall_ns", "cpu_scope", "logs",
                             "cost_completeness_verified", "execution_authority"}
-            and attempt["schema"] == ATTEMPT_SCHEMA
+            and attempt["schema"] == attempt_schema
             and attempt["request_sha256"] == sha((job / "ADMISSION.json").read_bytes())
             and attempt["child_status"] == "succeeded" and type(attempt["returncode"]) is int
             and attempt["returncode"] == 0 and attempt["error_type"] is None
             and attempt["cost_completeness_verified"] is False and attempt["execution_authority"] is False
-            and attempt["cpu_scope"] == CPU_SCOPE, "evaluation attempt scope or request differs")
+            and attempt["cpu_scope"] == cpu_scope, "evaluation attempt scope or request differs")
     for key in ("cpu_ns", "wall_ns"):
         require(type(attempt[key]) is int and 0 <= attempt[key] < 2**64
                 and type(cost.get(key)) is int and cost[key] == attempt[key], "evaluation attempt counters differ")
@@ -250,15 +305,20 @@ def verify_attempt_cost(job, cost, *, admission=None):
     intent_raw = (job / INTENT_FILE).read_bytes()
     require(sha(intent_raw) == attempt["intent_sha256"], "evaluation launch intent pin differs")
     intent = read(job / INTENT_FILE)
-    require(set(intent) == {"schema", "request_sha256", "command_sha256", "attempt_nonce", "execution_authority"}
-            and intent["schema"] == INTENT_SCHEMA and intent["execution_authority"] is False
+    intent_fields = {"schema", "request_sha256", "command_sha256", "attempt_nonce", "execution_authority"}
+    if isolated:
+        intent_fields.add("wall_timeout_seconds")
+        require(valid_timeout(intent.get("wall_timeout_seconds")), "evaluation launch timeout differs")
+    require(set(intent) == intent_fields
+            and intent["schema"] == intent_schema and intent["execution_authority"] is False
             and intent["request_sha256"] == attempt["request_sha256"]
             and intent["command_sha256"] == attempt["command_sha256"]
             and isinstance(intent["attempt_nonce"], str) and len(intent["attempt_nonce"]) == 32
             and all(c in "0123456789abcdef" for c in intent["attempt_nonce"]), "evaluation launch intent differs")
     logs = {name: sha((job / name).read_bytes()) for name in ("evaluation.stdout", "evaluation.stderr")}
     require(attempt["logs"] == logs, "evaluation attempt logs differ")
-    return dict(scope="evaluation_child_only", attempt_receipt_bound=True,
+    return dict(scope="owned_child_and_reaped_descendants" if isolated else "historical_process_children_delta",
+                concurrent_child_cpu_isolation_declared=isolated, attempt_receipt_bound=True,
                 cost_completeness_verified=False, execution_authenticated=False)
 
 
@@ -311,10 +371,10 @@ def execute(job, materials):
             "wrong reloaded model or request")
     evaluated = sum(len(r["row_hashes"]) for r in receipts)
     require(evaluated == terms["evaluated_examples"], "incomplete paired rows")
-    cost = dict(schema="trnm-isolated-circuit-evaluation-cost-v2", evaluated_examples=evaluated,
+    cost = dict(schema="trnm-isolated-circuit-evaluation-cost-v3", evaluated_examples=evaluated,
                 cpu_ns=cpu_ns, wall_ns=wall_ns, **attempt_cost_fields(job))
     if plain_model:
-        cost.update(schema="trnm-isolated-plain-paired-evaluation-cost-v2")
+        cost.update(schema="trnm-isolated-plain-paired-evaluation-cost-v3")
     else:
         cost["circuit_work"] = result["measured_circuit_work"]
     cost_hash = record(job / "COST.json", cost)

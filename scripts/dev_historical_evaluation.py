@@ -98,7 +98,7 @@ def execute(job, materials):
             arms["candidate"]["model_sha256"] == admission["pins"]["candidate"] and
             all(set(arms[k]["outcomes"]) == {"historical_training_A", "old_capability"} and
                 arms[k]["model_calls"] == 2 for k in ("parent", "candidate")), "wrong tasks, models or workers")
-    cost = record(job / "COST.json", dict(schema="trnm-isolated-historical-evaluation-cost-v2",
+    cost = record(job / "COST.json", dict(schema="trnm-isolated-historical-evaluation-cost-v3",
                   cpu_ns=cpu_ns, wall_ns=wall_ns, evaluated_examples=4,
                   **attempt_cost_fields(job),
                   work={arm:{k:arms[arm][k] for k in ("model_calls","input_tokens","output_tokens")} for arm in arms}))
