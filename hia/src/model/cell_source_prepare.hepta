@@ -1,0 +1,468 @@
+hia-asm.v1 hepta.hia.program.v8 trnm_cell_source_prepare
+fn f0(i:readbuf,o:mutbuf,w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf)
+  n:usize = buffer.len(i)
+  min:usize = const() {"value":265}
+  has:bool = compare.ge(n,min)
+  branch has frame(i,o,w,n) shape_bad()
+block frame(fi:readbuf,fo:mutbuf,fw:mutbuf,fn:usize)
+  zero:u64 = const() {"value":0}
+  magic:u64 = const() {"value":3544385890267714371}
+  word:u64 = call(fi,zero) {"function":"cp_read"}
+  ok:bool = compare.eq(word,magic)
+  branch ok size(fi,fo,fw,fn) shape_bad()
+block size(si:readbuf,so:mutbuf,sw:mutbuf,sn:usize)
+  prefix:usize = const() {"value":265}
+  width:usize = int.sub.wrap(sn,prefix)
+  one:usize = const() {"value":1}
+  bound:usize = const() {"value":8192}
+  bit:usize = bit.and(width,one)
+  even:bool = compare.ne(bit,one)
+  nonempty:bool = compare.ge(width,one)
+  bounded:bool = compare.le(width,bound)
+  some:bool = bool.and(nonempty,bounded)
+  valid_size:bool = bool.and(some,even)
+  branch valid_size mask(si,so,sw,width) hex_bad()
+block mask(mi:readbuf,mo:mutbuf,mw:mutbuf,mn:usize)
+  mask_ok:bool = call(mi) {"function":"sp_mask"}
+  branch mask_ok extents(mi,mo,mw,mn) mask_bad()
+block extents(ei:readbuf,eo:mutbuf,ew:mutbuf,en:usize)
+  extent:usize = buffer.len(ew)
+  min_a:usize = const() {"value":19712}
+  enough:bool = compare.ge(extent,min_a)
+  branch enough decode(ei,eo,ew,en) short()
+block decode(di:readbuf,do:mutbuf,dw:mutbuf,dn:usize)
+  fits:bool = call(di,dw,dn) {"function":"sp_decode"}
+  branch fits utf8(di,do,dw,dn) hex_bad()
+block utf8(ui:readbuf,uo:mutbuf,uw:mutbuf,un:usize)
+  onebit:usize = const() {"value":1}
+  half:usize = int.shr.checked(un,onebit)
+  raw:u64 = int.cast(half) {"mode":"wrap"}
+  valid:bool = call(uw,raw) {"function":"sp_utf8"}
+  branch valid normalized(ui,uo,uw,raw) utf8_bad()
+block normalized(ni:readbuf,no:mutbuf,nw:mutbuf,nr:u64)
+  rn:u64 = call(nw,nr) {"function":"sp_normalize"}
+  fixed:u64 = const() {"value":4160}
+  sum:u64 = int.add.wrap(fixed,rn)
+  wanted:usize = int.cast(sum) {"mode":"wrap"}
+  olen:usize = buffer.len(no)
+  enough_o:bool = compare.ge(olen,wanted)
+  branch enough_o raw_hash(ni,no,nw,nr,rn,sum) short()
+block raw_hash(hi:readbuf,ho:mutbuf,hw:mutbuf,hr:u64,hn:u64,hs:u64)
+  base:u64 = const() {"value":1208}
+  hashed:bool = call(hw,base,hr) {"function":"sp_hash"}
+  branch hashed tokens(hi,ho,hw,hn,hs) internal()
+block tokens(ti:readbuf,to:mutbuf,tw:mutbuf,tn:u64,ts:u64)
+  _saved:u64 = call(tw) {"function":"sp_save_digest"}
+  used:u64 = call(tw,tn) {"function":"sp_tokens"}
+  cap:u64 = const() {"value":1024}
+  fits_used:bool = compare.le(used,cap)
+  branch fits_used publish(ti,to,tw,tn,ts,used) internal()
+block publish(pi:readbuf,po:mutbuf,pw:mutbuf,pn:u64,ps:u64,pu:u64)
+  _pub:u64 = call(pi,po,pw,pn,ps,pu) {"function":"sp_publish"}
+  success:u32 = const() {"value":0}
+  ret(success)
+block shape_bad()
+  shape:u32 = const() {"value":100}
+  ret(shape)
+block mask_bad()
+  bad_mask:u32 = const() {"value":101}
+  ret(bad_mask)
+block hex_bad()
+  bad_hex:u32 = const() {"value":10}
+  ret(bad_hex)
+block utf8_bad()
+  bad_utf8:u32 = const() {"value":11}
+  ret(bad_utf8)
+block short()
+  small:u32 = const() {"value":102}
+  ret(small)
+block internal()
+  problem:u32 = const() {"value":103}
+  ret(problem)
+end
+
+fn sp_mask(i:readbuf) -> (bool) effects(read,trap) entry(entry)
+block entry(i:readbuf)
+  lo:usize = const() {"value":8}
+  jump mask(i,lo)
+block mask(mi:readbuf,mp:usize)
+  b:u8 = buffer.load(mi,mp)
+  one:u8 = const() {"value":1}
+  within:bool = compare.le(b,one)
+  branch within next(mi,mp,b) no()
+block next(ni:readbuf,np:usize,nb:u8)
+  last:usize = const() {"value":264}
+  done:bool = compare.eq(np,last)
+  one_step:usize = const() {"value":1}
+  forward:usize = int.add.wrap(np,one_step)
+  branch done yes(nb) mask(ni,forward)
+block yes(y:u8)
+  mask_on:u8 = const() {"value":1}
+  bias:bool = compare.eq(y,mask_on)
+  ret(bias)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+end
+
+fn sp_decode(i:readbuf,w:mutbuf,n:usize) -> (bool) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,w:mutbuf,n:usize)
+  hex:usize = const() {"value":265}
+  raw:usize = const() {"value":1208}
+  end_pos:usize = int.add.wrap(hex,n)
+  jump pair(i,w,hex,raw,end_pos)
+block pair(pi:readbuf,pw:mutbuf,pp:usize,pr:usize,pe:usize)
+  one:usize = const() {"value":1}
+  after_first:usize = int.add.wrap(pp,one)
+  lower:u8 = buffer.load(pi,pp)
+  upper:u8 = buffer.load(pi,after_first)
+  a:u64 = call(lower) {"function":"il_unhex"}
+  b:u64 = call(upper) {"function":"il_unhex"}
+  lim:u64 = const() {"value":16}
+  aok:bool = compare.lt(a,lim)
+  bok:bool = compare.lt(b,lim)
+  ok:bool = bool.and(aok,bok)
+  branch ok stage(pi,pw,after_first,pr,pe,a,b) no()
+block stage(si:readbuf,sw:mutbuf,sp:usize,sr:usize,se:usize,sa:u64,sb:u64)
+  four:u64 = const() {"value":4}
+  nib:u64 = int.shl.checked(sa,four)
+  word:u64 = bit.or(nib,sb)
+  ch:u8 = int.cast(word) {"mode":"wrap"}
+  _ = buffer.store(sw,sr,ch)
+  one_step:usize = const() {"value":1}
+  next_in:usize = int.add.wrap(sp,one_step)
+  next_out:usize = int.add.wrap(sr,one_step)
+  end:bool = compare.eq(next_in,se)
+  branch end yes() pair(si,sw,next_in,next_out,se)
+block yes()
+  ok_flag:bool = const() {"value":true}
+  ret(ok_flag)
+block no()
+  fail_flag:bool = const() {"value":false}
+  ret(fail_flag)
+end
+
+fn sp_utf8(w:mutbuf,len:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,len:u64)
+  base:u64 = const() {"value":1208}
+  jump scalar(w,base,len)
+block scalar(sw:mutbuf,sp:u64,sn:u64)
+  k:u64 = call(sw,sp,sn) {"function":"cs_utf8_step"}
+  limit:u64 = const() {"value":4}
+  valid_k:bool = compare.le(k,limit)
+  branch valid_k next(sw,sp,sn,k) no()
+block next(nw:mutbuf,np:u64,nn:u64,nk:u64)
+  remain:u64 = int.sub.wrap(nn,nk)
+  forward:u64 = int.add.wrap(np,nk)
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(remain,z)
+  branch done yes() scalar(nw,forward,remain)
+block no()
+  bad:bool = const() {"value":false}
+  ret(bad)
+block yes()
+  good:bool = const() {"value":true}
+  ret(good)
+end
+
+fn sp_normalize(w:mutbuf,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  start:u64 = const() {"value":1208}
+  target:u64 = const() {"value":5304}
+  top:u64 = int.add.wrap(start,n)
+  no_gap:bool = const() {"value":false}
+  jump scan(w,start,target,top,no_gap)
+block scan(sw:mutbuf,sp:u64,sd:u64,se:u64,sg:bool)
+  ended:bool = compare.eq(sp,se)
+  branch ended done(sd) ch(sw,sp,sd,se,sg)
+block ch(cw:mutbuf,cp:u64,cd:u64,ce:u64,cg:bool)
+  at:usize = int.cast(cp) {"mode":"wrap"}
+  v:u8 = buffer.load(cw,at)
+  tab:u8 = const() {"value":9}
+  cr:u8 = const() {"value":13}
+  a:bool = compare.ge(v,tab)
+  b:bool = compare.le(v,cr)
+  range:bool = bool.and(a,b)
+  blank:u8 = const() {"value":32}
+  space:bool = compare.eq(v,blank)
+  white:bool = bool.or(range,space)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(cp,one)
+  branch white gap(cw,next,cd,ce) nonwhite(cw,next,cd,ce,cg,v)
+block gap(gw:mutbuf,gp:u64,gd:u64,ge:u64)
+  base:u64 = const() {"value":5304}
+  fresh:bool = compare.ne(gd,base)
+  jump scan(gw,gp,gd,ge,fresh)
+block nonwhite(nw:mutbuf,np:u64,nd:u64,ne:u64,ng:bool,nv:u8)
+  branch ng spacer(nw,np,nd,ne,nv) out(nw,np,nd,ne,nv)
+block spacer(pw:mutbuf,pp:u64,pd:u64,pe:u64,pv:u8)
+  blank_at:usize = int.cast(pd) {"mode":"wrap"}
+  blank_value:u8 = const() {"value":32}
+  _ = buffer.store(pw,blank_at,blank_value)
+  next_space:u64 = const() {"value":1}
+  newdest:u64 = int.add.wrap(pd,next_space)
+  jump out(pw,pp,newdest,pe,pv)
+block out(ow:mutbuf,op:u64,od:u64,oe:u64,ov:u8)
+  dest:usize = int.cast(od) {"mode":"wrap"}
+  _ = buffer.store(ow,dest,ov)
+  following:u64 = const() {"value":1}
+  next_dest:u64 = int.add.wrap(od,following)
+  written:bool = const() {"value":false}
+  jump scan(ow,op,next_dest,oe,written)
+block done(d:u64)
+  origin:u64 = const() {"value":5304}
+  count:u64 = int.sub.wrap(d,origin)
+  ret(count)
+end
+
+fn sp_hash(w:mutbuf,p:u64,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,p:u64,n:u64)
+  a:u64 = call(w) {"function":"tr_sha_init"}
+  zero:u64 = const() {"value":0}
+  good:bool = compare.eq(a,zero)
+  branch good update(w,p,n) no()
+block update(uw:mutbuf,up:u64,un:u64)
+  b:u64 = call(uw,up,un) {"function":"tr_sha_update_work"}
+  ok:u64 = const() {"value":0}
+  fed:bool = compare.eq(b,ok)
+  branch fed finish(uw) no()
+block finish(fw:mutbuf)
+  c:u64 = call(fw) {"function":"tr_sha_final"}
+  z:u64 = const() {"value":0}
+  done:bool = compare.eq(c,z)
+  ret(done)
+block no()
+  fail:bool = const() {"value":false}
+  ret(fail)
+end
+
+fn sp_save_digest(w:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf)
+  origin:usize = const() {"value":1168}
+  dest:usize = const() {"value":15568}
+  edge:usize = const() {"value":1200}
+  jump byte(w,origin,dest,edge)
+block byte(bw:mutbuf,bp:usize,bd:usize,be:usize)
+  v:u8 = buffer.load(bw,bp)
+  _ = buffer.store(bw,bd,v)
+  one:usize = const() {"value":1}
+  p:usize = int.add.wrap(bp,one)
+  d:usize = int.add.wrap(bd,one)
+  done:bool = compare.eq(p,be)
+  branch done ok() byte(bw,p,d,be)
+block ok()
+  z:u64 = const() {"value":0}
+  ret(z)
+end
+
+fn sp_class(v:u8) -> (u64) effects() entry(entry)
+block entry(v:u8)
+  upper_a:u8 = const() {"value":65}
+  upper_z:u8 = const() {"value":90}
+  lower_a:u8 = const() {"value":97}
+  lower_z:u8 = const() {"value":122}
+  digit_0:u8 = const() {"value":48}
+  digit_9:u8 = const() {"value":57}
+  us:u8 = const() {"value":95}
+  upper0:bool = compare.ge(v,upper_a)
+  upper1:bool = compare.le(v,upper_z)
+  lower0:bool = compare.ge(v,lower_a)
+  lower1:bool = compare.le(v,lower_z)
+  digit0:bool = compare.ge(v,digit_0)
+  digit1:bool = compare.le(v,digit_9)
+  upper:bool = bool.and(upper0,upper1)
+  lower:bool = bool.and(lower0,lower1)
+  digit:bool = bool.and(digit0,digit1)
+  underscore:bool = compare.eq(v,us)
+  low:bool = bool.or(lower,underscore)
+  z:u64 = const() {"value":0}
+  one:u64 = const() {"value":1}
+  two:u64 = const() {"value":2}
+  three:u64 = const() {"value":3}
+  d:u64 = select(digit,one,z)
+  l:u64 = select(low,two,d)
+  c:u64 = select(upper,three,l)
+  ret(c)
+end
+
+fn sp_tokens(w:mutbuf,n:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  begin:u64 = const() {"value":5304}
+  end_pos:u64 = int.add.wrap(begin,n)
+  counter:u64 = const() {"value":13496}
+  jump reset(w,begin,end_pos,counter)
+block reset(rw:mutbuf,rp:u64,re:u64,rc:u64)
+  bias:u64 = const() {"value":1024}
+  end_c:u64 = const() {"value":15552}
+  _init:u64 = call(rw,rc,bias) {"function":"tr_put"}
+  word:u64 = const() {"value":8}
+  next_c:u64 = int.add.wrap(rc,word)
+  reset_done:bool = compare.eq(next_c,end_c)
+  z:u64 = const() {"value":0}
+  branch reset_done seek(rw,rp,re,z) reset(rw,rp,re,next_c)
+block seek(sw:mutbuf,sp:u64,se:u64,su:u64)
+  end_scan:bool = compare.eq(sp,se)
+  quota:u64 = const() {"value":1024}
+  cap:bool = compare.eq(su,quota)
+  done:bool = bool.or(end_scan,cap)
+  branch done finish(su) seek_byte(sw,sp,se,su)
+block seek_byte(bw:mutbuf,bp:u64,be:u64,bu:u64)
+  at:usize = int.cast(bp) {"mode":"wrap"}
+  v:u8 = buffer.load(bw,at)
+  c:u64 = call(v) {"function":"sp_class"}
+  alpha:u64 = const() {"value":2}
+  start:bool = compare.ge(c,alpha)
+  one:u64 = const() {"value":1}
+  next:u64 = int.add.wrap(bp,one)
+  tok:u64 = const() {"value":9400}
+  branch start start_word(bw,bp,be,bu,tok,v,c) seek(bw,next,be,bu)
+block start_word(ww:mutbuf,wp:u64,we:u64,wu:u64,wd:u64,wv:u8,wc:u64)
+  zero_word:u64 = const() {"value":0}
+  _t:u64 = call(ww,wd,zero_word) {"function":"tr_put"}
+  jump emit(ww,wp,we,wu,wd,wv,wc)
+block emit(ew:mutbuf,ep:u64,ee:u64,eu:u64,ed:u64,ev:u8,ec:u64)
+  uppercase:u64 = const() {"value":3}
+  upper:bool = compare.eq(ec,uppercase)
+  delta:u8 = const() {"value":32}
+  lower:u8 = int.add.wrap(ev,delta)
+  word_byte:u8 = select(upper,lower,ev)
+  dest:usize = int.cast(ed) {"mode":"wrap"}
+  _ = buffer.store(ew,dest,word_byte)
+  one_char:u64 = const() {"value":1}
+  next_in:u64 = int.add.wrap(ep,one_char)
+  next_out:u64 = int.add.wrap(ed,one_char)
+  ended:bool = compare.eq(next_in,ee)
+  branch ended test_token(ew,next_in,ee,eu,next_out) body(ew,next_in,ee,eu,next_out)
+block body(aw:mutbuf,ap:u64,ae:u64,au:u64,ad:u64)
+  index:usize = int.cast(ap) {"mode":"wrap"}
+  ch:u8 = buffer.load(aw,index)
+  class:u64 = call(ch) {"function":"sp_class"}
+  zc:u64 = const() {"value":0}
+  continues:bool = compare.ne(class,zc)
+  branch continues emit(aw,ap,ae,au,ad,ch,class) test_token(aw,ap,ae,au,ad)
+block test_token(tw:mutbuf,tp:u64,te:u64,tu:u64,td:u64)
+  root:u64 = const() {"value":9400}
+  len:u64 = int.sub.wrap(td,root)
+  excluded:bool = call(tw,len) {"function":"sp_excluded"}
+  branch excluded seek(tw,tp,te,tu) hash(tw,tp,te,tu,root,len)
+block hash(hw:mutbuf,hp:u64,he:u64,hu:u64,hr:u64,hn:u64)
+  ok:bool = call(hw,hr,hn) {"function":"sp_hash"}
+  branch ok count(hw,hp,he,hu) bad_hash()
+block count(cw:mutbuf,cp:u64,ce:u64,cu:u64)
+  b0:usize = const() {"value":1168}
+  b2:usize = const() {"value":1170}
+  b:u8 = buffer.load(cw,b0)
+  s:u8 = buffer.load(cw,b2)
+  bucket:u64 = int.cast(b) {"mode":"wrap"}
+  word_w:u64 = const() {"value":8}
+  count_base:u64 = const() {"value":13496}
+  stride:u64 = int.mul.wrap(bucket,word_w)
+  addr:u64 = int.add.wrap(count_base,stride)
+  old:u64 = call(cw,addr) {"function":"tr_get"}
+  one8:u8 = const() {"value":1}
+  sign:u8 = bit.and(s,one8)
+  pos:bool = compare.eq(sign,one8)
+  one64:u64 = const() {"value":1}
+  plus:u64 = int.add.wrap(old,one64)
+  minus:u64 = int.sub.wrap(old,one64)
+  acc:u64 = select(pos,plus,minus)
+  _added:u64 = call(cw,addr,acc) {"function":"tr_put"}
+  used:u64 = int.add.wrap(cu,one64)
+  jump seek(cw,cp,ce,used)
+block finish(k:u64)
+  ret(k)
+block bad_hash()
+  refused:u64 = const() {"value":1025}
+  ret(refused)
+end
+
+fn sp_excluded(w:mutbuf,n:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(w:mutbuf,n:u64)
+  off:u64 = const() {"value":9400}
+  word:u64 = call(w,off) {"function":"tr_get"}
+  four:u64 = const() {"value":4}
+  three:u64 = const() {"value":3}
+  has4:bool = compare.ge(n,four)
+  has3:bool = compare.eq(n,three)
+  mask4:u64 = const() {"value":4294967295}
+  mask3:u64 = const() {"value":16777215}
+  low4:u64 = bit.and(word,mask4)
+  low3:u64 = bit.and(word,mask3)
+  trnm:u64 = const() {"value":1835954804}
+  m00:u64 = const() {"value":3158125}
+  m04:u64 = const() {"value":3420269}
+  m10:u64 = const() {"value":3158381}
+  pref:bool = compare.eq(low4,trnm)
+  a:bool = compare.eq(low3,m00)
+  b:bool = compare.eq(low3,m04)
+  c:bool = compare.eq(low3,m10)
+  ab:bool = bool.or(a,b)
+  abc:bool = bool.or(ab,c)
+  no4:bool = bool.and(has4,pref)
+  no3:bool = bool.and(has3,abc)
+  exclude:bool = bool.or(no4,no3)
+  ret(exclude)
+end
+
+fn sp_publish(i:readbuf,o:mutbuf,w:mutbuf,n:u64,total:u64,used:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,w:mutbuf,n:u64,total:u64,used:u64)
+  p0:u64 = const() {"value":15552}
+  p1:u64 = const() {"value":15560}
+  _n:u64 = call(w,p0,n) {"function":"tr_put"}
+  _u:u64 = call(w,p1,used) {"function":"tr_put"}
+  z:u64 = const() {"value":0}
+  jump lanes(i,o,w,total,z)
+block lanes(li:readbuf,lo:mutbuf,lw:mutbuf,lt:u64,lx:u64)
+  width:u64 = const() {"value":8}
+  lane:u64 = int.mul.wrap(lx,width)
+  cb:u64 = const() {"value":13496}
+  cp:u64 = int.add.wrap(cb,lane)
+  raw:u64 = call(lw,cp) {"function":"tr_get"}
+  low:u64 = const() {"value":1016}
+  high:u64 = const() {"value":1032}
+  below:bool = compare.lt(raw,low)
+  above:bool = compare.gt(raw,high)
+  lo_clip:u64 = select(below,low,raw)
+  clip:u64 = select(above,high,lo_clip)
+  bias:u64 = const() {"value":1024}
+  v:u64 = int.sub.wrap(clip,bias)
+  last:u64 = const() {"value":256}
+  end:bool = compare.eq(lx,last)
+  data_bias:u64 = const() {"value":8}
+  final_word:u64 = select(end,data_bias,v)
+  ix:u64 = int.add.wrap(lx,width)
+  at:usize = int.cast(ix) {"mode":"wrap"}
+  mask:u8 = buffer.load(li,at)
+  one8:u8 = const() {"value":1}
+  enabled:bool = compare.eq(mask,one8)
+  zero:u64 = const() {"value":0}
+  filtered:u64 = select(enabled,final_word,zero)
+  as_is:u64 = const() {"value":15600}
+  masked:u64 = const() {"value":17656}
+  us:u64 = int.add.wrap(as_is,lane)
+  ms:u64 = int.add.wrap(masked,lane)
+  _raw:u64 = call(lw,us,final_word) {"function":"tr_put"}
+  _mask:u64 = call(lw,ms,filtered) {"function":"tr_put"}
+  one:u64 = const() {"value":1}
+  next_lane:u64 = int.add.wrap(lx,one)
+  branch end copy(lo,lw,lt,zero) lanes(li,lo,lw,lt,next_lane)
+block copy(co:mutbuf,cw:mutbuf,ct:u64,cur:u64)
+  fixed:u64 = const() {"value":4160}
+  is_header:bool = compare.lt(cur,fixed)
+  header:u64 = const() {"value":15552}
+  norm_select:u64 = const() {"value":1144}
+  which:u64 = select(is_header,header,norm_select)
+  shifted:u64 = int.add.wrap(which,cur)
+  src_index:usize = int.cast(shifted) {"mode":"wrap"}
+  dest:usize = int.cast(cur) {"mode":"wrap"}
+  b:u8 = buffer.load(cw,src_index)
+  _ = buffer.store(co,dest,b)
+  one_next:u64 = const() {"value":1}
+  next_byte:u64 = int.add.wrap(cur,one_next)
+  done:bool = compare.eq(next_byte,ct)
+  branch done finish() copy(co,cw,ct,next_byte)
+block finish()
+  ok:u64 = const() {"value":0}
+  ret(ok)
+end

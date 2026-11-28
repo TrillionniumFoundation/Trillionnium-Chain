@@ -22042,6 +22042,41 @@
         "source": "src/codec/json_primitives.hepta"
       }
     ],
+    "src/model/cell_source_prepare.hepta": [
+      {
+        "functions": [
+          "cp_read"
+        ],
+        "source": "src/control_plane/core.hepta"
+      },
+      {
+        "functions": [
+          "il_unhex"
+        ],
+        "source": "src/verification/integer_linear_context.hepta"
+      },
+      {
+        "functions": [
+          "cs_utf8_step"
+        ],
+        "source": "src/service_settlement/codec.hepta"
+      },
+      {
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      }
+    ],
     "src/model/cell_source_snippet.hepta": [
       {
         "functions": [

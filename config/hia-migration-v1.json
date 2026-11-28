@@ -3413,6 +3413,17 @@
       ]
     },
     {
+      "id": "model/cell-source-prepare",
+      "node_integration_complete": false,
+      "scope": "Private single bounded Cell source preprocessing: canonical lower-hex and UTF-8, ASCII normalization, real SHA256 signed-token features and the typed feature mask; no source execution, ingestion, provenance or authority.",
+      "source": "hia/src/model/cell_source_prepare.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_source_prepare.py",
+        "hia/tests/rust_cell_source_prepare_reference.rs"
+      ]
+    },
+    {
       "id": "model/cell-source-snippet-value",
       "node_integration_complete": false,
       "scope": "Private original canonical ASCII SourceSnippet object and ordered bounded list with exact u8 label and inert text; no source decoding, provenance, admission or training.",
@@ -4519,6 +4530,7 @@
         "state/integer-training-fused",
         "state/cell-held-rows",
         "state/cell-held-train",
+        "model/cell-source-prepare",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",
