@@ -26,6 +26,7 @@ JOB_HEADER = re.compile(r"(?m)^ {2}(?P<job>[a-z0-9][a-z0-9_-]*):[ \t]*(?:#[^\n]*
 EXPECTED_BOOTSTRAP_JOBS = (
     "native-components",
     "native-components-general-b",
+    "native-components-general-da",
     "native-components-general-c",
     "native-components-general-settlement",
     "native-components-general-state-import",

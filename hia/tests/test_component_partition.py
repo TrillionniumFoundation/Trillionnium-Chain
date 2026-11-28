@@ -41,9 +41,13 @@ STATE_IMPORT_IDS = SETTLEMENT_IDS + [
     "hia.tests.test_state_import_checkpoint_context.Example.test_original_context",
     "hia.tests.test_state_import_sqlite_update_write.Example.test_original_update",
 ]
+DA_IDS = STATE_IMPORT_IDS + [
+    "hia.tests.test_da_attestation_verify.Example.test_real_strict",
+    "hia.tests.test_da_availability_certificate_verify.Example.test_whole_standard",
+]
 PLAN_FIXTURES = {part.LEGACY_PLAN: IDS, part.SPLIT_PLAN: SPLIT_IDS,
                  part.GENERAL_PLAN: GENERAL_IDS, part.SETTLEMENT_PLAN: SETTLEMENT_IDS,
-                 part.STATE_IMPORT_PLAN: STATE_IMPORT_IDS}
+                 part.STATE_IMPORT_PLAN: STATE_IMPORT_IDS, part.DA_PLAN: DA_IDS}
 LINEAGE = {"git_head": "a" * 40, "run_id": "42", "attempt": 1}
 SOURCES = {"hia/src/fixture.hepta": "d" * 64, "hia/components.json": "f" * 64}
 SOURCES.update(word_fixture.fixture()[2])
@@ -245,7 +249,7 @@ class ComponentPartitions(unittest.TestCase):
         jobs = {match[1]: text[match.start():headers[index + 1].start() if index + 1 < len(headers) else len(text)]
                 for index, match in enumerate(headers)}
         expected = {group: "native-components" + ("-" + group if group != "general-a" else "")
-                    for group in part.STATE_IMPORT_GROUPS}
+                    for group in part.DA_GROUPS}
         for group, name in expected.items():
             job = jobs[name]
             self.assertEqual(re.findall(r"(?m)^    timeout-minutes: ([0-9]+)$", job), ["20"])
@@ -263,16 +267,17 @@ class ComponentPartitions(unittest.TestCase):
         self.assertIn("if: always()", upload)
         general = jobs["native-components"]
         general_b = jobs["native-components-general-b"]
+        da = jobs["native-components-general-da"]
         general_c = jobs["native-components-general-c"]
         settlement = jobs["native-components-general-settlement"]
         state_import = jobs["native-components-general-state-import"]
         bench = jobs["native-components-bench"]
-        for shard in (general, general_b, general_c, settlement, state_import):
+        for shard in (general, general_b, da, general_c, settlement, state_import):
             self.assertNotIn("HIA_BENCH_PROFILE_OBSERVATIONS:", shard)
             self.assertNotIn("hia-bench-${{", shard)
             self.assertNotIn("archive_ci_evidence.py", shard)
             self.assertIn("cargo fetch --locked --manifest-path trillionnium/Cargo.toml", shard)
-        for shard in (general, general_b):
+        for shard in (general, general_b, da):
             self.assertIn("prepare_original_m06_m09_oracles", shard)
             self.assertNotIn("TRNM_HIA_SHA256_WORDS_ARTIFACT_DIR", shard)
         self.assertNotIn("prepare_original_m06_m09_oracles", general_c)
@@ -289,6 +294,13 @@ class ComponentPartitions(unittest.TestCase):
         # Same untouched original setup, gates and evidence contract as the
         # established Settlement split apart from the shard/artifact name.
         self.assertEqual(settlement.replace("general-settlement", "general-state-import"), state_import)
+        # Exact same original Rust preparation and ordinary component
+        # evidence as B; specialization only removes B's unrelated evidence
+        # environment and sidecar uploads, still retained by unchanged B.
+        body = general_b.split("      - name: Retain complete native recovery ACK observations", 1)[0]
+        body = re.sub(r"(?ms)(^      - name: Execute every assigned native HIA[^\n]*\n)"
+                      r"^        env:\n.*?(?=^        run:)", r"\1", body)
+        self.assertEqual(body.replace("general-b", "general-da"), da)
         self.assertIn("HIA_CONTROL_GUARD_OUTPUT", general)
         for variable in ("HIA_CONTROL_PLANE_OUTPUT", "TRNM_HIA_ESCROW_OUTPUT",
                          "TRNM_HIA_GOVERNANCE_OUTPUT", "HIA_PEER_LEASE_OUTPUT"):
@@ -309,10 +321,11 @@ class ComponentPartitions(unittest.TestCase):
         reader = jobs["native-components-readback"]
         needs = re.search(r"(?m)^    needs: \[(.*)\]$", reader)[1].split(", ")
         self.assertEqual(set(needs), set(expected.values()))
-        self.assertEqual(len(needs), 11)
-        self.assertIn(" --partition-plan split-general-state-import-v1 ", reader)
-        self.assertEqual(part.source_plan(root), part.STATE_IMPORT_PLAN)
-        for historical in (part.SPLIT_PLAN, part.GENERAL_PLAN, part.SETTLEMENT_PLAN):
+        self.assertEqual(len(needs), 12)
+        self.assertIn(" --partition-plan split-general-da-v1 ", reader)
+        self.assertEqual(part.source_plan(root), part.DA_PLAN)
+        for historical in (part.SPLIT_PLAN, part.GENERAL_PLAN, part.SETTLEMENT_PLAN,
+                           part.STATE_IMPORT_PLAN):
             with self.assertRaisesRegex(ValueError, "differs from tracked source"):
                 part.source_bound_plan(root, historical)
         for group, producer in expected.items():
@@ -700,6 +713,36 @@ class ComponentReadback(unittest.TestCase):
         self.assertTrue({"test_sha256_word_evidence", "test_task_metadata_initializer",
                          "test_settlement_read_only_uri"} <= final_c)
         self.assertEqual(qualify.rust_oracle_names("general-c"), qualify.rust_oracle_names("general-state-import"))
+        live_da = part.DA_PLAN
+        after = {g: part.descriptor(ids, g, live_da)["selected_tests"] for g in part.DA_GROUPS}
+        da_ids = after["general-da"]
+        exact_da = sorted(i for i in ids if i.split(".")[2].startswith("test_da_"))
+        self.assertEqual(da_ids, exact_da)
+        self.assertEqual({i.split(".")[2] for i in da_ids},
+                         {p.stem for p in (root / "hia/tests").glob("test_da_*.py")})
+        self.assertIn("test_da_availability_certificate_verify", {i.split(".")[2] for i in da_ids})
+        self.assertEqual(sorted(final["general-b"]), sorted(after["general-b"] + da_ids))
+        self.assertEqual(sorted(ids), sorted(i for group in after.values() for i in group))
+        self.assertEqual(len(ids), len({i for group in after.values() for i in group}))
+        for group in set(final) - {"general-b"}:
+            self.assertEqual(after[group], final[group])
+        self.assertEqual(qualify.rust_oracle_names("general-b"), qualify.rust_oracle_names("general-da"))
+        self.assertNotIn("general-da", part.SHA_WORD_GROUPS)
+
+        # Traditional plans are still selected only by their own tracked
+        # source, not a same-run artifact self-declaring a historical schema.
+        with tempfile.TemporaryDirectory() as tmp:
+            historical = Path(tmp)
+            wf = historical / ".github/workflows/hia-native-migration.yml"
+            wf.parent.mkdir(parents=True)
+            for history in (part.LEGACY_PLAN, part.SPLIT_PLAN, part.GENERAL_PLAN,
+                            part.SETTLEMENT_PLAN, part.STATE_IMPORT_PLAN, part.DA_PLAN):
+                line = "" if history == part.LEGACY_PLAN else f"{part.PLAN_TRACKED_PREFIX} {history}\n"
+                wf.write_text(line)
+                self.assertEqual(part.source_bound_plan(historical, history), history)
+                if history != part.DA_PLAN:
+                    with self.assertRaisesRegex(ValueError, "differs from tracked source"):
+                        part.source_bound_plan(historical, part.DA_PLAN)
 
     def test_ten_way_readback_refuses_missing_duplicate_stale_and_nine_way_source(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -746,6 +789,7 @@ class ComponentReadback(unittest.TestCase):
                 ci.validate_job_results({k: v for k, v in env.items() if k != key}, plan)
 
         self._assert_eleven_way_hard_negatives()
+        self._assert_twelve_way_da_controls()
 
     def _assert_eleven_way_hard_negatives(self):
         # Extend the historical owner test; keep its stable discovered test
@@ -793,6 +837,71 @@ class ComponentReadback(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "must succeed: general-state-import"):
                     ci.validate_job_results({**env, key: bad}, plan)
             with self.assertRaisesRegex(ValueError, "must succeed: general-state-import"):
+                ci.validate_job_results({k: v for k, v in env.items() if k != key}, plan)
+
+    def _assert_twelve_way_da_controls(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = part.DA_PLAN
+            active = "general-da"
+            bundles = {g: self.make_bundle(root / "current", g, plan) for g in part.DA_GROUPS}
+
+            def verify(inputs):
+                return ci.verify_all(inputs, LINEAGE, SOURCES, DA_IDS, COMPILER, "f" * 40, plan)
+
+            result = verify(bundles)
+            self.assertEqual((result["schema"], result["tests"]), (ci.DA_SCHEMA, len(DA_IDS)))
+            self.assertEqual(result["partitions"][active]["selected_tests"], sorted(DA_IDS[-2:]))
+            self.assertIsNotNone(result["partitions"]["general-c"]["sha256_word_evidence"])
+            self.assertIsNone(result["partitions"][active]["sha256_word_evidence"])
+            previous_b = self.make_bundle(root / "eleven", "general-b", part.STATE_IMPORT_PLAN)
+            previous = {g: self.make_bundle(root / "previous", g, part.STATE_IMPORT_PLAN)
+                        for g in part.STATE_IMPORT_GROUPS}
+            self.assertEqual(ci.verify_all(previous, LINEAGE, SOURCES, STATE_IMPORT_IDS, COMPILER,
+                                           "f" * 40, part.STATE_IMPORT_PLAN)["schema"], ci.STATE_IMPORT_SCHEMA)
+            for inputs in ({g: p for g, p in bundles.items() if g != active},
+                           {**bundles, active: bundles["general-b"]},
+                           {**bundles, "general-b": previous_b},
+                           {**bundles, active: previous_b},
+                           previous):
+                with self.assertRaises(ValueError):
+                    verify(inputs)
+            mutations = (
+                ("head", "Different component head, run or attempt"),
+                ("run", "Different component head, run or attempt"),
+                ("attempt", "Different component head, run or attempt"),
+                ("incomplete", "Missing, repeated or unassigned actual component execution"),
+                ("duplicate", "Missing, repeated or unassigned actual component execution"),
+                ("failure", "did not finish on unchanged committed source"),
+            )
+            for kind, reason in mutations:
+                bad = self.make_bundle(root / kind, active, plan)
+                path = bad / "hia-observations/qualification.json"
+                value = json.loads(path.read_text())
+                if kind == "head":
+                    value["lineage"]["git_head"] = "c" * 40
+                elif kind == "run":
+                    value["lineage"]["run_id"] = "43"
+                elif kind == "attempt":
+                    value["lineage"]["attempt"] += 1
+                elif kind == "incomplete":
+                    value["test_partition"]["finished_tests"].pop()
+                elif kind == "duplicate":
+                    actual = value["test_partition"]["finished_tests"]
+                    actual[-1] = actual[0]
+                else:
+                    value["status"] = "FAIL"
+                path.write_text(json.dumps(value))
+                with self.assertRaisesRegex(ValueError, reason):
+                    verify({**bundles, active: bad})
+            env = {"TRNM_COMPONENT_" + g.upper().replace("-", "_") + "_RESULT": "success"
+                   for g in part.DA_GROUPS}
+            ci.validate_job_results(env, plan)
+            key = "TRNM_COMPONENT_GENERAL_DA_RESULT"
+            for status in ("cancelled", "skipped", "failure", ""):
+                with self.assertRaisesRegex(ValueError, "must succeed: general-da"):
+                    ci.validate_job_results({**env, key: status}, plan)
+            with self.assertRaisesRegex(ValueError, "must succeed: general-da"):
                 ci.validate_job_results({k: v for k, v in env.items() if k != key}, plan)
 
     def test_coherent_wrong_producer_trees_cannot_replace_consumer_tree(self):
