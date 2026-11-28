@@ -14,6 +14,19 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github/workflows/hia-native-migration.yml"
+# GitHub does not start workflows larger than 500 KB. Reserve space for small
+# future edits so this mandatory workflow cannot silently produce zero jobs.
+WORKFLOW_MAX_BYTES = 490_000
+ORIGINAL_RUST_PREP = "scripts/ci/build_original_rust_component_policies.sh"
+ORIGINAL_RUST_PREP_JOBS = {
+    "native-components",
+    "native-components-general-b",
+    "native-components-general-da",
+    "native-components-general-c",
+    "native-components-general-settlement",
+    "native-components-general-state-import",
+    "native-components-bench",
+}
 COMPILER_SHA256 = "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54"
 BOOTSTRAP = re.compile(
     r"(?ms)^ {10}python3(?: -B)? - \"\$RUNNER_TEMP/hia-bootstrap/bootstrap\.json\" \"\$GITHUB_ENV\" <<'PY'\n(?P<body>.*?)^ {10}PY$"
@@ -115,6 +128,19 @@ class BootstrapGuards(unittest.TestCase):
     def setUpClass(cls):
         cls.workflow_text = WORKFLOW.read_text(encoding="utf-8")
         cls.bodies = bootstrap_bodies(cls.workflow_text)
+
+    def test_workflow_fits_hosted_admission_and_uses_exact_shared_prep_jobs(self):
+        self.assertLessEqual(WORKFLOW.stat().st_size, WORKFLOW_MAX_BYTES)
+        headers = list(JOB_HEADER.finditer(self.workflow_text, self.workflow_text.index("\njobs:\n")))
+        step = ("      - name: Compile the original Rust reference policies\n"
+                f"        run: source {ORIGINAL_RUST_PREP}\n")
+        observed = Counter()
+        for i, header in enumerate(headers):
+            end = headers[i + 1].start() if i + 1 < len(headers) else len(self.workflow_text)
+            observed[header.group("job")] += self.workflow_text[header.end():end].count(step)
+        self.assertEqual(+observed, Counter(ORIGINAL_RUST_PREP_JOBS))
+        self.assertEqual(self.workflow_text.count(ORIGINAL_RUST_PREP), len(ORIGINAL_RUST_PREP_JOBS))
+        subprocess.run(["bash", "-n", str(ROOT / ORIGINAL_RUST_PREP)], check=True, timeout=8)
 
     def test_inventory_refuses_removed_or_reattributed_bench_guard(self):
         jobs = list(JOB_HEADER.finditer(self.workflow_text, self.workflow_text.index("\njobs:\n")))
