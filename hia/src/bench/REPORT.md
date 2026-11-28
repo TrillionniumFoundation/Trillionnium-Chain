@@ -125,3 +125,20 @@ original canonical Cargo CLI binary is separately retained. This does not
 by itself qualify a native argv/clock/filesystem owner. The separate
 [isolated Linux owner](README.md#isolated-profile-persistence) has its own
 actual bounded process and filesystem observations; wider ownership remains open.
+
+
+### Stateless fixed-point differential
+
+`python3 -m unittest hia.tests.test_bench_report_fixed_point -v` compares
+Direct and Selfhost report bytes against the byte-identical arithmetic block
+from the hash-pinned Rust Bench source. The Rust oracle receives already
+displayed text over pipes and never invokes Bench or its filesystem code.
+The two seed bodies retain original observed scheduler/profile fields;
+the independently corrected Rust seed is used only with marker-bearing
+`BRPT0002`, not as evidence of unchanged-Rust equivalence.
+
+The differential covers all four persistence states, UTF-8 byte lengths,
+embedded CRLF/LF, decimal carries in both self-describing counters and
+exact versus one-short borrowed capacities. A state-3 candidate matches the
+pre-write bytes; the injected error appears only in stdout. Display conversion,
+filesystem ownership and profile publication are outside this stateless test.
