@@ -1873,6 +1873,18 @@
       ]
     },
     {
+      "id": "data-availability/cell-version-content-lineage",
+      "node_integration_complete": false,
+      "scope": "Bounded canonical TCV3 declared lineage decode and exact content commitment; same-loan real TCV2 and TMR IDs before complete canonical root/alias/parent/reachability checks. Shared <=1 MiB and original 16-version bound. No actual content, owner pin, store, lineage authority, loader, network or production.",
+      "source": "hia/src/data_availability/cell_version_content_lineage.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_version_content_lineage.py",
+        "hia/tests/rust_cell_version_content_lineage_reference.rs",
+        "hia/tests/tcv3_member_derivation.py"
+      ]
+    },
+    {
       "id": "data-availability/cell-complete-version-content",
       "node_integration_complete": false,
       "scope": "Strict bounded TCV2 canonical declared metadata with fully validated embedded TCV1, same-loan TCM1 ID and chunk cardinality equality, original digest-presence ordering and computed SHA-512 content commitment. Common native total <=1 MiB, no trusted pins, payload, actual use, files, store, loader or production routing.",

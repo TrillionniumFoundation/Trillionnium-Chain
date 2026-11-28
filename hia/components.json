@@ -8385,6 +8385,163 @@
         ]
       }
     ],
+    "src/data_availability/cell_version_content_lineage.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_limit",
+          "tr_sha_update_work",
+          "tr_sha_update_work_limit"
+        ]
+      },
+      {
+        "source": "src/release_bundle/artifact_header.hepta",
+        "functions": [
+          "rac_nonzero_digest",
+          "rac_read_le"
+        ]
+      },
+      {
+        "source": "src/release_bundle/sbom_digest.hepta",
+        "functions": [
+          "sb_compare",
+          "sb_append_digest"
+        ]
+      },
+      {
+        "source": "src/crypto/pq_profile_auth.hepta",
+        "functions": [
+          "ca_read_be",
+          "ca_equal"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_manifest.hepta",
+        "functions": [
+          "cm_family_chars",
+          "cm_decode",
+          "cm_row_sizes",
+          "cm_hash"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_manifest.hepta",
+        "functions": [
+          "crm_decode",
+          "crm_order",
+          "crm_nonzero_range"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_dependency_closure.hepta",
+        "functions": [
+          "td_validate",
+          "td_row",
+          "td_scan",
+          "td_indices",
+          "td_index",
+          "td_fold",
+          "td_fold_eq",
+          "td_path_exists",
+          "td_unique",
+          "td_path",
+          "td_reserved",
+          "td_directory_alias",
+          "td_manifest_seen",
+          "td_records",
+          "td_has_index",
+          "td_members",
+          "td_graph",
+          "td_visit",
+          "td_copy",
+          "td_count"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_model_release_root.hepta",
+        "functions": [
+          "mr_count",
+          "mr_roster"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_model_manifest.hepta",
+        "functions": [
+          "ma_root",
+          "ma_root_hash"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_version_environment.hepta",
+        "functions": [
+          "ve_env_hash"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_complete_version.hepta",
+        "functions": [
+          "tc_frame",
+          "tc_keep_model",
+          "tc_ids",
+          "tc_pick",
+          "tc_union_count",
+          "tc_match"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_arena.hepta",
+        "functions": [
+          "sha512_state_init",
+          "sha512_compress",
+          "sha512_load64",
+          "sha512_store64",
+          "sha512_rotr64"
+        ]
+      },
+      {
+        "source": "src/crypto/sha512_stream.hepta",
+        "functions": [
+          "s512_init",
+          "s512_valid",
+          "s512_prepare",
+          "s512_update",
+          "s512_update_work",
+          "s512_feed",
+          "s512_block",
+          "s512_final"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_release_snapshot_metadata.hepta",
+        "functions": [
+          "cs_tcv_span",
+          "cs_tc_declared",
+          "cs_tc_links",
+          "cs_frame"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_complete_version_content.hepta",
+        "functions": [
+          "cvc_bind",
+          "cvc_claims_nonzero"
+        ]
+      }
+    ],
     "src/data_availability/cell_complete_version_content.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",
