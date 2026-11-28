@@ -1969,6 +1969,17 @@
       ]
     },
     {
+      "id": "data-availability/cell-content-claim-verify",
+      "node_integration_complete": false,
+      "scope": "Original independent typed CCH1 exact compare to the internally computed detached TCM2/TCC2 declaration observation. No actual payload/data readers, state, owner budget, authority or production.",
+      "source": "hia/src/data_availability/cell_content_claim_verify.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_da_cell_content_claim_verify.py",
+        "hia/tests/rust_da_cell_content_claim_verify_reference.rs"
+      ]
+    },
+    {
       "id": "data-availability/cell-content-manifest-observe",
       "node_integration_complete": false,
       "scope": "Original declared-only canonical TCM2 observation with independent ModelManifest context, pure fresh budget counters and shared native CCH1 SHA-512. No payload reads, owner budget, storage or authority.",
@@ -4030,6 +4041,7 @@
         "data-availability/cache-capacity",
         "data-availability/cell-content-manifest-value",
         "data-availability/cell-content-manifest-observe",
+        "data-availability/cell-content-claim-verify",
         "data-availability/cell-content-closure-value",
         "data-availability/cell-content-closure-observe",
         "data-availability/cell-manifest",
