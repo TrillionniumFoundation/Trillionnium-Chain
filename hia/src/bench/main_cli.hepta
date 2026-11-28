@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v10
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_main_cli_subset_v11
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   n:usize = buffer.len(i)
@@ -34,6 +34,8 @@ block defaults(i_def:readbuf,o_def:mutbuf,n_def:u64)
   _d6:u64 = call(o_def,at48,at0) {"function":"bench_put"}
   _d7:u64 = call(o_def,at56,stride) {"function":"bench_put"}
   _d8:u64 = call(o_def,at64,at0) {"function":"bench_put"}
+  history_at:u64 = const() {"value":80}
+  _history:u64 = call(o_def,history_at,at0) {"function":"bench_put"}
   jump next(i_def,o_def,n_def,at8,argc)
 block next(i_next:readbuf,o_next:mutbuf,n_next:u64,p_next:u64,k_next:u64)
   z_next:u64 = const() {"value":0}
@@ -75,33 +77,21 @@ block name(i_name:readbuf,o_name:mutbuf,n_name:u64,p_name:u64,k_name:u64,e_name:
   known:bool = compare.le(opt,max_field)
   branch known flag_or_arg(i_name,o_name,n_name,k_name,e_name,equal_at,opt) free_arg(i_name,o_name,n_name,p_name,k_name,e_name,equal_at)
 block free_arg(i_fa:readbuf,o_fa:mutbuf,n_fa:u64,p_fa:u64,k_fa:u64,e_fa:u64,eq_fa:u64)
-  first_fa:u64 = const() {"value":8}
   one_fa:u64 = const() {"value":1}
   cap_fa:u64 = const() {"value":127}
   past_fa:u64 = int.add.wrap(e_fa,one_fa)
   span_fa:u64 = int.sub.wrap(e_fa,p_fa)
-  first_tok:bool = compare.eq(p_fa,first_fa)
   one_tok:bool = compare.eq(k_fa,one_fa)
   exact_end:bool = compare.eq(past_fa,n_fa)
   has_token:bool = compare.ge(span_fa,one_fa)
   bounded_tok:bool = compare.le(span_fa,cap_fa)
-  zero_fa:u64 = const() {"value":0}
-  uncertain:u64 = const() {"value":255}
-  prior:u64 = call(o_fa) {"function":"bc_prior_usage"}
-  no_prior:bool = compare.eq(prior,zero_fa)
-  valid_prior:bool = compare.ne(prior,uncertain)
-  agrees:bool = compare.eq(first_tok,no_prior)
+  marked_fa:bool = call(o_fa) {"function":"bc_marked"}
+  ordinary_fa:bool = bool.not(marked_fa)
   tail_only:bool = bool.and(one_tok,exact_end)
-  bounded_scope:bool = bool.and(valid_prior,agrees)
-  valid_layout:bool = bool.and(tail_only,bounded_scope)
+  valid_layout:bool = bool.and(tail_only,ordinary_fa)
   valid_span:bool = bool.and(has_token,bounded_tok)
   finite:bool = bool.and(valid_layout,valid_span)
-  branch finite save_prior(i_fa,o_fa,p_fa,e_fa,eq_fa,prior) fail()
-block save_prior(i_sr:readbuf,o_sr:mutbuf,p_sr:u64,e_sr:u64,eq_sr:u64,prior_sr:u64)
-  at_sr:usize = const() {"value":223}
-  order_sr:u8 = int.cast(prior_sr) {"mode":"wrap"}
-  _ = buffer.store(o_sr,at_sr,order_sr)
-  jump free_kind(i_sr,o_sr,p_sr,e_sr,eq_sr)
+  branch finite free_kind(i_fa,o_fa,p_fa,e_fa,eq_fa) fail()
 block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   at_fk:usize = int.cast(p_fk) {"mode":"wrap"}
   lead_fk:u8 = buffer.load(i_fk,at_fk)
@@ -110,9 +100,7 @@ block free_kind(i_fk:readbuf,o_fk:mutbuf,p_fk:u64,e_fk:u64,eq_fk:u64)
   branch starts_dash free_long(i_fk,o_fk,p_fk,e_fk,eq_fk) free_positional(i_fk,o_fk,p_fk,e_fk,eq_fk)
 block free_positional(i_px:readbuf,o_px:mutbuf,p_px:u64,e_px:u64,eq_px:u64)
   bare_px:bool = compare.eq(e_px,eq_px)
-  alone_px:bool = call(o_px) {"function":"bc_no_usage_prior"}
-  valid_px:bool = bool.and(bare_px,alone_px)
-  branch valid_px free_plain(i_px,o_px,p_px,e_px) fail()
+  branch bare_px free_plain(i_px,o_px,p_px,e_px) fail()
 block free_long(i_fl:readbuf,o_fl:mutbuf,p_fl:u64,e_fl:u64,eq_fl:u64)
   two_fl:u64 = const() {"value":2}
   name_size_fl:u64 = int.sub.wrap(eq_fl,p_fl)
@@ -137,9 +125,7 @@ block free_assignment(i_fx:readbuf,o_fx:mutbuf,p_fx:u64,name_fx:u64,e_fx:u64,eq_
   tail_fx:u64 = int.add.wrap(eq_fx,one_fx)
   unknown_fx:bool = compare.eq(special_fx,zero_fx)
   tail_ascii:bool = call(i_fx,tail_fx,e_fx) {"function":"bc_ascii_assignment"}
-  sane_fx:bool = bool.and(unknown_fx,tail_ascii)
-  alone_fx:bool = call(o_fx) {"function":"bc_no_usage_prior"}
-  assignment_ok:bool = bool.and(sane_fx,alone_fx)
+  assignment_ok:bool = bool.and(unknown_fx,tail_ascii)
   branch assignment_ok free_flag(i_fx,o_fx,name_fx,eq_fx) fail()
 block free_flag(i_ff:readbuf,o_ff:mutbuf,p_ff:u64,e_ff:u64)
   kind_ff:u64 = const() {"value":91}
@@ -156,8 +142,11 @@ block free_save(i_fs:readbuf,o_fs:mutbuf,p_fs:u64,e_fs:u64,code_fs:u64)
   kind_fs:u64 = const() {"value":72}
   len_fs:u64 = int.sub.wrap(e_fs,p_fs)
   _size_fs:u64 = call(o_fs,kind_fs,len_fs) {"function":"bench_put"}
-  result_fs:u32 = int.cast(code_fs) {"mode":"wrap"}
-  ret(result_fs)
+  valid_fs:bool = call(o_fs,code_fs,len_fs) {"function":"bc_usage_for_echo"}
+  branch valid_fs free_return(code_fs) fail()
+block free_return(code_fr:u64)
+  result_fr:u32 = int.cast(code_fr) {"mode":"wrap"}
+  ret(result_fr)
 block flag_or_arg(fo_i:readbuf,fo_o:mutbuf,fo_n:u64,fo_k:u64,fo_e:u64,fo_at:u64,fo_field:u64)
   profile_field:u64 = const() {"value":3}
   persist_field:u64 = const() {"value":7}
@@ -178,15 +167,16 @@ block profile_flag(pf_i:readbuf,pf_o:mutbuf,pf_n:u64,pf_k:u64,pf_e:u64,pf_at:u64
   zero_pf:u64 = const() {"value":0}
   fresh_pf:bool = compare.eq(already,zero_pf)
   valid_pf:bool = bool.and(bare,fresh_pf)
-  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag) flag_reject(pf_o,pf_field,bare)
+  branch valid_pf keep_flag(pf_i,pf_o,pf_n,pf_k,pf_e,marks,bitmap,flag,pf_field) flag_reject(pf_o,pf_field,bare)
 block flag_reject(o_fr:mutbuf,f_fr:u64,bare_fr:bool)
   corrected_fr:u64 = const() {"value":9}
   normal_fr:bool = compare.lt(f_fr,corrected_fr)
   dupe_fr:bool = bool.and(normal_fr,bare_fr)
   branch dupe_fr duplicate(o_fr,f_fr) fail()
-block keep_flag(kf_i:readbuf,kf_o:mutbuf,kf_n:u64,kf_k:u64,kf_e:u64,kf_at:u64,kf_bits:u64,kf_flag:u64)
+block keep_flag(kf_i:readbuf,kf_o:mutbuf,kf_n:u64,kf_k:u64,kf_e:u64,kf_at:u64,kf_bits:u64,kf_flag:u64,kf_field:u64)
   with_profile:u64 = bit.or(kf_bits,kf_flag)
   _profile:u64 = call(kf_o,kf_at,with_profile) {"function":"bench_put"}
+  _usage_kf:u64 = call(kf_o,kf_field) {"function":"bc_record_usage"}
   one_kf:u64 = const() {"value":1}
   after_kf:u64 = int.add.wrap(kf_e,one_kf)
   left_kf:u64 = int.sub.wrap(kf_k,one_kf)
@@ -401,6 +391,7 @@ block keep(i_ke:readbuf,o_ke:mutbuf,n_ke:u64,e_ke:u64,k_ke:u64,f_ke:u64,s_ke:u64
   new_seen:u64 = bit.or(s_ke,b_ke)
   _arg:u64 = call(o_ke,slot,a_ke) {"function":"bench_put"}
   _seen:u64 = call(o_ke,offset24,new_seen) {"function":"bench_put"}
+  _usage_ke:u64 = call(o_ke,f_ke) {"function":"bc_record_usage"}
   one_ke:u64 = const() {"value":1}
   after_nul:u64 = int.add.wrap(e_ke,one_ke)
   jump next(i_ke,o_ke,n_ke,after_nul,k_ke)
@@ -1186,45 +1177,80 @@ block fail()
   ret(no)
 end
 
-fn bc_no_usage_prior(o:mutbuf) -> (bool) effects(read,trap) entry(entry)
-block entry(o:mutbuf)
-  pos:usize = const() {"value":223}
-  zero:u8 = const() {"value":0}
-  prior:u8 = buffer.load(o,pos)
-  alone:bool = compare.eq(prior,zero)
-  ret(alone)
+fn bc_record_usage(o:mutbuf,field:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,field:u64)
+  excluded:u64 = const() {"value":9}
+  ordinary:bool = compare.lt(field,excluded)
+  branch ordinary record(o,field) ignore()
+block record(o_r:mutbuf,f_r:u64)
+  history:u64 = const() {"value":80}
+  old:u64 = call(o_r,history) {"function":"bench_get"}
+  four:u64 = const() {"value":4}
+  one:u64 = const() {"value":1}
+  mask:u64 = const() {"value":15}
+  roster:u64 = const() {"value":22086584625}
+  r_shift:u64 = int.mul.wrap(f_r,four)
+  entries:u64 = int.shr.checked(roster,r_shift)
+  index:u64 = bit.and(entries,mask)
+  count:u64 = bit.and(old,mask)
+  next:u64 = int.add.wrap(count,one)
+  shift:u64 = int.mul.wrap(next,four)
+  word:u64 = int.shl.checked(index,shift)
+  with_word:u64 = bit.or(old,word)
+  value:u64 = int.add.wrap(with_word,one)
+  updated:u64 = call(o_r,history,value) {"function":"bench_put"}
+  ret(updated)
+block ignore()
+  zero:u64 = const() {"value":0}
+  ret(zero)
 end
 
-fn bc_prior_usage(o:mutbuf) -> (u64) effects(read,write,trap) entry(entry)
-block entry(o:mutbuf)
-  seen_at:u64 = const() {"value":24}
-  seen:u64 = call(o,seen_at) {"function":"bench_get"}
-  zero:u64 = const() {"value":0}
-  empty:bool = compare.eq(seen,zero)
-  branch empty result(zero) only_one(seen)
-block only_one(bits:u64)
-  zero_b:u64 = const() {"value":0}
-  one_b:u64 = const() {"value":1}
-  max_bit:u64 = const() {"value":256}
-  roster:u64 = const() {"value":22086584625}
-  no_later:bool = compare.le(bits,max_bit)
-  rest:u64 = int.sub.wrap(bits,one_b)
-  other:u64 = bit.and(bits,rest)
-  singular:bool = compare.eq(other,zero_b)
-  valid:bool = bool.and(no_later,singular)
-  branch valid lookup(bits,roster) fail()
-block lookup(b_l:u64,r_l:u64)
-  one_l:u64 = const() {"value":1}
-  four_l:u64 = const() {"value":4}
-  mask_l:u64 = const() {"value":15}
-  there:bool = compare.eq(b_l,one_l)
-  bit_next:u64 = int.shr.checked(b_l,one_l)
-  roster_next:u64 = int.shr.checked(r_l,four_l)
-  found:u64 = bit.and(r_l,mask_l)
-  branch there result(found) lookup(bit_next,roster_next)
-block fail()
-  invalid:u64 = const() {"value":255}
-  ret(invalid)
-block result(prior_result:u64)
-  ret(prior_result)
+fn bc_usage_for_echo(o:mutbuf,kind:u64,w:u64) -> (bool) effects(read,write,trap) entry(entry)
+block entry(o:mutbuf,kind:u64,w:u64)
+  flag:u64 = const() {"value":91}
+  for_flag:bool = compare.eq(kind,flag)
+  branch for_flag choose(o,w) valid()
+block choose(o_c:mutbuf,w_c:u64)
+  history:u64 = const() {"value":80}
+  old:u64 = call(o_c,history) {"function":"bench_get"}
+  four:u64 = const() {"value":4}
+  one:u64 = const() {"value":1}
+  mask:u64 = const() {"value":15}
+  count:u64 = bit.and(old,mask)
+  order:u64 = int.shr.checked(old,four)
+  simple:bool = compare.le(count,one)
+  branch simple legacy(o_c,order) limit(o_c,w_c,order)
+block legacy(o_l:mutbuf,order_l:u64)
+  at_l:usize = const() {"value":223}
+  index_l:u8 = int.cast(order_l) {"mode":"wrap"}
+  _ = buffer.store(o_l,at_l,index_l)
+  jump valid()
+block limit(o_m:mutbuf,w_m:u64,order_m:u64)
+  cap_m:u64 = const() {"value":122}
+  room_m:bool = compare.le(w_m,cap_m)
+  branch room_m save(o_m,order_m) refuse()
+block save(o_s:mutbuf,order_s:u64)
+  marker:u64 = const() {"value":280375465082880}
+  word_s:u64 = bit.or(order_s,marker)
+  start_s:u64 = const() {"value":218}
+  zero_s:u64 = const() {"value":0}
+  jump write(o_s,word_s,start_s,zero_s)
+block write(o_w:mutbuf,word_w:u64,at_w:u64,n_w:u64)
+  byte_w:u8 = int.cast(word_w) {"mode":"wrap"}
+  pos_w:usize = int.cast(at_w) {"mode":"wrap"}
+  _ = buffer.store(o_w,pos_w,byte_w)
+  step_w:u64 = const() {"value":1}
+  shift_w:u64 = const() {"value":8}
+  next_w:u64 = int.add.wrap(n_w,step_w)
+  next_at_w:u64 = int.add.wrap(at_w,step_w)
+  rest_w:u64 = int.shr.checked(word_w,shift_w)
+  limit_w:u64 = const() {"value":6}
+  done_w:bool = compare.eq(next_w,limit_w)
+  branch done_w valid() write(o_w,rest_w,next_at_w,next_w)
+block valid()
+  pass:bool = const() {"value":true}
+  ret(pass)
+block refuse()
+  fail:bool = const() {"value":false}
+  ret(fail)
 end

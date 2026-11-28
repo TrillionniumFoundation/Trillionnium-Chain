@@ -162,17 +162,22 @@ accept the suggested option. For an unknown long option with an attached
 `=value`, the complete token must still fit 127 bytes and the attached value
 must be empty or printable ASCII. Only the name before the first `=` is
 scored and printed, as in the locked CLI. This does not admit attached values
-on boolean flags, help or the corrected-mode marker. A final bare unknown
-long option also has an exact diagnostic after one completed original option
-(an ordinary flag or a recognized value in either existing spelling).
-Its usage shows the completed option before any different suggested option
-and never repeats the same option. Errors or help already selected earlier
-keep their existing precedence. The parser passes the prior option's one-based
-catalog index in the unused last byte of the diagnostic token slot (at most
-127 token bytes in the existing 128-byte copy). The renderer reuses the
-catalog's option-usage fragments; neither the machine adapter nor the
-catalog changes. Other combinations, attached unknown values after a
-completed option, control bytes and invalid UTF-8 remain refused.
+on boolean flags, help or the corrected-mode marker. The final diagnostic may follow a completed prefix of up to all nine original
+options. It shows the completed options in argv order and adds a distinct
+suggested option last, without repeating an already listed option. The
+original positional diagnostic uses `[OPTIONS]` even with preceding options.
+Earlier errors and help retain precedence. A late unknown assignment still
+elides the attached value, rather than treating it as an argument to execute.
+The complete unknown argv token remains bounded to 127 bytes. After multiple
+prior options, a long name of up to 122 bytes after the leading `--` leaves
+six bytes in the existing private diagnostic slot for the packed roster and
+its tag. Standalone and
+single-predecessor diagnostics retain the previous layout and full 127-byte
+echo bound. The renderer validates the packed roster and total assembled
+length before writing and uses the existing literal usage fragments. Neither
+the machine adapter nor the catalog changes. A nonfinal unknown, an original
+terminal `--` followed by a token, corrected-mode diagnostics, malformed
+assignment bytes, controls and invalid UTF-8 remain refused by this candidate.
 The HIA renderer reads a packed [literal catalog](main_diagnostics.json) instead of
 one sequence of machine instructions per message. All these outcomes precede
 scheduler, clock or profile I/O. Help comes after a syntactically admitted

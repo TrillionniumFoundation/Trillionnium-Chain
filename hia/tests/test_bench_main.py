@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections import Counter
 from datetime import datetime, timezone
+from itertools import permutations
 import hashlib
 import io
 import json
@@ -421,7 +422,7 @@ class NativeBenchMain(unittest.TestCase):
                                     (b"---unknown",), (b"-x",),
                                     (b"--", b"logfile"), (b"--", b"--tx"), (b"--unknown", b"--help"),
                                     (b"--hel", b"--help"), (b"--txs", b"--worklod"),
-                                    (b"--profile", b"logfile"), (b"--reader-high-water-v1", b"logfile"))):
+                                    (b"--reader-high-water-v1", b"logfile"))):
             rejected, _ = self.actual(f"free-arg-outside-{idx}", self.native, args)
             self.assertEqual((rejected.returncode, rejected.stdout, rejected.stderr), (2, b"", OUTSIDE), args)
         refused, _ = self.actual("free-arg-env-refused", self.native, (b"--unknown",),
@@ -455,7 +456,7 @@ class NativeBenchMain(unittest.TestCase):
                 (b"logfile=value",), (b"-x=value",), (b"---unknown=value",),
                 (b"--help=value",), (b"--profile=true",), (b"--persist-profile=false",),
                 (b"--reader-high-water-v1=true",),
-                (b"--unknown=1", b"--help"), (b"--profile", b"--unknown=1"),
+                (b"--unknown=1", b"--help"),
                 (b"--txs", b"--unknown=1"), (b"--", b"--unknown=1"))):
             new, _ = self.actual(f"assign-{idx}-outside", self.native, args)
             self.assertEqual((new.returncode, new.stdout, new.stderr), (2, b"", OUTSIDE), args)
@@ -517,9 +518,8 @@ class NativeBenchMain(unittest.TestCase):
         self.assertEqual((old.returncode, old.stderr), (0, b""))
         self.assertEqual((new.returncode, new.stdout, new.stderr), (0, old.stdout, b""))
         for idx, args in enumerate((
-                (b"--profile", b"--unknown=x"), (b"--profile", b"positional"),
                 (b"--profile", b"--unknown", b"--help"), (b"--profile", b"--", b"--unknown"),
-                (b"--txs=4", b"--keys=2", b"--unknown"), (b"--txs", b"--worklod"),
+                (b"--txs", b"--worklod"),
                 (b"--reader-high-water-v1", b"--unknown"), (b"--profile", b"--" + b"Z"*126),
                 (b"--profile", b"--unknown\xff"))):
             new, _ = self.actual(f"prior-cli-outside-{idx}", self.native, args)
@@ -527,6 +527,82 @@ class NativeBenchMain(unittest.TestCase):
         denied, _ = self.actual("prior-env-outside", self.native, (b"--profile", b"--tx"),
                                 env={b"HIA_BENCH_TEST_ONLY": b"synthetic"})
         self.assertEqual((denied.returncode, denied.stdout, denied.stderr), (2, b"", OUTSIDE))
+        self.assertFalse(self.run_path.exists())
+
+    def test_actual_bounded_multi_option_unknown_tail(self):
+        options = (
+            ((b"--txs", b"4"), b"--txs <TXS>", b"--tx", b"--txs"),
+            ((b"--keys=2",), b"--keys <KEYS>", b"--key", b"--keys"),
+            ((b"--determinism-repeats=1001",), b"--determinism-repeats <DETERMINISM_REPEATS>",
+             b"--determinis-repeats", b"--determinism-repeats"),
+            ((b"--profile",), b"--profile", b"--profil", b"--profile"),
+            ((b"--read-fanout", b"3"), b"--read-fanout <READ_FANOUT>",
+             b"--read-fanut", b"--read-fanout"),
+            ((b"--write-every=1",), b"--write-every <WRITE_EVERY>", b"--write-evry", b"--write-every"),
+            ((b"--workload=mixed",), b"--workload <WORKLOAD>", b"--worklod", b"--workload"),
+            ((b"--persist-profile",), b"--persist-profile", b"--persist-profil", b"--persist-profile"),
+            ((b"--strategy", b"footprint-desc"), b"--strategy <STRATEGY>", b"--stratgy", b"--strategy"),
+        )
+        prefixes = list(permutations(range(len(options)), 2))
+        prefixes.extend(tuple(range(length - 1, -1, -1)) for length in range(3, 10))
+        prefixes.extend((tuple(range(9)), (8, 0, 7, 1, 6, 2, 5, 3, 4)))
+        checked = 0
+        for prefix in prefixes:
+            pre = tuple(word for slot in prefix for word in options[slot][0])
+            used = b" ".join(options[slot][1] for slot in prefix)
+            in_option = options[prefix[0]]
+            spare = next((slot for slot in range(len(options)) if slot not in prefix), None)
+            tails = [(b"--ZZZZZ", b"", used), (in_option[2], in_option[3], used),
+                     (b"--helpful", b"--help", used + b" --help"),
+                     (b"free_tail-2", b"", b"[OPTIONS]")]
+            if spare is not None:
+                unused = options[spare]
+                tails.append((unused[2], unused[3], used + b" " + unused[1]))
+            for j, (echo, suggestion, usage) in enumerate(tails):
+                tail = echo + b"=discard=this" if echo.startswith(b"--") and j % 2 else echo
+                args = (*pre, tail)
+                expected = b"error: unexpected argument '" + echo + b"' found\n\n"
+                if suggestion:
+                    expected += b"  tip: a similar argument exists: '" + suggestion + b"'\n\n"
+                expected += b"Usage: trnm-bench " + usage + b"\n\nFor more information, try '--help'.\n"
+                for owner, image in (("rust", self.original), ("hia", self.native)):
+                    result, _ = self.actual(f"multi-cli-{checked}-{owner}", image, args)
+                    self.assertEqual((result.returncode, result.stdout, result.stderr), (2, b"", expected), args)
+                checked += 1
+        self.assertEqual(checked, 402)
+        ordered = (b"--profile", b"--keys=2")
+        pass_cases = (
+            (*ordered, b"--" + b"Z" * 122),
+            (*ordered, b"--" + b"Z" * 120 + b"=tail"),
+            (*ordered, b"--ZZZZZ="),
+            (*ordered, b"positional"),
+            (b"--profile", b"--ZZZZZ=x"),
+            (b"--profile", b"positional"),
+            (*ordered, b"--txs=bad", b"--ZZZZZ"),
+            (*ordered, b"--keys=3", b"--ZZZZZ"),
+            (*ordered, b"--txs", b"--help", b"--ZZZZZ"),
+            (b"--txs", b"4", b"--keys", b"2", b"--determinism-repeats", b"1001",
+             b"--profile", b"--read-fanout", b"3", b"--write-every", b"1",
+             b"--workload", b"mixed", b"--persist-profile", b"--strategy",
+             b"footprint-desc", b"--ZZZZZ"),
+            (*ordered, b"--help", b"--ZZZZZ"),
+        )
+        for j, args in enumerate(pass_cases):
+            old, _ = self.actual(f"multi-bound-{j}-rust", self.original, args)
+            new, _ = self.actual(f"multi-bound-{j}-hia", self.native, args)
+            self.assertEqual(old.returncode, 0 if j == len(pass_cases) - 1 else 2, args)
+            self.assertEqual((new.returncode, new.stdout, new.stderr),
+                             (old.returncode, old.stdout, old.stderr), args)
+        refuse_cases = (
+            (*ordered, b"--" + b"Z" * 123),
+            (*ordered, b"--" + b"Z" * 120 + b"=tails"),
+            (*ordered, b"--ZZZZZ=bad\x01"), (*ordered, b"--ZZZZZ\xff"),
+            (*ordered, b"--ZZZZZ", b"--help"), (*ordered, b"--", b"--ZZZZZ"),
+            (*ordered, b"--reader-high-water-v1", b"--ZZZZZ"),
+        )
+        for j, args in enumerate(refuse_cases):
+            native, _ = self.actual(f"multi-outside-{j}", self.native, args)
+            self.assertEqual((native.returncode, native.stdout, native.stderr), (2, b"", OUTSIDE), args)
         self.assertFalse(self.run_path.exists())
 
     def test_actual_plain_uint_cli_diagnostics_and_no_unbounded_echo(self):

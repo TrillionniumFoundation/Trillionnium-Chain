@@ -1,4 +1,4 @@
-hia-asm.v1 hepta.hia.program.v8 trnm_bench_plain_diagnostic_renderer_v4
+hia-asm.v1 hepta.hia.program.v8 trnm_bench_plain_diagnostic_renderer_v5
 fn f0(i:readbuf,o:mutbuf,s:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(i:readbuf,o:mutbuf,s:mutbuf)
   nz:usize = buffer.len(i)
@@ -115,20 +115,48 @@ block flag_choice(g_i:readbuf,g_o:mutbuf,g_start:u64,g_after:u64,g_a:u64,g_b:u64
   zero_byte:u8 = const() {"value":0}
   standalone:bool = compare.eq(prior_byte,zero_byte)
   prior_g:u64 = int.cast(prior_byte) {"mode":"wrap"}
-  branch standalone direct_flag_choice(g_i,g_o,g_start,g_after,g_a,g_b,g_len,g_total,g_winner) prior_flag_choice(g_i,g_o,g_start,g_after,g_a,g_b,g_len,g_winner,prior_g)
-block prior_flag_choice(ux_i:readbuf,ux_o:mutbuf,ux_start:u64,ux_after:u64,ux_a:u64,ux_b:u64,ux_len:u64,ux_winner:u64,ux_prior:u64)
-  prior_max:u64 = const() {"value":9}
-  prior_valid:bool = compare.le(ux_prior,prior_max)
-  prior_piece:u64 = call(ux_i,ux_prior) {"function":"flag_usage_piece"}
-  zero_ux:u64 = const() {"value":0}
-  prior_found:bool = compare.ne(prior_piece,zero_ux)
-  valid_ux:bool = bool.and(prior_valid,prior_found)
-  branch valid_ux prior_variant(ux_i,ux_o,ux_start,ux_after,ux_a,ux_b,ux_len,ux_winner,ux_prior,prior_piece) refuse()
+  branch standalone direct_flag_choice(g_i,g_o,g_start,g_after,g_a,g_b,g_len,g_total,g_winner) choose_prior_format(g_i,g_o,g_start,g_after,g_a,g_b,g_len,g_winner,prior_g)
+block choose_prior_format(cf_i:readbuf,cf_o:mutbuf,cf_start:u64,cf_after:u64,cf_a:u64,cf_b:u64,cf_len:u64,cf_winner:u64,cf_prior:u64)
+  marker:u64 = const() {"value":255}
+  pack_cf:bool = compare.eq(cf_prior,marker)
+  branch pack_cf read_order(cf_i,cf_o,cf_start,cf_after,cf_a,cf_b,cf_len,cf_winner) single_order(cf_i,cf_o,cf_start,cf_after,cf_a,cf_b,cf_len,cf_winner,cf_prior)
+block single_order(so_i:readbuf,so_o:mutbuf,so_start:u64,so_after:u64,so_a:u64,so_b:u64,so_len:u64,so_winner:u64,so_prior:u64)
+  max_so:u64 = const() {"value":9}
+  valid_so:bool = compare.le(so_prior,max_so)
+  branch valid_so prior_plan(so_i,so_o,so_start,so_after,so_a,so_b,so_len,so_winner,so_prior) refuse()
+block read_order(ro_i:readbuf,ro_o:mutbuf,ro_start:u64,ro_after:u64,ro_a:u64,ro_b:u64,ro_len:u64,ro_winner:u64)
+  lo_at:u64 = const() {"value":138}
+  mid_at:u64 = const() {"value":140}
+  hi_at:usize = const() {"value":142}
+  shift16:u64 = const() {"value":16}
+  shift32:u64 = const() {"value":32}
+  max_echo:u64 = const() {"value":122}
+  min_pack:u64 = const() {"value":17}
+  max_pack:u64 = const() {"value":68719476735}
+  lo_ro:u64 = call(ro_i,lo_at) {"function":"diag_u16"}
+  mid_ro:u64 = call(ro_i,mid_at) {"function":"diag_u16"}
+  last_ro:u8 = buffer.load(ro_i,hi_at)
+  hi_ro:u64 = int.cast(last_ro) {"mode":"wrap"}
+  middle:u64 = int.shl.checked(mid_ro,shift16)
+  high:u64 = int.shl.checked(hi_ro,shift32)
+  low_word:u64 = bit.or(lo_ro,middle)
+  order:u64 = bit.or(low_word,high)
+  enough_ro:bool = compare.ge(order,min_pack)
+  num_fit:bool = compare.le(order,max_pack)
+  echo_fit:bool = compare.le(ro_len,max_echo)
+  admissible_ro:bool = bool.and(num_fit,echo_fit)
+  good_ro:bool = bool.and(enough_ro,admissible_ro)
+  branch good_ro prior_plan(ro_i,ro_o,ro_start,ro_after,ro_a,ro_b,ro_len,ro_winner,order) refuse()
+block prior_plan(up_i:readbuf,up_o:mutbuf,up_start:u64,up_after:u64,up_a:u64,up_b:u64,up_len:u64,up_winner:u64,up_prior:u64)
+  usage_plan:u64 = call(up_i,up_prior) {"function":"flag_usage_plan"}
+  zero_up:u64 = const() {"value":0}
+  good_up:bool = compare.ne(usage_plan,zero_up)
+  branch good_up prior_variant(up_i,up_o,up_start,up_after,up_a,up_b,up_len,up_winner,up_prior,usage_plan) refuse()
 block prior_variant(uv_i:readbuf,uv_o:mutbuf,uv_start:u64,uv_after:u64,uv_a:u64,uv_b:u64,uv_len:u64,uv_winner:u64,uv_prior:u64,uv_piece:u64)
   none_uv:u64 = const() {"value":0}
   no_hint:bool = compare.eq(uv_winner,none_uv)
-  branch no_hint prior_no_hint(uv_i,uv_o,uv_start,uv_after,uv_a,uv_b,uv_len,uv_piece) prior_hint(uv_i,uv_o,uv_start,uv_after,uv_a,uv_b,uv_len,uv_winner,uv_prior,uv_piece)
-block prior_no_hint(un_i:readbuf,un_o:mutbuf,un_start:u64,un_after:u64,un_a:u64,un_b:u64,un_len:u64,un_piece:u64)
+  branch no_hint prior_no_hint(uv_i,uv_o,uv_start,uv_after,uv_a,uv_b,uv_len,uv_prior,uv_piece) prior_hint(uv_i,uv_o,uv_start,uv_after,uv_a,uv_b,uv_len,uv_winner,uv_prior,uv_piece)
+block prior_no_hint(un_i:readbuf,un_o:mutbuf,un_start:u64,un_after:u64,un_a:u64,un_b:u64,un_len:u64,un_prior:u64,un_piece:u64)
   stem_n:u64 = const() {"value":26}
   min_suf:u64 = const() {"value":64}
   shift_un:u64 = const() {"value":16}
@@ -136,7 +164,7 @@ block prior_no_hint(un_i:readbuf,un_o:mutbuf,un_start:u64,un_after:u64,un_a:u64,
   stem_un:u64 = bit.or(left_un,stem_n)
   zero_un:u64 = const() {"value":0}
   room_un:bool = compare.ge(un_b,min_suf)
-  branch room_un bound_prior_output(un_i,un_o,un_start,un_after,un_a,un_b,un_len,zero_un,stem_un,un_piece,zero_un) refuse()
+  branch room_un bound_prior_output(un_i,un_o,un_start,un_after,un_a,un_b,un_len,zero_un,stem_un,un_prior,un_piece,zero_un) refuse()
 block prior_hint(uh_i:readbuf,uh_o:mutbuf,uh_start:u64,uh_after:u64,uh_a:u64,uh_b:u64,uh_len:u64,uh_winner:u64,uh_prior:u64,uh_piece:u64)
   eleven_uh:u64 = const() {"value":11}
   choice_uh:u64 = int.sub.wrap(uh_winner,eleven_uh)
@@ -163,15 +191,20 @@ block prior_hint_stem(us_i:readbuf,us_o:mutbuf,us_start:u64,us_after:u64,us_a:u6
   stem_len_us:u64 = int.sub.wrap(tail_len_us,usage_len_us)
   stem_us:u64 = bit.or(tail_base_us,stem_len_us)
   zero_us:u64 = const() {"value":0}
-  same_us:bool = compare.eq(us_choice,us_prior)
+  sixteen_us:u64 = const() {"value":16}
+  one_us:u64 = const() {"value":1}
+  roster_us:u64 = int.shr.checked(us_piece,sixteen_us)
+  hint_bit:u64 = int.shl.checked(one_us,us_choice)
+  existing:u64 = bit.and(roster_us,hint_bit)
+  same_us:bool = compare.ne(existing,zero_us)
   last_us:u64 = select(same_us,zero_us,us_hint)
-  branch can_split bound_prior_output(us_i,us_o,us_start,us_after,us_a,us_b,us_len,us_lead,stem_us,us_piece,last_us) refuse()
-block bound_prior_output(ub_i:readbuf,ub_o:mutbuf,ub_start:u64,ub_after:u64,ub_a:u64,ub_b:u64,ub_len:u64,ub_lead:u64,ub_stem:u64,ub_prior:u64,ub_hint:u64)
+  branch can_split bound_prior_output(us_i,us_o,us_start,us_after,us_a,us_b,us_len,us_lead,stem_us,us_prior,us_piece,last_us) refuse()
+block bound_prior_output(ub_i:readbuf,ub_o:mutbuf,ub_start:u64,ub_after:u64,ub_a:u64,ub_b:u64,ub_len:u64,ub_lead:u64,ub_stem:u64,ub_prior:u64,ub_plan:u64,ub_hint:u64)
   mask_ub:u64 = const() {"value":65535}
   footer_ub:u64 = const() {"value":38}
   l_ub:u64 = bit.and(ub_lead,mask_ub)
   s_ub:u64 = bit.and(ub_stem,mask_ub)
-  p_ub:u64 = bit.and(ub_prior,mask_ub)
+  p_ub:u64 = bit.and(ub_plan,mask_ub)
   h_ub:u64 = bit.and(ub_hint,mask_ub)
   head_ub:u64 = int.add.wrap(ub_a,ub_len)
   pieces1:u64 = int.add.wrap(l_ub,s_ub)
@@ -196,7 +229,7 @@ block write_prior_output(uw_i:readbuf,uw_o:mutbuf,uw_start:u64,uw_after:u64,uw_a
   second_uw:u64 = call(uw_i,uw_o,token_uw,first_uw,uw_len) {"function":"diag_copy"}
   third_uw:u64 = call(uw_i,uw_o,second_uw,uw_lead) {"function":"diag_copy_piece"}
   fourth_uw:u64 = call(uw_i,uw_o,third_uw,uw_stem) {"function":"diag_copy_piece"}
-  fifth_uw:u64 = call(uw_i,uw_o,fourth_uw,uw_prior) {"function":"diag_copy_piece"}
+  fifth_uw:u64 = call(uw_i,uw_o,fourth_uw,uw_prior) {"function":"flag_usage_render"}
   sixth_uw:u64 = call(uw_i,uw_o,fifth_uw,uw_hint) {"function":"diag_copy_piece"}
   _footer_uw:u64 = call(uw_i,uw_o,footer_at,sixth_uw,end_uw) {"function":"diag_copy"}
   result_uw:u32 = int.cast(uw_total) {"mode":"wrap"}
@@ -707,6 +740,66 @@ block entry(i:readbuf,index:u64)
   absent:u64 = const() {"value":0}
   result:u64 = select(valid,combined,absent)
   ret(result)
+end
+
+fn flag_usage_plan(i:readbuf,order:u64) -> (u64) effects(read,trap) entry(entry)
+block entry(i:readbuf,order:u64)
+  zero:u64 = const() {"value":0}
+  jump next(i,order,zero,zero)
+block next(i_n:readbuf,o_n:u64,s_n:u64,l_n:u64)
+  zero_n:u64 = const() {"value":0}
+  done_n:bool = compare.eq(o_n,zero_n)
+  branch done_n finish(s_n,l_n) member(i_n,o_n,s_n,l_n)
+block member(i_m:readbuf,o_m:u64,s_m:u64,l_m:u64)
+  mask_m:u64 = const() {"value":15}
+  max_m:u64 = const() {"value":9}
+  one_m:u64 = const() {"value":1}
+  zero_m:u64 = const() {"value":0}
+  item_m:u64 = bit.and(o_m,mask_m)
+  bit_m:u64 = int.shl.checked(one_m,item_m)
+  old_m:u64 = bit.and(s_m,bit_m)
+  fresh_m:bool = compare.eq(old_m,zero_m)
+  valid_m:bool = compare.le(item_m,max_m)
+  input_m:bool = bool.and(fresh_m,valid_m)
+  piece_m:u64 = call(i_m,item_m) {"function":"flag_usage_piece"}
+  found_m:bool = compare.ne(piece_m,zero_m)
+  accept_m:bool = bool.and(input_m,found_m)
+  branch accept_m accumulate(i_m,o_m,s_m,l_m,piece_m,bit_m) invalid()
+block accumulate(i_a:readbuf,o_a:u64,s_a:u64,l_a:u64,p_a:u64,b_a:u64)
+  four_a:u64 = const() {"value":4}
+  mask_a:u64 = const() {"value":65535}
+  rest_a:u64 = int.shr.checked(o_a,four_a)
+  new_seen:u64 = bit.or(s_a,b_a)
+  width_a:u64 = bit.and(p_a,mask_a)
+  new_len:u64 = int.add.wrap(l_a,width_a)
+  jump next(i_a,rest_a,new_seen,new_len)
+block finish(s_f:u64,len_f:u64)
+  shift_f:u64 = const() {"value":16}
+  hi_f:u64 = int.shl.checked(s_f,shift_f)
+  value_f:u64 = bit.or(hi_f,len_f)
+  ret(value_f)
+block invalid()
+  empty:u64 = const() {"value":0}
+  ret(empty)
+end
+
+fn flag_usage_render(i:readbuf,o:mutbuf,to:u64,order:u64) -> (u64) effects(read,write,trap) entry(entry)
+block entry(i:readbuf,o:mutbuf,to:u64,order:u64)
+  jump next(i,o,to,order)
+block next(i_n:readbuf,o_n:mutbuf,t_n:u64,a_n:u64)
+  zero_n:u64 = const() {"value":0}
+  done_n:bool = compare.eq(a_n,zero_n)
+  branch done_n finish(t_n) member(i_n,o_n,t_n,a_n)
+block member(i_m:readbuf,o_m:mutbuf,t_m:u64,a_m:u64)
+  four_m:u64 = const() {"value":4}
+  mask_m:u64 = const() {"value":15}
+  item_m:u64 = bit.and(a_m,mask_m)
+  rest_m:u64 = int.shr.checked(a_m,four_m)
+  piece_m:u64 = call(i_m,item_m) {"function":"flag_usage_piece"}
+  again_m:u64 = call(i_m,o_m,t_m,piece_m) {"function":"diag_copy_piece"}
+  jump next(i_m,o_m,again_m,rest_m)
+block finish(t_f:u64)
+  ret(t_f)
 end
 
 fn flag_usage_piece(i:readbuf,idx:u64) -> (u64) effects(read,trap) entry(entry)
