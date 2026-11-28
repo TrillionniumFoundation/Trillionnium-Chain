@@ -1148,6 +1148,17 @@
       ]
     },
     {
+      "id": "state/cell-source-train",
+      "node_integration_complete": false,
+      "scope": "Private same-loan held hex to original source preprocessing, fifteen signed products, recurrent active rows, and masked numeric training update, without work proof, caller phase verdict, authority, or persistent state.",
+      "source": "hia/src/state/cell_source_train.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_cell_source_train.py",
+        "hia/tests/rust_cell_source_train_reference.rs"
+      ]
+    },
+    {
       "id": "state/cell-held-train",
       "node_integration_complete": false,
       "scope": "Pure same-loan held Cell route/logit/recurrent active-row -> frozen loss/gradient/optimizer numeric result, no externally supplied gradients, action/state commitment or production owner.",
@@ -4545,6 +4556,7 @@
         "state/cell-held-rows",
         "state/cell-held-train",
         "model/cell-source-prepare",
+        "state/cell-source-train",
         "consensus/work",
         "consensus/asert-target",
         "consensus/work-schedule-profile",
