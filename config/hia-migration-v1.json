@@ -1586,7 +1586,7 @@
     {
       "id": "data-availability/bep52-metainfo-value",
       "node_integration_complete": false,
-      "scope": "Pure immutable exact BEP52 canonical metainfo emission and strict original info/metainfo byte comparison. Independently pinned TCM1/context and exact canonical piece layers, no loading, network, parser fallback, possession or authority.",
+      "scope": "Pure immutable exact BEP52 canonical metainfo emission and strict original info/metainfo byte comparison, including full-bound Direct verification over two immutable loans. Independently pinned TCM1/context and exact canonical piece layers, no loading, network, parser fallback, possession or authority.",
       "source": "hia/src/data_availability/bep52_metainfo.hepta",
       "state": "native-kernel-implemented",
       "tests": [

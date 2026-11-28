@@ -22,9 +22,16 @@ Modes 0 and 2 reuse that arena after reduction and require 1,760 plus the
 larger of the padded arena and 1,024 plus 32 bytes per declared leaf.
 The maximum generation/verification scratch is 527,072 bytes. Direct
 generation handles the complete 16,384-leaf declaration under its existing
-1 MiB loan. A loan containing both BPB1 and metainfo is subject to that same
-Direct limit. Stock Selfhost also qualifies the full combined 16,384-leaf
-envelope without changing Direct, compiler, or stock bounds.
+1 MiB loan. The combined Direct `f0` keeps its existing loan bound.
+Stock Selfhost `f0` qualifies the full combined 16,384-leaf envelope.
+
+Direct `f1(readbuf,readbuf,mutbuf,mutbuf) -> u32` takes the unmodified BPB1
+request and raw metainfo as two independent immutable loans, with no
+trailer or cross-loan copy. It runs the exact same native mode-2 derivation
+and comparison as `f0`, measures both physical lengths itself, and publishes
+no output. The full 16,384-leaf case has a 590,268-byte BPB1 loan and a
+524,510-byte metainfo loan, each below the existing 1 MiB per-loan bound.
+Neither backend, existing export nor compiler limits changed.
 
 Verification success and failure leave the output untouched. Generation
 does not publish any output on failure. BPB1 statuses are unchanged;

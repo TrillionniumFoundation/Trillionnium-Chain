@@ -200,7 +200,8 @@ class DaBep52Metainfo(unittest.TestCase):
             large=[c for c in profile if max(map(len,c[:3]))>=40000]
             batches=[small[i:i+11] for i in range(0,len(small),11)]+[[x] for x in large]
             kw={"max_input_extent":MAX_LOAN} if backend=="selfhost" else {}
-            with self.subTest(backend=backend),NativeModule(SOURCE,byte_exports=("f0",),
+            exports = ("f0", "f1") if backend == "direct" else ("f0",)
+            with self.subTest(backend=backend),NativeModule(SOURCE,byte_exports=exports,
                         backend=backend,**kw) as n:
                 for batch in batches:
                     got=n.call_many([("f0",list(c[:3])) for c in batch],timeout=60)
@@ -212,3 +213,46 @@ class DaBep52Metainfo(unittest.TestCase):
                 print(json.dumps({"backend":backend,"native_elf":n.artifact_sha256,
                                   "original_matches":len(profile)-len(controls),
                                   "abi_controls":len(controls)},sort_keys=True),flush=True)
+                if backend == "direct":
+                    self._split_direct(n, verifies)
+
+    def _split_direct(self, native, verifies):
+        # Split the exact two immutable byte strings already passed in one loan
+        # to the frozen public Rust oracle. Do not regenerate, parse or hash
+        # either descriptor on the host for native verification.
+        rows = []
+        for raw, status, limit in verifies:
+            if raw[-1] != 2:
+                continue
+            body = raw[:-5]
+            prefix_len = int.from_bytes(raw[-5:-1], "big")
+            rows.append((body[:prefix_len], body[prefix_len:], status, limit))
+        self.assertEqual(len(rows), 61)
+        bpb, meta, expected, need = max((r for r in rows if r[2]==0),
+                                       key=lambda r: len(r[0])+len(r[1]))
+        self.assertEqual((len(bpb),len(meta)),(590268,524510))
+        self.assertLessEqual(max(len(bpb),len(meta)), MAX_EXTENT)
+        self.assertGreater(len(bpb)+len(meta), MAX_EXTENT)
+        self.assertEqual(expected,0)
+        out = b"\xa5"*9
+        work = b"\x79"*(need+11)
+        vectors = [(p,m,out,b"\x79"*(max(1232,guard)+11),status,guard)
+                   for p,m,status,guard in rows]
+        controls = [(bpb,meta,b"",work[:need],0,need),
+                    (bpb,meta,out,work[:need-1],102,1232),
+                    (bpb,meta,out,work[:1231],102,0),
+                    (b"",meta,out,work,100,0),
+                    (bpb,b"",out,work,33,need)]
+        vectors += controls
+        small = [v for v in vectors if max(map(len,v[:4]))<40000]
+        large = [v for v in vectors if max(map(len,v[:4]))>=40000]
+        batches = [small[i:i+11] for i in range(0,len(small),11)] + [[r] for r in large]
+        for batch in batches:
+            observed = native.call_many([("f1", list(v[:4])) for v in batch], timeout=60)
+            for (prefix,data,out,work,status,guard), result in zip(batch,observed,strict=True):
+                self.assertEqual(result.require_returned().value,status,(len(prefix),len(data)))
+                self.assertEqual(result.arguments[:3],[prefix,data,out])
+                self.assertEqual(result.arguments[3][guard:],work[guard:])
+        print(json.dumps({"backend":"direct","export":"f1","native_elf":native.artifact_sha256,
+                          "original_matches":len(rows),"abi_controls":len(controls),
+                          "max_valid_physical_loans":[len(bpb),len(meta)]},sort_keys=True),flush=True)

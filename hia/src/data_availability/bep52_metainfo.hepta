@@ -28,21 +28,66 @@ block mode(c_r:readbuf,c_o:mutbuf,c_w:mutbuf,c_bpb:u64,c_end:u64,c_mode:u64)
   c_empty:bool = compare.eq(c_data,c_z)
   c_is_verify:bool = bool.not(c_gen)
   c_valid:bool = bool.or(c_is_verify,c_empty)
-  branch c_valid binding(c_r,c_o,c_w,c_bpb,c_data,c_mode) bad_frame()
-block binding(d_r:readbuf,d_o:mutbuf,d_w:mutbuf,d_bpb:u64,d_n:u64,d_mode:u64)
+  branch c_valid execute(c_r,c_o,c_w,c_bpb,c_data,c_mode) bad_frame()
+block execute(d_r:readbuf,d_o:mutbuf,d_w:mutbuf,d_bpb:u64,d_n:u64,d_mode:u64)
+  d_s:u32,d_at:u64,d_len:u64 = call(d_r,d_w,d_bpb,d_n,d_mode) {"function":"cbm_materialize"}
+  d_z:u32 = const() {"value":0}
+  d_ok:bool = compare.eq(d_s,d_z)
+  branch d_ok choose(d_r,d_o,d_w,d_bpb,d_n,d_mode,d_at,d_len) fail(d_s)
+block choose(e_r:readbuf,e_o:mutbuf,e_w:mutbuf,e_bpb:u64,e_n:u64,e_mode:u64,e_at:u64,e_len:u64)
+  e_zero:u64 = const() {"value":0}
+  e_one:u64 = const() {"value":1}
+  e_gen:bool = compare.eq(e_mode,e_zero)
+  e_info:bool = compare.eq(e_mode,e_one)
+  branch e_gen publish(e_o,e_w,e_at,e_len) verify(e_r,e_w,e_bpb,e_n,e_at,e_len,e_info)
+block publish(f_o:mutbuf,f_w:mutbuf,f_at:u64,f_len:u64)
+  f_s:u32 = call(f_o,f_w,f_at,f_len) {"function":"cbm_publish"}
+  ret(f_s)
+block verify(g_r:readbuf,g_w:mutbuf,g_bpb:u64,g_n:u64,g_at:u64,g_len:u64,g_info:bool)
+  g_s:u32 = call(g_r,g_w,g_bpb,g_n,g_at,g_len,g_info) {"function":"cbm_verify"}
+  ret(g_s)
+block bad_frame()
+  h_s:u32 = const() {"value":100}
+  ret(h_s)
+block fail(i_s:u32)
+  ret(i_s)
+end
+
+fn f1(a_r:readbuf,a_meta:readbuf,a_o:mutbuf,a_w:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(a_r:readbuf,a_meta:readbuf,a_o:mutbuf,a_w:mutbuf)
+  a_bpb_:usize = buffer.len(a_r)
+  a_meta_:usize = buffer.len(a_meta)
+  a_bpb:u64 = int.cast(a_bpb_) {"mode":"wrap"}
+  a_n:u64 = int.cast(a_meta_) {"mode":"wrap"}
+  a_mode:u64 = const() {"value":2}
+  a_s:u32,a_at:u64,a_len:u64 = call(a_r,a_w,a_bpb,a_n,a_mode) {"function":"cbm_materialize"}
+  a_z:u32 = const() {"value":0}
+  a_ok:bool = compare.eq(a_s,a_z)
+  branch a_ok compare(a_meta,a_w,a_n,a_at,a_len) fail(a_s)
+block compare(b_meta:readbuf,b_w:mutbuf,b_n:u64,b_at:u64,b_len:u64)
+  b_zero:u64 = const() {"value":0}
+  b_info:bool = const() {"value":false}
+  b_s:u32 = call(b_meta,b_w,b_zero,b_n,b_at,b_len,b_info) {"function":"cbm_verify"}
+  ret(b_s)
+block fail(c_s:u32)
+  ret(c_s)
+end
+
+fn cbm_materialize(d_r:readbuf,d_w:mutbuf,d_bpb:u64,d_n:u64,d_mode:u64) -> (u32,u64,u64) effects(read,write,trap) entry(entry)
+block entry(d_r:readbuf,d_w:mutbuf,d_bpb:u64,d_n:u64,d_mode:u64)
   d_s:u32,d_rows:u64,d_count:u64 = call(d_r,d_w,d_bpb) {"function":"bcp_check"}
   d_z:u32 = const() {"value":0}
   d_valid:bool = compare.eq(d_s,d_z)
-  branch d_valid cap_input(d_r,d_o,d_w,d_bpb,d_n,d_mode,d_rows,d_count) fail(d_s)
-block cap_input(e_r:readbuf,e_o:mutbuf,e_w:mutbuf,e_bpb:u64,e_n:u64,e_mode:u64,e_rows:u64,e_count:u64)
+  branch d_valid cap_input(d_r,d_w,d_n,d_mode,d_rows,d_count) fail(d_s)
+block cap_input(e_r:readbuf,e_w:mutbuf,e_n:u64,e_mode:u64,e_rows:u64,e_count:u64)
   e_one:u64 = const() {"value":1}
   e_ic:u64 = const() {"value":256}
   e_mc:u64 = const() {"value":525312}
   e_info:bool = compare.eq(e_mode,e_one)
   e_cap:u64 = select(e_info,e_ic,e_mc)
   e_ok:bool = compare.le(e_n,e_cap)
-  branch e_ok capacity(e_r,e_o,e_w,e_bpb,e_n,e_mode,e_rows,e_count,e_info) bad_input_size(e_info)
-block capacity(f_r:readbuf,f_o:mutbuf,f_w:mutbuf,f_bpb:u64,f_n:u64,f_mode:u64,f_rows:u64,f_count:u64,f_info:bool)
+  branch e_ok capacity(e_r,e_w,e_rows,e_count,e_info) bad_input_size(e_info)
+block capacity(f_r:readbuf,f_w:mutbuf,f_rows:u64,f_count:u64,f_info:bool)
   f_pow:u64,f_unused:u64 = call(f_count) {"function":"cbp_geometry"}
   f_base:u64 = const() {"value":1760}
   f_32:u64 = const() {"value":32}
@@ -57,14 +102,14 @@ block capacity(f_r:readbuf,f_o:mutbuf,f_w:mutbuf,f_bpb:u64,f_n:u64,f_mode:u64,f_
   f_have_:usize = buffer.len(f_w)
   f_have:u64 = int.cast(f_have_) {"mode":"wrap"}
   f_ok:bool = compare.ge(f_have,f_need)
-  branch f_ok tree(f_r,f_o,f_w,f_bpb,f_n,f_mode,f_rows,f_count,f_info,f_pow) short()
-block tree(g_r:readbuf,g_o:mutbuf,g_w:mutbuf,g_bpb:u64,g_n:u64,g_mode:u64,g_rows:u64,g_count:u64,g_info:bool,g_pow:u64)
+  branch f_ok tree(f_r,f_w,f_rows,f_count,f_info,f_pow) short()
+block tree(g_r:readbuf,g_w:mutbuf,g_rows:u64,g_count:u64,g_info:bool,g_pow:u64)
   g_root:u64 = call(g_r,g_w,g_rows,g_count,g_pow) {"function":"bcp_fill"}
   g_status:u64 = call(g_w,g_pow,g_root) {"function":"bcp_tree"}
   g_z:u64 = const() {"value":0}
   g_ok:bool = compare.eq(g_status,g_z)
-  branch g_ok info(g_r,g_o,g_w,g_bpb,g_n,g_mode,g_rows,g_count,g_info,g_root) internal()
-block info(h_r:readbuf,h_o:mutbuf,h_w:mutbuf,h_bpb:u64,h_n:u64,h_mode:u64,h_rows:u64,h_count:u64,h_info:bool,h_root:u64)
+  branch g_ok info(g_r,g_w,g_rows,g_count,g_info,g_root) internal()
+block info(h_r:readbuf,h_w:mutbuf,h_rows:u64,h_count:u64,h_info:bool,h_root:u64)
   h_off:u64 = const() {"value":48}
   h_eight:u64 = const() {"value":8}
   h_base:u64 = const() {"value":1408}
@@ -72,15 +117,32 @@ block info(h_r:readbuf,h_o:mutbuf,h_w:mutbuf,h_bpb:u64,h_n:u64,h_mode:u64,h_rows
   h_data_size:u64 = call(h_r,h_at,h_eight) {"function":"ca_read_be"}
   h_end:u64 = call(h_w,h_root,h_data_size) {"function":"bcp_info"}
   h_len:u64 = int.sub.wrap(h_end,h_base)
-  branch h_info verify(h_r,h_w,h_bpb,h_n,h_base,h_len,h_info) meta(h_r,h_o,h_w,h_bpb,h_n,h_mode,h_rows,h_count,h_base,h_len,h_root)
-block meta(i_r:readbuf,i_o:mutbuf,i_w:mutbuf,i_bpb:u64,i_n:u64,i_mode:u64,i_rows:u64,i_count:u64,i_info:u64,i_len:u64,i_root:u64)
+  branch h_info done(h_base,h_len) meta(h_r,h_w,h_rows,h_count,h_base,h_len,h_root)
+block meta(i_r:readbuf,i_w:mutbuf,i_rows:u64,i_count:u64,i_info:u64,i_len:u64,i_root:u64)
   i_s:u64,i_e:u64 = call(i_r,i_w,i_rows,i_count,i_info,i_len,i_root) {"function":"cbm_emit"}
   i_out_n:u64 = int.sub.wrap(i_e,i_s)
-  i_z:u64 = const() {"value":0}
-  i_gen:bool = compare.eq(i_mode,i_z)
-  i_is_info:bool = const() {"value":false}
-  branch i_gen publish(i_o,i_w,i_s,i_out_n) verify(i_r,i_w,i_bpb,i_n,i_s,i_out_n,i_is_info)
-block verify(j_r:readbuf,j_w:mutbuf,j_at:u64,j_n:u64,j_exp:u64,j_len:u64,j_info:bool)
+  jump done(i_s,i_out_n)
+block done(j_at:u64,j_len:u64)
+  j_s:u32 = const() {"value":0}
+  ret(j_s,j_at,j_len)
+block bad_input_size(n_info:bool)
+  n_a:u32 = const() {"value":30}
+  n_b:u32 = const() {"value":32}
+  n_s:u32 = select(n_info,n_a,n_b)
+  jump fail(n_s)
+block short()
+  q_s:u32 = const() {"value":102}
+  jump fail(q_s)
+block internal()
+  r_s:u32 = const() {"value":103}
+  jump fail(r_s)
+block fail(s_s:u32)
+  s_zero:u64 = const() {"value":0}
+  ret(s_s,s_zero,s_zero)
+end
+
+fn cbm_verify(j_r:readbuf,j_w:mutbuf,j_at:u64,j_n:u64,j_exp:u64,j_len:u64,j_info:bool) -> (u32) effects(read,write,trap) entry(entry)
+block entry(j_r:readbuf,j_w:mutbuf,j_at:u64,j_n:u64,j_exp:u64,j_len:u64,j_info:bool)
   j_ok:bool = compare.eq(j_n,j_len)
   branch j_ok compare(j_r,j_w,j_at,j_exp,j_len,j_info) unequal(j_info)
 block compare(k_r:readbuf,k_w:mutbuf,k_at:u64,k_exp:u64,k_len:u64,k_info:bool)
@@ -88,33 +150,14 @@ block compare(k_r:readbuf,k_w:mutbuf,k_at:u64,k_exp:u64,k_len:u64,k_info:bool)
   k_same:u64 = call(k_r,k_at,k_w,k_exp,k_len) {"function":"ca_equal"}
   k_ok:bool = compare.eq(k_same,k_one)
   branch k_ok success() unequal(k_info)
-block publish(l_o:mutbuf,l_w:mutbuf,l_at:u64,l_n:u64)
-  l_s:u32 = call(l_o,l_w,l_at,l_n) {"function":"cbm_publish"}
-  ret(l_s)
 block success()
   m_s:u32 = const() {"value":0}
   ret(m_s)
-block bad_input_size(n_info:bool)
-  n_a:u32 = const() {"value":30}
-  n_b:u32 = const() {"value":32}
-  n_s:u32 = select(n_info,n_a,n_b)
-  ret(n_s)
 block unequal(o_info:bool)
   o_a:u32 = const() {"value":31}
   o_b:u32 = const() {"value":33}
   o_s:u32 = select(o_info,o_a,o_b)
   ret(o_s)
-block bad_frame()
-  p_s:u32 = const() {"value":100}
-  ret(p_s)
-block short()
-  q_s:u32 = const() {"value":102}
-  ret(q_s)
-block internal()
-  r_s:u32 = const() {"value":103}
-  ret(r_s)
-block fail(s_s:u32)
-  ret(s_s)
 end
 
 fn cbm_emit(a_r:readbuf,a_w:mutbuf,a_rows:u64,a_count:u64,a_info:u64,a_len:u64,a_root:u64) -> (u64,u64) effects(read,write,trap) entry(entry)
