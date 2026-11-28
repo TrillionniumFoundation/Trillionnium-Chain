@@ -19894,6 +19894,53 @@
         ]
       }
     ],
+    "src/checkpoint/tile_activation_raw.hepta": [
+      {
+        "source": "src/crypto/sha256_stream.hepta",
+        "functions": [
+          "tr_get",
+          "tr_put",
+          "tr_read",
+          "tr_sha_compress",
+          "tr_sha_feed_limit",
+          "tr_sha_final",
+          "tr_sha_final_limit",
+          "tr_sha_init",
+          "tr_sha_rotr",
+          "tr_sha_update",
+          "tr_sha_update_limit"
+        ]
+      },
+      {
+        "source": "src/codec/json_value_wire.hepta",
+        "functions": [
+          "jv_scalar",
+          "jv_hex4",
+          "jv_hex"
+        ]
+      },
+      {
+        "source": "src/codec/json_primitives.hepta",
+        "functions": [
+          "value_utf8"
+        ]
+      },
+      {
+        "source": "src/oracle/serde_json.hepta",
+        "functions": [
+          "oj_ws",
+          "oj_peek",
+          "oj_utf8",
+          "oj_ident"
+        ]
+      },
+      {
+        "source": "src/data_availability/cell_tensor_header_json.hepta",
+        "functions": [
+          "hj_uint"
+        ]
+      }
+    ],
     "src/checkpoint/tile_activation_profile.hepta": [
       {
         "source": "src/crypto/sha256_stream.hepta",

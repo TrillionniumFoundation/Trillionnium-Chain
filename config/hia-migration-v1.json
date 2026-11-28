@@ -1149,6 +1149,17 @@
       ]
     },
     {
+      "id": "checkpoint/tile_activation_raw",
+      "node_integration_complete": false,
+      "scope": "Private same held raw activation SHA pin before bounded strict JSON lexical/decoded-key uniqueness scan; no typed fields, observer, material or authority.",
+      "source": "hia/src/checkpoint/tile_activation_raw.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint_tile_activation_raw.py",
+        "hia/tests/rust_checkpoint_tile_activation_raw_reference.rs"
+      ]
+    },
+    {
       "id": "checkpoint/tile_activation_profile",
       "node_integration_complete": false,
       "scope": "Private typed original checkpoint activation profile, digest grammar and static runtime field predicates under inert test pins; no raw parse/binding, runtime claim, material or authority.",
