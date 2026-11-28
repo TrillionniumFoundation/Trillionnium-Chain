@@ -62,11 +62,12 @@ final comparison succeeds (`0`):
 - actual artifact count then actual package count (two u32 little endian).
 
 Both pinned machine emitters exercise the same entry. The tests compile
-the unchanged original V0 verifier with the precise typed assumptions;
-GNU coreutils supplies SHA-256 only at the `sha2` seam, and a separate
-hashlib fixture derives independent expected bytes. The original verifier
-reports an intentional signature callback error on positive prefix cases,
-not signature approval. Controls combine conflicting failures, validate
+the unchanged, locked original V0 Cargo package with its actual SHA-256
+dependency and call its public typed verifier. A separate hashlib fixture
+derives independent expected bytes. Original signature callback entry is
+observed exactly once on positive prefix cases, and that callback always
+returns an error. Cases rejected before that boundary never call it.
+No case returns signature approval. Controls combine conflicting failures, validate
 correctly hashed but false claims, check nonpublication even on late
 mismatch, and exercise 64 rows in all sections.
 

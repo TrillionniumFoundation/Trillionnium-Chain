@@ -1,12 +1,18 @@
-// The harness prefixes the exact original V0 code, fixture and independent
-// SHA-256 seam. Reaching the signature callback is an intentional hard error.
-use std::io::Read;
+//! Link only the unchanged original crate. Signature is always refused.
+use std::{cell::Cell, io::{self, Read, Write}};
+use trnm_release_bundle::{
+    ArtifactEntryV0, BuildInputV0, BuilderProvenanceV0, Digest32V0, ExactSourceV0,
+    ReleaseBundleErrorV0, ReleaseBundleHostErrorV0, ReleaseBundleV0,
+    ReleaseSignatureVerifierV0, SbomPackageV0, verify_release_bundle_v0,
+};
 
-struct StopAtSignature;
+#[derive(Default)]
+struct StopAtSignature(Cell<u32>);
 impl ReleaseSignatureVerifierV0 for StopAtSignature {
     type Error = io::Error;
 
     fn verify_release_signature(&self, _: &ReleaseBundleV0) -> Result<(), Self::Error> {
+        self.0.set(self.0.get() + 1);
         Err(io::Error::other("unsigned reference reached original signature boundary"))
     }
 }
@@ -42,13 +48,7 @@ fn main() -> io::Result<()> {
         let sbom_begin = art_begin + 877 * le16(frame, 4);
         let key_begin = sbom_begin + 1351 * le16(frame, 6);
         let end = key_begin + 772 * le16(frame, 8);
-        let mut release = bundle(20, 7);
-        release.bundle_name = vec_field(frame, 0, 299);
-        release.release_version = vec_field(frame, 2, 811);
-        release.protocol_digest = digest(frame, 10);
-        release.signer_identity_digest = digest(frame, 42);
-        release.signature_digest = digest(frame, 74);
-        release.exact_source = ExactSourceV0 {
+        let exact_source = ExactSourceV0 {
             repository_digest: digest(frame, 106),
             commit_digest: digest(frame, 138),
             tree_digest: digest(frame, 170),
@@ -57,7 +57,7 @@ fn main() -> io::Result<()> {
             production_closure_digest: digest(frame, 266),
             dirty: boolean(frame[298]),
         };
-        release.artifacts = frame[art_begin..sbom_begin]
+        let artifacts = frame[art_begin..sbom_begin]
             .chunks_exact(877)
             .map(|r| ArtifactEntryV0 {
                 logical_name: vec_field(r, 0, 109),
@@ -69,7 +69,7 @@ fn main() -> io::Result<()> {
                 source_path_digest: digest(r, 77),
             })
             .collect();
-        release.sbom_packages = frame[sbom_begin..key_begin]
+        let sbom_packages = frame[sbom_begin..key_begin]
             .chunks_exact(1351)
             .map(|r| SbomPackageV0 {
                 package_name: vec_field(r, 0, 71),
@@ -89,27 +89,36 @@ fn main() -> io::Result<()> {
         let fixed = end + 2;
         let rows = end + 322;
         let full_end = rows + 578 * count;
-        release.provenance.builder_identity_digest = digest(frame, fixed);
-        release.provenance.workflow_digest = digest(frame, fixed + 32);
-        release.provenance.run_identity_digest = digest(frame, fixed + 64);
-        release.provenance.isolated_environment_digest = digest(frame, fixed + 96);
-        release.provenance.exact_source_digest = digest(frame, fixed + 128);
-        release.provenance.artifact_set_digest = digest(frame, fixed + 160);
-        release.provenance.sbom_digest = digest(frame, fixed + 192);
-        release.provenance.provenance_digest = digest(frame, fixed + 224);
         let previous = digest(frame, fixed + 256);
-        release.previous_bundle_digest = (previous != Digest32V0([0; 32])).then_some(previous);
-        release.bundle_digest = digest(frame, fixed + 288);
-        release.provenance.build_inputs = frame[rows..full_end]
-            .chunks_exact(578)
-            .map(|row| BuildInputV0 {
-                logical_name: vec_field(row, 0, 66),
-                source_digest: digest(row, 2),
-                content_digest: digest(row, 34),
-            })
-            .collect();
+        let provenance = BuilderProvenanceV0 {
+            builder_identity_digest: digest(frame, fixed),
+            workflow_digest: digest(frame, fixed + 32),
+            run_identity_digest: digest(frame, fixed + 64),
+            isolated_environment_digest: digest(frame, fixed + 96),
+            exact_source_digest: digest(frame, fixed + 128),
+            artifact_set_digest: digest(frame, fixed + 160),
+            sbom_digest: digest(frame, fixed + 192),
+            provenance_digest: digest(frame, fixed + 224),
+            build_inputs: frame[rows..full_end].chunks_exact(578)
+                .map(|row| BuildInputV0 {
+                    logical_name: vec_field(row, 0, 66),
+                    source_digest: digest(row, 2),
+                    content_digest: digest(row, 34),
+                }).collect(),
+        };
+        let release = ReleaseBundleV0 {
+            bundle_name: vec_field(frame, 0, 299),
+            release_version: vec_field(frame, 2, 811),
+            protocol_digest: digest(frame, 10),
+            signer_identity_digest: digest(frame, 42),
+            signature_digest: digest(frame, 74),
+            exact_source, artifacts, sbom_packages, provenance,
+            previous_bundle_digest: (previous != Digest32V0([0; 32])).then_some(previous),
+            bundle_digest: digest(frame, fixed + 288),
+        };
 
-        let code = match verify_release_bundle_v0(&StopAtSignature, &release, &required) {
+        let boundary = StopAtSignature::default();
+        let code = match verify_release_bundle_v0(&boundary, &release, &required) {
             Err(ReleaseBundleHostErrorV0::Signature(err)) => {
                 assert_eq!(err.to_string(), "unsigned reference reached original signature boundary");
                 0
@@ -129,6 +138,8 @@ fn main() -> io::Result<()> {
             },
             other => panic!("unexpected original result: {other:?}"),
         };
+        // Zero is a test transport code only: the original still refused.
+        assert_eq!(boundary.0.get(), u32::from(code == 0));
         out.write_all(&[code])?;
         if code == 0 {
             out.write_all(&release.canonical_digest().0)?;

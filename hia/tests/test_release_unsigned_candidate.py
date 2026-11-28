@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import replace as change
 import hashlib
+import json
 import os
 from pathlib import Path
 import struct
@@ -19,10 +20,8 @@ from hia.tests.test_release_builder_provenance import (
     pack as pack_provenance,
 )
 from hia.tests.test_release_sbom_digest import (
-    ADAPTER as SHA_FIXTURE,
     ROOT,
     byte_digest,
-    exact_comparison_source,
     replace,
 )
 from hia.tests.test_release_unsigned_prefix import (
@@ -75,24 +74,54 @@ def case(header=HEAD, artifacts=(ARTIFACT,), packages=(PACKAGE,), required=(KEY,
 
 
 def original(cases):
-    rustc = os.environ.get("RUSTC", "rustc")
-    version = subprocess.run([rustc, "--version"], check=True, capture_output=True,
-                             text=True, timeout=15).stdout.split()
+    # The fixture links the locked package's actual rlib and SHA-256 dependency.
+    rust = ROOT / "trillionnium"
+    package = rust / "crates/trnm-release-bundle"
+    original_tree = "563bb7e471b3db278d50feceb3cbac7de4ab281a"
+    git = ["git", "-C", str(ROOT)]
+    if subprocess.check_output([*git, "rev-parse", "HEAD:trillionnium"],
+                               text=True, timeout=15).strip() != original_tree:
+        raise ValueError("Wrong tracked original V0 workspace tree")
+    subprocess.run([*git, "diff", "--quiet", "HEAD", "--", "trillionnium"],
+                   check=True, timeout=15)
+    requested = os.environ.get("TRNM_HIA_RUSTC", os.environ.get("RUSTC", "rustc"))
     pin = tomllib.loads((ROOT / "rust-toolchain.toml").read_text())["toolchain"]["channel"]
-    if version[:2] != ["rustc", pin]:
-        raise ValueError(f"Expected rustc {pin}, got {version[:2]}")
-    common = exact_comparison_source()
-    old_adapter = SHA_FIXTURE.read_bytes()
-    if not common.endswith(old_adapter):
-        raise ValueError("Original ownership/seam extraction changed")
+    version = subprocess.check_output([requested, "--version"], timeout=15)
+    sysroot = Path(subprocess.check_output([requested, "--print", "sysroot"],
+                                          text=True, timeout=15).strip()).resolve(strict=True)
+    rustc, cargo = sysroot / "bin/rustc", sysroot / "bin/cargo"
+    if version.decode().split()[:2] != ["rustc", pin] or subprocess.check_output(
+            [rustc, "--version"], timeout=15) != version:
+        raise ValueError(f"Expected exact original rustc {pin}")
+    env = {**os.environ, "RUSTC": str(rustc), "CARGO_BUILD_JOBS": "1",
+           "CARGO_INCREMENTAL": "0", "CARGO_PROFILE_DEV_DEBUG": "0"}
     with tempfile.TemporaryDirectory(prefix="trnm-unsigned-candidate-original-") as folder:
-        source = Path(folder) / "reference.rs"
-        program = source.with_suffix("")
-        source.write_bytes(common.removesuffix(old_adapter) + ADAPTER.read_bytes())
-        subprocess.run([rustc, "--edition=2021", "-Dwarnings", str(source), "-o", str(program)],
-                       check=True, capture_output=True, timeout=30)
-        report = subprocess.run([str(program)], input=b"".join(row[0] for row in cases),
-                                check=True, capture_output=True, timeout=80)
+        target = Path(folder) / "target"
+        build = subprocess.run(
+            [cargo, "build", "--locked", "--offline", "--no-default-features", "--lib",
+             "-p", "trnm-release-bundle", "--manifest-path", rust / "Cargo.toml",
+             "--target-dir", target, "--message-format=json"],
+            check=True, capture_output=True, env=env, timeout=240,
+        )
+        messages = [json.loads(line) for line in build.stdout.splitlines()]
+        if not messages or messages[-1] != {"reason": "build-finished", "success": True}:
+            raise ValueError("No successful original V0 Cargo artifact")
+        [artifact] = [m for m in messages if m.get("reason") == "compiler-artifact"
+                      and m["target"]["name"] == "trnm_release_bundle" and "lib" in m["target"]["kind"]]
+        if (artifact["features"] or artifact["fresh"]
+                or Path(artifact["manifest_path"]) != package / "Cargo.toml"
+                or Path(artifact["target"]["src_path"]) != package / "src/lib.rs"):
+            raise ValueError("Wrong original V0 release bundle library provenance")
+        [rlib] = [f for f in artifact["filenames"] if f.endswith(".rlib")]
+        if not Path(rlib).is_relative_to(target):
+            raise ValueError("Original V0 artifact is outside its clean build")
+        program = Path(folder) / "original-release-v0"
+        subprocess.run([rustc, "--edition=2021", "-Dwarnings", ADAPTER,
+                        "-L", f"dependency={target/'debug/deps'}",
+                        "--extern", f"trnm_release_bundle={rlib}", "-o", program],
+                       check=True, capture_output=True, env=env, timeout=40)
+        report = subprocess.run([program], input=b"".join(row[0] for row in cases),
+                                check=True, capture_output=True, env=env, timeout=80)
     raw, result = report.stdout, []
     for _ in cases:
         status = raw[0]
