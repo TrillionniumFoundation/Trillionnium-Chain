@@ -2276,6 +2276,17 @@
       ]
     },
     {
+      "id": "release-bundle/sbom-ordered-256",
+      "node_integration_complete": false,
+      "scope": "Separate read-only original V0 typed SBOM ordered aggregate at 0–256 private slots, with bounded index mergesort and original canonical member hashing. No release verification or trust; existing 64-slot ABI unchanged.",
+      "source": "hia/src/release_bundle/sbom_ordered_256.hepta",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_release_sbom_ordered_256.py",
+        "hia/tests/rust_release_sbom_ordered_reference.rs"
+      ]
+    },
+    {
       "id": "release-bundle/root-successor-identity-v3",
       "node_integration_complete": false,
       "scope": "Read-only canonical original RootStatementV3 successor action value and operation identity for Rotate, Recover and PolicyChange. No signing, authorization, application, state change or production routing.",

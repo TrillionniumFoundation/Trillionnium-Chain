@@ -73,7 +73,7 @@ def case(header=HEAD, artifacts=(ARTIFACT,), packages=(PACKAGE,), required=(KEY,
     return (prefix + tail, status, expected, footprint, computed + proof)
 
 
-def original(cases):
+def locked_original_report(adapter, payload):
     # The fixture links the locked package's actual rlib and SHA-256 dependency.
     rust = ROOT / "trillionnium"
     package = rust / "crates/trnm-release-bundle"
@@ -116,12 +116,16 @@ def original(cases):
         if not Path(rlib).is_relative_to(target):
             raise ValueError("Original V0 artifact is outside its clean build")
         program = Path(folder) / "original-release-v0"
-        subprocess.run([rustc, "--edition=2021", "-Dwarnings", ADAPTER,
+        subprocess.run([rustc, "--edition=2021", "-Dwarnings", adapter,
                         "-L", f"dependency={target/'debug/deps'}",
                         "--extern", f"trnm_release_bundle={rlib}", "-o", program],
                        check=True, capture_output=True, env=env, timeout=40)
-        report = subprocess.run([program], input=b"".join(row[0] for row in cases),
-                                check=True, capture_output=True, env=env, timeout=80)
+        return subprocess.run([program], input=payload, check=True, capture_output=True,
+                              env=env, timeout=80)
+
+
+def original(cases):
+    report = locked_original_report(ADAPTER, b"".join(row[0] for row in cases))
     raw, result = report.stdout, []
     for _ in cases:
         status = raw[0]
